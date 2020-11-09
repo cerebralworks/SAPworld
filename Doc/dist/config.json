@@ -2112,166 +2112,188 @@
                     },
                     {
                         "in": "formData",
-                        "name": "min_salary",
-                        "type": "number",
-                        "description": "Min salary of the job.",
-                        "required": true
-                    },
-                    {
-                        "in": "formData",
-                        "name": "max_salary",
-                        "type": "number",
-                        "description": "Max salary of the user.",
-                        "required": true
-                    },
-                    {
-                        "in": "formData",
-                        "name": "min_experience",
-                        "type": "number",
-                        "description": "Min experience of the job.",
-                        "required": true
-                    },
-                    {
-                        "in": "formData",
-                        "name": "max_experience",
-                        "type": "number",
-                        "description": "Max experience of the job.",
-                        "required": true
-                    },
-                    {
-                        "in": "formData",
-                        "name": "company",
+                        "name": "description",
                         "type": "string",
-                        "description": "Company of the job.",
+                        "description": "Details of job",
                         "required": true
                     },
                     {
                         "in": "formData",
-                        "name": "email",
+                        "name": "salary_type",
                         "type": "number",
-                        "description": "Email of the company.",
-                        "required": true
+                        "description": "salary type . 0-Hourly ,1-Annual",
+                        "required": true,
+                        "enum": [0, 1]
                     },
                     {
                         "in": "formData",
-                        "name": "phone_numbers",
-                        "type": "array",
-                        "collectionFormat": "multi",
-                        "items": { "type": "number" },
-                        "description": "Phone numbers of the company.",
-                        "required": true
-                    },
-                    {
-                        "in": "formData",
-                        "name": "company_bio",
-                        "type": "string",
-                        "description": "Bio of the company.",
-                        "required": false
-                    },
-                    {
-                        "in": "formData",
-                        "name": "company_website",
-                        "type": "string",
-                        "description": "Website of the company.",
-                        "required": false
-                    },
-                    {
-                        "in": "formData",
-                        "name": "location",
-                        "type": "string",
-                        "description": "Location geopoints of the job in lat,lng format (eg: 11.9312432,79.8342569).",
-                        "required": true
-                    },
-                    {
-                        "in": "formData",
-                        "name": "location_text",
-                        "type": "string",
-                        "description": "location text of the job.",
-                        "required": true
-                    },
-                    {
-                        "in": "formData",
-                        "name": "zip_code",
+                        "name": "salary_currency",
                         "type": "number",
-                        "description": "Zip code of the job.",
-                        "required": false
+                        "description": "Salary currency,0-us,1-inr,2-euro",
+                        "required": true,
+                        "enum": [0, 1, 2]
+                    },
+                    {
+                        "in": "formData",
+                        "name": "salary",
+                        "type": "number",
+                        "description": "Salary for this job.",
+                        "required": true
                     },
                     {
                         "in": "formData",
                         "name": "city",
-                        "type": "number",
-                        "description": "City of the job.",
-                        "required": false
-                    },
-                    {
-                        "in": "formData",
-                        "name": "responsibilities",
                         "type": "string",
-                        "description": "Responsibilities of the job.",
-                        "required": false
-                    },
-                    {
-                        "in": "formData",
-                        "name": "company_established",
-                        "type": "number",
-                        "description": "Year of company established. eg: 1991.",
-                        "required": false
-                    },
-                    {
-                        "in": "formData",
-                        "name": "company_employees",
-                        "type": "number",
-                        "description": "No of people currently working in the company. eg: 1500.",
-                        "required": false
-                    },
-                    {
-                        "in": "formData",
-                        "name": "company_branches",
-                        "type": "number",
-                        "description": "No of branches for the company. eg: 11.",
-                        "required": false
-                    },
-                    {
-                        "in": "formData",
-                        "name": "skill_requirements",
-                        "type": "array",
-                        "collectionFormat": "multi",
-                        "items": { "type": "string" },
-                        "description": "Skill requirement for the job.",
+                        "description": "city of the job.",
                         "required": true
                     },
                     {
                         "in": "formData",
-                        "name": "skill_tags",
+                        "name": "state",
+                        "type": "string",
+                        "description": "city of the job.",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "country",
+                        "type": "string",
+                        "description": "Country of job",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "zipcode",
+                        "type": "number",
+                        "description": "zipcode of job.",
+                        "required": true
+                    },
+
+                    {
+                        "in": "formData",
+                        "name": "availability",
+                        "type": "string",
+                        "description": "Availability of employee to join",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "remote",
+                        "type": "boolean",
+                        "description": "Ready to work from Remote.",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "experience",
+                        "type": "number",
+                        "description": "Year of experience .",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "sap_experience",
+                        "type": "number",
+                        "description": "experience in sap domain",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "latlng",
+                        "type": "string",
+                        "description": "Lat,lang",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "domain",
                         "type": "array",
                         "collectionFormat": "multi",
                         "items": { "type": "number" },
-                        "description": "Skill tags of the job from educations/skill-tags.",
+                        "description": "domain for the job. (Category api)",
                         "required": true
                     },
                     {
                         "in": "formData",
-                        "name": "category",
-                        "type": "number",
-                        "description": "Category of the job.",
-                        "required": true
-                    },
-                    {
-                        "in": "formData",
-                        "name": "company_social_profiles",
+                        "name": "hands_on_experience",
                         "type": "object",
                         "collectionFormat": "multi",
-                        "properties": {
-                            "facebook": {
-                                "type": "string",
-                                "example": "www.facebook.com/test"
-                            },
-                            "linkedin": {
-                                "type": "string",
-                                "example": "www.linkedin.com/test"
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "domain": {
+                                    "type": "string",
+                                    "description": "name of the domain eg:sap"
+                                },
+                                "experience": {
+                                    "type": "number",
+                                    "description": "Experience"
+                                }
                             }
-                        }
+                        },
+                        "description": "Hands_on_experience eg [ {domain:'domain-name',experience:1},{domain:'domain-name',experience:1} ]",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "skills",
+                        "type": "array",
+                        "collectionFormat": "multi",
+                        "items": { "type": "number" },
+                        "description": "skills (skill api )",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "programming_skills",
+                        "type": "array",
+                        "collectionFormat": "multi",
+                        "items": { "type": "string" },
+                        "description": "programming_skills of job example:[jquery]",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "optinal_skills",
+                        "type": "array",
+                        "collectionFormat": "multi",
+                        "items": { "type": "string" },
+                        "description": "Nice to have skill of job example:[jquery]",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "certification",
+                        "type": "array",
+                        "collectionFormat": "multi",
+                        "items": { "type": "string" },
+                        "description": "certification for job example:[sap-certificate]",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "work_authorization",
+                        "type": "number",
+                        "description": "work_authorization 0-Should be a Citizen / PR, 1-Should be having a Work Permit",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "visa_sponsorship",
+                        "type": "boolean",
+                        "description": "visa_sponsorship ",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "end_to_end_implementation",
+                        "type": "number",
+                        "description": "end_to_end_implementation ",
+                        "required": true
                     }
+
+
+
                 ],
                 "security": [{
                     "AccessToken": []

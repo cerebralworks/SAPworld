@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.1" last-position="0,666" last-zoom="1"
+<dbmodel pgmodeler-ver="0.9.1" last-position="0,1086" last-zoom="1"
 	 default-schema="public" default-owner="postgres">
 <database name="sap-development" encoding="UTF8" lc-collate="en_IN" lc-ctype="en_IN" is-template="false" allow-conns="true">
 	<role name="postgres"/>
@@ -1452,67 +1452,13 @@ END;
 	<role name="postgres"/>
 </sequence>
 
-<table name="she_user_employments">
-	<schema name="public"/>
-	<role name="postgres"/>
-	<position x="840" y="1520"/>
-	<column name="id" not-null="true" sequence="public.she_user_employments_id_seq">
-		<type name="bigint" length="0"/>
-	</column>
-	<column name="title" not-null="true">
-		<type name="character varying" length="300"/>
-	</column>
-	<column name="description">
-		<type name="text" length="0"/>
-	</column>
-	<column name="roles">
-		<type name="text" length="0"/>
-	</column>
-	<column name="company" not-null="true">
-		<type name="character varying" length="300"/>
-	</column>
-	<column name="location">
-		<type name="text" length="0"/>
-	</column>
-	<column name="start_month" not-null="true">
-		<type name="integer" length="0"/>
-	</column>
-	<column name="start_year" not-null="true">
-		<type name="integer" length="0"/>
-	</column>
-	<column name="end_month">
-		<type name="integer" length="0"/>
-	</column>
-	<column name="end_year">
-		<type name="integer" length="0"/>
-	</column>
-	<column name="user" not-null="true">
-		<type name="bigint" length="0"/>
-	</column>
-	<column name="created_at">
-		<type name="timestamp with time zone" length="0" with-timezone="true"/>
-	</column>
-	<column name="updated_at">
-		<type name="timestamp with time zone" length="0" with-timezone="true"/>
-	</column>
-	<column name="currently_working">
-		<type name="boolean" length="0"/>
-	</column>
-	<column name="industry">
-		<type name="bigint" length="0"/>
-	</column>
-	<column name="type">
-		<type name="integer" length="0"/>
-	</column>
-	<constraint name="she_user_employments_pkey" type="pk-constr" table="public.she_user_employments">
-		<columns names="id" ref-type="src-columns"/>
-	</constraint>
-</table>
+<extension name="postgis">
+</extension>
 
 <table name="she_user_subscriptions">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="1240" y="1520"/>
+	<position x="1320" y="1500"/>
 	<column name="id" not-null="true">
 		<type name="bigint" length="0"/>
 	</column>
@@ -1535,6 +1481,108 @@ END;
 		<type name="timestamp with time zone" length="0" with-timezone="true"/>
 	</column>
 	<constraint name="she_user_subscriptions_pkey" type="pk-constr" table="public.she_user_subscriptions">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="she_user_employments">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="840" y="1520"/>
+	<column name="id" not-null="true" sequence="public.she_user_employments_id_seq">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="title" not-null="true">
+		<type name="character varying" length="300"/>
+	</column>
+	<column name="type">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<column name="salary_type">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="salary_currency">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="salary">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="city">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="state">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="country">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="zipcode">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="availability">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="remote">
+		<type name="bool" length="0"/>
+	</column>
+	<column name="experience">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="sap_experience">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="domain">
+		<type name="bigint" length="0" dimension="1"/>
+	</column>
+	<column name="hands_on_experience">
+		<type name="jsonb" length="0"/>
+	</column>
+	<column name="skills">
+		<type name="bigint" length="0" dimension="1"/>
+	</column>
+	<column name="programming_skills">
+		<type name="text" length="0" dimension="1"/>
+	</column>
+	<column name="optinal_skills">
+		<type name="text" length="0" dimension="1"/>
+	</column>
+	<column name="certification">
+		<type name="text" length="0" dimension="1"/>
+	</column>
+	<column name="work_authorization">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="travel_opportunity">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="visa_sponsorship">
+		<type name="bool" length="0"/>
+	</column>
+	<column name="end_to_end_implementation">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="company">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="status">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="status_glossary">
+		<type name="text" length="0"/>
+	</column>
+	<column name="latlng">
+		<type name="geography" length="0"/>
+	</column>
+	<constraint name="she_user_employments_pkey" type="pk-constr" table="public.she_user_employments">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 </table>
@@ -1641,9 +1689,9 @@ END;
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="industry" type="fk-constr" comparison-type="MATCH SIMPLE"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_industries" table="public.she_user_employments">
-	<columns names="industry" ref-type="src-columns"/>
+<constraint name="she_user_employement_relationship" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_employer_profiles" table="public.she_user_employments">
+	<columns names="company" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -1759,16 +1807,15 @@ END;
 	 dst-table="public.she_educational_institutions" reference-fk="institution"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_she_user_employments_she_industries" type="relfk"
-	 custom-color="#15e1f4"
-	 src-table="public.she_user_employments"
-	 dst-table="public.she_industries" reference-fk="industry"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="rel_she_user_subscriptions_she_subscription_plans" type="relfk"
 	 custom-color="#4f5e90"
 	 src-table="public.she_user_subscriptions"
 	 dst-table="public.she_subscription_plans" reference-fk="she_user_subscriptions_fkey_subscription_plan"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_she_user_employments_she_employer_profiles" type="relfk"
+	 src-table="public.she_user_employments"
+	 dst-table="public.she_employer_profiles" reference-fk="she_user_employement_relationship"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>
