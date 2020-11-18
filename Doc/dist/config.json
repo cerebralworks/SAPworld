@@ -2210,7 +2210,14 @@
                         "type": "array",
                         "collectionFormat": "multi",
                         "items": { "type": "number" },
-                        "description": "domain for the job. (Category api)",
+                        "description": "domain for the job. (industry api)",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "travel_opportunity",
+                        "type": "string",
+                        "description": "travel_opportunity",
                         "required": true
                     },
                     {
@@ -2289,6 +2296,32 @@
                         "name": "end_to_end_implementation",
                         "type": "number",
                         "description": "end_to_end_implementation ",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "number_of_positions",
+                        "type": "number",
+                        "description": "number of positions ",
+                        "required": true
+                    },
+
+                    {
+                        "in": "formData",
+                        "name": "must_match",
+                        "type": "array",
+                        "collectionFormat": "multi",
+                        "items": { "type": "number" },
+                        "description": "Must match fields eg [{field_name:true / false}]",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "extra_criteria",
+                        "type": "array",
+                        "collectionFormat": "multi",
+                        "items": { "type": "number" },
+                        "description": "extra criteria eg [{title:string , value :string}]",
                         "required": true
                     }
 

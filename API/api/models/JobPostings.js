@@ -42,6 +42,10 @@ module.exports = {
         company: { model: 'employerprofiles' },
         status: { type: 'number', defaultsTo: 1 },
         status_glossary: { type: 'string', allowNull: true },
-        latlng: { type: 'string' }
+        latlng: { type: 'string' },
+        must_match: { type: 'ref' },
+        number_of_positions: { type: 'number', defaultsTo: 1 },
+        extra_criteria: { type: 'ref' },
+        photo: { type: 'string' }
     }
 };

@@ -67,7 +67,10 @@ module.exports = function create(request, response) {
         { name: 'work_authorization', required: true, number: true },
         { name: 'visa_sponsorship', required: true, boolean: true },
         { name: 'end_to_end_implementation', required: true, number: true },
-        { name: 'company', required: true, number: true, min: true }
+        { name: 'company', required: true, number: true, min: true },
+        { name: 'must_match', required: true, array: true },
+        { name: 'extra_criteria', required: false, array: true },
+        { name: 'number_of_positions', required: true, number: true },
     ];
     //Update the JobPostings record to db.
     const updateRecord = (post_data, callback) => {

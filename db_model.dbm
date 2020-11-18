@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.1" last-position="0,1086" last-zoom="1"
+<dbmodel pgmodeler-ver="0.9.1" last-position="174,1131" last-zoom="1"
 	 default-schema="public" default-owner="postgres">
 <database name="sap-development" encoding="UTF8" lc-collate="en_IN" lc-ctype="en_IN" is-template="false" allow-conns="true">
 	<role name="postgres"/>
@@ -1582,6 +1582,9 @@ END;
 	<column name="latlng">
 		<type name="geography" length="0"/>
 	</column>
+	<column name="must_match">
+		<type name="jsonb" length="0"/>
+	</column>
 	<constraint name="she_user_employments_pkey" type="pk-constr" table="public.she_user_employments">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
@@ -1689,15 +1692,15 @@ END;
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="she_user_employement_relationship" type="fk-constr" comparison-type="MATCH FULL"
-	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_employer_profiles" table="public.she_user_employments">
-	<columns names="company" ref-type="src-columns"/>
-	<columns names="id" ref-type="dst-columns"/>
-</constraint>
-
 <constraint name="she_user_subscriptions_fkey_subscription_plan" type="fk-constr" comparison-type="MATCH SIMPLE"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_subscription_plans" table="public.she_user_subscriptions">
 	<columns names="subscription_plan" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="she_user_employement_relationship" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_employer_profiles" table="public.she_user_employments">
+	<columns names="company" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
