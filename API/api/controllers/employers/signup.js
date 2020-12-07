@@ -60,9 +60,7 @@ module.exports = function signup(request, response) {
             types: [1],
             last_active: new Date()
         };
-        if (filtered_post_keys.includes('password')) {
-            user_input.password = await bcrypt.hash(filtered_post_data.password, SALT_WORK_FACTOR);
-        } else {
+        if (!filtered_post_keys.includes('password')) {
             user_input.password = Math.floor(10000000 + Math.random() * 90000000);
         }
         Users.create(user_input, async function(err, user) {

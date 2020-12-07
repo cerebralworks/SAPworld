@@ -5,98 +5,104 @@
  */
 
 /* global _, UserProfiles, UserInformation, Users, sails */
-
-module.exports = function update(request, response) {
+module.exports = async function update(request, response) {
     const post_request_data = request.body;
     const logged_in_user = request.user;
     var _response_object = {};
-    var input_attributes = [
-        {name: 'first_name', required: true},
-        {name: 'bio', profanity: true},
-        {name: 'about_info', profanity: true},
-        {name: 'city', number: true},
-        {name: 'work_experience', number: true},
-        {name: 'expected_salary', number: true},
-        {name: 'zip_code', number: true, min: 00501, max: 99950},
-        {name: 'location', geopoint: true},
-        {name: 'skill_tags', array: true},
-        {name: 'location_miles', number: true, min: 1 , message: "Location miles should be greater than 0."},
-        {name: 'preferred_job_type', enum: true, values: [0, 1, 2, 3, 4, 5, 6, 7]},
-        {name: 'country_code', array:true}
-    ];
-    pick_input = [
-        'first_name', 'last_name', 'bio', 'date_of_birth', 'about_info',
-        'city', 'zip_code', 'location', 'location_text', 'skill_tags', 'location_miles',
-        'preferred_job_type', 'certification', 'work_status', 'social_profiles', 'work_experience', 'expected_salary', 'country_code'
-    ];
-    //Check only admin not user
-    if(_.indexOf(_.get(logged_in_user, 'types', []),2) > -1 && _.indexOf(_.get(logged_in_user, 'types', []),0) < 0){
-        input_attributes.push({name: 'id', required: true, number: true, min: 1});
-        pick_input.push('id');
-    }
-    else if(_.indexOf(_.get(logged_in_user, 'types', []),2) > -1){
-        input_attributes.push({name: 'id', number: true, min: 1});
-        pick_input.push('id');
-    }
-    
-    var filtered_post_data = _.pick(post_request_data, pick_input);
-    const filtered_post_keys = Object.keys(filtered_post_data);
-    validateModel.validate(UserProfiles, input_attributes, filtered_post_data, async function(valid, errors){
-        if(valid){
-            filtered_not_post_keys = _.difference(pick_input, filtered_post_keys);
-            filtered_not_post_keys.map(function(value){
-                filtered_post_data[value] = null;
-            });
-            if(filtered_post_keys.includes('id')){
-                filtered_post_data.id = parseInt(filtered_post_data.id);
-            }
-            if(filtered_post_keys.includes('location')){
-                location = filtered_post_data.location.split(',')
-                filtered_post_data.location = '(' + location[0] + ',' + location[1] + ')';
-            }
-            if(filtered_post_keys.includes('zip_code')){
-                filtered_post_data.zip_code = parseInt(filtered_post_data.zip_code);
-            }
-            if(filtered_post_keys.includes('city')){
-                filtered_post_data.city = parseInt(filtered_post_data.city);
-            }
-            if(filtered_post_keys.includes('location_miles')){
-                filtered_post_data.location_miles = parseInt(filtered_post_data.location_miles);
-            }
-            if(filtered_post_keys.includes('preferred_job_type')){
-                filtered_post_data.preferred_job_type = parseInt(filtered_post_data.preferred_job_type);
-            }
-            if(filtered_post_keys.includes('work_experience')){
-                filtered_post_data.work_experience = parseInt(filtered_post_data.work_experience);
-            }
-            if(filtered_post_keys.includes('expected_salary')){
-                filtered_post_data.expected_salary = parseInt(filtered_post_data.expected_salary);
-            }
-            var id = filtered_post_keys.includes('id') ? filtered_post_data.id : logged_in_user.user_profile.id;
-            UserProfiles.update(id, filtered_post_data, async function(err, profile){
-                if(err){
-                    await errorBuilder.build(err, function (error_obj) {
-                        _response_object.errors = error_obj;
-                        _response_object.count = error_obj.length;
-                        return response.status(500).json(_response_object);
-                    });
-                }else{
-                    if(profile[0].email){
-                        delete profile[0].email;
-                    }
-                    if(profile[0].phone){
-                        delete profile[0].phone;
-                    }
-                    _response_object.message = 'Profile has been updated successfully.';
-                    _response_object.details = profile;
-                    return response.status(200).json(_response_object);
-                }
-            });
-        }
-        else{
-            _response_object.errors = errors;
-            _response_object.count = errors.length;
-            return response.status(400).json(_response_object);
-        }
+    let yup = sails.yup;
+    let schema = yup.object().shape({
+        id: yup.number().required().test().test('user_profile', 'Cant find record', async(value) => {
+            return await userprofiles.findOne({ where: { user: value } }).then(result => {
+                console.log(result);
+                return result == 0 ? true : false;
+            })
+        }),
+        first_name: yup.string().required().lowercase().min(3),
+        last_name: yup.string().required().lowercase(),
+        bio: yup.string().required().min(50),
+        country: yup.string().required().lowercase(),
+        state: yup.string().required().lowercase(),
+        city: yup.string().required().lowercase(),
+        zipcode: yup.number().required().positive().moreThan(1000),
+        latlng: yup.object().shape({
+            lat: yup.number().min(-90).max(90),
+            lng: yup.number().min(-180).max(180),
+        }).required(),
+        social_media_link: yup.array().of(
+            yup.object().shape({
+                media: yup.string().required().lowercase(),
+                url: yup.url().required(),
+                visibility: yup.boolean().default(true)
+            })
+        ).default([]),
+        education_qualification: yup.array().of(
+            yup.object().shape({
+                degree: yup.string().required().lowercase(),
+                field_of_study: yup.string().required().lowercase(),
+            })
+        ).default([]),
+        experience: yup.number().positive().default(1).required(),
+        sap_experience: yup.number().positive().default(1).required(),
+        current_employer: yup.string().required().lowercase(),
+        current_employer_role: yup.string().required().lowercase(),
+        domains_worked: yup.array().of(yup.number().positive()).required(),
+        clients_worked: yup.array().of(yup.string()).required(),
+        hands_on_experience: yup.array().of(yup.object().shape({
+            skill_id: yup.number().required().positive(),
+            skill_name: yup.string().required().lowercase(),
+            experience: yup.number().required().positive(),
+            exp_type: yup.string().required().lowercase().oneOf(['years', 'months']),
+        })).required(),
+        skills: yup.array().of(yup.number().positive()).required(),
+        programming_skills: yup.array().of(yup.string()).required(),
+        other_skills: yup.array().of(yup.string()).required(),
+        certification: yup.array().of(yup.string()).required(),
+        job_type: yup.number().required().positive().oneOf([0, 1, 2, 3, 4, 5, 6, 7, 8]),
+        preferred_location: yup.number().required().positive().oneOf([0, 1, 2, 3, 4, 5, 6, 7]),
+        availability: yup.number().required().positive().oneOf([0, 15, 30, 45, 60]),
+        travel: yup.number().required().positive().oneOf([0, 25, 50, 75, 100]),
+        work_authorization: yup.boolean().required(),
+        willing_to_relocate: yup.boolean().required(),
+        remote_only: yup.boolean().required(),
+        end_to_end_implementation: yup.number().required().positive(),
     });
+
+    //Check only admin not user
+    if (_.indexOf(_.get(logged_in_user, 'types', []), 2) > -1 && _.indexOf(_.get(logged_in_user, 'types', []), 0) < 0) {
+        input_attributes.push({ name: 'id', required: true, number: true, min: 1 });
+        pick_input.push('id');
+    } else if (_.indexOf(_.get(logged_in_user, 'types', []), 2) > -1) {
+        input_attributes.push({ name: 'id', number: true, min: 1 });
+        pick_input.push('id');
+    }
+    return await schema.validate(post_request_data, { abortEarly: false }).then(value => {
+        var point = latlng['lng'] + ',' + latlng['lat'];
+        value.latlng = 'SRID=4326;POINT(' + point + ')';
+        value.latlng_point = latlng;
+        UserProfiles.update(id, value, async function(err, profile) {
+            if (err) {
+                await errorBuilder.build(err, function(error_obj) {
+                    _response_object.errors = error_obj;
+                    _response_object.count = error_obj.length;
+                    return response.status(500).json(_response_object);
+                });
+            } else {
+                if (profile[0].email) {
+                    delete profile[0].email;
+                }
+                if (profile[0].phone) {
+                    delete profile[0].phone;
+                }
+                _response_object.message = 'Profile has been updated successfully.';
+                _response_object.details = profile;
+                return response.status(200).json(_response_object);
+            }
+        });
+
+    }).catch(err => {
+        _response_object.errors = err.inner;
+        _response_object.count = err.inner.length;
+        return response.status(400).json(err.inner);
+    });
+
 };

@@ -24,7 +24,7 @@ module.exports = {
         city: { type: 'string' },
         state: { type: 'string' },
         country: { type: 'string' },
-        zipcode: { type: 'string' },
+        zipcode: { type: 'number' },
         availability: { type: 'string', defaultsTo: 'no' },
         remote: { type: 'boolean', defaultsTo: false },
         experience: { type: 'number', defaultsTo: 1 },
@@ -46,6 +46,8 @@ module.exports = {
         must_match: { type: 'ref' },
         number_of_positions: { type: 'number', defaultsTo: 1 },
         extra_criteria: { type: 'ref' },
-        photo: { type: 'string' }
+        photo: { type: 'string' },
+        contract_duration: { type: 'number', defaultsTo: 0 },
+
     }
 };

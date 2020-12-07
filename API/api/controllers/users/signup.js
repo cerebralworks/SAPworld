@@ -13,35 +13,40 @@ var crypto = require('crypto');
 module.exports = function signup(request, response) {
     const post_request_data = request.body;
     var _response_object = {};
-    var filtered_post_data = _.pick(post_request_data,['first_name', 'last_name', 'email', 'phone', 'password', 'location', 'location_text']);
-    const filtered_post_keys = Object.keys(filtered_post_data);
-    var input_attributes = [
-        {name: 'first_name', required: true},
-        {name: 'phone', phone:true, required: false},
-        {name: 'email', email:true, required: true},
-        {name: 'password', min:8},
-        {name: 'location', geopoint: true}
-    ];
+    let yup = sails.yup;
+    let schema = yup.object().shape({
+        first_name: yup.string().required().lowercase().min(3),
+        last_name: yup.string().required().lowercase(),
+        email: yup.string().required().email().lowercase(),
+        phone: yup.string().required().matches(/^([0|\+[0-9]{1,5})?([0-9]{10})$/, 'Mobile number must be like +919999999999'),
+        password: yup.string().required().matches(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/, 'Password must has LOwercase,UpperCase,Digit and special character'),
+        city: yup.string().required().lowercase(),
+        latlng: yup.object().shape({
+            lat: yup.number().min(-90).max(90),
+            lng: yup.number().min(-180).max(180),
+        }).required(),
+
+    });
     //Build and sending response
     const sendResponse = (details) => {
         //Sending email
         const mail_data = {
             template: 'users/signup',
             data: details,
-            to: filtered_post_data.email,
+            to: post_request_data.email,
             subject: 'Welcome to Shejobs.'
         };
         mailService.sendMail(mail_data);
         _response_object.message = 'User signed up successfully.';
         var meta = {};
         meta['photo'] = {
-          path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
-          folder: 'media/Users',
-          sizes: {
-            small: 256,
-            medium: 512,
-            large: 1024,
-          }
+            path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
+            folder: 'media/Users',
+            sizes: {
+                small: 256,
+                medium: 512,
+                large: 1024,
+            }
         };
         meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/user-209.png';
         _response_object['meta'] = meta;
@@ -54,149 +59,67 @@ module.exports = function signup(request, response) {
             username: post_data.email,
             last_checkin_via: 'web',
             types: [0],
-            last_active: new Date()
-        };
-        if(filtered_post_keys.includes('password')){
-            user_input.password = filtered_post_data.password;
-        }else{
-            user_input.password = Math.floor(10000000 + Math.random() * 90000000);
-        }
-        Users.create(user_input, async function(err, user){
-            if(err){
-                await errorBuilder.build(err, function (error_obj) {
-                    _response_object.errors = error_obj;
-                    _response_object.count = error_obj.length;
-                    return response.status(500).json(_response_object);
-                });
-            }else{
-                profile_input = {
-                    first_name: filtered_post_data.first_name,
-                    account: user.id
-                }
-                if(post_data.email){
-                    profile_input.email = (post_data.email).toLowerCase();
-                }
-                if(post_data.phone){
-                    profile_input.phone = post_data.encrypted_phone;
-                }
-                if(filtered_post_keys.includes('last_name')){
-                    profile_input.last_name = filtered_post_data.last_name;
-                }
-                if(filtered_post_keys.includes('location')){
-                    location = filtered_post_data.location.split(',')
-                    profile_input.location = '(' + location[0] + ',' + location[1] + ')';
-                }
-                UserProfiles.create(profile_input, async function(err, profile){
-                    if(err){
-                        await errorBuilder.build(err, function (error_obj) {
-                            _response_object.errors = error_obj;
-                            _response_object.count = error_obj.length;
-                            return response.status(500).json(_response_object);
-                        });
-                    }else{
-                          profile.token = user.tokens.verification;
-                          sendResponse(profile);
-                    }
-                });
-            }
-        });
-    };
-    //Add to the existing profile.
-    const updateUser = async (user_data, post_data, callback) => {
-        user_data.types.push(0);
-        var user_input = {
-            types: user_data.types,
             last_active: new Date(),
-            last_checkin_via: 'web'
+            password: post_data.password
         };
-        user_input.tokens = {reset: UtilsService.uid(20), verification: UtilsService.uid(20)};
-        if(filtered_post_keys.includes('password')){
-            user_input.password = await bcrypt.hash(filtered_post_data.password, SALT_WORK_FACTOR);
-        }
-        Users.update(parseInt(user_data.id), user_input, async function(err, user){
-            if(err){
-                await errorBuilder.build(err, function (error_obj) {
+        Users.create(user_input, async function(err, user) {
+            if (err) {
+                return await errorBuilder.build(err, function(error_obj) {
                     _response_object.errors = error_obj;
                     _response_object.count = error_obj.length;
-                    return response.status(500).json(_response_object);
+                    return _response_object
                 });
-            }else{
-                profile_input = {
-                    first_name: post_data.first_name,
-                    account: parseInt(user_data.id)
-                }
-                if(filtered_post_keys.includes('email')){
-                    profile_input.email = (post_data.email).toLowerCase();
-                }
-                if(filtered_post_keys.includes('phone')){
-                    profile_input.phone = post_data.encrypted_phone;
-                }
-                if(filtered_post_keys.includes('last_name')){
-                    profile_input.last_name = post_data.last_name;
-                }
-                if(filtered_post_keys.includes('location')){
-                    location = post_data.location.split(',')
-                    profile_input.location = '(' + location[0] + ',' + location[1] + ')';
-                }
-                UserProfiles.create(profile_input, async function(err, profile){
-                    if(err){
-                        await errorBuilder.build(err, function (error_obj) {
+            } else {
+                post_data.account = user.id;
+                await phoneEncryptor.encrypt(post_data.phone, function(encrypted_text) {
+                    post_data.phone = encrypted_text;
+                });
+                var latlng_o = post_data.latlng;
+                post_data.latlng = 'SRID=4326;POINT(' + latlng_o['lng'] + ' ' + latlng_o['lat'] + ')';
+                post_data.latlng_text = latlng_o['lat'] + ',' + latlng_o['lng'];
+                UserProfiles.create(post_data, async function(err, profile) {
+                    if (err) {
+                        await errorBuilder.build(err, function(error_obj) {
                             _response_object.errors = error_obj;
                             _response_object.count = error_obj.length;
                             return response.status(500).json(_response_object);
                         });
-                    }else{
-                          profile.token = user[0].tokens.verification;
-                          sendResponse(profile);
+                    } else {
+                        profile.token = user.tokens.verification;
+                        sendResponse(profile);
                     }
                 });
             }
         });
     };
-    validateModel.validate(UserProfiles, input_attributes, filtered_post_data, async function(valid, errors){
-        if(valid){
-            if(filtered_post_keys.includes('email')){
-                filtered_post_data.email = (filtered_post_data.email).toLowerCase();
-            }else{
-                filtered_post_data.email = null;
-            }
-            if(filtered_post_keys.includes('phone')){
-                filtered_post_data.encrypted_phone = filtered_post_data.phone;
-                await phoneEncryptor.encrypt(filtered_post_data.phone, function(encrypted_text){
-                    filtered_post_data.encrypted_phone = encrypted_text;
+
+    schema.validate(post_request_data, { abortEarly: false }).then(async function(value) {
+        await loginService.findExistingConnection(0, value.email, value.phone, async function(err, user) {
+            if (err) {
+                await errorBuilder.build(err, function(error_obj) {
+                    _response_object.errors = error_obj;
+                    _response_object.count = error_obj.length;
+                    return response.status(500).json(_response_object);
                 });
-            }else{
-                filtered_post_data.phone = null;
-            }
-            await loginService.findExistingConnection(0, filtered_post_data.email, filtered_post_data.phone, async function(err, user){
-                if(err){
-                    await errorBuilder.build(err, function (error_obj) {
-                        _response_object.errors = error_obj;
-                        _response_object.count = error_obj.length;
-                        return response.status(500).json(_response_object);
-                    });
-                }else if(user && _.indexOf(user.types,0) > -1){
-                    var message = 'Email or phone already taken.';
-                    if(user.email && user.email === filtered_post_data.email && user.phone === filtered_post_data.encrypted_phone){
-                        message = 'Email and phone already taken.';
-                    }else if(user.email && user.email === filtered_post_data.email){
-                        message = 'Email already taken.';
-                    }else if(user.phone === filtered_post_data.encrypted_phone){
-                        message = 'Phone already taken.';
-                    }
-                    _response_object.errors = [{field: 'account', rules: [{rule:'unique', message: message}]}];
-                    return response.status(400).json(_response_object);
-                }else if(user){
-                    updateUser(user, filtered_post_data);
-                }else{
-                    createUser(filtered_post_data);
+            } else if (user && _.indexOf(user.types, 0) > -1) {
+                var message = 'Email or phone already taken.';
+                if (user.email && user.email === value.email && user.phone === value.encrypted_phone) {
+                    message = 'Email and phone already taken.';
+                } else if (user.email && user.email === value.email) {
+                    message = 'Email already taken.';
+                } else if (user.phone === value.encrypted_phone) {
+                    message = 'Phone already taken.';
                 }
-            });
-        }
-        else{
-            _response_object.errors = errors;
-            _response_object.count = errors.length;
-            return response.status(400).json(_response_object);
-        }
+                _response_object.errors = [{ field: 'account', rules: [{ rule: 'unique', message: message }] }];
+                return response.status(400).json(_response_object);
+            }
+            createUser(value);
+
+        });
+
+    }).catch(err => {
+        _response_object.errors = err.inner;
+        _response_object.count = err.inner.length;
+        return response.status(400).json(err.inner);
     });
 };

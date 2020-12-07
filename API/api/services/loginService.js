@@ -167,6 +167,7 @@ exports.findExistingConnection = async function(source_type, email, phone, callb
             }
         });
     } catch (err) {
+        console.log(err)
         var error_obj = new Error();
         if (err.message) {
             error_obj.message = err.message;

@@ -730,9 +730,9 @@ END;
 		<type name="text" length="0"/>
 	</column>
 	<column name="photo">
-		<type name="text" length="300"/>
+		<type name="character varying" length="300"/>
 	</column>
-	<column name="user" not-null="true">
+	<column name="account" not-null="true">
 		<type name="bigint" length="0"/>
 	</column>
 	<column name="country">
@@ -819,8 +819,11 @@ END;
 	<column name="latlng">
 		<type name="geometry" length="0"/>
 	</column>
+	<column name="latlng_text">
+		<type name="varchar" length="100"/>
+	</column>
 	<column name="doc_resume">
-		<type name="jsonb" length="0" dimension="1"/>
+		<type name="text" length="0" dimension="1"/>
 	</column>
 	<column name="status">
 		<type name="smallint" length="0"/>
@@ -1438,9 +1441,9 @@ END;
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
-<constraint name="user" type="fk-constr" comparison-type="MATCH SIMPLE"
+<constraint name="account" type="fk-constr" comparison-type="MATCH FULL"
 	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_users" table="public.she_user_profiles">
-	<columns names="user" ref-type="src-columns"/>
+	<columns names="account" ref-type="src-columns"/>
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
@@ -1513,11 +1516,6 @@ END;
 	 dst-table="public.she_users" reference-fk="user"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_she_user_profiles_she_users" type="relfk"
-	 src-table="public.she_user_profiles"
-	 dst-table="public.she_users" reference-fk="user"
-	 src-required="false" dst-required="false"/>
-
 <relationship name="rel_she_users_she_admin_profiles" type="relfk"
 	 src-table="public.she_users"
 	 dst-table="public.she_admin_profiles" reference-fk="admin_profile"
@@ -1561,6 +1559,11 @@ END;
 <relationship name="rel_she_user_subscriptions_she_user_profiles" type="relfk"
 	 src-table="public.she_user_subscriptions"
 	 dst-table="public.she_user_profiles" reference-fk="she_user_subscriptions_fkey_user"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_she_user_profiles_she_users" type="relfk"
+	 src-table="public.she_user_profiles"
+	 dst-table="public.she_users" reference-fk="account"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>

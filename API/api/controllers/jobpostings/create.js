@@ -37,6 +37,10 @@ module.exports = function create(request, response) {
         'end_to_end_implementation',
         'company',
         'latlng',
+        'must_match',
+        'number_of_positions',
+        'extra_criteria',
+        'contract_duration'
     ];
     var filtered_post_data = _.pick(post_request_data, pick_input);
     const filtered_post_keys = Object.keys(filtered_post_data);
@@ -64,19 +68,20 @@ module.exports = function create(request, response) {
         { name: 'certification', array: true },
         { name: 'work_authorization', required: true, number: true },
         { name: 'visa_sponsorship', required: true, boolean: true },
-        { name: 'end_to_end_implementation', required: true, number: true },
-        { name: 'must_match', required: true, array: true },
+        { name: 'end_to_end_implementation', number: true },
+        { name: 'must_match', required: true, json: true },
         { name: 'extra_criteria', required: false, array: true },
         { name: 'number_of_positions', required: true, number: true },
+        { name: 'contract_duration', number: true },
+
 
     ];
     validateModel.validate(JobPostings, input_attributes, filtered_post_data, async function(valid, errors) {
-        console.log(filtered_post_data);
         if (valid) {
             filtered_post_data.company = logged_in_user.employer_profile.id;
             if (filtered_post_keys.includes('latlng')) {
                 location = filtered_post_data.latlng.split(',')
-                filtered_post_data.location = '(' + location[0] + ',' + location[1] + ')';
+                filtered_post_data.latlng = 'SRID=4326;POINT(' + location[1] + ' ' + location[0] + ')';
             }
             //Creating record
             JobPostings.create(filtered_post_data, async function(err, job) {

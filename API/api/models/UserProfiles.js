@@ -15,48 +15,54 @@ module.exports = {
     tableName: 'she_user_profiles',
     tableAlias: 'user_profile',
     attributes: {
-        user_handle: {type: 'string'},
-        email: {type: 'string', allowNull: true},
-        first_name: {type: 'string'},
-        last_name: {type: 'string', allowNull: true},
-        bio: {type: 'string', allowNull: true},
-        about_info: {type: 'string', allowNull: true},
-        date_of_birth: {type: 'string', allowNull: true},
-        city: {type: 'number', allowNull: true},
-        google_id: {type: 'string', allowNull: true},
-        google_data: {type: 'ref'},
-        facebook_id: {type: 'string', allowNull: true},
-        facebook_data: {type: 'ref'},
-        linkedin_id: {type: 'string', allowNull: true},
-        linkedin_data: {type: 'ref'},
-        phone: {type: 'ref'},
-        country_code: {type: 'ref'},
-        photo: {type: 'ref', defaultsTo: 'default.png'},
-        certification: {type: 'string', allowNull: true},
-        doc_resume: {type: 'ref'},
-        video_resume: {type: 'ref'},
-        skill_tags: {type: 'ref'},
-        zip_code: {type: 'number', allowNull: true},
-        location: {type: 'ref'},
-        location_text: {type: 'string', allowNull: true},
-        location_geom: {type: 'ref'},
-        location_miles: {type: 'number', allowNull: true},
-        preferred_job_type: {type: 'number', allowNull: true},
-        work_status: {type: 'string', allowNull: true},
-        work_experience: {type: 'number', allowNull: true},
-        expected_salary: {type: 'number', allowNull: true},
-        social_profiles: {type: 'ref'},
+        first_name: { type: 'string' },
+        last_name: { type: 'string', allowNull: true },
+        email: { type: 'string' },
+        phone: { type: 'string', allowNull: true },
+        bio: { type: 'string', allowNull: true },
+        photo: { type: 'string', allowNull: true },
+        country: { type: 'string', allowNull: true },
+        state: { type: 'string', allowNull: true },
+        city: { type: 'string', allowNull: true },
+        address_line: { type: 'string', allowNull: true },
+        zipcode: { type: 'number', allowNull: true },
+        social_media_link: { type: 'json' },
+        education_qualification: { type: 'json' },
+        experience: { type: 'number' },
+        sap_experience: { type: 'number' },
+        current_employer: { type: 'string', allowNull: true },
+        current_employer_role: { type: 'string', allowNull: true },
+        domains_worked: { type: 'json' },
+        clients_worked: { type: 'json' },
+        hands_on_experience: { type: 'json' },
+        skills: { type: 'json' },
+        programming_skills: { type: 'json' },
+        other_skills: { type: 'json' },
+        certification: { type: 'json' },
+        job_type: { type: 'number', allowNull: true },
+        job_role: { type: 'string', allowNull: true },
+        preferred_location: { type: 'number', allowNull: true },
+        availability: { type: 'number', allowNull: true },
+        travel: { type: 'number', allowNull: true },
+        work_authorization: { type: 'number', allowNull: true },
+        willing_to_relocate: { type: 'boolean', allowNull: true },
+        remote_only: { type: 'boolean', allowNull: true },
+        end_to_end_implementation: { type: 'number', allowNull: true },
+        latlng: { type: 'string' },
+        latlng_text: { type: 'string' },
+        doc_resume: { type: 'json' },
+        status: { type: 'number', allowNull: true },
+        status_glossary: { type: 'string' },
         account: {
-          columnName: 'user',
-          model: 'users'
+            model: 'users'
         }
     },
     afterCreate: async function(profile, callback) {
-        if(profile.id){
-            await Users.update({id:profile.account},{user_profile:profile.id}, async function(err, user){
+        if (profile.id) {
+            await Users.update({ id: profile.account }, { user_profile: profile.id }, async function(err, user) {
                 return callback();
             });
-        }else{
+        } else {
             return callback();
         }
     }

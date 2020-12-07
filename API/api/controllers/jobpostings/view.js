@@ -36,7 +36,7 @@ module.exports = async function view(request, response) {
             job_model.populate('category');
         }
         if (expand.includes('company')) {
-            job_model.populate('employer');
+            job_model.populate('company');
         }
 
         job_model.exec(async function(err, job_posting) {

@@ -11,13 +11,13 @@ const job_type_values = _.values(_.get(sails, 'config.custom.job_types', {}));
 module.exports = async function list(request, response) {
     var _response_object = {};
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['page', 'sort', 'limit', 'expand', 'search', 'status', 'type', 'skill_tags', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'category', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'employer', 'zip_code', 'additional_fields']);
+    const filtered_query_data = _.pick(request_query, ['page', 'sort', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'zip_code', 'additional_fields']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
         { name: 'page', number: true, min: 1 },
         { name: 'limit', number: true, min: 1 },
         { name: 'status', enum: true, values: _.values(_.pick(sails.config.custom.status_codes, ['inactive', 'active'])) },
-        { name: 'skill_tags', array: true, individual_rule: { number: true, min: 1 } },
+        { name: 'skills', array: true, individual_rule: { number: true, min: 1 } },
         { name: 'type', array: true, individual_rule: { number: true, min: _.min(job_type_values), max: _.max(job_type_values) } },
         { name: 'min_salary', number: true, positive: true },
         { name: 'max_salary', number: true, positive: true },
@@ -54,7 +54,7 @@ module.exports = async function list(request, response) {
             })()
         },
         { name: 'category', number: true, min: 1 },
-        { name: 'city', number: true, min: 1 },
+        { name: 'city', string: true, min: 1 },
         { name: 'alphabet', letter: true },
         { name: 'location_miles', number: true, min: 1 },
         { name: 'is_job_applied', number: true, min: 1 },
@@ -64,8 +64,8 @@ module.exports = async function list(request, response) {
     if (filtered_query_data.expand) {
         expand = filtered_query_data.expand.split(',');
     }
-    if (filtered_query_data.skill_tags) {
-        filtered_query_data.skill_tags = filtered_query_data.skill_tags.split(',');
+    if (filtered_query_data.skills) {
+        filtered_query_data.skills = filtered_query_data.skills.split(',');
     }
     if (filtered_query_data.type) {
         filtered_query_data.type = filtered_query_data.type.split(',');
@@ -134,7 +134,7 @@ module.exports = async function list(request, response) {
         let query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).
         from(JobPostings.tableName, JobPostings.tableAlias);
 
-        var fields = _.without(Object.keys(JobPostings.schema), 'city', 'category', 'employer');
+        var fields = _.without(Object.keys(JobPostings.schema), 'company');
 
         if (!count) {
             await fields.forEach(function(attribute) {
@@ -152,34 +152,7 @@ module.exports = async function list(request, response) {
             let get_populate_table_fields = [];
             let build_populate_table_columns = '';
 
-            if (expand.includes('city')) {
-                get_populate_table_fields = Object.keys(Cities.schema);
-                await get_populate_table_fields.forEach(function(attribute) {
-                    if (!_.isEmpty(Cities.schema[attribute].columnName)) {
-                        build_populate_table_columns += `'${Cities.schema[attribute].columnName}',${Cities.tableAlias}.${Cities.schema[attribute].columnName},`;
-                    }
-                });
-                build_populate_table_columns = build_populate_table_columns.slice(0, -1);
-                query.field(`json_build_object(${build_populate_table_columns})`, JobPostings.schema.city.columnName);
-            } else {
-                query.field(`${JobPostings.tableAlias}.${JobPostings.schema.city.columnName}`);
-            }
-
-            if (expand.includes('category')) {
-                get_populate_table_fields = Object.keys(Categories.schema);
-                build_populate_table_columns = '';
-                await get_populate_table_fields.forEach(function(attribute) {
-                    if (!_.isEmpty(Categories.schema[attribute].columnName)) {
-                        build_populate_table_columns += `'${Categories.schema[attribute].columnName}',${Categories.tableAlias}.${Categories.schema[attribute].columnName},`;
-                    }
-                });
-                build_populate_table_columns = build_populate_table_columns.slice(0, -1);
-                query.field(`json_build_object(${build_populate_table_columns})`, JobPostings.schema.category.columnName);
-            } else {
-                query.field(`${JobPostings.tableAlias}.${JobPostings.schema.category.columnName}`);
-            }
-
-            if (expand.includes('employer')) {
+            if (expand.includes('company')) {
                 get_populate_table_fields = Object.keys(EmployerProfiles.schema);
                 build_populate_table_columns = '';
                 await get_populate_table_fields.forEach(function(attribute) {
@@ -188,9 +161,9 @@ module.exports = async function list(request, response) {
                     }
                 });
                 build_populate_table_columns = build_populate_table_columns.slice(0, -1);
-                query.field(`json_build_object(${build_populate_table_columns})`, JobPostings.schema.employer.columnName);
+                query.field(`json_build_object(${build_populate_table_columns})`, JobPostings.schema.company.columnName);
             } else {
-                query.field(`${JobPostings.tableAlias}.${JobPostings.schema.employer.columnName}`);
+                query.field(`${JobPostings.tableAlias}.${JobPostings.schema.company.columnName}`);
             }
 
             // making additional fields
@@ -207,9 +180,9 @@ module.exports = async function list(request, response) {
             query.field("COUNT(*)");
         }
 
-        query.left_join(`${Cities.tableName}`, `${Cities.tableAlias}`, `${JobPostings.tableAlias}.city = ${Cities.tableAlias}.id`);
-        query.left_join(`${Categories.tableName}`, `${Categories.tableAlias}`, `${JobPostings.tableAlias}.category = ${Categories.tableAlias}.id`);
-        query.left_join(`${EmployerProfiles.tableName}`, `${EmployerProfiles.tableAlias}`, `${JobPostings.tableAlias}.employer = ${EmployerProfiles.tableAlias}.id`);
+
+
+        query.left_join(`${EmployerProfiles.tableName}`, `${EmployerProfiles.tableAlias}`, `${JobPostings.tableAlias}.company = ${EmployerProfiles.tableAlias}.id`);
 
         if (_.get(criteria, 'where.status')) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} = ${_.get(criteria, 'where.status')}`);
@@ -220,32 +193,30 @@ module.exports = async function list(request, response) {
         if (_.get(criteria, 'where.alphabet')) {
             query.where(`LOWER(${JobPostings.tableAlias}.${JobPostings.schema.title.columnName}) LIKE '${_.get(criteria, 'where.alphabet')}%'`);
         }
-        if (_.get(criteria, 'where.skill_tags')) {
-            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.skill_tags.columnName} && '${_.get(criteria, 'where.skill_tags')}'`);
+        if (_.get(criteria, 'where.skills')) {
+            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.skills.columnName} && '${_.get(criteria, 'where.skills')}'`);
         }
         if (_.get(criteria, 'where.min_salary')) {
-            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.min_salary.columnName} >= ${_.get(criteria, 'where.min_salary')}`);
+            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.salary.columnName} >= ${_.get(criteria, 'where.min_salary')}`);
         }
         if (_.get(criteria, 'where.max_salary')) {
-            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.max_salary.columnName} <= ${_.get(criteria, 'where.max_salary')}`);
+            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.salary.columnName} <= ${_.get(criteria, 'where.max_salary')}`);
         }
         if (_.get(criteria, 'where.min_experience')) {
-            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.min_experience.columnName} >= ${_.get(criteria, 'where.min_experience')}`);
+            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.experience.columnName} >= ${_.get(criteria, 'where.min_experience')}`);
         }
         if (_.get(criteria, 'where.max_experience')) {
-            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.max_experience.columnName} <= ${_.get(criteria, 'where.max_experience')}`);
+            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.experience.columnName} <= ${_.get(criteria, 'where.max_experience')}`);
         }
         if (_.get(criteria, 'where.type')) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.type.columnName} = ANY('${_.get(criteria, 'where.type')}')`);
         }
-        if (_.get(criteria, 'where.category')) {
-            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.category.columnName} = ${_.get(criteria, 'where.category')}`);
-        }
+
         if (_.get(criteria, 'where.city')) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.city.columnName} = ${_.get(criteria, 'where.city')}`);
         }
-        if (_.get(criteria, 'where.employer')) {
-            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.employer.columnName} = ${_.get(criteria, 'where.employer')}`);
+        if (_.get(criteria, 'where.company')) {
+            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.company.columnName} = ${_.get(criteria, 'where.company')}`);
         }
         if (_.get(criteria, 'where.zip_code')) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.zip_code.columnName} = ${_.get(criteria, 'where.zip_code')}`);
@@ -256,7 +227,7 @@ module.exports = async function list(request, response) {
             field(`${SkillTags.tableAlias}.${SkillTags.schema.id.columnName}`).
             where(`LOWER(${SkillTags.tableAlias}.${SkillTags.schema.tag.columnName}) like '${_.get(criteria, 'where.search.contains')}%'`).
             where(`${SkillTags.tableAlias}.${SkillTags.schema.status.columnName} != ${row_deleted_sign}`);
-            query.where(`((array(${sub_query}) && ${JobPostings.tableAlias}.${JobPostings.schema.skill_tags.columnName} = true) or LOWER(${JobPostings.tableAlias}.${JobPostings.schema.title.columnName}) like '${_.get(criteria, 'where.search.contains')}%')`);
+            query.where(`((array(${sub_query}) && ${JobPostings.tableAlias}.${JobPostings.schema.skills.columnName} = true) or LOWER(${JobPostings.tableAlias}.${JobPostings.schema.title.columnName}) like '${_.get(criteria, 'where.search.contains')}%')`);
         }
         if (_.get(criteria, 'where.location_miles')) {
             const generateGeom = `ST_PointFromText(ST_AsEWKT(${JobPostings.tableAlias}.${JobPostings.schema.location.columnName}::geometry), 4326)::geography`;
@@ -269,7 +240,7 @@ module.exports = async function list(request, response) {
                 await _.get(criteria, 'sort').forEach(function(field) {
                     let value = _.keys(field)[0];
                     if (value === 'most_popular') {
-                        value = `array_length(${JobPostings.tableAlias}.${JobPostings.schema.skill_tags.columnName}, 1)`
+                        value = `array_length(${JobPostings.tableAlias}.${JobPostings.schema.skills.columnName}, 1)`
                     } else {
                         value = `${JobPostings.tableAlias}.${value}`;
                     }
@@ -326,8 +297,8 @@ module.exports = async function list(request, response) {
             if (filtered_query_keys.includes('type')) {
                 criteria.where.type = `{${filtered_query_data.type.toString()}}`;
             }
-            if (filtered_query_keys.includes('skill_tags')) {
-                criteria.where.skill_tags = `{${filtered_query_data.skill_tags.toString()}}`;
+            if (filtered_query_keys.includes('skills')) {
+                criteria.where.skills = `{${filtered_query_data.skills.toString()}}`;
             }
             if (filtered_query_keys.includes('min_salary')) {
                 criteria.where.min_salary = parseInt(filtered_query_data.min_salary);
@@ -347,8 +318,8 @@ module.exports = async function list(request, response) {
             if (filtered_query_keys.includes('city')) {
                 criteria.where.city = parseInt(filtered_query_data.city);
             }
-            if (filtered_query_keys.includes('employer')) {
-                criteria.where.employer = parseInt(filtered_query_data.employer);
+            if (filtered_query_keys.includes('company')) {
+                criteria.where.company = parseInt(filtered_query_data.company);
             }
             if (filtered_query_keys.includes('alphabet')) {
                 criteria.where.alphabet = filtered_query_data.alphabet.toLowerCase();

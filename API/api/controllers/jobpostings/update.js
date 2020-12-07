@@ -39,6 +39,10 @@ module.exports = function create(request, response) {
         'end_to_end_implementation',
         'company',
         'latlng',
+        'must_match',
+        'number_of_positions',
+        'extra_criteria',
+        'contract_duration'
     ];
     var filtered_post_data = _.pick(post_request_data, pick_input);
     const filtered_post_keys = Object.keys(filtered_post_data);
@@ -57,7 +61,7 @@ module.exports = function create(request, response) {
         { name: 'remote', required: true, boolean: true },
         { name: 'experience', required: true, number: true },
         { name: 'sap_experience', required: true, number: true },
-        { name: 'latlng', required: true, geopoint: true },
+        { name: 'latlng', required: true, string: true },
         { name: 'domain', required: true, array: true },
         { name: 'hands_on_experience', required: false, array: true },
         { name: 'skills', required: true, array: true },
@@ -68,9 +72,11 @@ module.exports = function create(request, response) {
         { name: 'visa_sponsorship', required: true, boolean: true },
         { name: 'end_to_end_implementation', required: true, number: true },
         { name: 'company', required: true, number: true, min: true },
-        { name: 'must_match', required: true, array: true },
+        { name: 'must_match', required: true, json: true },
         { name: 'extra_criteria', required: false, array: true },
         { name: 'number_of_positions', required: true, number: true },
+        { name: 'contract_duration', number: true },
+
     ];
     //Update the JobPostings record to db.
     const updateRecord = (post_data, callback) => {
@@ -88,7 +94,7 @@ module.exports = function create(request, response) {
     };
     //Find the JobPostings record to db.
     const findPosting = (callback) => {
-        let query = { id: id, employer: logged_in_user.employer_profile.id };
+        let query = { id: id, company: logged_in_user.employer_profile.id };
         JobPostings.findOne(query, async function(err, job) {
             if (job) {
                 return callback(job);
@@ -100,9 +106,11 @@ module.exports = function create(request, response) {
     };
     validateModel.validate(JobPostings, input_attributes, filtered_post_data, async function(valid, errors) {
         if (valid) {
-            if (filtered_post_keys.includes('location')) {
-                location = filtered_post_data.location.split(',')
-                filtered_post_data.location = '(' + location[0] + ',' + location[1] + ')';
+            if (filtered_post_keys.includes('latlng')) {
+                location = filtered_post_data.latlng.split(',')
+                if (location.length == 2) {
+                    filtered_post_data.latlng = 'SRID=4326;POINT(' + location[1] + ' ' + location[0] + ')';
+                }
             }
             await findPosting(function(job) {
                 updateRecord(filtered_post_data, function(updated_job) {
