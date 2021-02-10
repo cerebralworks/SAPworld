@@ -16,18 +16,18 @@ module.exports = {
     tableName: 'she_access_tokens',
     tableAlias: 'token',
     attributes: {
-          user_id: {
-              type: 'ref',
-              required: true
-          },
-          client_id: {
-              type: 'ref',
-              required: true
-          },
-          token: 'string',
-          scope: 'string'
+        user_id: {
+            type: 'ref',
+            required: true
+        },
+        client_id: {
+            type: 'ref',
+            required: true
+        },
+        token: 'string',
+        scope: 'string'
     },
-    beforeCreate: function(values, next){
+    beforeCreate: function(values, next) {
         values.token = UtilsService.uid(255);
         next();
     }

@@ -53,12 +53,12 @@ module.exports = async function list(request, response) {
                 }
             })()
         },
-        { name: 'category', number: true, min: 1 },
+        { name: 'domain', number: true, min: 1 },
         { name: 'city', string: true, min: 1 },
         { name: 'alphabet', letter: true },
         { name: 'location_miles', number: true, min: 1 },
         { name: 'is_job_applied', number: true, min: 1 },
-        { name: 'zip_code', number: true }
+        { name: 'zipcode', number: true }
     ];
     var expand = [];
     if (filtered_query_data.expand) {
@@ -203,34 +203,34 @@ module.exports = async function list(request, response) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.salary.columnName} <= ${_.get(criteria, 'where.max_salary')}`);
         }
         if (_.get(criteria, 'where.min_experience')) {
-            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.experience.columnName} >= ${_.get(criteria, 'where.min_experience')}`);
+            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.sap_experience.columnName} >= ${_.get(criteria, 'where.min_experience')}`);
         }
         if (_.get(criteria, 'where.max_experience')) {
-            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.experience.columnName} <= ${_.get(criteria, 'where.max_experience')}`);
+            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.sap_experience.columnName} <= ${_.get(criteria, 'where.max_experience')}`);
         }
         if (_.get(criteria, 'where.type')) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.type.columnName} = ANY('${_.get(criteria, 'where.type')}')`);
         }
 
         if (_.get(criteria, 'where.city')) {
-            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.city.columnName} = ${_.get(criteria, 'where.city')}`);
+            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.city.columnName} LIKE '%${_.get(criteria, 'where.city')}%'`);
         }
         if (_.get(criteria, 'where.company')) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.company.columnName} = ${_.get(criteria, 'where.company')}`);
         }
-        if (_.get(criteria, 'where.zip_code')) {
+        if (_.get(criteria, 'where.zipcode')) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.zip_code.columnName} = ${_.get(criteria, 'where.zip_code')}`);
         }
         if (_.get(criteria, 'where.search.contains')) {
             let sub_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).
             from(SkillTags.tableName, SkillTags.tableAlias).
             field(`${SkillTags.tableAlias}.${SkillTags.schema.id.columnName}`).
-            where(`LOWER(${SkillTags.tableAlias}.${SkillTags.schema.tag.columnName}) like '${_.get(criteria, 'where.search.contains')}%'`).
+            where(`LOWER(${SkillTags.tableAlias}.${SkillTags.schema.tag.columnName}) like '% LOWER(${_.get(criteria, 'where.search.contains')})%'`).
             where(`${SkillTags.tableAlias}.${SkillTags.schema.status.columnName} != ${row_deleted_sign}`);
             query.where(`((array(${sub_query}) && ${JobPostings.tableAlias}.${JobPostings.schema.skills.columnName} = true) or LOWER(${JobPostings.tableAlias}.${JobPostings.schema.title.columnName}) like '${_.get(criteria, 'where.search.contains')}%')`);
         }
         if (_.get(criteria, 'where.location_miles')) {
-            const generateGeom = `ST_PointFromText(ST_AsEWKT(${JobPostings.tableAlias}.${JobPostings.schema.location.columnName}::geometry), 4326)::geography`;
+            const generateGeom = `ST_PointFromText(ST_AsEWKT(${JobPostings.tableAlias}.${JobPostings.schema.latlng.columnName}::geometry), 4326)::geography`;
             query.where(`ST_DWithin(${generateGeom}, ST_SetSRID(ST_MakePoint(${_.get(criteria, 'where.location.latitude')}, ${_.get(criteria, 'where.location.longitude')}), 4326), ${_.get(criteria, 'where.location_miles')} * 1609)`);
         }
         if (count) {
@@ -316,7 +316,7 @@ module.exports = async function list(request, response) {
                 criteria.where.category = parseInt(filtered_query_data.category);
             }
             if (filtered_query_keys.includes('city')) {
-                criteria.where.city = parseInt(filtered_query_data.city);
+                criteria.where.city = filtered_query_data.city.toLowerCase();
             }
             if (filtered_query_keys.includes('company')) {
                 criteria.where.company = parseInt(filtered_query_data.company);
@@ -334,7 +334,7 @@ module.exports = async function list(request, response) {
                 location = filtered_query_data.location.split(',');
                 criteria.where.location = { longitude: location[1], latitude: location[0] };
             }
-            if (filtered_query_keys.includes('zip_code')) {
+            if (filtered_query_keys.includes('zipcode')) {
                 criteria.where.zip_code = parseInt(filtered_query_data.zip_code);
             }
             if (filtered_query_keys.includes('page')) {

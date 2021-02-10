@@ -15,10 +15,10 @@ module.exports = {
     tableName: 'she_job_applications',
     tableAlias: 'job_application',
     attributes: {
-        comments: {type: 'string', allowNull: true},
-        status: {type: 'number', defaultsTo: 1},
-        short_listed: {type: 'boolean', defaultsTo: false},
-        status_glossary: {type: 'string', allowNull: true},
+        comments: { type: 'string', allowNull: true },
+        status: { type: 'number', defaultsTo: 1 },
+        short_listed: { type: 'boolean', defaultsTo: false },
+        status_glossary: { type: 'string', allowNull: true },
         user: {
             model: 'userprofiles'
         },
@@ -28,7 +28,8 @@ module.exports = {
         employer: {
             model: 'employerprofiles'
         },
-        user_approach_id: {type: 'string', allowNull: true},
-        user_interest: {type: 'number', allowNull: true}
+        user_approach_id: { type: 'string', allowNull: true },
+        user_interest: { type: 'number', allowNull: true },
+        user_resume: { type: 'string', allowNull: true },
     }
 };

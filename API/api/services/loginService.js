@@ -53,7 +53,7 @@ exports.findUser = async function(username, callback, properties = {}) {
         username_query.or(UserProfiles.tableAlias + "." + UserProfiles.schema.email.columnName + "='" + username + "'");
         username_query.or(EmployerProfiles.tableAlias + "." + EmployerProfiles.schema.email.columnName + "='" + username + "'");
         username_query.or(AdminProfiles.tableAlias + "." + AdminProfiles.schema.email.columnName + "='" + username + "'");
-        username_query.or(UserProfiles.tableAlias + "." + UserProfiles.schema.user_handle.columnName + "='" + username + "'");
+        // username_query.or(UserProfiles.tableAlias + "." + UserProfiles.schema.user_handle.columnName + "='" + username + "'");
         query.where(username_query);
         query.field(Users.tableAlias + "." + Users.schema.id.columnName, 'id');
         query.field(Users.tableAlias + "." + Users.schema.types.columnName, 'types');
@@ -167,7 +167,6 @@ exports.findExistingConnection = async function(source_type, email, phone, callb
             }
         });
     } catch (err) {
-        console.log(err)
         var error_obj = new Error();
         if (err.message) {
             error_obj.message = err.message;

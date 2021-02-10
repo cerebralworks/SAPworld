@@ -39,7 +39,7 @@ module.exports = async function list(request, response) {
             } else if (total < 1) {
                 return callback([], {}, total);
             } else {
-                var skill_tag_model = SkillTags.find(criteria);
+                var skill_tag_model = SkillTags.find(criteria).meta({ makeLikeModifierCaseInsensitive: true });;
                 skill_tag_model.exec(async function(err, skill_tags) {
                     if (err) {
                         var error = {

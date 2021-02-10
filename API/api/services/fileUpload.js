@@ -23,22 +23,19 @@ var async = require("async");
 var bucket = sails.config.conf.aws.bucket_name;
 
 //Resize photo and converting them to streams. Then upload it to s3
-exports.S3 = async function(photo, file_path, filename, sizes, callback, additional_param={}) {
+exports.S3 = async function(photo, file_path, filename, sizes, callback, additional_param = {}) {
     var fs = require('fs');
     var AWS = require('aws-sdk');
-    var endpoint = new AWS.Endpoint(sails.config.conf.aws.endpoint);
-    var aws_options = {
-        apiVersion: '2006-03-01',
-        endpoint: endpoint,
+    AWS.config.update({
         accessKeyId: sails.config.conf.aws.access_key_id,
-        secretAccessKey: sails.config.conf.aws.secret_access_key
-    };
-    var s3 = new AWS.S3(aws_options);
+        secretAccessKey: sails.config.conf.aws.secret_access_key,
+    });
+    var s3 = new AWS.S3();
     const sharp = require('sharp');
-    additional_param = _.isObject({additional_param})?additional_param:{}; 
-    fs.readFile(photo.fd, async function(err, data){
-        sizes.forEach(async function (size, key) {
-            if(size === 'Original'){
+    additional_param = _.isObject({ additional_param }) ? additional_param : {};
+    fs.readFile(photo.fd, async function(err, data) {
+        sizes.forEach(async function(size, key) {
+            if (size === 'Original') {
                 var upload_params = {
                     Bucket: bucket,
                     Key: file_path + '/' + size + '/' + filename,
@@ -46,17 +43,17 @@ exports.S3 = async function(photo, file_path, filename, sizes, callback, additio
                     Body: data,
                     ...additional_param
                 };
-                await s3.putObject(upload_params, async function(err, upload_data){
-                    if(err){
+                await s3.putObject(upload_params, async function(err, upload_data) {
+                    if (err) {
                         //error
                         return callback(err);
-                    }else if(key === ((sizes.length)-1)){
-                        return callback(err,true);
-                    }else{
-                        return callback(err,false);
+                    } else if (key === ((sizes.length) - 1)) {
+                        return callback(err, true);
+                    } else {
+                        return callback(err, false);
                     }
                 });
-            }else{
+            } else {
                 await sharp(data).resize(size).toBuffer().then(async resized_data => {
                     var upload_params = {
                         Bucket: bucket,
@@ -65,15 +62,13 @@ exports.S3 = async function(photo, file_path, filename, sizes, callback, additio
                         Body: resized_data,
                         ...additional_param
                     };
-                    console.log(file_path + '/' + size + '/' + filename);
-                    await s3.putObject(upload_params, async function(err, upload_data){
-                        if(err){
-                            //error
+                    await s3.putObject(upload_params, async function(err, upload_data) {
+                        if (err) {
                             return callback(err);
-                        }else if(key === ((sizes.length)-1)){
-                            return callback(err,true);
-                        }else{
-                            return callback(err,false);
+                        } else if (key === ((sizes.length) - 1)) {
+                            return callback(err, true);
+                        } else {
+                            return callback(err, false);
                         }
                     });
                 }).catch(async err => {
@@ -81,7 +76,7 @@ exports.S3 = async function(photo, file_path, filename, sizes, callback, additio
                     return callback(err);
                 });
             }
-        }, function (err) {
+        }, function(err) {
             return callback(err);
         });
     });
@@ -91,27 +86,25 @@ exports.S3file = async function(file, file_path, filename, callback) {
     var fs = require('fs');
     var AWS = require('aws-sdk');
     var endpoint = new AWS.Endpoint(sails.config.conf.aws.endpoint);
-    var aws_options = {
-        apiVersion: '2006-03-01',
-        endpoint: endpoint,
+    AWS.config.update({
         accessKeyId: sails.config.conf.aws.access_key_id,
-        secretAccessKey: sails.config.conf.aws.secret_access_key
-    };
-    var s3 = new AWS.S3(aws_options);
+        secretAccessKey: sails.config.conf.aws.secret_access_key,
+    });
+    var s3 = new AWS.S3();
     const sharp = require('sharp');
-    fs.readFile(file.fd, async function(err, data){
+    fs.readFile(file.fd, async function(err, data) {
         var upload_params = {
             Bucket: bucket,
             Key: file_path + '/' + filename,
             ACL: 'public-read',
             Body: data
         };
-        await s3.putObject(upload_params, async function(err, upload_data){
-            if(err){
+        await s3.putObject(upload_params, async function(err, upload_data) {
+            if (err) {
                 //error
                 return callback(err);
-            }else{
-                return callback(err,true);
+            } else {
+                return callback(err, true);
             }
         });
     });
@@ -122,13 +115,11 @@ exports.deleteFromS3 = async function(photo_keys, callback) {
     var fs = require('fs');
     var AWS = require('aws-sdk');
     var endpoint = new AWS.Endpoint(sails.config.conf.aws.endpoint);
-    var aws_options = {
-        apiVersion: '2006-03-01',
-        endpoint: endpoint,
+    AWS.config.update({
         accessKeyId: sails.config.conf.aws.access_key_id,
-        secretAccessKey: sails.config.conf.aws.secret_access_key
-    };
-    var s3 = new AWS.S3(aws_options);
+        secretAccessKey: sails.config.conf.aws.secret_access_key,
+    });
+    var s3 = new AWS.S3();
     var params = {
         Bucket: bucket,
         Delete: {
@@ -136,10 +127,10 @@ exports.deleteFromS3 = async function(photo_keys, callback) {
         }
     };
     await s3.deleteObjects(params, function(err, data) {
-        if(err) {
+        if (err) {
             return callback(err);
-        }else{
-            return callback(err,true);
+        } else {
+            return callback(err, true);
         }
     });
 };

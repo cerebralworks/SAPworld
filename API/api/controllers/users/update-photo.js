@@ -10,23 +10,23 @@ module.exports = async function updatePhoto(request, response) {
     const post_request_data = request.body;
     const logged_in_user = request.user;
     var _response_object = {};
-    var filtered_post_data = _.pick(post_request_data,['photo']);
+    var filtered_post_data = _.pick(post_request_data, ['photo']);
     var fs = require('fs');
     //Process Photos
-    const uploadPhotos = async (photo, callback) => {
+    const uploadPhotos = async(photo, callback) => {
         path = require('path');
         filename = 'photo-' + logged_in_user.user_profile.id + path.extname(photo.filename);
         file_path = 'public/images/Users';
-        await fileUpload.S3(photo, file_path, filename, [256,512], async function(err, done){
-            if(err){
+        await fileUpload.S3(photo, file_path, filename, [256, 512], async function(err, done) {
+            if (err) {
                 err.field = 'photo';
-                await errorBuilder.build(err, function (error_obj) {
+                await errorBuilder.build(err, function(error_obj) {
                     _response_object.errors = error_obj;
                     _response_object.count = error_obj.length;
                     return response.status(500).json(_response_object);
                 });
-            }else{
-                if(done){
+            } else {
+                if (done) {
                     return callback(filename);
                 }
             }
@@ -34,26 +34,26 @@ module.exports = async function updatePhoto(request, response) {
     };
     //Add the filename to user's profile.
     const updateUser = (filename, callback) => {
-        UserProfiles.update({id: logged_in_user.user_profile.id}, {photo: filename}, async function(err, user){
-            if(err){
+        UserProfiles.update({ id: logged_in_user.user_profile.id }, { photo: filename }, async function(err, user) {
+            if (err) {
                 err.field = 'photo';
-                await errorBuilder.build(err, function (error_obj) {
+                await errorBuilder.build(err, function(error_obj) {
                     _response_object.errors = error_obj;
                     _response_object.count = error_obj.length;
                     return response.status(500).json(_response_object);
                 });
-            }else{
+            } else {
                 return callback(user);
             }
         });
     };
     //Check whether photo exists in the request
     if (request._fileparser && request._fileparser.upstreams && request._fileparser.upstreams.length > 0) {
-        try{
-            request.file('photo').upload({maxBytes: 50000000}, async function (err, uploaded_files) {
+        try {
+            request.file('photo').upload({ maxBytes: 50000000 }, async function(err, uploaded_files) {
                 if (err) {
                     err.field = 'photo';
-                    await errorBuilder.build(err, function (error_obj) {
+                    await errorBuilder.build(err, function(error_obj) {
                         _response_object.errors = error_obj;
                         _response_object.count = error_obj.length;
                         return response.status(500).json(_response_object);
@@ -63,25 +63,25 @@ module.exports = async function updatePhoto(request, response) {
                     /*Photo uploaded*/
                     var allowed_file_types = ['image/jpeg', 'image/png'];
                     if (allowed_file_types.indexOf(uploaded_files[0].type) === -1) {
-                        fs.unlink(uploaded_files[0].fd, function(err){});
-                        _response_object.errors = [{field: 'photo', rules: [{rule: 'required', message: 'photo should be only of type jpeg or png.'}]}];
+                        fs.unlink(uploaded_files[0].fd, function(err) {});
+                        _response_object.errors = [{ field: 'photo', rules: [{ rule: 'required', message: 'photo should be only of type jpeg or png.' }] }];
                         _response_object.count = 1;
                         return response.status(400).json(_response_object);
-                    }else{
+                    } else {
                         //Uploading photo
-                        await uploadPhotos(uploaded_files[0], async function (filename) {
+                        await uploadPhotos(uploaded_files[0], async function(filename) {
                             //Update user
-                            await updateUser(filename, function (details) {
+                            await updateUser(filename, function(details) {
                                 _response_object.message = 'Photo has been updated successfully.';
                                 _response_object.details = details;
                                 var meta = {};
                                 meta['photo'] = {
-                                  path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
-                                  folder: 'public/images/Users',
-                                  sizes: {
-                                    small: 256,
-                                    medium: 512
-                                  }
+                                    path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
+                                    folder: 'public/images/Users',
+                                    sizes: {
+                                        small: 256,
+                                        medium: 512
+                                    }
                                 };
                                 meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/photo-55.png';
                                 _response_object['meta'] = meta;
@@ -89,22 +89,22 @@ module.exports = async function updatePhoto(request, response) {
                             });
                         });
                     }
-                }else{
-                    _response_object.errors = [{field: 'photo', rules: [{rule: 'required', message: 'photo cannot be empty.'}]}];
+                } else {
+                    _response_object.errors = [{ field: 'photo', rules: [{ rule: 'required', message: 'photo cannot be empty.' }] }];
                     _response_object.count = 1;
                     return response.status(400).json(_response_object);
                 }
             });
-        }catch(err){
+        } catch (err) {
             err.field = 'photo';
-            await errorBuilder.build(err, function (error_obj) {
+            await errorBuilder.build(err, function(error_obj) {
                 _response_object.errors = error_obj;
                 _response_object.count = error_obj.length;
                 return response.status(500).json(_response_object);
             });
         }
-    }else{
-        _response_object.errors = [{field: 'photo', rules: [{rule: 'required', message: 'photo cannot be empty.'}]}];
+    } else {
+        _response_object.errors = [{ field: 'photo', rules: [{ rule: 'required', message: 'photo cannot be empty.' }] }];
         _response_object.count = 1;
         return response.status(400).json(_response_object);
     }

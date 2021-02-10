@@ -8,22 +8,23 @@
 module.exports = async function update(request, response) {
     const post_request_data = request.body;
     const logged_in_user = request.user;
+    post_request_data.id = logged_in_user.id;
     var _response_object = {};
     let yup = sails.yup;
     let schema = yup.object().shape({
-        id: yup.number().required().test().test('user_profile', 'Cant find record', async(value) => {
-            return await userprofiles.findOne({ where: { user: value } }).then(result => {
-                console.log(result);
-                return result == 0 ? true : false;
+        id: yup.number().test('user_profile', 'Cant find record', async(value) => {
+            return await UserProfiles.find().where({ account: value }).limit(1).then(result => {
+                return result.length > 0 ? true : false;
             })
         }),
         first_name: yup.string().required().lowercase().min(3),
         last_name: yup.string().required().lowercase(),
-        bio: yup.string().required().min(50),
+        bio: yup.string(),
         country: yup.string().required().lowercase(),
         state: yup.string().required().lowercase(),
         city: yup.string().required().lowercase(),
         zipcode: yup.number().required().positive().moreThan(1000),
+        phone: yup.string().matches(/^([0|\+[0-9]{1,5})?([0-9]{10})$/, 'Mobile number must be like +919999999999').required(),
         latlng: yup.object().shape({
             lat: yup.number().min(-90).max(90),
             lng: yup.number().min(-180).max(180),
@@ -31,14 +32,15 @@ module.exports = async function update(request, response) {
         social_media_link: yup.array().of(
             yup.object().shape({
                 media: yup.string().required().lowercase(),
-                url: yup.url().required(),
+                url: yup.string().url().required(),
                 visibility: yup.boolean().default(true)
             })
         ).default([]),
         education_qualification: yup.array().of(
             yup.object().shape({
-                degree: yup.string().required().lowercase(),
-                field_of_study: yup.string().required().lowercase(),
+                degree: yup.string().lowercase().required(),
+                field_of_study: yup.string().lowercase().required(),
+                year_of_completion: yup.number().positive().required()
             })
         ).default([]),
         experience: yup.number().positive().default(1).required(),
@@ -46,7 +48,7 @@ module.exports = async function update(request, response) {
         current_employer: yup.string().required().lowercase(),
         current_employer_role: yup.string().required().lowercase(),
         domains_worked: yup.array().of(yup.number().positive()).required(),
-        clients_worked: yup.array().of(yup.string()).required(),
+        clients_worked: yup.array().of(yup.string()),
         hands_on_experience: yup.array().of(yup.object().shape({
             skill_id: yup.number().required().positive(),
             skill_name: yup.string().required().lowercase(),
@@ -55,31 +57,34 @@ module.exports = async function update(request, response) {
         })).required(),
         skills: yup.array().of(yup.number().positive()).required(),
         programming_skills: yup.array().of(yup.string()).required(),
-        other_skills: yup.array().of(yup.string()).required(),
-        certification: yup.array().of(yup.string()).required(),
-        job_type: yup.number().required().positive().oneOf([0, 1, 2, 3, 4, 5, 6, 7, 8]),
-        preferred_location: yup.number().required().positive().oneOf([0, 1, 2, 3, 4, 5, 6, 7]),
-        availability: yup.number().required().positive().oneOf([0, 15, 30, 45, 60]),
-        travel: yup.number().required().positive().oneOf([0, 25, 50, 75, 100]),
-        work_authorization: yup.boolean().required(),
+        other_skills: yup.array().of(yup.string()),
+        certification: yup.array().of(yup.string()),
+        job_type: yup.number().required().oneOf([0, 1, 2, 3, 4, 5, 6, 7, 8]),
+        job_role: yup.string().required().lowercase(),
+        preferred_location: yup.number().oneOf([0, 1, 2, 3, 4, 5, 6, 7]),
+        availability: yup.number().required().oneOf([0, 15, 30, 45, 60]),
+        travel: yup.number().required().oneOf([0, 25, 50, 75, 100]),
+        work_authorization: yup.boolean(),
         willing_to_relocate: yup.boolean().required(),
         remote_only: yup.boolean().required(),
-        end_to_end_implementation: yup.number().required().positive(),
+        end_to_end_implementation: yup.number().min(0),
+        privacy_protection: yup.object().shape({
+            photo: yup.boolean().default(true),
+            phone: yup.boolean().default(true),
+            email: yup.boolean().default(true),
+            current_employer: yup.boolean().default(true),
+        }),
+        available_for_opportunity: yup.boolean().default(true),
     });
-
-    //Check only admin not user
-    if (_.indexOf(_.get(logged_in_user, 'types', []), 2) > -1 && _.indexOf(_.get(logged_in_user, 'types', []), 0) < 0) {
-        input_attributes.push({ name: 'id', required: true, number: true, min: 1 });
-        pick_input.push('id');
-    } else if (_.indexOf(_.get(logged_in_user, 'types', []), 2) > -1) {
-        input_attributes.push({ name: 'id', number: true, min: 1 });
-        pick_input.push('id');
-    }
-    return await schema.validate(post_request_data, { abortEarly: false }).then(value => {
-        var point = latlng['lng'] + ',' + latlng['lat'];
+    await schema.validate(post_request_data, { abortEarly: false }).then(async value => {
+        var point = value.latlng['lng'] + ' ' + value.latlng['lat'];
+        value.latlng_text = value.latlng.lat + ',' + value.latlng.lng;
         value.latlng = 'SRID=4326;POINT(' + point + ')';
-        value.latlng_point = latlng;
-        UserProfiles.update(id, value, async function(err, profile) {
+        await phoneEncryptor.encrypt(value.phone, function(encrypted_text) {
+            value.phone = encrypted_text;
+        });
+        value.status = 1;
+        UserProfiles.update(logged_in_user.user_profile.id, value, async function(err, profile) {
             if (err) {
                 await errorBuilder.build(err, function(error_obj) {
                     _response_object.errors = error_obj;
@@ -87,6 +92,8 @@ module.exports = async function update(request, response) {
                     return response.status(500).json(_response_object);
                 });
             } else {
+                var status = value.available_for_opportunity == false ? 7 : logged_in_user.status;
+                Users.update(logged_in_user.id, { status: status }, function(err, profile) {});
                 if (profile[0].email) {
                     delete profile[0].email;
                 }
@@ -98,7 +105,6 @@ module.exports = async function update(request, response) {
                 return response.status(200).json(_response_object);
             }
         });
-
     }).catch(err => {
         _response_object.errors = err.inner;
         _response_object.count = err.inner.length;

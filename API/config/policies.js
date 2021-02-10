@@ -34,6 +34,8 @@ module.exports.policies = {
     'users/update': ['oauthBearer', 'isUserOrAdmin'],
     'users/update-photo': ['oauthBearer', 'isUser'],
     'users/update-doc-resume': ['oauthBearer', 'isUser'],
+    'users/resume-delete': ['oauthBearer', 'isUser'],
+    'users/choose-default-resume': ['oauthBearer', 'isUser'],
     'users/update-video-resume': ['oauthBearer', 'isUser'],
     'users/check-user-handle': ['oauthBearer'],
     'users/update-user-handle': ['oauthBearer', 'isUser'],
@@ -59,6 +61,10 @@ module.exports.policies = {
     'employers/profile': ['oauthBearer', 'isEmployer'],
     'employers/signup': ['noOauthBearer'],
     'employers/approach-job-seeker': ['oauthBearer', 'isEmployer'],
+    'employers/update-company-profile': ['oauthBearer', 'isEmployer'],
+    'employers/company-profile': ['oauthBearer', 'isEmployer'],
+    'employers/saved-profiles': ['oauthBearer', 'isEmployer'],
+    'employers/save-profile': ['oauthBearer', 'isEmployer'],
 
 
     'jobpostings/create': ['oauthBearer', 'isEmployer'],
@@ -75,6 +81,10 @@ module.exports.policies = {
     'jobpostings/applications/view-for-user': ['oauthBearer', 'isUser'],
     'jobpostings/applications/change-status': ['oauthBearer', 'isEmployer'],
     'jobpostings/applications/short-list-user': ['oauthBearer', 'isEmployer'],
+    'jobpostings/job-scoring': ['oauthBearer', 'isEmployer'],
+    'jobpostings/user-scoring': ['oauthBearer', 'isUser'],
+    'jobpostings/send-email': ['oauthBearer', 'isEmployer'],
+
 
     'site/health': ['noOauthBearer'],
     'site/report': ['oauthBearer', 'isUser'],

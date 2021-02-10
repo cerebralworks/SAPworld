@@ -91,9 +91,8 @@ server.exchange(oauth2orize.exchange.code(function(client, code, redirect_uri, d
 server.exchange(oauth2orize.exchange.password(async function(client, username, password, scope, request_data, done) {
     await loginService.findUser(username, async function(err, user) {
         if (!user) {
-            console.log(err)
             return done({ message: 'Invalid username or password combination.' }, false, { message: 'Invalid username or password combination.' });
-        } else if (user.status !== 1) {
+        } else if (user.status !== 1 && user.status !== 7) {
             return done({ message: 'Your account has been deactivated. Please contact admin for further details.' }, false, { message: 'Your account has been deactivated. Please contact admin for further details.' });
         } else {
             bcrypt.compare(password, user.password).then(function(password_check) {

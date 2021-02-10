@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.1" last-position="0,0" last-zoom="0.7"
+<dbmodel pgmodeler-ver="0.9.1" last-position="405,0" last-zoom="1"
 	 default-owner="postgres">
 <database name="sap-development" encoding="UTF8" lc-collate="en_IN" lc-ctype="en_IN" is-template="false" allow-conns="true">
 	<role name="postgres"/>
@@ -710,8 +710,8 @@ END;
 <table name="she_user_profiles">
 	<schema name="public"/>
 	<role name="postgres"/>
-	<position x="1200" y="60"/>
-	<column name="id" not-null="true" sequence="public.hop_user_profiles_id_seq">
+	<position x="1220" y="60"/>
+	<column name="id" not-null="true">
 		<type name="bigint" length="0"/>
 	</column>
 	<column name="first_name" not-null="true">
@@ -830,6 +830,9 @@ END;
 	</column>
 	<column name="status_glossary">
 		<type name="text" length="0"/>
+	</column>
+	<column name="privacy_protection">
+		<type name="json" length="0"/>
 	</column>
 	<column name="created_at">
 		<type name="timestamp with time zone" length="0" with-timezone="true"/>
@@ -1299,10 +1302,10 @@ END;
 		<type name="smallint" length="0"/>
 	</column>
 	<column name="salary_currency">
-		<type name="smallint" length="0"/>
+		<type name="varchar" length="10"/>
 	</column>
 	<column name="salary">
-		<type name="smallint" length="0"/>
+		<type name="bigint" length="0"/>
 	</column>
 	<column name="city">
 		<type name="character varying" length="100"/>
@@ -1317,7 +1320,7 @@ END;
 		<type name="bigint" length="0"/>
 	</column>
 	<column name="availability">
-		<type name="character varying" length="100"/>
+		<type name="smallint" length="100"/>
 	</column>
 	<column name="remote">
 		<type name="boolean" length="0"/>
@@ -1347,7 +1350,7 @@ END;
 		<type name="smallint" length="0"/>
 	</column>
 	<column name="travel_opportunity">
-		<type name="character varying" length="100"/>
+		<type name="smallint" length="100"/>
 	</column>
 	<column name="visa_sponsorship">
 		<type name="boolean" length="0"/>
@@ -1388,6 +1391,9 @@ END;
 	<column name="latlng">
 		<type name="geography" length="0"/>
 	</column>
+	<column name="contract_duration">
+		<type name="smallint" length="0"/>
+	</column>
 	<constraint name="she_user_employments_pkey" type="pk-constr" table="public.she_user_employments">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
@@ -1419,6 +1425,96 @@ END;
 		<type name="timestamp with time zone" length="0" with-timezone="true"/>
 	</column>
 	<constraint name="she_user_subscriptions_pkey" type="pk-constr" table="public.she_user_subscriptions">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="she_company_profile">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1260" y="1500"/>
+	<column name="id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="name">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="contact">
+		<type name="varchar" length="15" dimension="1"/>
+	</column>
+	<column name="email_id">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="address">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="city">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="state">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="country">
+		<type name="varchar" length="3"/>
+	</column>
+	<column name="zipcode">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="latlng">
+		<type name="geography" length="0"/>
+	</column>
+	<column name="latlng_text">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<column name="website">
+		<type name="text" length="0"/>
+	</column>
+	<column name="social_media_link">
+		<type name="json" length="0" dimension="1"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="user_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="status">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="status_glossary">
+		<type name="varchar" length="1000"/>
+	</column>
+	<constraint name="company_id" type="pk-constr" table="public.she_company_profile">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="she_saved_profiles">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="900" y="1800"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="user_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="employee_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp" length="0"/>
+	</column>
+	<constraint name="saved_profile_id" type="pk-constr" table="public.she_saved_profiles">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 </table>
@@ -1501,6 +1597,12 @@ END;
 	<columns names="id" ref-type="dst-columns"/>
 </constraint>
 
+<constraint name="user_id_company" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_users" table="public.she_company_profile">
+	<columns names="user_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
 <relationship name="rel_she_access_tokens_she_users" type="relfk"
 	 src-table="public.she_access_tokens"
 	 dst-table="public.she_users" reference-fk="user"
@@ -1564,6 +1666,11 @@ END;
 <relationship name="rel_she_user_profiles_she_users" type="relfk"
 	 src-table="public.she_user_profiles"
 	 dst-table="public.she_users" reference-fk="account"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_company_profile_she_users" type="relfk"
+	 src-table="public.she_company_profile"
+	 dst-table="public.she_users" reference-fk="user_id_company"
 	 src-required="false" dst-required="false"/>
 
 </dbmodel>

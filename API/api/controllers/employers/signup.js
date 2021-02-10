@@ -58,7 +58,8 @@ module.exports = function signup(request, response) {
             username: post_data.email,
             last_checkin_via: 'web',
             types: [1],
-            last_active: new Date()
+            last_active: new Date(),
+            password: post_data.password
         };
         if (!filtered_post_keys.includes('password')) {
             user_input.password = Math.floor(10000000 + Math.random() * 90000000);

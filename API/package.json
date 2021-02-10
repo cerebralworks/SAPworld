@@ -18,6 +18,7 @@
         "canvas": "^2.6.1",
         "connect-ensure-login": "^0.1.1",
         "connect-flash": "^0.1.1",
+        "continuation-local-storage": "^3.2.1",
         "crypto": "^1.0.1",
         "email-templates": "^5.0.1",
         "fb": "^2.0.0",
@@ -41,6 +42,8 @@
         "passport-local": "^1.0.0",
         "passport-oauth2-client-password": "^0.1.2",
         "path": "^0.12.7",
+        "pg": "^8.5.1",
+        "pg-hstore": "^2.3.3",
         "pkg-config": "^1.1.1",
         "sails": "^1.2.3",
         "sails-hook-email": "^0.12.1",
@@ -55,7 +58,9 @@
         "yup": "^0.32.0"
     },
     "devDependencies": {
-        "@sailshq/eslint": "^4.19.3"
+        "@sailshq/eslint": "^4.19.3",
+        "mocha": "^8.2.1",
+        "sequelize-cli": "^6.2.0"
     },
     "scripts": {
         "start": "node app.js",

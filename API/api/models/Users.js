@@ -19,15 +19,15 @@ module.exports = {
     tableName: 'she_users',
     tableAlias: 'user_account',
     attributes: {
-        username: {type:'string'},
-        password: {type:'string', minLength: 8},
-        status: {type:'number', defaultsTo: 1},
-        status_glossary: {type:'string', allowNull: true},
-        verified: {type:'boolean', defaultsTo: false},
-        types: {type:'ref'},
-        tokens: {type:'ref'},
-        last_active: {type:'ref', columnType: 'date', defaultsTo: new Date()},
-        last_checkin_via: {type:'string', defaultsTo: 'web'},
+        username: { type: 'string' },
+        password: { type: 'string', minLength: 8 },
+        status: { type: 'number', defaultsTo: 1 },
+        status_glossary: { type: 'string', allowNull: true },
+        verified: { type: 'boolean', defaultsTo: false },
+        types: { type: 'ref' },
+        tokens: { type: 'ref' },
+        last_active: { type: 'ref', columnType: 'date', defaultsTo: new Date() },
+        last_checkin_via: { type: 'string', defaultsTo: 'web' },
         user_profile: {
             model: 'userprofiles'
         },
@@ -43,13 +43,13 @@ module.exports = {
         return _.omit(this, ['tokens']);
     },
     beforeCreate: function(user, callback) {
-        user.tokens = {reset: UtilsService.uid(20), verification: UtilsService.uid(20)};
-        if(user.password){
-            bcrypt.hash(user.password, SALT_WORK_FACTOR, function (err, hash) {
-              user.password = hash;
-              return callback();
+        user.tokens = { reset: UtilsService.uid(20), verification: UtilsService.uid(20) };
+        if (user.password) {
+            bcrypt.hash(user.password, SALT_WORK_FACTOR, function(err, hash) {
+                user.password = hash;
+                return callback();
             });
-        }else{
+        } else {
             return callback();
         }
     }

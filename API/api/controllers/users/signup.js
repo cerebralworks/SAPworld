@@ -11,6 +11,7 @@ var SALT_WORK_FACTOR = 10;
 var crypto = require('crypto');
 
 module.exports = function signup(request, response) {
+    var details = {};
     const post_request_data = request.body;
     var _response_object = {};
     let yup = sails.yup;
@@ -18,13 +19,13 @@ module.exports = function signup(request, response) {
         first_name: yup.string().required().lowercase().min(3),
         last_name: yup.string().required().lowercase(),
         email: yup.string().required().email().lowercase(),
-        phone: yup.string().required().matches(/^([0|\+[0-9]{1,5})?([0-9]{10})$/, 'Mobile number must be like +919999999999'),
+        // phone: yup.string().matches(/^([0|\+[0-9]{1,5})?([0-9]{10})$/, 'Mobile number must be like +919999999999'),
         password: yup.string().required().matches(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/, 'Password must has LOwercase,UpperCase,Digit and special character'),
-        city: yup.string().required().lowercase(),
-        latlng: yup.object().shape({
-            lat: yup.number().min(-90).max(90),
-            lng: yup.number().min(-180).max(180),
-        }).required(),
+        // city: yup.string().lowercase(),
+        // latlng: yup.object().shape({
+        //     lat: yup.number().min(-90).max(90),
+        //     lng: yup.number().min(-180).max(180),
+        // }),
 
     });
     //Build and sending response
@@ -67,16 +68,15 @@ module.exports = function signup(request, response) {
                 return await errorBuilder.build(err, function(error_obj) {
                     _response_object.errors = error_obj;
                     _response_object.count = error_obj.length;
-                    return _response_object
+                    return response.status(500).json(_response_object);
                 });
             } else {
                 post_data.account = user.id;
-                await phoneEncryptor.encrypt(post_data.phone, function(encrypted_text) {
-                    post_data.phone = encrypted_text;
-                });
-                var latlng_o = post_data.latlng;
-                post_data.latlng = 'SRID=4326;POINT(' + latlng_o['lng'] + ' ' + latlng_o['lat'] + ')';
-                post_data.latlng_text = latlng_o['lat'] + ',' + latlng_o['lng'];
+                // await phoneEncryptor.encrypt(post_data.phone, function(encrypted_text) {
+                //     post_data.phone = encrypted_text;
+                // });
+                post_data.latlng = 'SRID=4326;POINT(0 0)';
+                // post_data.latlng_text = latlng_o['lat'] + ',' + latlng_o['lng'];
                 UserProfiles.create(post_data, async function(err, profile) {
                     if (err) {
                         await errorBuilder.build(err, function(error_obj) {

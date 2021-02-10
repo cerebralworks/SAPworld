@@ -5,7 +5,7 @@
  */
 
 var env = require('node-env-file');
-env(__dirname+'/../../.env');
+env(__dirname + '/../../.env');
 
 //Overwrite these configuration in env/production.js for production enviroment
 module.exports.conf = {

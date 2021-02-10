@@ -545,7 +545,7 @@
                     {
                         "in": "query",
                         "name": "city",
-                        "type": "number",
+                        "type": "string",
                         "minimum": 1,
                         "required": false,
                         "description": "Filters the user list by a specific city."
@@ -758,16 +758,23 @@
                     {
                         "in": "formData",
                         "name": "state",
-                        "type": "number",
+                        "type": "string",
                         "description": "state of the user.",
                         "required": false
                     },
                     {
                         "in": "formData",
-                        "name": "zip_code",
+                        "name": "zipcode",
                         "type": "number",
                         "description": "Zip code of the user.",
                         "required": false
+                    },
+                    {
+                        "in": "formData",
+                        "name": "phone",
+                        "type": "string",
+                        "description": "Phone with country code  of the user.",
+                        "required": true
                     },
                     {
                         "in": "formData",
@@ -814,7 +821,8 @@
                             "type": "object",
                             "properties": {
                                 "degree": { "type": "string" },
-                                "field_of_study": { "type": "string" }
+                                "field_of_study": { "type": "string" },
+                                "year_of_completion": { "type": "number" }
                             }
                         },
                         "description": "Education Qualification of user",
@@ -877,7 +885,8 @@
                                 "skill_id": { "type": "number" },
                                 "skill_name": { "type": "string" },
                                 "experience": { "type": "number" },
-                                "exp_type": { "type": "string" }
+                                "exp_type": { "type": "string" },
+
                             }
                         },
                         "description": "hands_on_experience of user",
@@ -920,6 +929,13 @@
                     },
                     {
                         "in": "formData",
+                        "name": "job_role",
+                        "type": "string",
+                        "description": "job_role of user",
+                        "required": false
+                    },
+                    {
+                        "in": "formData",
                         "name": "preferred_location",
                         "type": "number",
                         "enum": [0, 1, 2, 3, 4, 5, 6, 7],
@@ -938,7 +954,7 @@
                         "in": "formData",
                         "name": "travel",
                         "type": "number",
-                        "description": "availability",
+                        "description": "travel",
                         "enum": [0, 25, 50, 75, 100],
                         "required": false
                     },
@@ -951,7 +967,7 @@
                     },
                     {
                         "in": "formData",
-                        "name": "travel",
+                        "name": "willing_to_relocate",
                         "type": "boolean",
                         "description": "willing_to_relocate",
                         "required": false
@@ -968,6 +984,27 @@
                         "name": "end_to_end_implementation",
                         "type": "number",
                         "description": "end_to_end_implementation",
+                        "required": false
+                    },
+                    {
+                        "in": "formData",
+                        "name": "available_for_opportunity",
+                        "type": "boolean",
+                        "description": "Currently available for opportunity",
+                        "required": false
+                    },
+
+                    {
+                        "in": "formData",
+                        "name": "privacy_protection",
+                        "type": "object",
+                        "properties": {
+                            "photo": { "type": "boolean" },
+                            "email": { "type": "boolean" },
+                            "phone": { "type": "boolean" },
+                            "current_employer": { "type": "boolean" }
+                        },
+                        "description": "Hide data to display, Profile Setting",
                         "required": false
                     }
 
@@ -1155,12 +1192,100 @@
                 "operationId": "updatedocresume",
                 "produces": ["application/json"],
                 "parameters": [{
+                        "in": "formData",
+                        "name": "doc_resume",
+                        "type": "file",
+                        "description": "New doc resume of the user.",
+                        "required": false
+                    },
+                    {
+                        "in": "formData",
+                        "name": "title",
+                        "type": "string",
+                        "description": "Title of resume",
+                        "required": false
+                    }
+                ],
+                "security": [{
+                    "AccessToken": []
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success."
+                    },
+                    "400": {
+                        "description": "Bad request."
+                    },
+                    "401": {
+                        "description": "Unauthorized."
+                    },
+                    "403": {
+                        "description": "You don't have permission to perform this action."
+                    },
+                    "500": {
+                        "description": "Internal server error."
+                    }
+                }
+            }
+        },
+        "/users/delete-resume": {
+            "post": {
+                "tags": ["users"],
+                "summary": "Delete resume ",
+                "description": "Delete resume .",
+                "operationId": "deleteresume",
+                "produces": ["application/json"],
+                "parameters": [{
                     "in": "formData",
-                    "name": "doc_resume",
-                    "type": "file",
-                    "description": "New doc resume of the user.",
+                    "name": "file_key",
+                    "type": "string",
+                    "description": "user resume file  string",
                     "required": false
                 }],
+                "security": [{
+                    "AccessToken": []
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success."
+                    },
+                    "400": {
+                        "description": "Bad request."
+                    },
+                    "401": {
+                        "description": "Unauthorized."
+                    },
+                    "403": {
+                        "description": "You don't have permission to perform this action."
+                    },
+                    "500": {
+                        "description": "Internal server error."
+                    }
+                }
+            }
+        },
+        "/users/choose-default-resume": {
+            "post": {
+                "tags": ["users"],
+                "summary": "Choose default resume",
+                "description": "Choose default resume .",
+                "operationId": "choosedefaultresume",
+                "produces": ["application/json"],
+                "parameters": [{
+                        "in": "formData",
+                        "name": "file_key",
+                        "type": "string",
+                        "description": "user resume file  string",
+                        "required": false
+                    },
+                    {
+                        "in": "formData",
+                        "name": "remove_all_default",
+                        "type": "number",
+                        "description": "to remove all default",
+                        "required": false
+                    }
+                ],
                 "security": [{
                     "AccessToken": []
                 }],
@@ -2208,6 +2333,290 @@
                 }
             }
         },
+        "/employers/update-company-profile": {
+            "post": {
+                "tags": ["employers"],
+                "summary": "Update or create company profile.",
+                "description": "This will help to Create company profile.",
+                "operationId": "UpdatecompanyProfile",
+                "produces": ["application/json"],
+                "parameters": [{
+                        "in": "formData",
+                        "name": "name",
+                        "type": "string",
+                        "required": true,
+                        "description": "Name of company"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "email_id",
+                        "type": "string",
+                        "required": true,
+                        "description": "Email of company"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "city",
+                        "type": "string",
+                        "required": true,
+                        "description": "city of company"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "state",
+                        "type": "string",
+                        "required": true,
+                        "description": "state of company"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "address",
+                        "type": "string",
+                        "required": true,
+                        "description": "address of company"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "country",
+                        "type": "string",
+                        "required": true,
+                        "description": "country of company"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "zipcode",
+                        "type": "number",
+                        "required": true,
+                        "description": "zipcode of company"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "description",
+                        "type": "string",
+                        "required": true,
+                        "description": "description of company"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "description",
+                        "type": "string",
+                        "required": true,
+                        "description": "description of company"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "website",
+                        "type": "string",
+                        "required": true,
+                        "description": "website of company"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "contact",
+                        "type": "array",
+                        "collectionFormat": "multi",
+                        "items": { "type": "string" },
+                        "description": "Contact number of company",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "latlng",
+                        "type": "object",
+                        "properties": {
+                            "lat": { "type": "number" },
+                            "lng": { "type": "number" }
+                        },
+                        "description": "Social network handles or url of the user.",
+                        "required": false
+                    },
+                    {
+                        "in": "formData",
+                        "name": "social_media_link",
+                        "type": "array",
+                        "collectionFormat": "multi",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "media": { "type": "string", "description": "facebook,youtube" },
+                                "url": { "type": "string" },
+                                "visibility": { "type": "boolean" }
+                            }
+                        },
+                        "description": "social media link with on/off",
+                        "required": false
+                    }
+                ],
+                "security": [{
+                    "AccessToken": []
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/employers/company-profile": {
+            "get": {
+                "tags": ["employers"],
+                "summary": "Company profile",
+                "description": "This can help to view company profile",
+                "operationId": "companyprofile",
+                "produces": ["application/json"],
+                "parameters": [],
+                "security": [{
+                    "AccessToken": []
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success."
+                    },
+                    "400": {
+                        "description": "Bad request."
+                    },
+                    "401": {
+                        "description": "Unauthorized."
+                    },
+                    "403": {
+                        "description": "You don't have permission to perform this action."
+                    },
+                    "500": {
+                        "description": "Internal server error."
+                    }
+                }
+            }
+        },
+        "/employers/save-profile": {
+            "post": {
+                "tags": ["employers"],
+                "summary": "Update or create company profile.",
+                "description": "This will help to Create company profile.",
+                "operationId": "savedeleteprofile",
+                "produces": ["application/json"],
+                "parameters": [{
+                        "in": "formData",
+                        "name": "user_id",
+                        "type": "number",
+                        "required": true,
+                        "description": "User id"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "delete",
+                        "type": "boolean",
+                        "required": true,
+                        "description": "Trigger delete action"
+                    }
+                ],
+                "security": [{
+                    "AccessToken": []
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/employers/saved-profiles": {
+            "get": {
+                "tags": ["employers"],
+                "summary": "List saved profiles. (Admin)",
+                "description": "This will list all saved profile based on the input params.",
+                "operationId": "savedprofiles",
+                "produces": ["application/json"],
+                "parameters": [{
+                        "in": "query",
+                        "name": "page",
+                        "type": "number",
+                        "minimum": 1,
+                        "required": false,
+                        "description": "Page number of the users list. (ie: The page number will be 1 by default)."
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort",
+                        "type": "string",
+                        "required": false,
+                        "description": "Sorting order of the individual attribute in users list. (ie: If you want to sort more than one attribute then it should be commma seperated string.) (eg: Ascending: `title.asc`. Descending: `title.desc`. Most Recent: `created_at.desc`. Most Popular: `most_popular.desc`.)."
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "type": "number",
+                        "minimum": 1,
+                        "required": false,
+                        "description": "Limit the users list by specific value. (ie: The limit will be 10 by default)."
+                    },
+                    {
+                        "in": "query",
+                        "name": "search",
+                        "type": "string",
+                        "required": false,
+                        "description": "Filters the users email or first_name & last_name."
+                    },
+                    {
+                        "in": "query",
+                        "name": "status",
+                        "type": "number",
+                        "enum": [0, 1],
+                        "required": false,
+                        "description": "List the job posting by specific status value 0 or 1. Status can be either 0 or 1. Here 0 represent inActive and 1 represent active. (ie: By default the list contains both active and inActive item.)"
+                    },
+                    {
+                        "in": "query",
+                        "name": "expand",
+                        "type": "string",
+                        "required": false,
+                        "description": "Expand the specific attribute in the job postings list. (eg: you can expand a city,account)."
+                    },
+                    {
+                        "in": "query",
+                        "name": "company",
+                        "type": "number",
+                        "minimum": 1,
+                        "required": false,
+                        "description": "Filters the users list by a searchable text of company."
+                    }
+                ],
+                "security": [{
+                    "AccessToken": []
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
         "/jobpostings/create": {
             "post": {
                 "tags": ["jobpostings"],
@@ -2248,10 +2657,9 @@
                     {
                         "in": "formData",
                         "name": "salary_currency",
-                        "type": "number",
-                        "description": "Salary currency,0-us,1-inr,2-euro",
+                        "type": "string",
+                        "description": "Salary currency like USD",
                         "required": true,
-                        "enum": [0, 1, 2]
                     },
                     {
                         "in": "formData",
@@ -2292,9 +2700,10 @@
                     {
                         "in": "formData",
                         "name": "availability",
-                        "type": "string",
-                        "description": "Availability of employee to join",
-                        "required": true
+                        "type": "number",
+                        "description": "availability",
+                        "enum": [0, 15, 30, 45, 60],
+                        "required": false
                     },
                     {
                         "in": "formData",
@@ -2320,9 +2729,13 @@
                     {
                         "in": "formData",
                         "name": "latlng",
-                        "type": "string",
-                        "description": "Lat,lang",
-                        "required": true
+                        "type": "object",
+                        "properties": {
+                            "lat": { "type": "number" },
+                            "lng": { "type": "number" }
+                        },
+                        "description": "latlng of the user.",
+                        "required": false
                     },
                     {
                         "in": "formData",
@@ -2336,9 +2749,10 @@
                     {
                         "in": "formData",
                         "name": "travel_opportunity",
-                        "type": "string",
-                        "description": "travel_opportunity",
-                        "required": true
+                        "type": "number",
+                        "description": "travel",
+                        "enum": [0, 25, 50, 75, 100],
+                        "required": false
                     },
                     {
                         "in": "formData",
@@ -2348,18 +2762,14 @@
                         "items": {
                             "type": "object",
                             "properties": {
-                                "domain": {
-                                    "type": "string",
-                                    "description": "name of the domain eg:sap"
-                                },
-                                "experience": {
-                                    "type": "number",
-                                    "description": "Experience"
-                                }
+                                "skill_id": { "type": "number" },
+                                "skill_name": { "type": "string" },
+                                "experience": { "type": "number" },
+                                "exp_type": { "type": "string" }
                             }
                         },
-                        "description": "Hands_on_experience eg [ {domain:'domain-name',experience:1},{domain:'domain-name',experience:1} ]",
-                        "required": true
+                        "description": "hands_on_experience of user",
+                        "required": false
                     },
                     {
                         "in": "formData",
@@ -2476,6 +2886,88 @@
                     },
                     "500": {
                         "description": "Internal server error."
+                    }
+                }
+            }
+        },
+        "/jobpostings/job-scoring": {
+            "get": {
+                "tags": ["jobpostings"],
+                "summary": "Job user scoring",
+                "description": "Job user scoring",
+                "operationId": "jobuserscoring",
+                "produces": ["application/json"],
+                "parameters": [{
+                        "in": "query",
+                        "name": "id",
+                        "type": "number",
+                        "required": true,
+                        "description": "Id of job"
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "type": "number",
+                        "required": true,
+                        "description": "pagination"
+                    }
+                ],
+                "security": [{
+                    "AccessToken": []
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/jobpostings/user-scoring": {
+            "get": {
+                "tags": ["jobpostings"],
+                "summary": " user Job scoring",
+                "description": " user Job scoring",
+                "operationId": "userjobscoring",
+                "produces": ["application/json"],
+                "parameters": [{
+                        "in": "query",
+                        "name": "job_id",
+                        "type": "number",
+                        "required": false,
+                        "description": "Id of job"
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "type": "number",
+                        "required": true,
+                        "description": "pagination"
+                    }
+                ],
+                "security": [{
+                    "AccessToken": []
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
                     }
                 }
             }
@@ -2669,12 +3161,13 @@
                 "operationId": "updatejobpostings",
                 "produces": ["application/json"],
                 "parameters": [{
-                        "in": "path",
+                        "in": "formData",
                         "name": "id",
-                        "type": "string",
-                        "description": "Id of the job posting.",
+                        "type": "number",
+                        "description": "id",
                         "required": true
-                    }, {
+                    },
+                    {
                         "in": "formData",
                         "name": "title",
                         "type": "string",
@@ -2691,166 +3184,232 @@
                     },
                     {
                         "in": "formData",
-                        "name": "min_salary",
-                        "type": "number",
-                        "description": "Min salary of the job.",
-                        "required": true
-                    },
-                    {
-                        "in": "formData",
-                        "name": "max_salary",
-                        "type": "number",
-                        "description": "Max salary of the user.",
-                        "required": true
-                    },
-                    {
-                        "in": "formData",
-                        "name": "min_experience",
-                        "type": "number",
-                        "description": "Min experience of the job.",
-                        "required": true
-                    },
-                    {
-                        "in": "formData",
-                        "name": "max_experience",
-                        "type": "number",
-                        "description": "Max experience of the job.",
-                        "required": true
-                    },
-                    {
-                        "in": "formData",
-                        "name": "company",
+                        "name": "description",
                         "type": "string",
-                        "description": "Company of the job.",
+                        "description": "Details of job",
                         "required": true
                     },
                     {
                         "in": "formData",
-                        "name": "email",
+                        "name": "salary_type",
                         "type": "number",
-                        "description": "Email of the company.",
-                        "required": true
+                        "description": "salary type . 0-Hourly ,1-Annual",
+                        "required": true,
+                        "enum": [0, 1]
                     },
                     {
                         "in": "formData",
-                        "name": "phone_numbers",
-                        "type": "array",
-                        "collectionFormat": "multi",
-                        "items": { "type": "number" },
-                        "description": "Phone numbers of the company.",
-                        "required": true
-                    },
-                    {
-                        "in": "formData",
-                        "name": "company_bio",
+                        "name": "salary_currency",
                         "type": "string",
-                        "description": "Bio of the company.",
-                        "required": false
+                        "description": "Salary currency like USD",
+                        "required": true,
                     },
                     {
                         "in": "formData",
-                        "name": "company_website",
-                        "type": "string",
-                        "description": "Website of the company.",
-                        "required": false
-                    },
-                    {
-                        "in": "formData",
-                        "name": "location",
-                        "type": "string",
-                        "description": "Location geopoints of the job in lat,lng format (eg: 11.9312432,79.8342569).",
-                        "required": true
-                    },
-                    {
-                        "in": "formData",
-                        "name": "location_text",
-                        "type": "string",
-                        "description": "location text of the job.",
-                        "required": true
-                    },
-                    {
-                        "in": "formData",
-                        "name": "zip_code",
+                        "name": "salary",
                         "type": "number",
-                        "description": "Zip code of the job.",
-                        "required": false
+                        "description": "Salary for this job.",
+                        "required": true
                     },
                     {
                         "in": "formData",
                         "name": "city",
-                        "type": "number",
-                        "description": "City of the job.",
-                        "required": false
-                    },
-                    {
-                        "in": "formData",
-                        "name": "responsibilities",
                         "type": "string",
-                        "description": "Responsibilities of the job.",
-                        "required": false
-                    },
-                    {
-                        "in": "formData",
-                        "name": "company_established",
-                        "type": "number",
-                        "description": "Year of company established. eg: 1991.",
-                        "required": false
-                    },
-                    {
-                        "in": "formData",
-                        "name": "company_employees",
-                        "type": "number",
-                        "description": "No of people currently working in the company. eg: 1500.",
-                        "required": false
-                    },
-                    {
-                        "in": "formData",
-                        "name": "company_branches",
-                        "type": "number",
-                        "description": "No of branches for the company. eg: 11.",
-                        "required": false
-                    },
-                    {
-                        "in": "formData",
-                        "name": "skill_requirements",
-                        "type": "array",
-                        "collectionFormat": "multi",
-                        "items": { "type": "string" },
-                        "description": "Skill requirement for the job.",
+                        "description": "city of the job.",
                         "required": true
                     },
                     {
                         "in": "formData",
-                        "name": "skill_tags",
+                        "name": "state",
+                        "type": "string",
+                        "description": "city of the job.",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "country",
+                        "type": "string",
+                        "description": "Country of job",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "zipcode",
+                        "type": "number",
+                        "description": "zipcode of job.",
+                        "required": true
+                    },
+
+                    {
+                        "in": "formData",
+                        "name": "availability",
+                        "type": "number",
+                        "description": "availability",
+                        "enum": [0, 15, 30, 45, 60],
+                        "required": false
+                    },
+                    {
+                        "in": "formData",
+                        "name": "remote",
+                        "type": "boolean",
+                        "description": "Ready to work from Remote.",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "experience",
+                        "type": "number",
+                        "description": "Year of experience .",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "sap_experience",
+                        "type": "number",
+                        "description": "experience in sap domain",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "latlng",
+                        "type": "object",
+                        "properties": {
+                            "lat": { "type": "number" },
+                            "lng": { "type": "number" }
+                        },
+                        "description": "latlng of the user.",
+                        "required": false
+                    },
+                    {
+                        "in": "formData",
+                        "name": "domain",
                         "type": "array",
                         "collectionFormat": "multi",
                         "items": { "type": "number" },
-                        "description": "Skill tags of the job from educations/skill-tags.",
+                        "description": "domain for the job. (industry api)",
                         "required": true
                     },
                     {
                         "in": "formData",
-                        "name": "category",
+                        "name": "travel_opportunity",
                         "type": "number",
-                        "description": "Category of the job.",
+                        "description": "travel",
+                        "enum": [0, 25, 50, 75, 100],
+                        "required": false
+                    },
+                    {
+                        "in": "formData",
+                        "name": "hands_on_experience",
+                        "type": "array",
+                        "collectionFormat": "multi",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "skill_id": { "type": "number" },
+                                "skill_name": { "type": "string" },
+                                "experience": { "type": "number" },
+                                "exp_type": { "type": "string" }
+                            }
+                        },
+                        "description": "hands_on_experience of user",
+                        "required": false
+                    },
+                    {
+                        "in": "formData",
+                        "name": "skills",
+                        "type": "array",
+                        "collectionFormat": "multi",
+                        "items": { "type": "number" },
+                        "description": "skills (skill api )",
                         "required": true
                     },
                     {
                         "in": "formData",
-                        "name": "company_social_profiles",
-                        "type": "object",
+                        "name": "programming_skills",
+                        "type": "array",
                         "collectionFormat": "multi",
-                        "properties": {
-                            "facebook": {
-                                "type": "string",
-                                "example": "www.facebook.com/test"
-                            },
-                            "linkedin": {
-                                "type": "string",
-                                "example": "www.linkedin.com/test"
+                        "items": { "type": "string" },
+                        "description": "programming_skills of job example:[jquery]",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "optinal_skills",
+                        "type": "array",
+                        "collectionFormat": "multi",
+                        "items": { "type": "string" },
+                        "description": "Nice to have skill of job example:[jquery]",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "certification",
+                        "type": "array",
+                        "collectionFormat": "multi",
+                        "items": { "type": "string" },
+                        "description": "certification for job example:[sap-certificate]",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "work_authorization",
+                        "type": "number",
+                        "description": "work_authorization 0-Should be a Citizen / PR, 1-Should be having a Work Permit",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "visa_sponsorship",
+                        "type": "boolean",
+                        "description": "visa_sponsorship ",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "end_to_end_implementation",
+                        "type": "number",
+                        "description": "end_to_end_implementation ",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "number_of_positions",
+                        "type": "number",
+                        "description": "number of positions ",
+                        "required": true
+                    },
+
+                    {
+                        "in": "formData",
+                        "name": "must_match",
+                        "type": "object",
+                        "properties": {},
+                        "description": "Must match fields eg {field_name:true / false}"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "extra_criteria",
+                        "type": "array",
+                        "collectionFormat": "multi",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "title": {
+                                    "type": "string",
+                                    "description": "name of the domain eg:sap"
+                                },
+                                "value": {
+                                    "type": "number",
+                                    "description": "Experience"
+                                }
                             }
-                        }
+                        },
+                        "description": "extra criteria eg [{title:string , value :string}]",
+                        "required": true
                     }
+
+
+
                 ],
                 "security": [{
                     "AccessToken": []
@@ -2935,6 +3494,13 @@
                         "name": "job_posting",
                         "type": "string",
                         "description": "Id of the job posting.",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "user_resume",
+                        "type": "string",
+                        "description": "File key of resume",
                         "required": true
                     },
                     {
@@ -3158,7 +3724,7 @@
                 "tags": ["jobpostings"],
                 "summary": "List job posting applications. (User)",
                 "description": "This will list all job posting applications based on the input params.",
-                "operationId": "listjobpostingsapplications",
+                "operationId": "listjobpostingsapplicationsuser",
                 "produces": ["application/json"],
                 "parameters": [{
                         "in": "query",
@@ -3370,7 +3936,7 @@
                 }
             }
         },
-        "/jobpostings/applications/short-list-user/{id}": {
+        "/jobpostings/applications/short-list-user": {
             "post": {
                 "tags": ["jobpostings"],
                 "summary": "This api helps to edit shorlisted field of a posted job applications. (Employer)",
@@ -3378,9 +3944,16 @@
                 "operationId": "shortListUserJobpostingsApplications",
                 "produces": ["application/json"],
                 "parameters": [{
-                        "in": "path",
-                        "name": "id",
-                        "type": "string",
+                        "in": "formData",
+                        "name": "user_id",
+                        "type": "number",
+                        "description": "Id of the posted job applications.",
+                        "required": true
+                    },
+                    {
+                        "in": "formData",
+                        "name": "job_id",
+                        "type": "number",
                         "description": "Id of the posted job applications.",
                         "required": true
                     },
@@ -3391,6 +3964,47 @@
                         "enum": [true, false],
                         "required": true,
                         "description": "value can be either true or false. true will add job seeker to shorlist and false will remove job seeker from shortlist."
+                    }
+                ],
+                "security": [{
+                    "AccessToken": []
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/jobpostings/send-email": {
+            "get": {
+                "tags": ["jobpostings"],
+                "summary": "Send jd to user",
+                "description": "Send jd to user",
+                "operationId": "sendjduser",
+                "produces": ["application/json"],
+                "parameters": [{
+                        "in": "query",
+                        "name": "job_id",
+                        "type": "number",
+                        "required": false,
+                        "description": "Id of job"
+                    },
+                    {
+                        "in": "query",
+                        "name": "email_id",
+                        "type": "string",
+                        "required": true,
+                        "description": "Email id"
                     }
                 ],
                 "security": [{

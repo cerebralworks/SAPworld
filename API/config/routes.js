@@ -73,6 +73,10 @@ module.exports.routes = {
     'POST /users/update-photo': { controller: 'users', action: 'update-photo' },
     'GET /users/update-doc-resume': nonGetHandler,
     'POST /users/update-doc-resume': { controller: 'users', action: 'update-doc-resume' },
+    'GET /users/delete-resume': nonGetHandler,
+    'POST /users/delete-resume': { controller: 'users', action: 'resume-delete' },
+    'GET /users/choose-default-resume': nonGetHandler,
+    'POST /users/choose-default-resume': { controller: 'users', action: 'choose-default-resume' },
     'GET /users/update-video-resume': nonGetHandler,
     'POST /users/update-video-resume': { controller: 'users', action: 'update-video-resume' },
     'GET /users/check-user-handle/:user_handle': { controller: 'users', action: 'check-user-handle' },
@@ -113,7 +117,12 @@ module.exports.routes = {
     'POST /employers/update-email': { controller: 'employers', action: 'update-email' },
     'GET /employers/approach-job-seeker': nonGetHandler,
     'POST /employers/approach-job-seeker': { controller: 'employers', action: 'approach-job-seeker' },
-
+    'GET /employers/update-company-profile': nonGetHandler,
+    'POST /employers/update-company-profile': { controller: 'employers', action: 'update-company-profile' },
+    'GET /employers/company-profile': { controller: 'employers', action: 'company-profile' },
+    'GET /employerssave-profile': nonGetHandler,
+    'POST /employers/save-profile': { controller: 'employers', action: 'save-profile' },
+    'GET /employers/saved-profiles': { controller: 'employers', action: 'saved-profiles' },
     /*Jobs routes*/
     'GET /jobpostings/list': { controller: 'jobpostings', action: 'list' },
     'GET /jobpostings/create': nonGetHandler,
@@ -136,7 +145,10 @@ module.exports.routes = {
     'GET /jobpostings/applications/change-status/:id': nonGetHandler,
     'POST /jobpostings/applications/change-status/:id': { controller: 'jobpostings', action: 'change-status' },
     'GET /jobpostings/applications/short-list-user/:id': nonGetHandler,
-    'POST /jobpostings/applications/short-list-user/:id': { controller: 'jobpostings', action: 'applications/short-list-user' },
+    'POST /jobpostings/applications/short-list-user': { controller: 'jobpostings', action: 'applications/short-list-user' },
+    'GET /jobpostings/job-scoring': { controller: 'jobpostings', action: 'job-scoring' },
+    'GET /jobpostings/user-scoring': { controller: 'jobpostings', action: 'user-scoring' },
+    'GET /jobpostings/send-email': { controller: 'jobpostings', action: 'send-email' },
 
     /*Site routes*/
     'GET /site/health': { controller: 'site', action: 'health' },

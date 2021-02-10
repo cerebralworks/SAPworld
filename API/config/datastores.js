@@ -38,7 +38,8 @@ module.exports.datastores = {
 
     default: {
         adapter: 'sails-postgresql',
-        url: process.env.db_connection_string
+        url: process.env.db_connection_string,
+        dialect: 'postgres',
     }
 
 };
