@@ -17,13 +17,13 @@ module.exports = async function Scoring(request, response) {
         meta['limit'] = post_request_data.limit;
         meta['photo'] = {
             path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
-            folder: 'public/images/Companies',
+            folders: {company: 'public/images/Companies', user: 'public/images/Users'},
             sizes: {
                 small: 256,
                 medium: 512
             }
         };
-        meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/[filename].[filetype]';
+        meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folders.company + '/' + meta['photo'].sizes.medium + '/[filename].[filetype]';
         _response_object['meta'] = meta;
         _response_object['profile'] = _.cloneDeep(model);
         _response_object['jobs'] = _.cloneDeep(items);
@@ -74,7 +74,7 @@ module.exports = async function Scoring(request, response) {
         var count_query = list_query;
         list_query.limit(1).offset(value.page);
         // var query_string = list_query.toString() + `(CASE WHEN applyed=(
-        //     SELECT id from she_job_applications WHERE user=${value.user_id} and job_posting=${JobPostings.tableAlias}.id) 
+        //     SELECT id from she_job_applications WHERE user=${value.user_id} and job_posting=${JobPostings.tableAlias}.id)
         //     THEN 'true' ELSE 'false' END) `;
 
         sails.sendNativeQuery(list_query.toString(), async function(err, job_postings) {
