@@ -184,7 +184,7 @@ module.exports = async function list(request, response) {
                         query.field(UserProfiles.tableAlias + '.' + UserProfiles.schema[value].columnName, value);
                     }
                 });
-                // adding additional columns to users list
+                // Adding additional columns to users list
                 if (additional_fields.includes('job_application') && filtered_query_keys.includes('job_posting')) {
                     let build_job_application_table_columns = '';
                     _.forEach(_.keys(JobApplications.schema), attribute => {
@@ -216,7 +216,7 @@ module.exports = async function list(request, response) {
                     query.field(user, 'account');
                 }
 
-                //Populating skill_tags 
+                //Populating skill_tags
                 if (expand.includes('skill_tags')) {
                     let sub_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' });
                     let build_skill_tags_table_columns = '';

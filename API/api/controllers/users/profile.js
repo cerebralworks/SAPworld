@@ -142,7 +142,6 @@ module.exports = async function list(request, response) {
             filtered_query_data.limit = parseInt(filtered_query_data.limit) > 0 ? parseInt(filtered_query_data.limit) : 10;
             await getUser(filtered_query_data, async function(user) {
                 user.profile_completed = await isProfileCompleted(user);
-
                 if (user.phone) {
                     await phoneEncryptor.decrypt(user.phone, function(decrypted_text) {
                         user.phone = decrypted_text;
