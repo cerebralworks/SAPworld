@@ -17,13 +17,13 @@ module.exports = async function Scoring(request, response) {
         meta['limit'] = post_request_data.limit;
         meta['photo'] = {
             path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
-            folder: 'public/images/Companies',
+            folders: {company: 'public/images/Companies', user: 'public/images/Users'},
             sizes: {
                 small: 256,
                 medium: 512
             }
         };
-        meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/[filename].[filetype]';
+        meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folders.company + '/' + meta['photo'].sizes.medium + '/[filename].[filetype]';
         _response_object['meta'] = meta;
         _response_object['profile'] = _.cloneDeep(items);
         _response_object['job'] = _.cloneDeep(model);

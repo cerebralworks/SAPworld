@@ -160,7 +160,6 @@ module.exports = async function list(request, response) {
         query_split = query.toString().split(/FROM(.+)/)[1];
         count_query = count_query + ' FROM ' + query_split.split(' ORDER')[0];
         sails.sendNativeQuery(count_query, function(err, total_result) {
-            console.log(err)
             if (err) {
                 var error = {
                     'field': 'count',
@@ -214,6 +213,13 @@ module.exports = async function list(request, response) {
                     });
                     user = 'json_build_object(' + user.slice(0, -1) + ')';
                     query.field(user, 'account');
+                }
+
+                if (expand.includes('is_saved_profile') && _.indexOf(_.get(logged_in_user, 'types'), _.get(sails, 'config.custom.access_role.employer')) > -1) {
+                    let sav_query = squel.select({tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"'}).from(SavedProfile.tableName);
+                    sav_query.where('"' + SavedProfile.schema.employee_id.columnName + '"=' + logged_in_user.employer_profile.id);
+                    sav_query.where(SavedProfile.schema.user_id.columnName + "=" + UserProfiles.tableAlias + '.' + UserProfiles.schema.id.columnName);
+                    query.field('(SELECT EXISTS('+ sav_query.toString() +'))','is_saved_profile');
                 }
 
                 //Populating skill_tags
