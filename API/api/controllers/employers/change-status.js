@@ -39,7 +39,7 @@ module.exports = async function changeStatus(request, response) {
 
     // Check whether the employer posting id is exits in db.
     function isEmployerExist(id, callback) {
-        EmployerProfiles.findOne(id, function(err, employer) {
+        CompanyProfile.findOne(id, function(err, employer) {
             if (!employer) {
                 _response_object.message = 'No employer found with the given id.';
                 return response.status(404).json(_response_object);
@@ -60,13 +60,13 @@ module.exports = async function changeStatus(request, response) {
         return response.ok(_response_object);
     };
 
-    validateModel.validate(EmployerProfiles, input_attributes, filtered_post_data, async function(valid, errors) {
+    validateModel.validate(CompanyProfile, input_attributes, filtered_post_data, async function(valid, errors) {
         if (valid) {
             if (filtered_post_keys.includes('status')) {
                 filtered_post_data.status = parseInt(filtered_post_data.status);
             }
             isEmployerExist(id, function(employer) {
-                updateEmployer(employer.account, filtered_post_data, function(employer) {
+                updateEmployer(employer.user_id, filtered_post_data, function(employer) {
                     sendResponse(employer);
                 });
             });

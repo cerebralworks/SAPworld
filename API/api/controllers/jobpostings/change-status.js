@@ -7,7 +7,7 @@
 /* global _, JobPostings, validateModel, sails */
 
 module.exports = async function update(request, response) {
-    const post_request_data = request.body; 
+    const post_request_data = request.body;
     const request_query = request.allParams();
     let id;
     var _response_object = {};
@@ -25,10 +25,10 @@ module.exports = async function update(request, response) {
         pick_input.push('employer');
     }
     var filtered_post_data = _.pick(_.merge(post_request_data, request_query), pick_input);
-    const filtered_post_keys = Object.keys(filtered_post_data); 
+    const filtered_post_keys = Object.keys(filtered_post_data);
 
     // Update the Job Posting record to db.
-    function updateJobPosting(id, data, callback){ 
+    function updateJobPosting(id, data, callback){
         JobPostings.update(id, data, async function(err, job_posting){
             if(err){
                 await errorBuilder.build(err, function (error_obj) {
@@ -43,20 +43,20 @@ module.exports = async function update(request, response) {
     };
 
     // Check whether the job posting id is exits in db.
-    function isJobPostingExist(id, attributes={}, successCallBack){ 
+    function isJobPostingExist(id, attributes={}, successCallBack){
         JobPostings.findOne(_.merge({
             id: id,
             status : { '!=' : _.get(sails.config.custom.status_codes, 'deleted') } ,
-            employer: _.get(logged_in_user, 'employer_profile.id')
-            }, attributes), 
+            company: _.get(logged_in_user, 'employer_profile.id')
+            }, attributes),
             function(err, job_posting){
                 if(!job_posting){
                     _response_object.message = 'No job found with the given id.';
                     return response.status(404).json(_response_object);
-                }else{ 
+                }else{
                     successCallBack(job_posting);
                 }
-            }); 
+            });
     }
 
     // Build and send response.
@@ -79,11 +79,11 @@ module.exports = async function update(request, response) {
                 filtered_post_data.status = parseInt(filtered_post_data.status);
             }
             let id = _.get(filtered_post_data, 'id');
-            isJobPostingExist(id,_.pick(filtered_post_data, ['employer']), function(){ 
+            isJobPostingExist(id,_.pick(filtered_post_data, ['employer']), function(){
                 updateJobPosting(id, _.omit(filtered_post_data, ['id', 'employer']), function (job_posting) {
                     sendResponse(job_posting);
                 });
-            }); 
+            });
         }else{
             _response_object.errors = errors;
             _response_object.count = errors.length;

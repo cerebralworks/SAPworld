@@ -181,7 +181,7 @@ module.exports = async function list(request, response) {
                         query.field(UserProfiles.tableAlias + '.' + UserProfiles.schema[value].columnName, value);
                     }
                 });
-                // adding additional columns to users list
+                // Adding additional columns to users list
                 if (additional_fields.includes('job_application') && filtered_query_keys.includes('job_posting')) {
                     let build_job_application_table_columns = '';
                     _.forEach(_.keys(JobApplications.schema), attribute => {
@@ -213,7 +213,14 @@ module.exports = async function list(request, response) {
                     query.field(user, 'account');
                 }
 
-                //Populating skill_tags 
+                if (expand.includes('is_saved_profile') && _.indexOf(_.get(logged_in_user, 'types'), _.get(sails, 'config.custom.access_role.employer')) > -1) {
+                    let sav_query = squel.select({tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"'}).from(SavedProfile.tableName);
+                    sav_query.where('"' + SavedProfile.schema.employee_id.columnName + '"=' + logged_in_user.id);
+                    sav_query.where(SavedProfile.schema.user_id.columnName + "=" + UserProfiles.tableAlias + '.' + UserProfiles.schema.id.columnName);
+                    query.field('(SELECT EXISTS('+ sav_query.toString() +'))','is_saved_profile');
+                }
+
+                //Populating skill_tags
                 if (expand.includes('skill_tags')) {
                     let sub_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' });
                     let build_skill_tags_table_columns = '';

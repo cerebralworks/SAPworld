@@ -35,7 +35,7 @@ module.exports = {
             model: 'adminprofiles'
         },
         employer_profile: {
-            model: 'employerprofiles'
+            model: 'companyprofile'
         }
     },
     customToJSON: function() {
