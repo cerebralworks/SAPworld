@@ -17,7 +17,7 @@ module.exports = {
     tableAlias: 'industry',
     attributes: {
         name: { type: 'string', required: true, unique: true },
-        description: { type: 'string', maxLength: 2000, minLength: 100, required: true },
+        description: { type: 'string', allowNull: true },
         photo: { type: 'ref', defaultsTo: 'default.png' },
         status: { type: 'number', defaultsTo: 1 },
     }

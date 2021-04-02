@@ -36,8 +36,10 @@ module.exports = async function list(request, response) {
 
     //Find the EmployerProfiles based on general criteria.
     const getEmployerProfiles = (criteria, callback) => {
+        // console.log(logged_in_user.employer_profile.id)
         //Initializing query
         var query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(SavedProfile.tableName, SavedProfile.tableAlias);
+        query.where('employee_id =' + logged_in_user.employer_profile.id);
         query.left_join(UserProfiles.tableName, UserProfiles.tableAlias, UserProfiles.tableAlias + '.' + UserProfiles.schema.id.columnName + "=" + SavedProfile.tableAlias + '.' + SavedProfile.schema.user_id.columnName);
         var group_by = SavedProfile.tableAlias + "." + SavedProfile.schema.id.columnName;
         group_by += "," + UserProfiles.tableAlias + "." + UserProfiles.schema.id.columnName;
@@ -149,6 +151,11 @@ module.exports = async function list(request, response) {
             }
         };
         meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/user-209.png';
+        meta['doc_resume'] = {
+            path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
+            folder: 'public/resumes/Documents'
+        };
+        meta['doc_resume'].example = meta['doc_resume'].path + '/' + meta['doc_resume'].folder + '/doc-resume-55.png';
         _response_object['meta'] = meta;
         _response_object['items'] = _.cloneDeep(items);
         if (!_.isEmpty(details)) {

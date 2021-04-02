@@ -24,6 +24,11 @@ module.exports = async function Scoring(request, response) {
             }
         };
         meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/[filename].[filetype]';
+        meta['doc_resume'] = {
+            path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
+            folder: 'public/resumes/Documents'
+        };
+        meta['doc_resume'].example = meta['doc_resume'].path + '/' + meta['doc_resume'].folder + '/doc-resume-55.png';
         _response_object['meta'] = meta;
         _response_object['profile'] = _.cloneDeep(items);
         _response_object['job'] = _.cloneDeep(model);
@@ -76,7 +81,7 @@ module.exports = async function Scoring(request, response) {
             list_query.where("end_to_end_implementation >=" + model.end_to_end_implementation);
             score += 1;
         }
-        list_query.limit(1).offset(value.page);
+        list_query.limit(1).offset(value.page - 1);
 
         sails.sendNativeQuery(list_query.toString(), async function(err, job_postings) {
             if (err) {
@@ -114,9 +119,10 @@ module.exports = async function Scoring(request, response) {
                     //     score += 1;
                     // }
                 } else profile = {};
-                var count_query = list_query.toString().replace("LIMIT 1", " ").replace("*", "COUNT(*)");
+                var count_query = list_query.toString().replace("LIMIT 1", " ").replace("*", "COUNT(*)").replace(`OFFSET ${value.page-1}`, " ");
                 var count = sails.sendNativeQuery(count_query, async function(err, job_postings) {
-                    sendResponse(profile, job_postings['rowCount']);
+                    console.log(job_postings);
+                    sendResponse(profile, job_postings['rows'][0]['count']);
                 });
             }
         });

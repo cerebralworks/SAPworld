@@ -107,12 +107,10 @@ module.exports = async function list(request, response) {
             query.where(Users.tableAlias + '.' + Users.schema.status.columnName + "=1");
         }
         if (filtered_query_keys.includes('city')) {
-            query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.city.columnName + ") LIKE '%" + criteria.city.toLowerCase() + "%'");
-        } else {
-            query.where(UserProfiles.tableAlias + '.' + UserProfiles.schema.willing_to_relocate.columnName + '= true');
+            query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.city.columnName + ") LIKE '%" + criteria.city.toLowerCase() + "%' OR willing_to_relocate=true");
         }
         if (filtered_query_keys.includes('country')) {
-            query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.country.columnName + ") LIKE '%" + criteria.country.toLowerCase() + "%'");
+            query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.country.columnName + ") LIKE '%" + criteria.country.toLowerCase() + "%' OR willing_to_relocate=true");
         }
         if (filtered_query_keys.includes('search')) {
             if (filtered_query_keys.includes('search_type') && parseInt(filtered_query_data.search_type) === 1) {
@@ -160,7 +158,6 @@ module.exports = async function list(request, response) {
         query_split = query.toString().split(/FROM(.+)/)[1];
         count_query = count_query + ' FROM ' + query_split.split(' ORDER')[0];
         sails.sendNativeQuery(count_query, function(err, total_result) {
-            console.log(err)
             if (err) {
                 var error = {
                     'field': 'count',

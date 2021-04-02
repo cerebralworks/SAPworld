@@ -39,11 +39,10 @@ module.exports = async function saveProfile(request, response) {
     };
     await schema.validate(post_request_data, { abortEarly: false }).then(async value => {
         if (!value.delete) {
-            var company_profile = await SavedProfile.findOne({ employee_id: logged_in_user.id, user_id: value.user_id });
-            value.employee_id = logged_in_user.id;
+            var company_profile = await SavedProfile.findOne({ employee_id: logged_in_user.employer_profile.id, user_id: value.user_id });
+            value.employee_id = logged_in_user.employer_profile.id;
             if (!company_profile) {
                 SavedProfile.create(value, async function(err, profile) {
-                    console.log(err)
                     if (err) {
                         await errorBuilder.build(err, function(error_obj) {
                             _response_object.errors = error_obj;
@@ -58,7 +57,9 @@ module.exports = async function saveProfile(request, response) {
                 sendResponse(company_profile);
             }
         } else {
-            await SavedProfile.destroyOne({ employee_id: logged_in_user.id, user_id: value.user_id });
+            await SavedProfile.destroyOne({ employee_id: logged_in_user.employer_profile.id, user_id: value.user_id }).then(success => {
+                console.log(success)
+            });
             return response.status(200).json({ message: ' profile deleted successfully.', user_id: value.user_id });
         }
 
