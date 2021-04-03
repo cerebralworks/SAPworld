@@ -17,7 +17,7 @@ module.exports = async function Scoring(request, response) {
         meta['limit'] = post_request_data.limit;
         meta['photo'] = {
             path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
-            folders: { company: 'public/images/Companies', user: 'public/images/Users' },
+            folder: 'public/images/Companies',
             sizes: {
                 small: 256,
                 medium: 512
@@ -83,6 +83,7 @@ module.exports = async function Scoring(request, response) {
             score += 1;
         }
 
+
         list_query.limit(1).offset(value.page - 1);
 
         sails.sendNativeQuery(list_query.toString(), async function(err, job_postings) {
@@ -102,6 +103,7 @@ module.exports = async function Scoring(request, response) {
                 if (profile.length) {
                     profile = profile[0]
 
+
                     if (!value.work_authorization && model.work_authorization == profile.work_authorization) {
                         score += 1;
                     }
@@ -117,6 +119,7 @@ module.exports = async function Scoring(request, response) {
                     if (!value.end_to_end_implementation && model.end_to_end_implementation <= profile.end_to_end_implementation) {
                         score += 1;
                     }
+
                     // if ( model.domain = profile.domains_worked) {
                     //     score += 1;
                     // }
@@ -193,6 +196,7 @@ module.exports = async function Scoring(request, response) {
                 });
             }
         })
+
     }).catch(err => {
         _response_object.errors = err.inner;
         // _response_object.count = err.inner.length;
