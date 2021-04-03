@@ -215,7 +215,7 @@ module.exports = async function list(request, response) {
 
                 if (expand.includes('is_saved_profile') && _.indexOf(_.get(logged_in_user, 'types'), _.get(sails, 'config.custom.access_role.employer')) > -1) {
                     let sav_query = squel.select({tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"'}).from(SavedProfile.tableName);
-                    sav_query.where('"' + SavedProfile.schema.employee_id.columnName + '"=' + logged_in_user.id);
+                    sav_query.where('"' + SavedProfile.schema.employee_id.columnName + '"=' + logged_in_user.employer_profile.id);
                     sav_query.where(SavedProfile.schema.user_id.columnName + "=" + UserProfiles.tableAlias + '.' + UserProfiles.schema.id.columnName);
                     query.field('(SELECT EXISTS('+ sav_query.toString() +'))','is_saved_profile');
                 }
