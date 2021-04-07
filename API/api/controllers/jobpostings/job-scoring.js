@@ -82,10 +82,8 @@ module.exports = async function Scoring(request, response) {
             list_query.where("end_to_end_implementation >=" + model.end_to_end_implementation);
             score += 1;
         }
-
-
-        list_query.limit(1).offset(value.page - 1);
-
+        value.page = value.page ? parseInt(value.page) : 1;
+        list_query.limit(1).offset(value.page-1);
         sails.sendNativeQuery(list_query.toString(), async function(err, job_postings) {
             if (err) {
                 var error = {
