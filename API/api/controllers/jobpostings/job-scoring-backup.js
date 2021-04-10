@@ -8,7 +8,7 @@ module.exports = async function Scoring(request, response) {
     var model = {};
     var score = 4;
     //Build and sending response
-    const sendResponse = (items, count) => {
+    const sendResponse = (items, count, application) => {
         _response_object.message = 'Job items retrieved successfully.';
         _response_object.score = score;
         var meta = {};
@@ -32,6 +32,7 @@ module.exports = async function Scoring(request, response) {
         _response_object['meta'] = meta;
         _response_object['profile'] = _.cloneDeep(items);
         _response_object['job'] = _.cloneDeep(model);
+        _response_object['application'] = _.cloneDeep(application);
         return response.ok(_response_object);
     };
     yup.object().shape({
@@ -81,6 +82,8 @@ module.exports = async function Scoring(request, response) {
             list_query.where("end_to_end_implementation >=" + model.end_to_end_implementation);
             score += 1;
         }
+
+
         list_query.limit(1).offset(value.page - 1);
 
         sails.sendNativeQuery(list_query.toString(), async function(err, job_postings) {
@@ -100,6 +103,7 @@ module.exports = async function Scoring(request, response) {
                 if (profile.length) {
                     profile = profile[0]
 
+
                     if (!value.work_authorization && model.work_authorization == profile.work_authorization) {
                         score += 1;
                     }
@@ -115,17 +119,84 @@ module.exports = async function Scoring(request, response) {
                     if (!value.end_to_end_implementation && model.end_to_end_implementation <= profile.end_to_end_implementation) {
                         score += 1;
                     }
+
                     // if ( model.domain = profile.domains_worked) {
                     //     score += 1;
                     // }
                 } else profile = {};
+                list_query.limit(1).offset(value.page);
                 var count_query = list_query.toString().replace("LIMIT 1", " ").replace("*", "COUNT(*)").replace(`OFFSET ${value.page-1}`, " ");
-                var count = sails.sendNativeQuery(count_query, async function(err, job_postings) {
-                    console.log(job_postings);
-                    sendResponse(profile, job_postings['rows'][0]['count']);
+                var count = sails.sendNativeQuery(count_query, async function(err, job_count) {
+                    //Selecting fields
+                    fields = _.without(Object.keys(UserProfiles.schema), 'phone', 'skill_tags');
+                    fields.map(function(value) {
+                        if (UserProfiles.schema[value].columnName || typeof UserProfiles.schema[value].columnName !== "undefined") {
+                            list_query.field(UserProfiles.tableAlias + '.' + UserProfiles.schema[value].columnName, value);
+                        }
+                    });
+                    if (value.id) {
+                        let build_job_application_table_columns = '';
+                        _.forEach(_.keys(JobApplications.schema), attribute => {
+                            if (!_.isEmpty(JobApplications.schema[attribute].columnName)) {
+                                build_job_application_table_columns += `'${JobApplications.schema[attribute].columnName}',${JobApplications.tableAlias}.${JobApplications.schema[attribute].columnName},`;
+                            }
+                        });
+                        build_job_application_table_columns = build_job_application_table_columns.slice(0, -1);
+                        let sub_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).
+                        from(JobApplications.tableName, JobApplications.tableAlias).
+                        field(`json_build_object(${build_job_application_table_columns})`).
+                        where(`${JobApplications.tableAlias}.${JobApplications.schema.job_posting.columnName} = ${parseInt(value.id)}`).
+                        where(`${JobApplications.tableAlias}.${JobApplications.schema.user.columnName} = ${UserProfiles.tableAlias}.${UserProfiles.schema.id.columnName}`).
+                        limit(1);
+                        list_query.field(`(${sub_query.toString()})`, 'job_application');
+                    }
+                    sails.sendNativeQuery(list_query.toString(), async function(err, job_postings) {
+                        if (err) {
+                            var error = {
+                                'field': 'items',
+                                'rules': [{
+                                    'rule': 'invalid',
+                                    'message': err.message
+                                }]
+                            };
+                            _response_object.errors = [error];
+                            _response_object.count = _response_object.errors.count;
+                            return response.status(400).json(_response_object);
+                        } else {
+                            profile = _.get(job_postings, 'rows');
+                            let application = null;
+                            if (profile.length) {
+                                profile = profile[0];
+                                if (!value.work_authorization && model.work_authorization == profile.work_authorization) {
+                                    score += 1;
+                                }
+                                if (!value.travel && model.travel_opportunity <= profile.travel) {
+                                    score += 1;
+                                }
+                                if (!value.job_type && model.job_type == profile.job_type) {
+                                    score += 1;
+                                }
+                                if (!value.availability && model.availability >= profile.availability) {
+                                    score += 1;
+                                }
+                                if (!value.end_to_end_implementation && model.end_to_end_implementation <= profile.end_to_end_implementation) {
+                                    score += 1;
+                                }
+                                if (profile.job_application) {
+                                    application = profile.job_application;
+                                }
+                                delete profile.job_application;
+                                // if ( model.domain = profile.domains_worked) {
+                                //     score += 1;
+                                // }
+                            } else profile = {};
+                            sendResponse(profile, job_count['rowCount'], application);
+                        }
+                    });
                 });
             }
-        });
+        })
+
     }).catch(err => {
         _response_object.errors = err.inner;
         // _response_object.count = err.inner.length;
