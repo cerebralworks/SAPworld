@@ -8,7 +8,7 @@ module.exports = async function Scoring(request, response) {
     var model = {};
     var score = 4;
     //Build and sending response
-    const sendResponse = (items, count) => {
+    const sendResponse = (items, count, application) => {
         _response_object.message = 'Job items retrieved successfully.';
         _response_object.score = score;
         var meta = {};
@@ -17,13 +17,13 @@ module.exports = async function Scoring(request, response) {
         meta['limit'] = post_request_data.limit;
         meta['photo'] = {
             path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
-            folder: 'public/images/Companies',
+            folders: {company: 'public/images/Companies', user: 'public/images/Users'},
             sizes: {
                 small: 256,
                 medium: 512
             }
         };
-        meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/[filename].[filetype]';
+        meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folders.company + '/' + meta['photo'].sizes.medium + '/[filename].[filetype]';
         meta['doc_resume'] = {
             path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
             folder: 'public/resumes/Documents'
@@ -32,6 +32,7 @@ module.exports = async function Scoring(request, response) {
         _response_object['meta'] = meta;
         _response_object['profile'] = _.cloneDeep(items);
         _response_object['job'] = _.cloneDeep(model);
+        _response_object['application'] = _.cloneDeep(application);
         return response.ok(_response_object);
     };
     yup.object().shape({
@@ -81,13 +82,32 @@ module.exports = async function Scoring(request, response) {
             list_query.where("end_to_end_implementation >=" + model.end_to_end_implementation);
             score += 1;
         }
-<<<<<<< HEAD
-        value.page = value.page ? parseInt(value.page) : 1;
-        list_query.limit(1).offset(value.page-1);
-=======
+        value.page = value.page ? value.page : 1;
         list_query.limit(1).offset(value.page - 1);
-
->>>>>>> 49b48445efa68286bdc9aaffbd06c0958dbb409e
+        var count_query = list_query.clone();
+        //Selecting fields
+        fields = _.without(Object.keys(UserProfiles.schema), 'phone', 'skill_tags');
+        fields.map(function(value) {
+            if (UserProfiles.schema[value].columnName || typeof UserProfiles.schema[value].columnName !== "undefined") {
+                list_query.field(UserProfiles.tableAlias + '.' + UserProfiles.schema[value].columnName, value);
+            }
+        });
+        if (value.id) {
+            let build_job_application_table_columns = '';
+            _.forEach(_.keys(JobApplications.schema), attribute => {
+                if (!_.isEmpty(JobApplications.schema[attribute].columnName)) {
+                    build_job_application_table_columns += `'${JobApplications.schema[attribute].columnName}',${JobApplications.tableAlias}.${JobApplications.schema[attribute].columnName},`;
+                }
+            });
+            build_job_application_table_columns = build_job_application_table_columns.slice(0, -1);
+            let sub_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).
+            from(JobApplications.tableName, JobApplications.tableAlias).
+            field(`json_build_object(${build_job_application_table_columns})`).
+            where(`${JobApplications.tableAlias}.${JobApplications.schema.job_posting.columnName} = ${parseInt(value.id)}`).
+            where(`${JobApplications.tableAlias}.${JobApplications.schema.user.columnName} = ${UserProfiles.tableAlias}.${UserProfiles.schema.id.columnName}`).
+            limit(1);
+            list_query.field(`(${sub_query.toString()})`, 'job_application');
+        }
         sails.sendNativeQuery(list_query.toString(), async function(err, job_postings) {
             if (err) {
                 var error = {
@@ -102,6 +122,7 @@ module.exports = async function Scoring(request, response) {
                 return response.status(400).json(_response_object);
             } else {
                 profile = _.get(job_postings, 'rows');
+                let application = null;
                 if (profile.length) {
                     profile = profile[0]
 
@@ -123,11 +144,14 @@ module.exports = async function Scoring(request, response) {
                     // if ( model.domain = profile.domains_worked) {
                     //     score += 1;
                     // }
+                    if (profile.job_application) {
+                        application = profile.job_application;
+                        delete profile.job_application;
+                    }
                 } else profile = {};
-                var count_query = list_query.toString().replace("LIMIT 1", " ").replace("*", "COUNT(*)").replace(`OFFSET ${value.page-1}`, " ");
+                count_query = count_query.toString().replace("LIMIT 1", " ").replace("*", "COUNT(*)").replace(`OFFSET ${value.page-1}`, " ");
                 var count = sails.sendNativeQuery(count_query, async function(err, job_postings) {
-                    console.log(job_postings);
-                    sendResponse(profile, job_postings['rows'][0]['count']);
+                    sendResponse(profile, job_postings['rows'][0]['count'], application);
                 });
             }
         });
