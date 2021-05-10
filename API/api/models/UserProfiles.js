@@ -12,7 +12,7 @@
  */
 
 module.exports = {
-    tableName: 'she_user_profiles',
+    tableName: 'user_profiles',
     tableAlias: 'user_profile',
     attributes: {
         first_name: { type: 'string' },
@@ -57,9 +57,24 @@ module.exports = {
         status: { type: 'number', allowNull: true },
         status_glossary: { type: 'string' },
         privacy_protection: { type: 'ref', columnType: 'json' },
-        account: {
+		account: {
             model: 'users'
-        }
+        },
+		nationality: { type: 'string', allowNull: true },
+		previous_employee: { type: 'ref', columnType: 'bigint[]' },
+		authorized_country: { type: 'ref', columnType: 'bigint[]' },
+		language_known: { type: 'ref', columnType: 'json[]' },
+		visa_type: { type: 'ref', columnType: 'text[]' },
+		reference: { type: 'ref', columnType: 'json[]' },
+		employer_role_type: { type: 'string', allowNull: true },
+		knowledge_on: { type: 'ref', columnType: 'bigint[]' },
+		preferred_countries: { type: 'ref', columnType: 'bigint[]' },
+		other_countries: { type: 'ref', columnType: 'json[]' }
+		
+		
+        
+		
+		
     },
     afterCreate: async function(profile, callback) {
         if (profile.id) {

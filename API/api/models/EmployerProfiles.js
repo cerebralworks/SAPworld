@@ -12,7 +12,7 @@
  */
 
 module.exports = {
-    tableName: 'she_employer_profiles',
+    tableName: 'employer_profiles',
     tableAlias: 'employer',
     attributes: {
         email: { type: 'string', required: true, isEmail: true },

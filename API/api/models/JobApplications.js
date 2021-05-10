@@ -12,7 +12,7 @@
  */
 
 module.exports = {
-    tableName: 'she_job_applications',
+    tableName: 'job_applications',
     tableAlias: 'job_application',
     attributes: {
         comments: { type: 'string', allowNull: true },

@@ -15,7 +15,7 @@
  */
 
 module.exports = {
-    tableName: 'she_refresh_tokens',
+    tableName: 'refresh_tokens',
     tableAlias: 'refresh_token',
     attributes: {
           user_id: {

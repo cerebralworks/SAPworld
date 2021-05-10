@@ -55,7 +55,10 @@ module.exports.routes = {
      * not match any of those, it is matched against static assets.             *
      *                                                                          *
      ***************************************************************************/
-
+	/*Country routes*/
+    'GET /country/list': { controller: 'country', action: 'list' },
+    'GET /language/list': { controller: 'language', action: 'list' },
+	
     /*Client routes*/
     'GET /clients/create': nonGetHandler,
     'POST /clients/create': { controller: 'clients', action: 'create' },

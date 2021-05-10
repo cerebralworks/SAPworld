@@ -14,7 +14,7 @@
 
 
 module.exports = {
-    tableName: 'she_saved_profiles',
+    tableName: 'saved_profiles',
     tableAlias: 'saved_profile',
     attributes: {
         user_id: { type: 'number' },

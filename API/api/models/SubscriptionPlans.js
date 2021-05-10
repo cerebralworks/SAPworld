@@ -13,7 +13,7 @@
  */
 
 module.exports = {
-    tableName: 'she_subscription_plans',
+    tableName: 'subscription_plans',
     tableAlias: 'subscription_plan',
     attributes: { 
         amount: {type: 'number', defaultsTo: 0},

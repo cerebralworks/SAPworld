@@ -13,7 +13,7 @@
  */
 
 module.exports = {
-    tableName: 'she_educational_institutions',
+    tableName: 'educational_institutions',
     tableAlias: 'educational_institution',
     attributes: {
         name: {type:'string', required: true, unique: true},

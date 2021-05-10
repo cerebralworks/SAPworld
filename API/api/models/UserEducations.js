@@ -12,7 +12,7 @@
  */
 
 module.exports = {
-    tableName: 'she_user_educations',
+    tableName: 'user_educations',
     tableAlias: 'user_education',
     attributes: {
         start_year: {type: 'number'},

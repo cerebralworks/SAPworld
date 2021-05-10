@@ -14,7 +14,8 @@
 
 module.exports = function (req, res, next) {
     var user = req.user;
-    if(_.indexOf(user.types,2) > -1){
+    //if(_.indexOf(user.types,2) > -1){
+    if(user.types.indexOf(2) > -1){
         return next();
     }else{
         res.status(403).json({'message':'You don\'t have permission to perform this action.'});

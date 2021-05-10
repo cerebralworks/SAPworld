@@ -12,7 +12,7 @@
  */
 
 module.exports = {
-    tableName: 'she_user_employments',
+    tableName: 'user_employments',
     tableAlias: 'job_posting',
     attributes: {
         title: { type: 'string' },

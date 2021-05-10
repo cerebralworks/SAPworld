@@ -13,7 +13,7 @@
  */
 
 module.exports = {
-    tableName: 'she_clients',
+    tableName: 'clients',
     tableAlias: 'client',
     attributes: {
           name: {

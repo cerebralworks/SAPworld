@@ -16,7 +16,7 @@
 //Loading the env file datas
 var env = require('node-env-file');
 env(__dirname + '/../../.env');
-
+console.log(process.env.db_connection_string);
 module.exports.datastores = {
 
 
@@ -35,7 +35,7 @@ module.exports.datastores = {
      * (For production configuration, see `config/env/production.js`.)          *
      *                                                                          *
      ***************************************************************************/
-
+	
     default: {
         adapter: 'sails-postgresql',
         url: process.env.db_connection_string,

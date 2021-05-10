@@ -182,10 +182,10 @@ exports.findUserByToken = function(access_token, callback) {
         //Building query
         var query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(AccessTokens.tableName, AccessTokens.tableAlias);
         query.right_join(Clients.tableName, Clients.tableAlias, AccessTokens.tableAlias + '.' + AccessTokens.schema.client_id.columnName + "=" + Clients.tableAlias + '.' + Clients.schema.client_id.columnName);
-        query.right_join(Users.tableName, Users.tableAlias, AccessTokens.tableAlias + '.' + AccessTokens.schema.user_id.columnName + "=" + Users.tableAlias + '.' + Users.schema.id.columnName);
-        query.left_join(UserProfiles.tableName, UserProfiles.tableAlias, AccessTokens.tableAlias + '.' + AccessTokens.schema.user_id.columnName + "=" + UserProfiles.tableAlias + '.' + UserProfiles.schema.account.columnName);
-        query.left_join(EmployerProfiles.tableName, EmployerProfiles.tableAlias, AccessTokens.tableAlias + '.' + AccessTokens.schema.user_id.columnName + "=" + EmployerProfiles.tableAlias + '.' + EmployerProfiles.schema.account.columnName);
-        query.left_join(AdminProfiles.tableName, AdminProfiles.tableAlias, AccessTokens.tableAlias + '.' + AccessTokens.schema.user_id.columnName + "=" + AdminProfiles.tableAlias + '.' + AdminProfiles.schema.account.columnName);
+        query.right_join(Users.tableName, Users.tableAlias, AccessTokens.tableAlias + '.' + AccessTokens.schema.user_id.columnName+'::varchar' + "=" + Users.tableAlias + '.' + Users.schema.id.columnName+'::varchar');
+        query.left_join(UserProfiles.tableName, UserProfiles.tableAlias, AccessTokens.tableAlias + '.' + AccessTokens.schema.user_id.columnName+'::varchar' + "=" + UserProfiles.tableAlias + '.' + UserProfiles.schema.account.columnName+'::varchar');
+        query.left_join(EmployerProfiles.tableName, EmployerProfiles.tableAlias, AccessTokens.tableAlias + '.' + AccessTokens.schema.user_id.columnName+'::varchar' + "=" + EmployerProfiles.tableAlias + '.' + EmployerProfiles.schema.account.columnName+'::varchar');
+        query.left_join(AdminProfiles.tableName, AdminProfiles.tableAlias, AccessTokens.tableAlias + '.' + AccessTokens.schema.user_id.columnName+'::varchar' + "=" + AdminProfiles.tableAlias + '.' + AdminProfiles.schema.account.columnName+'::varchar');
         query.where(AccessTokens.tableAlias + "." + AccessTokens.schema.token.columnName + "='" + access_token + "'");
         account_fields = _.without(Object.keys(Users.schema), 'username', 'password');
         account_fields.map(function(value) {
@@ -196,12 +196,33 @@ exports.findUserByToken = function(access_token, callback) {
         //Adding user fields
         user_fields = _.without(Object.keys(UserProfiles.schema));
         users = '';
-        user_fields.map(function(value) {
+		var usersData = user_fields.reduce((resultArray, item, index) => { 
+            var perChunk = 42;
+          const chunkIndex = Math.floor(index/perChunk)
+
+          if(!resultArray[chunkIndex]) {
+            resultArray[chunkIndex] = [] // start a new chunk
+          }
+
+          resultArray[chunkIndex].push(item)
+
+          return resultArray
+        }, []) 
+		var users1='';	
+		usersData[0][usersData[0].length]="account";
+        usersData[0].map(function(value) {
             if (UserProfiles.schema[value].columnName || typeof UserProfiles.schema[value].columnName !== "undefined") {
-                users += "'" + UserProfiles.schema[value].columnName + "'," + UserProfiles.tableAlias + "." + UserProfiles.schema[value].columnName + ",";
+                users1 += "'" + UserProfiles.schema[value].columnName + "'," + UserProfiles.tableAlias + "." + UserProfiles.schema[value].columnName + ",";
             }
         });
-        users = 'CASE WHEN ' + UserProfiles.tableAlias + "." + UserProfiles.schema.id.columnName + ' IS NULL THEN NULL ELSE json_build_object(' + users.slice(0, -1) + ') END';
+		var users2 ="'data',json_build_object(";
+		usersData[1].slice(0,usersData[1].length-1);
+		usersData[1].map(function(value) {
+            if (UserProfiles.schema[value].columnName || typeof UserProfiles.schema[value].columnName !== "undefined") {
+                users2 += "'" + UserProfiles.schema[value].columnName + "'," + UserProfiles.tableAlias + "." + UserProfiles.schema[value].columnName + ",";
+            }
+        });
+        users = 'CASE WHEN ' + UserProfiles.tableAlias + "." + UserProfiles.schema.id.columnName + ' IS NULL THEN NULL ELSE json_build_object(' + users1.slice(0, -1) +','+users2.slice(0, -1)+ ')) END';
         query.field(users, 'user_profile');
         //Adding employer fields
         employer_fields = _.without(Object.keys(EmployerProfiles.schema));

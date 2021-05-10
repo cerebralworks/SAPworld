@@ -13,7 +13,7 @@
  */
 
 module.exports = {
-    tableName: 'she_access_tokens',
+    tableName: 'access_tokens',
     tableAlias: 'token',
     attributes: {
         user_id: {

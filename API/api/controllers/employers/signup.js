@@ -106,7 +106,7 @@ module.exports = function signup(request, response) {
                             return response.status(500).json(_response_object);
                         });
                     } else {
-                        profile.token = user.tokens.verification;
+                        profile.token = JSON.parse(user.tokens).verification;
                         sendResponse(profile);
                     }
                 });
@@ -167,7 +167,7 @@ module.exports = function signup(request, response) {
                             return response.status(500).json(_response_object);
                         });
                     } else {
-                        profile.token = user[0].tokens.verification;
+                        profile.token = JSON.parse(user[0].tokens).verification;
                         sendResponse(profile);
                     }
                 });

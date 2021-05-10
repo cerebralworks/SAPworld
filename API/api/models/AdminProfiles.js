@@ -12,7 +12,7 @@
  */
 
 module.exports = {
-    tableName: 'she_admin_profiles',
+    tableName: 'admin_profiles',
     tableAlias: 'admin',
     attributes: {
         email:{type: 'string', required: true, isEmail: true},

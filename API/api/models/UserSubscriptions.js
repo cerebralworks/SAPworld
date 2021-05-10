@@ -13,7 +13,7 @@
  */
 
 module.exports = {
-    tableName: 'she_user_subscriptions',
+    tableName: 'user_subscriptions',
     tableAlias: 'user_subscription',
     attributes: {
         user: {
@@ -26,7 +26,7 @@ module.exports = {
             type: 'string', required: true
         },
         expire_date: {
-            type: 'ref', columnType: 'datetime', required: true
+            type: 'ref', columnType: 'timestamp', required: true
         }
     }
 };

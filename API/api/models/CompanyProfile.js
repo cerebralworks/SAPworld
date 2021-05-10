@@ -14,7 +14,7 @@
 
 
 module.exports = {
-    tableName: 'she_company_profile',
+    tableName: 'company_profile',
     tableAlias: 'company_profile',
     attributes: {
         name: { type: 'string' },

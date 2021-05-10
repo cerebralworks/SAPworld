@@ -16,7 +16,7 @@ var SALT_WORK_FACTOR = 10;
 var crypto = require('crypto');
 
 module.exports = {
-    tableName: 'she_users',
+    tableName: 'users',
     tableAlias: 'user_account',
     attributes: {
         username: { type: 'string' },

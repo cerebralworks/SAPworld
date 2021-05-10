@@ -13,7 +13,7 @@
  */
 
 module.exports = {
-    tableName: 'she_categories',
+    tableName: 'categories',
     tableAlias: 'category',
     attributes: {
       name: {type: 'string', required: true, unique: true},
