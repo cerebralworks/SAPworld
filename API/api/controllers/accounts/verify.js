@@ -29,10 +29,10 @@ module.exports = function verify(request, response) {
                         _response_object.count = error_obj.length;
                         return response.status(500).json(_response_object);
                     });
-                }else if(user && JSON.parse(user.tokens).verification == filtered_post_data.token){
+                }else if(user && user.tokens.verification == filtered_post_data.token){
                     var tokens = {};
                     if(user.tokens){
-                        tokens = JSON.parse(user.tokens);
+                        tokens = user.tokens;
                     }
                     tokens.verification = UtilsService.uid(20);
                     Users.update(filtered_post_data.id, {verified: true, tokens: tokens}, async function(err, user){

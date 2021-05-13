@@ -77,15 +77,19 @@ module.exports = function signup(request, response) {
                 // });
                 post_data.latlng = 'SRID=4326;POINT(0 0)';
                 // post_data.latlng_text = latlng_o['lat'] + ',' + latlng_o['lng'];
+				console.log(post_data);
                 UserProfiles.create(post_data, async function(err, profile) {
+					
                     if (err) {
+						console.log(err);
                         await errorBuilder.build(err, function(error_obj) {
+							
                             _response_object.errors = error_obj;
                             _response_object.count = error_obj.length;
                             return response.status(500).json(_response_object);
                         });
                     } else {
-                        profile.token = JSON.parse(user.tokens).verification;
+                        profile.token = user.tokens.verification;
                         sendResponse(profile);
                     }
                 });

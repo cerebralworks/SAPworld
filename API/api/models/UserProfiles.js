@@ -69,7 +69,8 @@ module.exports = {
 		employer_role_type: { type: 'string', allowNull: true },
 		knowledge_on: { type: 'ref', columnType: 'bigint[]' },
 		preferred_countries: { type: 'ref', columnType: 'bigint[]' },
-		other_countries: { type: 'ref', columnType: 'json[]' }
+		other_countries: { type: 'ref', columnType: 'json[]' },
+		doc_cover: { type: 'ref', columnType: 'json[]' }
 		
 		
         
