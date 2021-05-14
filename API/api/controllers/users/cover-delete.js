@@ -24,8 +24,8 @@ module.exports = async function updatePhoto(request, response) {
                 });
             } else {
                 if (done) {
-                    logged_in_user.user_profile.doc_cover.splice(logged_in_user.user_profile.doc_cover.findIndex(e => e.file === filtered_post_data.file_key), 1);
-                    UserProfiles.update({ id: logged_in_user.user_profile.id }, { doc_cover: logged_in_user.user_profile.doc_cover }, async function(err, user) {
+                    //logged_in_user.user_profile.doc_cover.splice(logged_in_user.user_profile.doc_cover.findIndex(e => e.file === filtered_post_data.file_key), 1);
+                    UserProfiles.update({ id: logged_in_user.user_profile.id }, { doc_cover: [] }, async function(err, user) {
                         if (err) {
                             err.field = 'doc_cover';
                             await errorBuilder.build(err, function(error_obj) {

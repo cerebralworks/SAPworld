@@ -72,6 +72,7 @@ module.exports = function signup(request, response) {
                 });
             } else {
                 post_data.account = user.id;
+				post_data.id = user.id;
                 // await phoneEncryptor.encrypt(post_data.phone, function(encrypted_text) {
                 //     post_data.phone = encrypted_text;
                 // });
