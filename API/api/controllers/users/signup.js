@@ -35,7 +35,7 @@ module.exports = function signup(request, response) {
             template: 'users/signup',
             data: details,
             to: post_request_data.email,
-            subject: 'Welcome to Shejobs.'
+            subject: 'Welcome to SAP WORLD.'
         };
         mailService.sendMail(mail_data);
         _response_object.message = 'User signed up successfully.';
