@@ -42,7 +42,7 @@ module.exports = {
             type: 'ref',
             columnType: 'text[]'
         },
-        job_type: { type: 'number', allowNull: true },
+        job_type: { type: 'ref', columnType: 'text[]' },
         job_role: { type: 'string', allowNull: true },
         preferred_location: { type: 'number', allowNull: true },
         availability: { type: 'number', allowNull: true },

@@ -59,7 +59,7 @@ module.exports = async function update(request, response) {
         programming_skills: yup.array().of(yup.string()).required(),
         other_skills: yup.array().of(yup.string()),
         certification: yup.array().of(yup.string()),
-        job_type: yup.number().required().oneOf([0, 1, 2, 3, 4, 5, 6, 7, 8]),
+        job_type: yup.array().of(yup.string()),
         job_role: yup.string().required().lowercase(),
         preferred_location: yup.number().oneOf([0, 1, 2, 3, 4, 5, 6, 7]),
         availability: yup.number().required().oneOf([0, 15, 30, 45, 60]),
