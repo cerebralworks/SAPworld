@@ -27,7 +27,7 @@ var oauth2orize = require('oauth2orize'),
 
 module.exports.routes = {
 
-	console.log('Welcome Routes');
+
     //  ╦ ╦╔═╗╔╗ ╔═╗╔═╗╔═╗╔═╗╔═╗
     //  ║║║║╣ ╠╩╗╠═╝╠═╣║ ╦║╣ ╚═╗
     //  ╚╩╝╚═╝╚═╝╩  ╩ ╩╚═╝╚═╝╚═╝
