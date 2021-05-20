@@ -16,7 +16,7 @@
 //Loading the env file datas
 var env = require('node-env-file');
 env(__dirname + '/../../.env');
-console.log(process.env.db_connection_string);
+
 module.exports.datastores = {
 
 
