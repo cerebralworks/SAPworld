@@ -72,7 +72,6 @@ module.exports = {
 		preferred_countries: { type: 'ref', columnType: 'bigint[]' },
 		other_countries: { type: 'ref', columnType: 'json[]' },
         visa_sponsered: { type: 'boolean', allowNull: true },
-		hands_on_experience_secondary: { type: 'ref', columnType: 'json[]' },
 		doc_cover: { type: 'ref', columnType: 'json[]' }
 		
 		
