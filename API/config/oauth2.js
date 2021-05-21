@@ -78,6 +78,7 @@ server.exchange(oauth2orize.exchange.code(function(client, code, redirect_uri, d
                         return done(err);
                     } else {
                         Users.update({ id: user.id }, { last_active: new Date() }, function(err, updated_user) {
+							
                             return done(null, accessToken.token, refreshToken.token, { 'expires_in': sails.config.oauth.tokenLife });
                         });
                     }
@@ -117,7 +118,20 @@ server.exchange(oauth2orize.exchange.password(async function(client, username, p
                         return done(err);
                     } else {
                         Users.update({ id: user.id }, { last_active: new Date(), last_checkin_via: 'web' }, function(err, updated_user) {
-                            done(null, accessToken.token, refreshToken.token, { 'expires_in': sails.config.oauth.tokenLife, types: user.types });
+							if(updated_user[0].user_profile){
+								UserProfiles.findOne({ id: updated_user[0].user_profile }, function(errs, userInfo) {
+									if (!userInfo) {
+										done(null, accessToken.token, refreshToken.token, { 'expires_in': sails.config.oauth.tokenLife, types: user.types });
+									}else{
+										var checkAttributes = _.pick(userInfo, ['phone', 'zip_code']);
+										var validate = Object.values(checkAttributes).some(x => (x === null || x === '' || x === undefined));
+										
+										done(null, accessToken.token, refreshToken.token, { 'expires_in': sails.config.oauth.tokenLife, types: user.types ,'verified': !validate });
+									}
+								});
+							}else{
+								done(null, accessToken.token, refreshToken.token, { 'expires_in': sails.config.oauth.tokenLife, types: user.types });
+							}
                         });
                     }
                 });
@@ -169,6 +183,10 @@ server.exchange(oauth2orize.exchange.refreshToken(function(client, refreshToken,
                             return done(err);
                         } else {
                             Users.update({ id: user.id }, { last_active: new Date() }, function(err, updated_user) {
+								if(updated_user.user_profile){
+								console.log(updated_user);
+							}
+							console.log(updated_user);
                                 done(null, accessToken.token, refreshToken.token, { 'expires_in': sails.config.oauth.tokenLife, types: user.types });
                             });
                         }
