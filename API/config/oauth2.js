@@ -125,11 +125,6 @@ server.exchange(oauth2orize.exchange.password(async function(client, username, p
 									}else{
 										var checkAttributes = _.pick(userInfo, ['phone', 'zip_code']);
 										var validate = Object.values(checkAttributes).some(x => (x === null || x === '' || x === undefined));
-<<<<<<< HEAD
-										
-=======
-										//console.log(validate);
->>>>>>> development
 										done(null, accessToken.token, refreshToken.token, { 'expires_in': sails.config.oauth.tokenLife, types: user.types ,'verified': !validate });
 									}
 								});
