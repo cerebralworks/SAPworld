@@ -91,6 +91,7 @@ module.exports = function signup(request, response) {
                         });
                     } else {
                         profile.token = user.tokens.verification;
+                        profile.name = post_data.first_name;
                         sendResponse(profile);
                     }
                 });
