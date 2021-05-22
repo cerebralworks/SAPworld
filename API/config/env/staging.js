@@ -123,8 +123,8 @@ console.log(process.env.STAGE_db_connection_string);
       * https://sailsjs.com/docs/concepts/models-and-orm/model-settings#?migrate *
       *                                                                          *
       ***************************************************************************/
-      migrate: 'safe',
-
+     // migrate: 'safe',
+		migrate: 'drop',
       /***************************************************************************
       *                                                                          *
       * If, in Staging, this app has access to physical-layer CASCADE         *
