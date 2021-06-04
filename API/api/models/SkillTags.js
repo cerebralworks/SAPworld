@@ -18,6 +18,7 @@ module.exports = {
     attributes: {
           tag: {type:'string', required: true},
           status: {type:'number', defaultsTo: 1},
-          status_glossary: {type: 'string', allowNull: true}
+          status_glossary: {type: 'string', allowNull: true},
+		  long_tag: {type:'string', required: true}
     }
 };
