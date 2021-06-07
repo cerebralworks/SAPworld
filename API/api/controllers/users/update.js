@@ -3,7 +3,7 @@
  * @author Ilanchezhian Rajendiran <ilan@studioq.co.in>
  *
  */
-     
+
 /* global _, UserProfiles, UserInformation, Users, sails */
 module.exports = async function update(request, response) {
     const post_request_data = request.body;
@@ -41,6 +41,13 @@ module.exports = async function update(request, response) {
                 degree: yup.string().lowercase().required(),
                 field_of_study: yup.string().lowercase().required(),
                 year_of_completion: yup.number().positive().required()
+            })
+        ).default([]),
+        preferred_locations: yup.array().of(
+            yup.object().shape({
+                city: yup.string().lowercase(),
+                state: yup.string().lowercase(),
+                country: yup.string().lowercase()
             })
         ).default([]),
         experience: yup.number().positive().default(1).required(),
