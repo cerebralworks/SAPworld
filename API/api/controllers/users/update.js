@@ -43,6 +43,13 @@ module.exports = async function update(request, response) {
                 year_of_completion: yup.number().positive().required()
             })
         ).default([]),
+        preferred_locations: yup.array().of(
+            yup.object().shape({
+                city: yup.string().lowercase(),
+                state: yup.string().lowercase(),
+                country: yup.string().lowercase()
+            })
+        ).default([]),
         experience: yup.number().positive().default(1).required(),
         sap_experience: yup.number().positive().default(1).required(),
         current_employer: yup.string().required().lowercase(),
@@ -60,7 +67,6 @@ module.exports = async function update(request, response) {
         other_skills: yup.array().of(yup.string()),
         certification: yup.array().of(yup.string()),
         job_type: yup.array().of(yup.string()),
-       // job_type: yup.string().default(''),
         job_role: yup.string().default(''),
         preferred_location: yup.number().oneOf([0, 1, 2, 3, 4, 5, 6, 7]),
         availability: yup.number().required().oneOf([0, 15, 30, 45, 60]),

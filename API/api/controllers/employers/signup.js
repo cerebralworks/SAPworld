@@ -208,7 +208,10 @@ module.exports = function signup(request, response) {
                     _response_object.errors = [{ field: 'account', rules: [{ rule: 'unique', message: message }] }];
                     return response.status(400).json(_response_object);
                 } else if (user) {
-                    updateUser(user, filtered_post_data);
+                    //updateUser(user, filtered_post_data);
+					message = 'Email already taken.';
+					_response_object.errors = [{ field: 'account', rules: [{ rule: 'unique', message: message }] }];
+                    return response.status(400).json(_response_object);
                 } else {
                     createUser(filtered_post_data);
                 }
