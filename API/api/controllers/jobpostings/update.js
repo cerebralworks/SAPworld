@@ -24,7 +24,7 @@ module.exports = async function create(request, response) {
             });
         }),
         title: yup.string().required().lowercase().min(3),
-        type: yup.number().required().oneOf([0, 1, 2, 3, 4, 5, 6, 7, 8]),
+        type: yup.string().required(),
         description: yup.string().min(100),
         salary_type: yup.number().required().oneOf([0, 1, 2]),
         salary_currency: yup.string().required().min(3).max(3).lowercase().required(),

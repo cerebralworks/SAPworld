@@ -13,7 +13,7 @@ module.exports = async function create(request, response) {
     let yup = sails.yup;
     let schema = yup.object().shape({
         title: yup.string().required().lowercase().min(3),
-        type: yup.number().required().oneOf([0, 1, 2, 3, 4, 5, 6, 7, 8]),
+        type: yup.string().required(),
         description: yup.string().min(100),
         salary_type: yup.number().required().oneOf([0, 1, 2]),
         salary_currency: yup.string().required().min(3).max(3).lowercase().required(),
@@ -51,7 +51,7 @@ module.exports = async function create(request, response) {
         })).nullable(),
         number_of_positions: yup.number().required().positive(),
         contract_duration: yup.number().min(0).when("type", {
-            is: (val) => { val == 5 ? true : false },
+            is: (val) => { val == '03' ? true : false },
             then: yup.string().required()
         }),
     });
