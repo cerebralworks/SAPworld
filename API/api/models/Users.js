@@ -24,7 +24,7 @@ module.exports = {
         status: { type: 'number', defaultsTo: 1 },
         status_glossary: { type: 'string', allowNull: true },
         verified: { type: 'boolean', defaultsTo: false },
-        types: { type: 'ref' },
+        types: { type: 'ref', columnType: 'int[]' },
         tokens: { type: 'ref', columnType: 'json' },
         last_active: { type: 'ref', columnType: 'date', defaultsTo: new Date() },
         last_checkin_via: { type: 'string', defaultsTo: 'web' },

@@ -16,7 +16,7 @@ module.exports = {
     tableAlias: 'job_posting',
     attributes: {
         title: { type: 'string' },
-        type: { type: 'number', defaultsTo: 0 },
+        type: { type: 'string' },
         description: { type: 'string' },
         salary_type: { type: 'number', defaultsTo: 0 },
         salary_currency: { type: 'string', allowNull: true },
@@ -45,10 +45,22 @@ module.exports = {
         latlng: { type: 'string' },
         latlng_text: { type: 'string' },
         must_match: { type: 'ref', columnType: 'json' },
+        match_select: { type: 'ref', columnType: 'json' },
         number_of_positions: { type: 'number', defaultsTo: 1 },
         extra_criteria: { type: 'ref', columnType: 'json[]' },
         photo: { type: 'string' },
         contract_duration: { type: 'number', defaultsTo: 0 },
+		
+		health_wellness: { type: 'ref', columnType: 'json' },
+        paid_off: { type: 'ref', columnType: 'json' },
+        financial_benefits: { type: 'ref', columnType: 'json' },
+        office_perks: { type: 'ref', columnType: 'json' },
+        language: { type: 'ref', columnType: 'json[]' },
+        education: { type: 'ref', columnType: 'text[]' },
+        employer_role_type: { type: 'string', allowNull: true  },
+        need_reference: { type: 'boolean', defaultsTo: false },
+        facing_role: { type: 'string', allowNull: true },
+        training_experience: { type: 'string', allowNull: true },
 
     }
 };
