@@ -33,7 +33,7 @@ module.exports = function signup(request, response) {
             template: 'employers/signup',
             data: details,
             to: filtered_post_data.email,
-            subject: 'Welcome to Shejobs.'
+            subject: 'Welcome to SAP.'
         };
         mailService.sendMail(mail_data);
         _response_object.message = 'Employer signed up successfully.';
@@ -107,6 +107,7 @@ module.exports = function signup(request, response) {
                         });
                     } else {
                         profile.token = user.tokens.verification;
+						profile.name = post_data.first_name;
                         sendResponse(profile);
                     }
                 });

@@ -18,7 +18,7 @@ module.exports = async function updateCompanyProfile(request, response) {
         address: yup.string().lowercase(),
         city: yup.string().lowercase().required(),
         state: yup.string().lowercase().required(),
-        country: yup.string().lowercase().required().max(3),
+        country: yup.string().lowercase().required(),
         zipcode: yup.number().positive(),
         contact: yup.array().of(yup.string()),
         description: yup.string().max(1000),
