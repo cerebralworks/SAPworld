@@ -21,7 +21,7 @@ module.exports = async function updateCompanyProfile(request, response) {
         country: yup.string().lowercase().required(),
         zipcode: yup.number().positive(),
         contact: yup.array().of(yup.string()),
-        description: yup.string().max(1000),
+        description: yup.string().max(2000),
         latlng: yup.object().shape({
             lat: yup.number().min(-90).max(90),
             lng: yup.number().min(-180).max(180),
