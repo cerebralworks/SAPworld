@@ -129,6 +129,18 @@ server.exchange(oauth2orize.exchange.password(async function(client, username, p
 										done(null, accessToken.token, refreshToken.token, { 'expires_in': sails.config.oauth.tokenLife, types: user.types ,'verified': !validate });
 									}
 								});
+							}else if(updated_user[0].employer_profile){
+								CompanyProfile.findOne({ user_id: updated_user[0].id }, function(errs, userInfo) {
+									if (!userInfo) {
+										done(null, accessToken.token, refreshToken.token, { 'expires_in': sails.config.oauth.tokenLife, types: user.types,'verified': false });
+									}else{
+										//console.log(userInfo);
+										var checkAttributes = _.pick(userInfo, ['contact', 'zip_code']);
+										var validate = Object.values(checkAttributes).some(x => (x === null || x === '' || x === undefined));
+										//console.log(validate);
+										done(null, accessToken.token, refreshToken.token, { 'expires_in': sails.config.oauth.tokenLife, types: user.types ,'verified': !validate });
+									}
+								});
 							}else{
 								done(null, accessToken.token, refreshToken.token, { 'expires_in': sails.config.oauth.tokenLife, types: user.types });
 							}
