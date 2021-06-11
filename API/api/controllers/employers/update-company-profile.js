@@ -27,13 +27,6 @@ module.exports = async function updateCompanyProfile(request, response) {
             lng: yup.number().min(-180).max(180),
         }),
         website: yup.string().url().required().lowercase(),
-        social_media_link: yup.array().of(
-            yup.object().shape({
-                media: yup.string().required().lowercase(),
-                url: yup.string().url().required(),
-                visibility: yup.boolean().default(true)
-            })
-        ).default([]),
     });
     //Build and sending response
     const sendResponse = (details) => {
