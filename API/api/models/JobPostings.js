@@ -56,7 +56,7 @@ module.exports = {
         financial_benefits: { type: 'ref', columnType: 'json' },
         office_perks: { type: 'ref', columnType: 'json' },
         language: { type: 'ref', columnType: 'json[]' },
-        education: { type: 'ref', columnType: 'text[]' },
+        education: { type: 'string', allowNull: true },
         employer_role_type: { type: 'string', allowNull: true  },
         need_reference: { type: 'boolean', defaultsTo: false },
         facing_role: { type: 'string', allowNull: true },
