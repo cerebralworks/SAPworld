@@ -33,6 +33,7 @@ module.exports = {
         country_code: { type: 'ref' },
         zipcode: { type: 'number', allowNull: true },
         description: { type: 'string', allowNull: true },
+        privacy_protection: { type: 'ref', columnType: 'json' },
     },
     afterCreate: async function(profile, callback) {
         if (profile.id) {
