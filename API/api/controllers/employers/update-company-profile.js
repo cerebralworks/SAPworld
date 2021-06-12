@@ -21,19 +21,12 @@ module.exports = async function updateCompanyProfile(request, response) {
         country: yup.string().lowercase().required(),
         zipcode: yup.number().positive(),
         contact: yup.array().of(yup.string()),
-        description: yup.string().max(1000),
+        description: yup.string().max(2000),
         latlng: yup.object().shape({
             lat: yup.number().min(-90).max(90),
             lng: yup.number().min(-180).max(180),
         }),
         website: yup.string().url().required().lowercase(),
-        social_media_link: yup.array().of(
-            yup.object().shape({
-                media: yup.string().required().lowercase(),
-                url: yup.string().url().required(),
-                visibility: yup.boolean().default(true)
-            })
-        ).default([]),
     });
     //Build and sending response
     const sendResponse = (details) => {

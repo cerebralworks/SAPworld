@@ -29,13 +29,6 @@ module.exports = async function update(request, response) {
             lat: yup.number().min(-90).max(90),
             lng: yup.number().min(-180).max(180),
         }).required(),
-        social_media_link: yup.array().of(
-            yup.object().shape({
-                media: yup.string().required().lowercase(),
-                url: yup.string().url().required(),
-                visibility: yup.boolean().default(true)
-            })
-        ).default([]),
         education_qualification: yup.array().of(
             yup.object().shape({
                 degree: yup.string().lowercase().required(),

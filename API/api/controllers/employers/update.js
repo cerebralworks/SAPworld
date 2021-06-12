@@ -12,18 +12,19 @@ module.exports = function update(request, response) {
     var _response_object = {};
     pick_input = [
         'first_name', 'last_name', 'company', 'department', 'city', 'country_code',
-        'address_line_1', 'address_line_2', 'state', 'zipcode', 'description'
+        'address_line_1', 'address_line_2', 'state', 'zipcode', 'description','privacy_protection'
     ];
     var filtered_post_data = _.pick(post_request_data, pick_input);
     const filtered_post_keys = Object.keys(filtered_post_data);
     var input_attributes = [
-        { name: 'city', number: true, min: 1 },
-        { name: 'country_code', array: true },
-        { name: 'company', required: true },
-        { name: 'department', required: true },
-        { name: 'description', required: true },
-        { name: 'address_line_1', required: true },
-        { name: 'state', required: true },
+        { name: 'city' },
+        { name: 'country_code'},
+        { name: 'company' },
+        { name: 'department'},
+        { name: 'description' },
+        { name: 'address_line_1' },
+        { name: 'state' },
+        { name: 'privacy_protection' },
     ];
     validateModel.validate(EmployerProfiles, input_attributes, filtered_post_data, async function(valid, errors) {
         if (valid) {
