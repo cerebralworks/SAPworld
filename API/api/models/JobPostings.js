@@ -61,6 +61,7 @@ module.exports = {
         need_reference: { type: 'boolean', defaultsTo: false },
         facing_role: { type: 'string', allowNull: true },
         training_experience: { type: 'string', allowNull: true },
+		authorized_to_work: { type: 'ref', columnType: 'bigint[]' },
 
     }
 };
