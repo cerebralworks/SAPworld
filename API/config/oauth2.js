@@ -123,7 +123,7 @@ server.exchange(oauth2orize.exchange.password(async function(client, username, p
 									if (!userInfo) {
 										done(null, accessToken.token, refreshToken.token, { 'expires_in': sails.config.oauth.tokenLife, types: user.types });
 									}else{
-										var checkAttributes = _.pick(userInfo, ['phone', 'zip_code']);
+										var checkAttributes = _.pick(userInfo, ['email', 'country']);
 										var validate = Object.values(checkAttributes).some(x => (x === null || x === '' || x === undefined));
 										//console.log(validate);
 										done(null, accessToken.token, refreshToken.token, { 'expires_in': sails.config.oauth.tokenLife, types: user.types ,'verified': !validate });
@@ -135,7 +135,7 @@ server.exchange(oauth2orize.exchange.password(async function(client, username, p
 										done(null, accessToken.token, refreshToken.token, { 'expires_in': sails.config.oauth.tokenLife, types: user.types,'verified': false });
 									}else{
 										//console.log(userInfo);
-										var checkAttributes = _.pick(userInfo, ['contact', 'zip_code']);
+										var checkAttributes = _.pick(userInfo, ['email_id', 'country']);
 										var validate = Object.values(checkAttributes).some(x => (x === null || x === '' || x === undefined));
 										//console.log(validate);
 										done(null, accessToken.token, refreshToken.token, { 'expires_in': sails.config.oauth.tokenLife, types: user.types ,'verified': !validate });
