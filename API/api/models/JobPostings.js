@@ -38,6 +38,7 @@ module.exports = {
         work_authorization: { type: 'number', defaultsTo: 0 },
         travel_opportunity: { type: 'number' },
         visa_sponsorship: { type: 'boolean', defaultsTo: false },
+        willing_to_relocate: { type: 'boolean', defaultsTo: false },
         end_to_end_implementation: { type: 'number', defaultsTo: 0 },
         company: { model: 'employerprofiles' },
         status: { type: 'number', defaultsTo: 1 },

@@ -24,7 +24,7 @@ module.exports = async function update(request, response) {
         state: yup.string().required().lowercase(),
         city: yup.string().required().lowercase(),
         zipcode: yup.number().required().positive().moreThan(1000),
-        phone: yup.string().matches(/^([0|\+[0-9]{1,5})?([0-9]{10})$/, 'Mobile number must be like +919999999999').required(),
+        phone: yup.string().matches(/^([0|\+[0-9]{1,5})?([0-9]{10})$/, 'Mobile number must be like +919999999999'),
         latlng: yup.object().shape({
             lat: yup.number().min(-90).max(90),
             lng: yup.number().min(-180).max(180),
@@ -80,9 +80,13 @@ module.exports = async function update(request, response) {
         var point = value.latlng['lng'] + ' ' + value.latlng['lat'];
         value.latlng_text = value.latlng.lat + ',' + value.latlng.lng;
         value.latlng = 'SRID=4326;POINT(' + point + ')';
-        await phoneEncryptor.encrypt(value.phone, function(encrypted_text) {
-            value.phone = encrypted_text;
-        });
+		if(value.phone){
+			await phoneEncryptor.encrypt(value.phone, function(encrypted_text) {
+				value.phone = encrypted_text;
+			});
+		}else{
+			value.phone =null;
+		}
         value.status = 1;
         UserProfiles.update(logged_in_user.user_profile.id, value, async function(err, profile) {
             if (err) {

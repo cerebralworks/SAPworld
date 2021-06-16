@@ -21,7 +21,7 @@ module.exports = async function updateCompanyProfile(request, response) {
         country: yup.string().lowercase().required(),
         zipcode: yup.number().positive(),
         contact: yup.array().of(yup.string()),
-        description: yup.string().max(2000),
+        description: yup.string().max(5000),
         latlng: yup.object().shape({
             lat: yup.number().min(-90).max(90),
             lng: yup.number().min(-180).max(180),
@@ -56,6 +56,11 @@ module.exports = async function updateCompanyProfile(request, response) {
         var company_profile = await CompanyProfile.findOne({ user_id: value.user_id });
         console.log("fgdfgdgfg");
         console.log(company_profile);
+		if(value.contact){
+			
+		}else{
+			value.contact=null;
+		}
         if (!company_profile) {
             CompanyProfile.create(value, async function(err, profile) {
                 console.log(err);

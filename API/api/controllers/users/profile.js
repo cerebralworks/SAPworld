@@ -130,7 +130,7 @@ module.exports = async function list(request, response) {
 
     // Building profile completed status
     const isProfileCompleted = async(userProfileData) => {
-        var checkAttributes = _.pick(userProfileData, ['first_name', 'phone', 'zip_code']);
+        var checkAttributes = _.pick(userProfileData, ['first_name', 'zip_code']);
         const isEmpty = await Object.values(checkAttributes).some(x => (x === null || x === '' || x === undefined));
         return !isEmpty;
     }
