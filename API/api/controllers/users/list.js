@@ -22,7 +22,7 @@ module.exports = async function list(request, response) {
     const request_query = request.allParams();
     const logged_in_user = request.user;
     const filtered_query_data = _.pick(request_query, [
-        'page', 'sort', 'limit', 'status', 'expand', 'search', 'search_type', 'city', 'job_types', 'skill_tags', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'job_posting', 'skill_tags_filter_type', 'additional_fields'
+        'page', 'sort','country','work_authorization', 'limit', 'status', 'expand', 'search', 'search_type', 'city', 'job_types', 'skill_tags', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'job_posting', 'skill_tags_filter_type', 'additional_fields'
     ]);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var expand = [];
@@ -112,6 +112,9 @@ module.exports = async function list(request, response) {
         if (filtered_query_keys.includes('country')) {
             query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.country.columnName + ") LIKE '%" + criteria.country.toLowerCase() + "%' OR willing_to_relocate=true");
         }
+        if (filtered_query_keys.includes('work_authorization')) {
+             query.where(UserProfiles.tableAlias + '.' + UserProfiles.schema.work_authorization.columnName + "="+criteria.work_authorization );
+        }
         if (filtered_query_keys.includes('search')) {
             if (filtered_query_keys.includes('search_type') && parseInt(filtered_query_data.search_type) === 1) {
                 query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.email.columnName + ") LIKE '%" + criteria.search.toLowerCase() + "%'");
@@ -123,7 +126,8 @@ module.exports = async function list(request, response) {
             }
         }
         if (filtered_query_keys.includes('job_types')) {
-            query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} = ANY('{${filtered_query_data.job_types.toString()}}')`);
+            //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} = ANY('{${filtered_query_data.job_types.toString()}}')`);
+            query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} IN ('{${filtered_query_data.job_types.toString()}}')`);
         }
         if (filtered_query_keys.includes('min_salary')) {
             query.where(`COALESCE(${UserProfiles.tableAlias}.${UserProfiles.schema.expected_salary.columnName}, 0) >= ${parseFloat(filtered_query_data.min_salary)}`);

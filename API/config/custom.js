@@ -53,14 +53,14 @@ module.exports.custom = {
         admin: 2
     },
     job_types: {
-        full_time: 0,
-        part_time: 1,
-        freelance: 2,
-        internship: 3,
-        temporary: 4,
-        remote: 5,
-        contract: 6,
-        day_job: 7
+        full_time: 1000,
+        part_time: 1001,
+        contract: 1002,
+        freelance: 1003,
+        internship: 1004,
+        temporary: 1005,
+        remote: 1006,
+        day_job: 1007
     },
     user_job_interest: {
         not_interested: 0,
