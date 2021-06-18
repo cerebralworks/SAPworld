@@ -107,10 +107,11 @@ module.exports = async function list(request, response) {
             query.where(Users.tableAlias + '.' + Users.schema.status.columnName + "=1");
         }
         if (filtered_query_keys.includes('city')) {
-            query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.city.columnName + ") LIKE '%" + criteria.city.toLowerCase() + "%' OR willing_to_relocate=true");
+            //query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.city.columnName + ") LIKE '%" + criteria.city.toLowerCase() + "%' OR willing_to_relocate=true");
+            query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.city.columnName + ") = '" + criteria.city.toLowerCase() + "' ");
         }
         if (filtered_query_keys.includes('country')) {
-            query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.country.columnName + ") LIKE '%" + criteria.country.toLowerCase() + "%' OR willing_to_relocate=true");
+            query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.country.columnName + ") = '" + criteria.country.toLowerCase() + "'");
         }
         if (filtered_query_keys.includes('work_authorization')) {
              query.where(UserProfiles.tableAlias + '.' + UserProfiles.schema.work_authorization.columnName + "="+criteria.work_authorization );
