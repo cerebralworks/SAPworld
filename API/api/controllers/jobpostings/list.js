@@ -11,7 +11,7 @@ const job_type_values = _.values(_.get(sails, 'config.custom.job_types', {}));
 module.exports = async function list(request, response) {
     var _response_object = {};
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['page', 'sort', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'zip_code', 'additional_fields']);
+    const filtered_query_data = _.pick(request_query, ['page', 'country', 'sort', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'zip_code', 'additional_fields']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
         { name: 'page', number: true, min: 1 },
@@ -69,6 +69,12 @@ module.exports = async function list(request, response) {
     }
     if (filtered_query_data.type) {
         filtered_query_data.type = filtered_query_data.type.split(',');
+    }
+    if (filtered_query_data.city) {
+        filtered_query_data.city = filtered_query_data.city.split(',');
+    }
+    if (filtered_query_data.country) {
+        filtered_query_data.country = filtered_query_data.country.split(',');
     }
     var additional_fields = [];
     const additional_fields_details = { applications_count: 'applications_count' };
@@ -213,7 +219,10 @@ module.exports = async function list(request, response) {
         }
 
         if (_.get(criteria, 'where.city')) {
-            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.city.columnName} LIKE '%${_.get(criteria, 'where.city')}%'`);
+            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.city.columnName}  = ANY('${_.get(criteria, 'where.city')}')`);
+        }
+        if (_.get(criteria, 'where.country')) {
+            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.country.columnName} = ANY('${_.get(criteria, 'where.country')}')`);
         }
         if (_.get(criteria, 'where.company')) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.company.columnName} = ${_.get(criteria, 'where.company')}`);
@@ -316,7 +325,10 @@ module.exports = async function list(request, response) {
                 criteria.where.category = parseInt(filtered_query_data.category);
             }
             if (filtered_query_keys.includes('city')) {
-                criteria.where.city = filtered_query_data.city.toLowerCase();
+                criteria.where.city = `{${filtered_query_data.city.toString()}}`;
+            }
+            if (filtered_query_keys.includes('country')) {
+                criteria.where.country = `{${filtered_query_data.country.toString()}}`
             }
             if (filtered_query_keys.includes('company')) {
                 criteria.where.company = parseInt(filtered_query_data.company);
