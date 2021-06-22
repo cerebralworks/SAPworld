@@ -22,7 +22,13 @@ module.exports = async function list(request, response) {
     const request_query = request.allParams();
     const logged_in_user = request.user;
     const filtered_query_data = _.pick(request_query, [
-        'page', 'sort','country','work_authorization', 'limit', 'status', 'expand', 'search', 'search_type', 'city', 'job_types', 'skill_tags', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'job_posting', 'skill_tags_filter_type', 'additional_fields'
+        'page', 'sort','country','work_authorization', 'limit', 'status', 'expand', 'search', 'search_type', 'city', 'job_types', 'skill_tags', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'job_posting', 'skill_tags_filter_type', 'additional_fields',
+		'domain','skills.','programming_skills','availability',
+		'optinal_skills','certification',
+		'facing_role','employer_role_type',
+		'training_experience','travel_opportunity','work_authorization',
+		'end_to_end_implementation','education',
+		'remote','willing_to_relocate','language'
     ]);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var expand = [];
@@ -73,6 +79,31 @@ module.exports = async function list(request, response) {
             })()
         },
     ];
+	//AdditionalFilters Adding
+	if (filtered_query_keys.includes('domain')) {
+        filtered_query_data.domain = filtered_query_data.domain.split(',');
+        filtered_query_data.domain = filtered_query_data.domain.map(s => `'${s}'`).join(', ');
+    }if (filtered_query_keys.includes('skills')) {
+        filtered_query_data.skills = filtered_query_data.skills.split(',');
+    }
+	if (filtered_query_keys.includes('programming_skills')) {
+        filtered_query_data.programming_skills = filtered_query_data.programming_skills.split(',');
+        filtered_query_data.programming_skills = filtered_query_data.programming_skills.map(s => `'${s}'`).join(', ');
+    }
+	if (filtered_query_keys.includes('optinal_skills')) {
+        filtered_query_data.optinal_skills = filtered_query_data.optinal_skills.split(',');
+        filtered_query_data.optinal_skills = filtered_query_data.optinal_skills.map(s => `'${s}'`).join(', ');
+    }
+	if (filtered_query_keys.includes('certification')) {
+        filtered_query_data.certification = filtered_query_data.certification.split(',');
+        filtered_query_data.certification = filtered_query_data.certification.map(s => `'${s}'`).join(', ');
+    }
+	if (filtered_query_keys.includes('language')) {
+        filtered_query_data.language = filtered_query_data.language.split(',');
+    }
+	
+	
+	
     if (filtered_query_keys.includes('skill_tags')) {
         filtered_query_data.skill_tags = filtered_query_data.skill_tags.split(',');
     }
@@ -106,6 +137,42 @@ module.exports = async function list(request, response) {
         } else {
             query.where(Users.tableAlias + '.' + Users.schema.status.columnName + "=1");
         }
+		
+		
+		//Filter the Custom Data's
+		
+        if (filtered_query_keys.includes('domain')) {
+             query.where(UserProfiles.tableAlias + '.' + UserProfiles.schema.domains_worked.columnName + " && ARRAY["+criteria.domain+"]::bigint[]"  );
+        }
+        if (filtered_query_keys.includes('programming_skills')) {
+             query.where(UserProfiles.tableAlias + '.' + UserProfiles.schema.programming_skills.columnName + " && ARRAY["+criteria.programming_skills+"]::text[]"  );
+        }
+        if (filtered_query_keys.includes('optinal_skills')) {
+             query.where(UserProfiles.tableAlias + '.' + UserProfiles.schema.other_skills.columnName + " && ARRAY["+criteria.optinal_skills+"]::text[]"  );
+        }
+        if (filtered_query_keys.includes('certification')) {
+             query.where(UserProfiles.tableAlias + '.' + UserProfiles.schema.certification.columnName + " && ARRAY["+criteria.certification+"]::text[]"  );
+        }
+        if (filtered_query_keys.includes('employer_role_type')) {
+			 query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.employer_role_type.columnName + ") = '" + criteria.employer_role_type.toLowerCase() + "' ");
+        }
+        if (filtered_query_keys.includes('end_to_end_implementation')) {
+			 query.where( UserProfiles.tableAlias + '.' + UserProfiles.schema.end_to_end_implementation.columnName + " = '" + criteria.end_to_end_implementation + "' ");
+        }
+        if (filtered_query_keys.includes('remote')) {
+			 query.where( UserProfiles.tableAlias + '.' + UserProfiles.schema.remote_only.columnName + " = '" + criteria.remote + "' ");
+        }
+        if (filtered_query_keys.includes('willing_to_relocate')) {
+			 query.where( UserProfiles.tableAlias + '.' + UserProfiles.schema.willing_to_relocate.columnName + " = '" + criteria.willing_to_relocate + "' ");
+        }
+        if (filtered_query_keys.includes('availability')) {
+			 query.where( UserProfiles.tableAlias + '.' + UserProfiles.schema.availability.columnName + " <= '" + criteria.availability + "' ");
+        }
+        if (filtered_query_keys.includes('travel_opportunity')) {
+			 query.where( UserProfiles.tableAlias + '.' + UserProfiles.schema.travel.columnName + " <= '" + criteria.travel_opportunity + "' ");
+        }
+		
+		
         if (filtered_query_keys.includes('city')) {
             //query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.city.columnName + ") LIKE '%" + criteria.city.toLowerCase() + "%' OR willing_to_relocate=true");
             query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.city.columnName + ") = '" + criteria.city.toLowerCase() + "' ");
@@ -133,6 +200,10 @@ module.exports = async function list(request, response) {
         if (filtered_query_keys.includes('job_types')) {
             //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} = ANY('{${filtered_query_data.job_types.toString()}}')`);
             query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} IN ('{${filtered_query_data.job_types.toString()}}')`);
+        }
+        if (filtered_query_keys.includes('education')) {
+            //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} = ANY('{${filtered_query_data.job_types.toString()}}')`);
+            //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.education_qualification.columnName} IN ('{${filtered_query_data.education.toString()}}')`);
         }
         if (filtered_query_keys.includes('min_salary')) {
             query.where(`COALESCE(${UserProfiles.tableAlias}.${UserProfiles.schema.expected_salary.columnName}, 0) >= ${parseFloat(filtered_query_data.min_salary)}`);
