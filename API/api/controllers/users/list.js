@@ -100,6 +100,10 @@ module.exports = async function list(request, response) {
     }
 	if (filtered_query_keys.includes('language')) {
         filtered_query_data.language = filtered_query_data.language.split(',');
+       // filtered_query_data.language = filtered_query_data.language.map(s => `'${s}'`).join(', ');
+    }
+	if (filtered_query_keys.includes('education')) {
+        filtered_query_data.education = filtered_query_data.education.toLocaleLowerCase();
     }
 	
 	
@@ -129,6 +133,12 @@ module.exports = async function list(request, response) {
     const getUserProfiles = (criteria, callback) => {
         //Initializing query
         var query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(UserProfiles.tableName, UserProfiles.tableAlias);
+       if (filtered_query_keys.includes('education')) {
+			query.cross_join('json_array_elements(to_json(education_qualification)) degree(ele)');
+	   }
+	   if (filtered_query_keys.includes('language')) {
+			query.cross_join('json_array_elements(to_json(language_known)) language(lang)');
+	   }
         query.left_join(Users.tableName, Users.tableAlias, Users.tableAlias + '.' + Users.schema.id.columnName + "=" + UserProfiles.tableAlias + '.' + UserProfiles.schema.account.columnName);
         var group_by = UserProfiles.tableAlias + "." + UserProfiles.schema.id.columnName;
         group_by += "," + Users.tableAlias + "." + Users.schema.id.columnName;
@@ -201,9 +211,21 @@ module.exports = async function list(request, response) {
             //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} = ANY('{${filtered_query_data.job_types.toString()}}')`);
             query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} IN ('{${filtered_query_data.job_types.toString()}}')`);
         }
-        if (filtered_query_keys.includes('education')) {
+        /* if (filtered_query_keys.includes('education')) {
             //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} = ANY('{${filtered_query_data.job_types.toString()}}')`);
-            //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.education_qualification.columnName} IN ('{${filtered_query_data.education.toString()}}')`);
+            query.where(`to_jsonb(${UserProfiles.tableAlias}.${UserProfiles.schema.education_qualification.columnName})->0->>'degree' =ANY('{"${filtered_query_data.education.toString()}"}')`);
+        } */
+		if (filtered_query_keys.includes('education')) {
+            //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} = ANY('{${filtered_query_data.job_types.toString()}}')`);
+            query.where(`(ele->>'degree') =ANY('{"${filtered_query_data.education.toString()}"}')`);
+        }
+        /* if (filtered_query_keys.includes('language')) {
+            //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} = ANY('{${filtered_query_data.job_types.toString()}}')`);
+            query.where(`to_jsonb(${UserProfiles.tableAlias}.${UserProfiles.schema.language_known.columnName})->0->>'language' =ANY('{${filtered_query_data.language.toString()}}')`);
+        } */
+		if (filtered_query_keys.includes('language')) {
+            //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} = ANY('{${filtered_query_data.job_types.toString()}}')`);
+            query.where(`(lang->>'language') =ANY('{${filtered_query_data.language.toString()}}')`);
         }
         if (filtered_query_keys.includes('min_salary')) {
             query.where(`COALESCE(${UserProfiles.tableAlias}.${UserProfiles.schema.expected_salary.columnName}, 0) >= ${parseFloat(filtered_query_data.min_salary)}`);

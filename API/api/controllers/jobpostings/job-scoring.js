@@ -58,6 +58,7 @@ module.exports = async function Scoring(request, response) {
             // .where("experience >=" + model.experience)
             .where("sap_experience >=" + model.sap_experience)
             .where(`skills && ARRAY[${model.skills}]::bigint[]`)
+            //.where("lower(city) = lower('" + model.city + "') OR willing_to_relocate=true ");
             .where("lower(city) = lower('" + model.city + "') OR willing_to_relocate=true OR ST_DistanceSphere(latlng, '" + model.latlng + "'::geometry) <=" + value.distance + " * 1609.34");
         if (value.user_id) {
             list_query.where("account =" + value.user_id);
