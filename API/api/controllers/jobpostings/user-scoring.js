@@ -2,6 +2,8 @@ var squel = require("squel");
 var async = require("async");
 module.exports = async function Scoring(request, response) {
     const post_request_data = request.allParams();
+	const filtered_query_data = _.pick(post_request_data, ['page', 'country', 'sort', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'zip_code', 'additional_fields']);
+    const filtered_query_keys = Object.keys(filtered_query_data);
     var _response_object = {};
     const logged_in_user = request.user;
     let yup = sails.yup;
@@ -34,6 +36,20 @@ module.exports = async function Scoring(request, response) {
         _response_object['jobs'] = _.cloneDeep(items);
         return response.ok(_response_object);
     };
+	
+    if (filtered_query_data.skills) {
+        filtered_query_data.skills = filtered_query_data.skills.split(',');
+    }
+    if (filtered_query_data.type) {
+        filtered_query_data.type = filtered_query_data.type.split(',');
+    }
+    if (filtered_query_data.city) {
+        filtered_query_data.city = filtered_query_data.city.split(',');
+    }
+    if (filtered_query_data.country) {
+        filtered_query_data.country = filtered_query_data.country.split(',');
+    }
+	
     yup.object().shape({
         job_id: yup.number().positive(),
         page: yup.number().min(0).default(0),
@@ -41,7 +57,7 @@ module.exports = async function Scoring(request, response) {
         travel: yup.number().positive(),
         distance: yup.number().positive().default(100),
         availability: yup.number().positive(),
-        job_type: yup.number().positive().oneOf([0, 1, 2, 3, 4, 5, 6, 7, 8]),
+        job_type: yup.number().positive().oneOf([1000, 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008]),
         end_to_end_implementation: yup.number().positive(),
     }).validate(post_request_data, { abortEarly: false }).then(value => {
         model = logged_in_user.user_profile;
@@ -50,8 +66,9 @@ module.exports = async function Scoring(request, response) {
             .where("status=1")
             // .where("experience <=" + model.experience)
             .where("sap_experience <=" + model.sap_experience)
-            .where(`skills && ARRAY[${model.skills}]::bigint[]`)
-            .where("lower(city) = lower('" + model.city + "')  OR ST_DistanceSphere(latlng, ST_MakePoint(" + model.latlng['coordinates'].toString() + ")) <=" + value.distance + " * 1609.34");
+            .where(`skills && ARRAY[${model.skills}]::bigint[]`);
+            //.where("lower(city) = lower('" + model.city + "')  OR ST_DistanceSphere(latlng, ST_MakePoint(" + model.latlng['coordinates'].toString() + ")) <=" + value.distance + " * 1609.34");
+            //.where("lower(city) = lower('" + model.city + "') ");
 
         if (value.job_id) {
             list_query.where("id =" + value.job_id);
