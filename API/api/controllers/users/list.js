@@ -202,7 +202,7 @@ module.exports = async function list(request, response) {
              //query.where(search_texts);
         }
         if (filtered_query_keys.includes('work_authorization')) {
-             query.where(UserProfiles.tableAlias + '.' + UserProfiles.schema.work_authorization.columnName + "="+criteria.work_authorization );
+            // query.where(UserProfiles.tableAlias + '.' + UserProfiles.schema.work_authorization.columnName + "="+criteria.work_authorization );
         }
         if (filtered_query_keys.includes('search')) {
             if (filtered_query_keys.includes('search_type') && parseInt(filtered_query_data.search_type) === 1) {
