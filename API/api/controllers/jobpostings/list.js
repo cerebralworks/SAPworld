@@ -209,10 +209,10 @@ module.exports = async function list(request, response) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.salary.columnName} <= ${_.get(criteria, 'where.max_salary')}`);
         }
         if (_.get(criteria, 'where.min_experience')) {
-            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.sap_experience.columnName} >= ${_.get(criteria, 'where.min_experience')}`);
+            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.experience.columnName} >= ${_.get(criteria, 'where.min_experience')}`);
         }
         if (_.get(criteria, 'where.max_experience')) {
-            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.sap_experience.columnName} <= ${_.get(criteria, 'where.max_experience')}`);
+            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.experience.columnName} <= ${_.get(criteria, 'where.max_experience')}`);
         }
         if (_.get(criteria, 'where.type')) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.type.columnName} = ANY('${_.get(criteria, 'where.type')}')`);
