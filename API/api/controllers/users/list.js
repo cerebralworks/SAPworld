@@ -241,10 +241,10 @@ module.exports = async function list(request, response) {
             query.where(`COALESCE(${UserProfiles.tableAlias}.${UserProfiles.schema.expected_salary.columnName}, 0) <= ${parseFloat(filtered_query_data.max_salary)}`);
         }
         if (filtered_query_keys.includes('min_experience')) {
-            query.where(`COALESCE(${UserProfiles.tableAlias}.${UserProfiles.schema.sap_experience.columnName}, 0) >= ${parseInt(filtered_query_data.min_experience)}`);
+            query.where(`COALESCE(${UserProfiles.tableAlias}.${UserProfiles.schema.experience.columnName}, 0) >= ${parseInt(filtered_query_data.min_experience)}`);
         }
         if (filtered_query_keys.includes('max_experience')) {
-            query.where(`COALESCE(${UserProfiles.tableAlias}.${UserProfiles.schema.sap_experience.columnName}, 0) <= ${parseInt(filtered_query_data.max_experience)}`);
+            query.where(`COALESCE(${UserProfiles.tableAlias}.${UserProfiles.schema.experience.columnName}, 0) <= ${parseInt(filtered_query_data.max_experience)}`);
         }
         if (filtered_query_keys.includes('skill_tags') && _.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 0)), 0)) {
             // skill_tags_filter_type is 0. it indicates that skill_tags values will be provided by client.
