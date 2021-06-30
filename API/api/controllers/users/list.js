@@ -208,7 +208,7 @@ module.exports = async function list(request, response) {
              //query.where(search_texts);
         }
         if (filtered_query_data.visa == true) {
-            query.where(UserProfiles.tableAlias + '.' + UserProfiles.schema.work_authorization.columnName + "= 1 " );
+            query.where(`(${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1 or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${criteria.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}') or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${criteria.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}') )`);
         }
         if (filtered_query_keys.includes('work_authorization')) {
             // query.where(UserProfiles.tableAlias + '.' + UserProfiles.schema.work_authorization.columnName + "="+criteria.work_authorization );
