@@ -52,7 +52,7 @@ module.exports = async function create(request, response) {
         optinal_skills: yup.array().of(yup.string()),
         certification: yup.array().of(yup.string()),
         travel_opportunity: yup.number().required().oneOf([0, 25, 50, 75, 100]),
-        work_authorization: yup.number(),
+        //work_authorization: yup.number(),
         visa_sponsorship: yup.boolean(),
         must_match: yup.object().nullable(),
         end_to_end_implementation: yup.number().min(0),

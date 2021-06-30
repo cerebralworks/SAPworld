@@ -35,7 +35,7 @@ module.exports = {
         programming_skills: { type: 'ref', columnType: 'text[]' },
         optinal_skills: { type: 'ref', columnType: 'text[]' },
         certification: { type: 'ref', columnType: 'text[]' },
-        work_authorization: { type: 'number', defaultsTo: 0 },
+        work_authorization: { type: 'number'},
         travel_opportunity: { type: 'number' },
         visa_sponsorship: { type: 'boolean', defaultsTo: false },
         willing_to_relocate: { type: 'boolean', defaultsTo: false },
