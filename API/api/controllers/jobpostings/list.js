@@ -233,6 +233,7 @@ module.exports = async function list(request, response) {
         }
         if (_.get(criteria, 'where.country') && filtered_query_data.work_authorization != 1 ) {
            // query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.country.columnName} = ANY('${_.get(criteria, 'where.country')}') or ${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = ${filtered_query_data.visa_sponsered} )`);
+		   query.where(`${JobPostings.tableAlias}.${JobPostings.schema.country.columnName}  = ANY('${_.get(criteria, 'where.country')}')`);
         }
         if ( filtered_query_data.visa_sponsered == false && filtered_query_data.work_authorization != 1) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = ${filtered_query_data.visa_sponsered} `);
