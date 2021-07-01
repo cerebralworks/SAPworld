@@ -225,7 +225,7 @@ module.exports = async function list(request, response) {
         }
         if (filtered_query_keys.includes('job_types')) {
             //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} = ANY('{${filtered_query_data.job_types.toString()}}')`);
-            query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} IN ('{${filtered_query_data.job_types.toString()}}')`);
+            query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} && ARRAY[${filtered_query_data.job_types.toString()}]::text[]`);
         }
         /* if (filtered_query_keys.includes('education')) {
             //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} = ANY('{${filtered_query_data.job_types.toString()}}')`);
