@@ -2,7 +2,7 @@ var squel = require("squel");
 var async = require("async");
 module.exports = async function Scoring(request, response) {
     const post_request_data = request.allParams();
-	const filtered_query_data = _.pick(post_request_data, ['page', 'country', 'sort', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'zip_code', 'additional_fields']);
+	const filtered_query_data = _.pick(post_request_data, ['page', 'country', 'sort', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'zip_code', 'additional_fields', 'visa_sponsered', 'work_authorization']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var _response_object = {};
     const logged_in_user = request.user;
@@ -49,6 +49,15 @@ module.exports = async function Scoring(request, response) {
     if (filtered_query_data.country) {
         filtered_query_data.country = filtered_query_data.country.split(',');
     }
+    if (filtered_query_data.work_authorization) {
+        filtered_query_data.work_authorization = parseInt(filtered_query_data.work_authorization);
+    }
+    if (filtered_query_data.visa_sponsered =="true") {
+        filtered_query_data.visa_sponsered = true;
+    }
+    if (filtered_query_data.visa_sponsered == "false") {
+        filtered_query_data.visa_sponsered = false;
+    }
 	
     yup.object().shape({
         job_id: yup.number().positive(),
@@ -62,14 +71,32 @@ module.exports = async function Scoring(request, response) {
     }).validate(post_request_data, { abortEarly: false }).then(value => {
         model = logged_in_user.user_profile;
         // console.log(model.latlng['coordinates'].toString());
-        var list_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(JobPostings.tableName, JobPostings.tableAlias)
-            .where("status=1")
+        var list_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(JobPostings.tableName, JobPostings.tableAlias);
+		
+            list_query.where("status=1");
             // .where("experience <=" + model.experience)
-            .where("sap_experience <=" + model.sap_experience)
-            .where(`skills && ARRAY[${model.skills}]::bigint[]`);
+            //.where("sap_experience <=" + model.sap_experience)
+            list_query.where(`skills && ARRAY[${model.skills}]::bigint[]`);
             //.where("lower(city) = lower('" + model.city + "')  OR ST_DistanceSphere(latlng, ST_MakePoint(" + model.latlng['coordinates'].toString() + ")) <=" + value.distance + " * 1609.34");
             //.where("lower(city) = lower('" + model.city + "') ");
-
+		
+		
+        if (model.job_type) {
+            list_query.where(`${JobPostings.tableAlias}.${JobPostings.schema.type.columnName} = ANY('{${model.job_type}}')`);
+        }
+        if (filtered_query_data.city && model.work_authorization != 1 ) {
+            list_query.where(`${JobPostings.tableAlias}.${JobPostings.schema.city.columnName}  = ANY('{${filtered_query_data.city}}')`);
+        }
+        if (filtered_query_data.country && model.work_authorization != 1 ) {
+		list_query.where(`${JobPostings.tableAlias}.${JobPostings.schema.country.columnName}  = ANY('{${filtered_query_data.country}}')`);
+        }
+        if ( filtered_query_data.visa_sponsered == false && model.work_authorization != 1) {
+            list_query.where(`${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = ${filtered_query_data.visa_sponsered} `);
+        }
+        if (filtered_query_data.work_authorization == 1 ) {
+		list_query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = true or ${JobPostings.tableAlias}.${JobPostings.schema.country.columnName} = ANY('{${filtered_query_data.country}}') or ${JobPostings.tableAlias}.${JobPostings.schema.city.columnName}  = ANY('{${filtered_query_data.city}}') ) `);
+        }
+		
         if (value.job_id) {
             list_query.where("id =" + value.job_id);
         }
