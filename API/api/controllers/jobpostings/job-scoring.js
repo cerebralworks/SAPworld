@@ -7,6 +7,16 @@ module.exports = async function Scoring(request, response) {
     let yup = sails.yup;
     var model = {};
     var score = 4;
+    const filtered_query_data = _.pick(post_request_data, [
+        'page', 'sort','country','work_authorization', 'limit', 'status', 'expand', 'search', 'search_type', 'city','visa', 'job_types', 'skill_tags', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'job_posting', 'skill_tags_filter_type', 'additional_fields',
+		'domain','skills.','programming_skills','availability',
+		'optinal_skills','certification',
+		'facing_role','employer_role_type',
+		'training_experience','travel_opportunity','work_authorization',
+		'end_to_end_implementation','education',
+		'remote','willing_to_relocate','language','visa','filter_location'
+    ]);
+	const filtered_query_keys = Object.keys(filtered_query_data);
     //Build and sending response
     const sendResponse = (items, count, application) => {
         _response_object.message = 'Job items retrieved successfully.';
@@ -35,6 +45,28 @@ module.exports = async function Scoring(request, response) {
         _response_object['application'] = _.cloneDeep(application);
         return response.ok(_response_object);
     };
+	
+    if (filtered_query_data.visa =="true") {
+        filtered_query_data.visa = true;
+    }
+    if (filtered_query_data.visa == "false") {
+        filtered_query_data.visa = false;
+    }
+    if (filtered_query_data.filter_location =="true") {
+        filtered_query_data.filter_location = true;
+    }
+    if (filtered_query_data.filter_location == "false") {
+        filtered_query_data.filter_location = false;
+    }
+	
+	
+    if (filtered_query_keys.includes('skill_tags')) {
+        filtered_query_data.skill_tags = filtered_query_data.skill_tags.split(',');
+    }
+    if (filtered_query_keys.includes('job_types')) {
+        filtered_query_data.job_types = filtered_query_data.job_types.split(',');
+    }
+	
     yup.object().shape({
         id: yup.number().test('job_id', 'Cant find record', async(value) => {
             return await JobPostings.findOne({ company: logged_in_user.employer_profile.id || 0, id: value, status: 1 }).then((result) => {
@@ -50,16 +82,47 @@ module.exports = async function Scoring(request, response) {
         travel: yup.number().positive(),
         distance: yup.number().positive().default(100),
         availability: yup.number().positive(),
-        job_type: yup.number().positive().oneOf([0, 1, 2, 3, 4, 5, 6, 7, 8]),
+        job_type: yup.number().positive().oneOf([1000, 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008]),
         end_to_end_implementation: yup.number().positive(),
     }).validate(post_request_data, { abortEarly: false }).then(value => {
-        var list_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(UserProfiles.tableName, UserProfiles.tableAlias)
-            .where("status=1")
-            // .where("experience >=" + model.experience)
-            .where("sap_experience >=" + model.sap_experience)
-            .where(`skills && ARRAY[${model.skills}]::bigint[]`)
-            .where("lower(city) = lower('" + model.city + "') OR willing_to_relocate=true ");
+		
+        var list_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(UserProfiles.tableName, UserProfiles.tableAlias);
+		
+		
+	   if (model.country) {
+			list_query.cross_join('json_array_elements(to_json(preferred_locations)) country(coun)');
+	   }
+	   if (model.city) {
+			list_query.cross_join('json_array_elements(to_json(preferred_locations)) city(citys)');
+	   }
+	   
+            list_query.where("status=1");
+            list_query.where("experience >=" + model.experience);
+            //.where("sap_experience >=" + model.sap_experience)
+            list_query.where(`skills && ARRAY[${model.skills}]::bigint[]`);
+            //list_query.where("lower(city) = lower('" + model.city + "') OR willing_to_relocate=true ");
             //.where("lower(city) = lower('" + model.city + "') OR willing_to_relocate=true OR ST_DistanceSphere(latlng, '" + model.latlng + "'::geometry) <=" + value.distance + " * 1609.34");
+		
+
+			
+		
+        if (model.city && model.visa_sponsorship == false ) {
+			list_query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${model.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${model.city.toString()}}')`);
+        }
+        if (model.country && model.visa_sponsorship == false ) {
+            list_query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${model.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}')`);
+        }
+        if (model.visa_sponsorship == true ) {
+            list_query.where(`(${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1 or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${model.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${model.country.toString()}}') or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${model.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${model.city.toString()}}') )`);
+        }
+        if (model.type) {
+            //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} = ANY('{${filtered_query_data.job_types.toString()}}')`);
+            list_query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} && ARRAY[${model.type.toString()}]::text[]`);
+        }
+       // if (model.includes('min_experience')) {
+           // list_query.where(`COALESCE(${UserProfiles.tableAlias}.${UserProfiles.schema.experience.columnName}, 0) >= ${parseInt(filtered_query_data.min_experience)}`);
+        //}
+		
         if (value.user_id) {
             list_query.where("account =" + value.user_id);
         }
@@ -83,9 +146,14 @@ module.exports = async function Scoring(request, response) {
             list_query.where("end_to_end_implementation >=" + model.end_to_end_implementation);
             score += 1;
         }
+		var group_by = UserProfiles.tableAlias + "." + UserProfiles.schema.id.columnName;
+        //group_by += "," + Users.tableAlias + "." + Users.schema.id.columnName;
+		
         value.page = value.page ? value.page : 1;
-        list_query.limit(1).offset(value.page - 1);
+	        list_query.limit(1).offset(value.page - 1);
+        
         var count_query = list_query.clone();
+		list_query.group(group_by);
         //Selecting fields
         fields = _.without(Object.keys(UserProfiles.schema), 'phone', 'skill_tags');
         fields.map(function(value) {
@@ -150,7 +218,7 @@ module.exports = async function Scoring(request, response) {
                         delete profile.job_application;
                     }
                 } else profile = {};
-                count_query = count_query.toString().replace("LIMIT 1", " ").replace("*", "COUNT(*)").replace(`OFFSET ${value.page-1}`, " ");
+                count_query = count_query.toString().replace("LIMIT 1", " ").replace("*", "COUNT(DISTINCT user_profile.id)").replace(`OFFSET ${value.page-1}`, " ");
                 var count = sails.sendNativeQuery(count_query, async function(err, job_postings) {
                     sendResponse(profile, job_postings['rows'][0]['count'], application);
                 });
