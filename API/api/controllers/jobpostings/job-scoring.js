@@ -151,7 +151,7 @@ module.exports = async function Scoring(request, response) {
 		
         value.page = value.page ? value.page : 1;
 	        list_query.limit(1).offset(value.page - 1);
-        
+         
         var count_query = list_query.clone();
 		list_query.group(group_by);
         //Selecting fields
