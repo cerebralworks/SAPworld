@@ -110,7 +110,7 @@ module.exports = async function Scoring(request, response) {
 			list_query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${model.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${model.city.toString()}}')`);
         }
         if (model.country && model.visa_sponsorship == false ) {
-            list_query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${model.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}')`);
+            list_query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${model.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${model.country.toString()}}')`);
         }
         if (model.visa_sponsorship == true ) {
             list_query.where(`(${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1 or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${model.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${model.country.toString()}}') or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${model.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${model.city.toString()}}') )`);
