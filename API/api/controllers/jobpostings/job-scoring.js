@@ -95,11 +95,15 @@ module.exports = async function Scoring(request, response) {
 	   if (model.city) {
 			list_query.cross_join('json_array_elements(to_json(preferred_locations)) city(citys)');
 	   }
+	   if(model.skills){
+		   //var tempData = model.hands_on_experience.map(function(a,b){ return a.skill_id });
+		   var tempData = model.skills;
+	   }
 	   
             list_query.where("status=1");
             list_query.where("experience >=" + model.experience);
             //.where("sap_experience >=" + model.sap_experience)
-            list_query.where(`skills && ARRAY[${model.skills}]::bigint[]`);
+            list_query.where(`skills && ARRAY[${tempData}]::bigint[]`);
             //list_query.where("lower(city) = lower('" + model.city + "') OR willing_to_relocate=true ");
             //.where("lower(city) = lower('" + model.city + "') OR willing_to_relocate=true OR ST_DistanceSphere(latlng, '" + model.latlng + "'::geometry) <=" + value.distance + " * 1609.34");
 		

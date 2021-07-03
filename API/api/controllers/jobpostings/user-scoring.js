@@ -73,10 +73,14 @@ module.exports = async function Scoring(request, response) {
         // console.log(model.latlng['coordinates'].toString());
         var list_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(JobPostings.tableName, JobPostings.tableAlias);
 		
+		if(model.skills){
+		  // var tempData = model.hands_on_experience.map(function(a,b){ return a.skill_id });
+			var tempData = model.skills;
+	  }
             list_query.where("status=1");
             // .where("experience <=" + model.experience)
             //.where("sap_experience <=" + model.sap_experience)
-            list_query.where(`skills && ARRAY[${model.skills}]::bigint[]`);
+            list_query.where(`skills && ARRAY[${tempData}]::bigint[]`);
             //.where("lower(city) = lower('" + model.city + "')  OR ST_DistanceSphere(latlng, ST_MakePoint(" + model.latlng['coordinates'].toString() + ")) <=" + value.distance + " * 1609.34");
             //.where("lower(city) = lower('" + model.city + "') ");
 		
