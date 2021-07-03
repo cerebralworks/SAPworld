@@ -63,7 +63,10 @@ module.exports.routes = {
     'GET /clients/create': nonGetHandler,
     'POST /clients/create': { controller: 'clients', action: 'create' },
     'GET /clients/list': { controller: 'clients', action: 'list' },
-
+	
+	'GET /user/application/delete/:id': nonGetHandler,
+    'POST /user/application/delete/:id': { controller: 'jobpostings', action: 'applications/delete-application' },
+    
     /*Users routes*/
     'GET /users/list': { controller: 'users', action: 'list' },
     'GET /users/signup': nonGetHandler,
