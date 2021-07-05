@@ -161,8 +161,12 @@ module.exports = async function list(request, response) {
                     user_fields = _.without(Object.keys(UserProfiles.schema));
                     user = '';
                     user_fields.map(function(value) {
-                        if (UserProfiles.schema[value].columnName || typeof UserProfiles.schema[value].columnName !== "undefined") {
-                            user += "'" + value + "'," + UserProfiles.tableAlias + "." + UserProfiles.schema[value].columnName + ",";
+                        if((UserProfiles.schema[value].columnName || typeof UserProfiles.schema[value].columnName !== "undefined")&& 
+						UserProfiles.schema[value].columnName !== 'created_at' && UserProfiles.schema[value].columnName !=='updated_at' &&
+						UserProfiles.schema[value].columnName !== 'social_media_link' && UserProfiles.schema[value].columnName !=='preferred_location' &&
+						UserProfiles.schema[value].columnName !== 'latlng' && UserProfiles.schema[value].columnName !== 'latlng_text'
+						&& UserProfiles.schema[value].columnName !== 'privacy_protection'){
+                          user += "'" + value + "'," + UserProfiles.tableAlias + "." + UserProfiles.schema[value].columnName + ",";
                         }
                     });
                     if (expand.includes('user_skill_tags')) {
