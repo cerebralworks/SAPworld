@@ -103,7 +103,7 @@ module.exports = async function list(request, response) {
 
     //Find the JobPostings based on general criteria.
     const getJobPostings = async(criteria, callback) => {
-        const count_query = await buildNativeQueryToGetJobPostingList(criteria, true).then(function(query) {
+        const count_query = await buildNativeQueryToGetJobPostingList(criteria, true,false).then(function(query) {
             return query;
         });
         sails.sendNativeQuery(count_query, async function(err, total) {
@@ -121,7 +121,7 @@ module.exports = async function list(request, response) {
             } else if (_.get(total, 'count.rows[0].count') < 1) {
                 return callback([], {}, _.get(total, 'count.rows[0].count'));
             } else {
-                const list_query = await buildNativeQueryToGetJobPostingList(criteria, false).then(function(query) {
+                const list_query = await buildNativeQueryToGetJobPostingList(criteria, false,false).then(function(query) {
                     return query;
                 });
                 sails.sendNativeQuery(list_query, async function(err, job_postings) {
@@ -137,7 +137,27 @@ module.exports = async function list(request, response) {
                         _response_object.count = _response_object.errors.count;
                         return response.status(400).json(_response_object);
                     } else {
-                        return callback(_.get(job_postings, 'rows'), {}, parseInt(_.get(_.cloneDeep(total), 'rows[0].count')));
+						const group_query = await buildNativeQueryToGetJobPostingList(criteria, true,true).then(function(query) {
+							return query;
+						});
+						sails.sendNativeQuery(group_query, async function(err, group_query_Value) {
+							if (err) {
+								var error = {
+									'field': 'items',
+									'rules': [{
+										'rule': 'invalid',
+										'message': err.message
+									}]
+								};
+								_response_object.errors = [error];
+								_response_object.count = _response_object.errors.count;
+								return response.status(400).json(_response_object);
+							} else {
+								console.log(group_query_Value);
+								return callback(_.get(job_postings, 'rows'), {}, parseInt(_.get(_.cloneDeep(total), 'rows[0].count')),_.get(group_query_Value, 'rows'));
+							}
+						});
+                        //return callback(_.get(job_postings, 'rows'), {}, parseInt(_.get(_.cloneDeep(total), 'rows[0].count')));
                     }
                 });
             }
@@ -145,7 +165,7 @@ module.exports = async function list(request, response) {
     };
 
     //Build sails native query
-    const buildNativeQueryToGetJobPostingList = async(criteria, count = false) => {
+    const buildNativeQueryToGetJobPostingList = async(criteria, count = false,group = false) => {
 
         let query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).
         from(JobPostings.tableName, JobPostings.tableAlias);
@@ -192,6 +212,8 @@ module.exports = async function list(request, response) {
                 query.field(`(${sub_query})`, _.get(additional_fields_details, 'applications_count'));
             }
 
+        } else if(group){
+            query.field("country,count(country)");
         } else {
             query.field("COUNT(*)");
         }
@@ -259,7 +281,10 @@ module.exports = async function list(request, response) {
             const generateGeom = `ST_PointFromText(ST_AsEWKT(${JobPostings.tableAlias}.${JobPostings.schema.latlng.columnName}::geometry), 4326)::geography`;
             query.where(`ST_DWithin(${generateGeom}, ST_SetSRID(ST_MakePoint(${_.get(criteria, 'where.location.latitude')}, ${_.get(criteria, 'where.location.longitude')}), 4326), ${_.get(criteria, 'where.location_miles')} * 1609)`);
         }
-        if (count) {
+        if (count && !group) {
+            return query.toString();
+        }else if (group) {
+			query.group(`${JobPostings.tableAlias}.${JobPostings.schema.country.columnName}`);
             return query.toString();
         } else {
             if (_.isArray(_.get(criteria, 'sort'))) {
@@ -281,7 +306,7 @@ module.exports = async function list(request, response) {
     }
 
     //Build and sending response
-    const sendResponse = (items, details, total) => {
+    const sendResponse = (items, details, total,country) => {
         _response_object.message = 'Job items retrieved successfully.';
         var meta = {};
         meta['count'] = items.length;
@@ -299,6 +324,7 @@ module.exports = async function list(request, response) {
         meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/[filename].[filetype]';
         _response_object['meta'] = meta;
         _response_object['items'] = _.cloneDeep(items);
+        _response_object['country'] = _.cloneDeep(country);
         if (!_.isEmpty(details)) {
             _response_object['details'] = _.cloneDeep(details);
         }
@@ -387,8 +413,8 @@ module.exports = async function list(request, response) {
                 }
             }
             //Preparing data
-            await getJobPostings(criteria, function(job_postings, details, total) {
-                sendResponse(job_postings, details, total);
+            await getJobPostings(criteria, function(job_postings, details, total,country) {
+                sendResponse(job_postings, details, total,country);
             });
         } else {
             _response_object.errors = errors;
