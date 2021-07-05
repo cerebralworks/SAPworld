@@ -64,6 +64,10 @@ module.exports.routes = {
     'POST /clients/create': { controller: 'clients', action: 'create' },
     'GET /clients/list': { controller: 'clients', action: 'list' },
 
+	'GET /user/application/delete/:id': nonGetHandler,
+    'POST /user/application/delete/:id': { controller: 'jobpostings', action: 'applications/delete-application' },
+    
+	
     /*Users routes*/
     'GET /users/list': { controller: 'users', action: 'list' },
     'GET /users/signup': nonGetHandler,
@@ -153,6 +157,9 @@ module.exports.routes = {
     'POST /jobpostings/applications/change-status/:id': { controller: 'jobpostings', action: 'change-status' },
     'GET /jobpostings/applications/short-list-user/:id': nonGetHandler,
     'POST /jobpostings/applications/short-list-user': { controller: 'jobpostings', action: 'applications/short-list-user' },
+	
+	
+	
     'GET /jobpostings/job-scoring': { controller: 'jobpostings', action: 'job-scoring' },
     'GET /jobpostings/user-scoring': { controller: 'jobpostings', action: 'user-scoring' },
     'GET /jobpostings/send-email': { controller: 'jobpostings', action: 'send-email' },
