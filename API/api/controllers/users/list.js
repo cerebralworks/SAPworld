@@ -133,7 +133,7 @@ module.exports = async function list(request, response) {
             input_attributes[_.findIndex(input_attributes, { name: 'job_posting' })].required = true;
         }
     }
-    if (_.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 0)), 1)) {
+    if (_.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 1)), 0)) {
         input_attributes[_.findIndex(input_attributes, { name: 'job_posting' })].required = true;
     }
 
@@ -270,11 +270,15 @@ module.exports = async function list(request, response) {
         if (filtered_query_keys.includes('max_experience')) {
             query.where(`COALESCE(${UserProfiles.tableAlias}.${UserProfiles.schema.experience.columnName}, 0) <= ${parseInt(filtered_query_data.max_experience)}`);
         }
-        if (filtered_query_keys.includes('skill_tags') && _.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 0)), 0)) {
+        if (filtered_query_keys.includes('skill_tags') && _.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 0)), 1)) {
             // skill_tags_filter_type is 0. it indicates that skill_tags values will be provided by client.
             query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.skills.columnName} && ARRAY[${filtered_query_data.skill_tags}]::bigint[]`);
         }
-        if (filtered_query_keys.includes('job_posting') && _.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 0)), 1)) {
+        if (filtered_query_keys.includes('skill_tags') && _.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 1)), 0)) {
+            // skill_tags_filter_type is 0. it indicates that skill_tags values will be provided by client.
+            query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.skills.columnName} && ARRAY[${filtered_query_data.skill_tags}]::bigint[]`);
+        }
+        /* if (filtered_query_keys.includes('job_posting') && _.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 1)), 0)) {
             // skill_tags_filter_type is 1. it indicates that skill_tags values will be taken from job_posting skill_tags.
             let sub_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' });
             sub_query.from(JobPostings.tableName, JobPostings.tableAlias);
@@ -285,7 +289,7 @@ module.exports = async function list(request, response) {
             }
             sub_query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} != ${row_deleted_sign}`);
             query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.skills.columnName} && (${sub_query.toString()})`);
-        }
+        } */
         //Count Country query
         var count_country_query = squel.select().field(UserProfiles.schema.country.columnName +' , COUNT( ' + UserProfiles.tableAlias + '.' + UserProfiles.schema.country.columnName + ')').toString();
 		var querys = query;
