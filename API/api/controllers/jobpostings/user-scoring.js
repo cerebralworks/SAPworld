@@ -85,19 +85,19 @@ module.exports = async function Scoring(request, response) {
             //.where("lower(city) = lower('" + model.city + "') ");
 		
 		
-        if (model.job_type) {
+        if (model.job_type && !value.job_id) {
             list_query.where(`${JobPostings.tableAlias}.${JobPostings.schema.type.columnName} = ANY('{${model.job_type}}')`);
         }
-        if (filtered_query_data.city && model.work_authorization != 1 ) {
+        if (filtered_query_data.city && model.work_authorization != 1  && !value.job_id) {
             list_query.where(`${JobPostings.tableAlias}.${JobPostings.schema.city.columnName}  = ANY('{${filtered_query_data.city}}')`);
         }
-        if (filtered_query_data.country && model.work_authorization != 1 ) {
+        if (filtered_query_data.country && model.work_authorization != 1  && !value.job_id) {
 		list_query.where(`${JobPostings.tableAlias}.${JobPostings.schema.country.columnName}  = ANY('{${filtered_query_data.country}}')`);
         }
-        if ( filtered_query_data.visa_sponsered == false && model.work_authorization != 1) {
+        if ( filtered_query_data.visa_sponsered == false && model.work_authorization != 1 && !value.job_id) {
             list_query.where(`${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = ${filtered_query_data.visa_sponsered} `);
         }
-        if (filtered_query_data.work_authorization == 1 ) {
+        if (filtered_query_data.work_authorization == 1  && !value.job_id) {
 		list_query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = true or ${JobPostings.tableAlias}.${JobPostings.schema.country.columnName} = ANY('{${filtered_query_data.country}}') or ${JobPostings.tableAlias}.${JobPostings.schema.city.columnName}  = ANY('{${filtered_query_data.city}}') ) `);
         }
 		
