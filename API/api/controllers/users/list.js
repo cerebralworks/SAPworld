@@ -202,12 +202,17 @@ module.exports = async function list(request, response) {
 		
 		
         if (filtered_query_keys.includes('city') && filtered_query_data.visa == false ) {
-            //query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.city.columnName + ") LIKE '%" + criteria.city.toLowerCase() + "%' OR willing_to_relocate=true");
-           // query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.city.columnName + ") = '" + criteria.city.toLowerCase() + "' ");
-			query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${criteria.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}')`);
+          // query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${criteria.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}')`);
         }
-        if (filtered_query_keys.includes('country') && filtered_query_data.visa == false ) {
+        if (filtered_query_keys.includes('country') && !filtered_query_keys.includes('city')  && filtered_query_data.visa == false ) {
             query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${criteria.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}')`);
+            //query.orWhere('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.country.columnName + ") = '" + criteria.country.toLowerCase() + "'");
+			//let search_texts = squel.expr();
+            // search_texts.or('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.preferred_locations.columnName + '->>' + UserProfiles.schema.country.columnName + ") LIKE '%" + criteria.country.toLowerCase() + "%'");
+             //query.where(search_texts);
+        }
+        if (filtered_query_keys.includes('country') && filtered_query_keys.includes('city')  && filtered_query_data.visa == false ) {
+            query.where(`((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${criteria.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}')) or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${criteria.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}'))`);
             //query.orWhere('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.country.columnName + ") = '" + criteria.country.toLowerCase() + "'");
 			//let search_texts = squel.expr();
             // search_texts.or('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.preferred_locations.columnName + '->>' + UserProfiles.schema.country.columnName + ") LIKE '%" + criteria.country.toLowerCase() + "%'");
@@ -284,7 +289,7 @@ module.exports = async function list(request, response) {
         //Count Country query
         var count_country_query = squel.select().field(UserProfiles.schema.country.columnName +' , COUNT( ' + UserProfiles.tableAlias + '.' + UserProfiles.schema.country.columnName + ')').toString();
 		var querys = query;
-		querys.group(`${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}`);
+		querys.group(`${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName},${UserProfiles.tableAlias}.${UserProfiles.schema.id.columnName}`);
         query_split = querys.toString().split(/FROM(.+)/)[1];
         count_country_query = count_country_query + ' FROM ' + query_split.split(' ORDER')[0];
         //Count query
