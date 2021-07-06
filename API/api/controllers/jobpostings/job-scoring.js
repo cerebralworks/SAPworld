@@ -119,8 +119,8 @@ module.exports = async function Scoring(request, response) {
         if (model.visa_sponsorship == true && !value.user_id) {
             list_query.where(`(${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1 or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${model.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${model.country.toString()}}') or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${model.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${model.city.toString()}}') )`);
         }
-        if (model.type && !value.user_id) {
-           list_query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} && ARRAY[${model.type.toString()}]::text[]`);
+        if (model.type && !value.user_id && model.visa_sponsorship == false ) {
+           //list_query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} && ARRAY[${model.type.toString()}]::text[]`);
         }
        // if (model.includes('min_experience')) {
            // list_query.where(`COALESCE(${UserProfiles.tableAlias}.${UserProfiles.schema.experience.columnName}, 0) >= ${parseInt(filtered_query_data.min_experience)}`);

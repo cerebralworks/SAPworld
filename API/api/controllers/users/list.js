@@ -288,8 +288,10 @@ module.exports = async function list(request, response) {
         query_split = querys.toString().split(/FROM(.+)/)[1];
         count_country_query = count_country_query + ' FROM ' + query_split.split(' ORDER')[0];
         //Count query
-        var count_query = squel.select().field('COUNT(DISTINCT ' + UserProfiles.tableAlias + '.' + UserProfiles.schema.id.columnName + ')').toString();
-        query_split = query.toString().split(/FROM(.+)/)[1];
+        var count_query = squel.select().field('COUNT(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.id.columnName + ')').toString();
+		var queryss = query;
+		queryss.group(`${UserProfiles.tableAlias}.${UserProfiles.schema.id.columnName}`);
+        query_split = queryss.toString().split(/FROM(.+)/)[1];
         count_query = count_query + ' FROM ' + query_split.split(' ORDER')[0];
         sails.sendNativeQuery(count_query, function(err, total_result) {
             if (err) {
