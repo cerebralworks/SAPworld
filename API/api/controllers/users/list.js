@@ -202,17 +202,12 @@ module.exports = async function list(request, response) {
 		
 		
         if (filtered_query_keys.includes('city') && filtered_query_data.visa == false ) {
-          // query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${criteria.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}')`);
+            //query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.city.columnName + ") LIKE '%" + criteria.city.toLowerCase() + "%' OR willing_to_relocate=true");
+           // query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.city.columnName + ") = '" + criteria.city.toLowerCase() + "' ");
+			query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${criteria.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}')`);
         }
-        if (filtered_query_keys.includes('country') && !filtered_query_keys.includes('city')  && filtered_query_data.visa == false ) {
+        if (filtered_query_keys.includes('country') && filtered_query_data.visa == false ) {
             query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${criteria.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}')`);
-            //query.orWhere('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.country.columnName + ") = '" + criteria.country.toLowerCase() + "'");
-			//let search_texts = squel.expr();
-            // search_texts.or('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.preferred_locations.columnName + '->>' + UserProfiles.schema.country.columnName + ") LIKE '%" + criteria.country.toLowerCase() + "%'");
-             //query.where(search_texts);
-        }
-        if (filtered_query_keys.includes('country') && filtered_query_keys.includes('city')  && filtered_query_data.visa == false ) {
-            query.where(`((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${criteria.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}')) or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${criteria.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}'))`);
             //query.orWhere('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.country.columnName + ") = '" + criteria.country.toLowerCase() + "'");
 			//let search_texts = squel.expr();
             // search_texts.or('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.preferred_locations.columnName + '->>' + UserProfiles.schema.country.columnName + ") LIKE '%" + criteria.country.toLowerCase() + "%'");
