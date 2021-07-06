@@ -131,7 +131,7 @@ module.exports = async function Scoring(request, response) {
             list_query.where("account =" + value.user_id);
         }
         if (value.work_authorization) {
-            list_query.where("work_authorization=" + model.work_authorization);
+            //list_query.where("work_authorization=" + model.work_authorization);
             score += 1;
         }
         if (value.travel) {

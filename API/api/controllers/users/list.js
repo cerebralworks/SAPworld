@@ -281,6 +281,12 @@ module.exports = async function list(request, response) {
             sub_query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} != ${row_deleted_sign}`);
             query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.skills.columnName} && (${sub_query.toString()})`);
         }
+        //Count Country query
+        var count_country_query = squel.select().field(UserProfiles.schema.country.columnName +' , COUNT( ' + UserProfiles.tableAlias + '.' + UserProfiles.schema.country.columnName + ')').toString();
+		var querys = query;
+		querys.group(`${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}`);
+        query_split = querys.toString().split(/FROM(.+)/)[1];
+        count_country_query = count_country_query + ' FROM ' + query_split.split(' ORDER')[0];
         //Count query
         var count_query = squel.select().field('COUNT(DISTINCT ' + UserProfiles.tableAlias + '.' + UserProfiles.schema.id.columnName + ')').toString();
         query_split = query.toString().split(/FROM(.+)/)[1];
@@ -407,15 +413,34 @@ module.exports = async function list(request, response) {
                         _response_object.count = _response_object.errors.count;
                         return response.status(400).json(_response_object);
                     } else {
+						
+						var application_models = sails.sendNativeQuery(count_country_query);
+						application_models.exec(async function(err, applications_results) {
+							if (err) {
+								var error = {
+									'field': 'Country Count',
+									'rules': [{
+										'rule': 'invalid',
+										'message': err.message
+									}]
+								};
+								_response_object.errors = [error];
+								_response_object.count = _response_object.errors.count;
+								return response.status(400).json(_response_object);
+							} else {
 
-                        return callback(applications_result.rows, {}, parseInt(total_result.rows[0].count));
+								return callback(applications_result.rows, {}, parseInt(total_result.rows[0].count),applications_results.rows);
+							}
+						});
+
+                        //return callback(applications_result.rows, {}, parseInt(total_result.rows[0].count));
                     }
                 });
             }
         });
     };
     //Build and sending response
-    const sendResponse = (items, details, total) => {
+    const sendResponse = (items, details, total,country) => {
         _response_object.message = 'Users list have been retrieved successfully.';
         var meta = {};
         meta['count'] = items.length;
@@ -439,6 +464,7 @@ module.exports = async function list(request, response) {
         meta['doc_resume'].example = meta['doc_resume'].path + '/' + meta['doc_resume'].folder + '/doc-resume-55.png';
         _response_object['meta'] = meta;
         _response_object['items'] = _.cloneDeep(items);
+        _response_object['country'] = _.cloneDeep(country);
         if (!_.isEmpty(details)) {
             _response_object['details'] = _.cloneDeep(details);
         }
@@ -449,10 +475,10 @@ module.exports = async function list(request, response) {
         if (valid) {
             filtered_query_data.limit = parseInt(filtered_query_data.limit) > 0 ? parseInt(filtered_query_data.limit) : 10;
             //Preparing data
-            await getUserProfiles(filtered_query_data, function(applications, details, total) {
+            await getUserProfiles(filtered_query_data, function(applications, details, total,country) {
                 var pro_details = [];
                 if (!Object.keys(applications).length) {
-                    sendResponse(applications, pro_details, total);
+                    sendResponse(applications, pro_details, total,country);
                     return true;
                 }
                 for (const element of applications) {
@@ -475,7 +501,7 @@ module.exports = async function list(request, response) {
                 }
 
 
-                sendResponse(applications, pro_details, total);
+                sendResponse(applications, pro_details, total,country);
             });
         } else {
             _response_object.errors = errors;

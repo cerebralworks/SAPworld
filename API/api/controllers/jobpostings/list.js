@@ -153,7 +153,7 @@ module.exports = async function list(request, response) {
 								_response_object.count = _response_object.errors.count;
 								return response.status(400).json(_response_object);
 							} else {
-								console.log(group_query_Value);
+								//console.log(group_query_Value);
 								return callback(_.get(job_postings, 'rows'), {}, parseInt(_.get(_.cloneDeep(total), 'rows[0].count')),_.get(group_query_Value, 'rows'));
 							}
 						});
