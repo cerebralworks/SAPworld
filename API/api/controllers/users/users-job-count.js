@@ -6,7 +6,7 @@ const job_type_values = _.values(_.get(sails, 'config.custom.job_types', {}));
 module.exports = async function list(request, response) {
     var _response_object = {};
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['page', 'sort', 'limit','company']);
+    const filtered_query_data = _.pick(request_query, ['page', 'sort', 'limit','company','view']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
         { name: 'page', number: true, min: 1 },
@@ -19,8 +19,7 @@ module.exports = async function list(request, response) {
     const getJobPostings = async( callback) => {
 								
 		if (filtered_query_keys.includes('company')) {
-
-			const Count_Users = `SELECT job_posting.id,job_posting.title,COUNT(distinct user_profile.id) FROM user_employments "job_posting"
+			var Count_Users = `SELECT job_posting.id,job_posting.title,COUNT(distinct user_profile.id) FROM user_employments "job_posting"
 	LEFT JOIN employer_profiles "employer" ON (job_posting.company = employer.id) 
 	CROSS JOIN user_profiles "user_profile" 
 	CROSS JOIN json_array_elements(to_json(job_posting.hands_on_experience)) skill_id(skillss) 
@@ -32,7 +31,13 @@ module.exports = async function list(request, response) {
 	or (coun->>'country') like job_posting.country  or (LOWER(user_profile.city) like job_posting.city)
 	or (citys->>'city') like job_posting.city) AND (user_profile.skills && ARRAY[skillss->>'skill_id']::bigint[])
 	AND (COALESCE(user_profile.experience) >= job_posting.experience)
-	group by job_posting.id`
+			group by job_posting.id`
+			if(filtered_query_data.view =='applicants'){
+				Count_Users = `SELECT COUNT(DISTINCT job_application.id),job_posting.id FROM  job_applications "job_application" 
+LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 
+LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) WHERE
+(job_application.status=1) AND (job_application.employer=${parseInt(filtered_query_data.company)}) Group BY job_posting.id`
+			}
 			sails.sendNativeQuery(Count_Users, async function(err, Count_Users_value) {
 				if (err) {
 					var error = {
