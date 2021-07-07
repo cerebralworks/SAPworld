@@ -133,7 +133,7 @@ module.exports = async function list(request, response) {
             input_attributes[_.findIndex(input_attributes, { name: 'job_posting' })].required = true;
         }
     }
-    if (_.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 0)), 1)) {
+    if (_.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 1)), 0)) {
         input_attributes[_.findIndex(input_attributes, { name: 'job_posting' })].required = true;
     }
 
@@ -145,7 +145,8 @@ module.exports = async function list(request, response) {
     const getUserProfiles = (criteria, callback) => {
         //Initializing query
         var query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(UserProfiles.tableName, UserProfiles.tableAlias);
-       if (filtered_query_keys.includes('education')) {
+       query.cross_join('json_array_elements(to_json(hands_on_experience)) skill_id(skillss)');
+	   if (filtered_query_keys.includes('education')) {
 			query.cross_join('json_array_elements(to_json(education_qualification)) degree(ele)');
 	   }
 	   if (filtered_query_keys.includes('language')) {
@@ -202,23 +203,28 @@ module.exports = async function list(request, response) {
 		
 		
         if (filtered_query_keys.includes('city') && filtered_query_data.visa == false ) {
-            //query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.city.columnName + ") LIKE '%" + criteria.city.toLowerCase() + "%' OR willing_to_relocate=true");
-           // query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.city.columnName + ") = '" + criteria.city.toLowerCase() + "' ");
-			query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${criteria.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}')`);
+          //query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${criteria.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}')`);
         }
-        if (filtered_query_keys.includes('country') && filtered_query_data.visa == false ) {
+        if (filtered_query_keys.includes('country') && filtered_query_keys.includes('city') && filtered_query_data.visa == false ) {
+            query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) =any( '{${criteria.country.toLowerCase()}}')) or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}') or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) =any( '{${criteria.city.toLowerCase()}}')) or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}')`);
+            //query.orWhere('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.country.columnName + ") = '" + criteria.country.toLowerCase() + "'");
+			//let search_texts = squel.expr();
+            // search_texts.or('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.preferred_locations.columnName + '->>' + UserProfiles.schema.country.columnName + ") LIKE '%" + criteria.country.toLowerCase() + "%'");
+             //query.where(search_texts);
+        }
+        if (filtered_query_keys.includes('country') && !filtered_query_keys.includes('city') && filtered_query_data.visa == false ) {
             query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${criteria.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}')`);
             //query.orWhere('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.country.columnName + ") = '" + criteria.country.toLowerCase() + "'");
 			//let search_texts = squel.expr();
             // search_texts.or('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.preferred_locations.columnName + '->>' + UserProfiles.schema.country.columnName + ") LIKE '%" + criteria.country.toLowerCase() + "%'");
              //query.where(search_texts);
         }
-        if (filtered_query_data.visa == true && filtered_query_data.filter_location == false) {
-            query.where(`(${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1 or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${criteria.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}') or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${criteria.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}') )`);
+        if (filtered_query_data.visa == true ) {
+            query.where(`(${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1 or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) =any( '{${criteria.country.toLowerCase()}}')) or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}') or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) =any( '{${criteria.city.toLowerCase()}}')) or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}') )`);
         }
         if (filtered_query_data.filter_location == true) {
-            query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${criteria.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}')`);
-			query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${criteria.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}')`);       
+            //query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${criteria.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}')`);
+			//query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${criteria.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}')`);       
 		}
         if (filtered_query_keys.includes('work_authorization')) {
             // query.where(UserProfiles.tableAlias + '.' + UserProfiles.schema.work_authorization.columnName + "="+criteria.work_authorization );
@@ -265,11 +271,25 @@ module.exports = async function list(request, response) {
         if (filtered_query_keys.includes('max_experience')) {
             query.where(`COALESCE(${UserProfiles.tableAlias}.${UserProfiles.schema.experience.columnName}, 0) <= ${parseInt(filtered_query_data.max_experience)}`);
         }
-        if (filtered_query_keys.includes('skill_tags') && _.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 0)), 0)) {
+        if (filtered_query_keys.includes('skill_tags') && _.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 0)), 1)) {
+			query.where(`(skillss->>'skill_id') = ANY( '{${filtered_query_data.skill_tags}}' )`);
+			//query.where(`(skillss->>'skill_id') && ARRAY[${filtered_query_data.skill_tags}]::text[]`);
             // skill_tags_filter_type is 0. it indicates that skill_tags values will be provided by client.
             query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.skills.columnName} && ARRAY[${filtered_query_data.skill_tags}]::bigint[]`);
         }
-        if (filtered_query_keys.includes('job_posting') && _.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 0)), 1)) {
+        if (filtered_query_keys.includes('skill_tags') && _.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 1)), 0)) {
+			
+			query.where(`(skillss->>'skill_id') = ANY( '{${filtered_query_data.skill_tags}}' )`);
+            // skill_tags_filter_type is 0. it indicates that skill_tags values will be provided by client.
+			
+			
+			for(let i=0;i<filtered_query_data.skill_tags.length;i++){
+				query.where(` ${UserProfiles.tableAlias}.${UserProfiles.schema.skills.columnName} && '{${filtered_query_data.skill_tags[i]}}'`);
+			}
+            
+            //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.skills.columnName} && ARRAY[${filtered_query_data.skill_tags}]::bigint[]`);
+        }
+        /* if (filtered_query_keys.includes('job_posting') && _.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 1)), 0)) {
             // skill_tags_filter_type is 1. it indicates that skill_tags values will be taken from job_posting skill_tags.
             let sub_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' });
             sub_query.from(JobPostings.tableName, JobPostings.tableAlias);
@@ -280,16 +300,18 @@ module.exports = async function list(request, response) {
             }
             sub_query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} != ${row_deleted_sign}`);
             query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.skills.columnName} && (${sub_query.toString()})`);
-        }
+        } */
         //Count Country query
         var count_country_query = squel.select().field(UserProfiles.schema.country.columnName +' , COUNT( ' + UserProfiles.tableAlias + '.' + UserProfiles.schema.country.columnName + ')').toString();
 		var querys = query;
-		querys.group(`${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}`);
+		querys.group(`${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName},${UserProfiles.tableAlias}.${UserProfiles.schema.id.columnName}`);
         query_split = querys.toString().split(/FROM(.+)/)[1];
         count_country_query = count_country_query + ' FROM ' + query_split.split(' ORDER')[0];
         //Count query
-        var count_query = squel.select().field('COUNT(DISTINCT ' + UserProfiles.tableAlias + '.' + UserProfiles.schema.id.columnName + ')').toString();
-        query_split = query.toString().split(/FROM(.+)/)[1];
+        var count_query = squel.select().field('COUNT(distinct ' + UserProfiles.tableAlias + '.' + UserProfiles.schema.id.columnName + ')').toString();
+		var queryss = query;
+		//queryss.group(`${UserProfiles.tableAlias}.${UserProfiles.schema.id.columnName}`);
+        query_split = queryss.toString().split(/FROM(.+)/)[1].split(/GROUP(.+)/)[0];
         count_query = count_query + ' FROM ' + query_split.split(' ORDER')[0];
         sails.sendNativeQuery(count_query, function(err, total_result) {
             if (err) {

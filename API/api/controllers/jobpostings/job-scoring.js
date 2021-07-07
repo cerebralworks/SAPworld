@@ -89,46 +89,47 @@ module.exports = async function Scoring(request, response) {
         var list_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(UserProfiles.tableName, UserProfiles.tableAlias);
 		
 		
-	   if (model.country) {
+	   if (model.country && !value.user_id) {
 			list_query.cross_join('json_array_elements(to_json(preferred_locations)) country(coun)');
 	   }
-	   if (model.city) {
+	   if (model.city && !value.user_id) {
 			list_query.cross_join('json_array_elements(to_json(preferred_locations)) city(citys)');
 	   }
 	   if(model.skills){
-		   //var tempData = model.hands_on_experience.map(function(a,b){ return a.skill_id });
-		   var tempData = model.skills;
+		   var tempData = model.hands_on_experience.map(function(a,b){ return a.skill_id });
+		   //var tempData = model.skills;
 	   }
 	   
             list_query.where("status=1");
             list_query.where("experience >=" + model.experience);
             //.where("sap_experience >=" + model.sap_experience)
-            list_query.where(`skills && ARRAY[${tempData}]::bigint[]`);
+            //list_query.where(`skills && ARRAY[${tempData}]::bigint[]`);
             //list_query.where("lower(city) = lower('" + model.city + "') OR willing_to_relocate=true ");
             //.where("lower(city) = lower('" + model.city + "') OR willing_to_relocate=true OR ST_DistanceSphere(latlng, '" + model.latlng + "'::geometry) <=" + value.distance + " * 1609.34");
 		
 
 			
 		
-        if (model.city && model.visa_sponsorship == false ) {
-			list_query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${model.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${model.city.toString()}}')`);
+		list_query.cross_join('json_array_elements(to_json(user_profile.hands_on_experience)) skill_id(skillss)');
+		list_query.where(`(skillss->>'skill_id') = ANY( '{${tempData}}')`);
+        if (model.city && model.visa_sponsorship == false && !value.user_id) {
+			list_query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) = ANY( '{${model.city.toLowerCase()}}')) or (citys->>'city') = ANY( '{${model.city.toString()}}')`);
         }
-        if (model.country && model.visa_sponsorship == false ) {
-            list_query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${model.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${model.country.toString()}}')`);
+        if (model.country && model.visa_sponsorship == false && !value.user_id) {
+            list_query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) = ANY( '{${model.country.toLowerCase()}}')) or (coun->>'country') = ANY( '{${model.country.toString()}}')`);
         }
-        if (model.visa_sponsorship == true ) {
-            list_query.where(`(${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1 or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${model.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${model.country.toString()}}') or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${model.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${model.city.toString()}}') )`);
+        if (model.visa_sponsorship == true && !value.user_id) {
+            list_query.where(`(${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1 or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) = ANY( '{${model.country.toLowerCase()}}')) or (coun->>'country') = ANY( '{${model.country.toString()}}') or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) = ANY( '{${model.city.toLowerCase()}}')) or (citys->>'city') = ANY( '{${model.city.toString()}}') )`);
         }
-        if (model.type) {
-            //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} = ANY('{${filtered_query_data.job_types.toString()}}')`);
-            list_query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} && ARRAY[${model.type.toString()}]::text[]`);
+        if (model.type && !value.user_id && model.visa_sponsorship == false ) {
+           //list_query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} && ARRAY[${model.type.toString()}]::text[]`);
         }
        // if (model.includes('min_experience')) {
            // list_query.where(`COALESCE(${UserProfiles.tableAlias}.${UserProfiles.schema.experience.columnName}, 0) >= ${parseInt(filtered_query_data.min_experience)}`);
         //}
 		
         if (value.user_id) {
-            list_query.where("account =" + value.user_id);
+            list_query.where("id =" + value.user_id);
         }
         if (value.work_authorization) {
             //list_query.where("work_authorization=" + model.work_authorization);
