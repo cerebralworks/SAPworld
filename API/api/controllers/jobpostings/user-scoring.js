@@ -74,17 +74,17 @@ module.exports = async function Scoring(request, response) {
         var list_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(JobPostings.tableName, JobPostings.tableAlias);
 		
 		if(model.skills){
-		  // var tempData = model.hands_on_experience.map(function(a,b){ return a.skill_id });
-			var tempData = model.skills;
+		   var tempData = model.hands_on_experience.map(function(a,b){ return a.skill_id });
+			//var tempData = model.skills;
 	  }
             list_query.where("status=1");
             // .where("experience <=" + model.experience)
             //.where("sap_experience <=" + model.sap_experience)
-            list_query.where(`skills && ARRAY[${tempData}]::bigint[]`);
+           // list_query.where(`skills && ARRAY[${tempData}]::bigint[]`);
             //.where("lower(city) = lower('" + model.city + "')  OR ST_DistanceSphere(latlng, ST_MakePoint(" + model.latlng['coordinates'].toString() + ")) <=" + value.distance + " * 1609.34");
             //.where("lower(city) = lower('" + model.city + "') ");
-		
-		
+		list_query.cross_join('json_array_elements(to_json(job_posting.hands_on_experience)) skill_id(skillss)');
+		list_query.where(`(skillss->>'skill_id') = ANY( '{${tempData}}')`);
         if (model.job_type && !value.job_id) {
             list_query.where(`${JobPostings.tableAlias}.${JobPostings.schema.type.columnName} = ANY('{${model.job_type}}')`);
         }

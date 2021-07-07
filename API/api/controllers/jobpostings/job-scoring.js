@@ -96,20 +96,22 @@ module.exports = async function Scoring(request, response) {
 			list_query.cross_join('json_array_elements(to_json(preferred_locations)) city(citys)');
 	   }
 	   if(model.skills){
-		   //var tempData = model.hands_on_experience.map(function(a,b){ return a.skill_id });
-		   var tempData = model.skills;
+		   var tempData = model.hands_on_experience.map(function(a,b){ return a.skill_id });
+		   //var tempData = model.skills;
 	   }
 	   
             list_query.where("status=1");
             list_query.where("experience >=" + model.experience);
             //.where("sap_experience >=" + model.sap_experience)
-            list_query.where(`skills && ARRAY[${tempData}]::bigint[]`);
+            //list_query.where(`skills && ARRAY[${tempData}]::bigint[]`);
             //list_query.where("lower(city) = lower('" + model.city + "') OR willing_to_relocate=true ");
             //.where("lower(city) = lower('" + model.city + "') OR willing_to_relocate=true OR ST_DistanceSphere(latlng, '" + model.latlng + "'::geometry) <=" + value.distance + " * 1609.34");
 		
 
 			
 		
+		list_query.cross_join('json_array_elements(to_json(user_profile.hands_on_experience)) skill_id(skillss)');
+		list_query.where(`(skillss->>'skill_id') = ANY( '{${tempData}}')`);
         if (model.city && model.visa_sponsorship == false && !value.user_id) {
 			list_query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) = ANY( '{${model.city.toLowerCase()}}')) or (citys->>'city') = ANY( '{${model.city.toString()}}')`);
         }

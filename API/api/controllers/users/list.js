@@ -145,7 +145,8 @@ module.exports = async function list(request, response) {
     const getUserProfiles = (criteria, callback) => {
         //Initializing query
         var query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(UserProfiles.tableName, UserProfiles.tableAlias);
-       if (filtered_query_keys.includes('education')) {
+       query.cross_join('json_array_elements(to_json(hands_on_experience)) skill_id(skillss)');
+	   if (filtered_query_keys.includes('education')) {
 			query.cross_join('json_array_elements(to_json(education_qualification)) degree(ele)');
 	   }
 	   if (filtered_query_keys.includes('language')) {
@@ -271,12 +272,22 @@ module.exports = async function list(request, response) {
             query.where(`COALESCE(${UserProfiles.tableAlias}.${UserProfiles.schema.experience.columnName}, 0) <= ${parseInt(filtered_query_data.max_experience)}`);
         }
         if (filtered_query_keys.includes('skill_tags') && _.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 0)), 1)) {
+			query.where(`(skillss->>'skill_id') = ANY( '{${filtered_query_data.skill_tags}}' )`);
+			//query.where(`(skillss->>'skill_id') && ARRAY[${filtered_query_data.skill_tags}]::text[]`);
             // skill_tags_filter_type is 0. it indicates that skill_tags values will be provided by client.
             query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.skills.columnName} && ARRAY[${filtered_query_data.skill_tags}]::bigint[]`);
         }
         if (filtered_query_keys.includes('skill_tags') && _.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 1)), 0)) {
+			
+			query.where(`(skillss->>'skill_id') = ANY( '{${filtered_query_data.skill_tags}}' )`);
             // skill_tags_filter_type is 0. it indicates that skill_tags values will be provided by client.
-            query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.skills.columnName} && ARRAY[${filtered_query_data.skill_tags}]::bigint[]`);
+			
+			
+			for(let i=0;i<filtered_query_data.skill_tags.length;i++){
+				query.where(` ${UserProfiles.tableAlias}.${UserProfiles.schema.skills.columnName} && '{${filtered_query_data.skill_tags[i]}}'`);
+			}
+            
+            //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.skills.columnName} && ARRAY[${filtered_query_data.skill_tags}]::bigint[]`);
         }
         /* if (filtered_query_keys.includes('job_posting') && _.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 1)), 0)) {
             // skill_tags_filter_type is 1. it indicates that skill_tags values will be taken from job_posting skill_tags.

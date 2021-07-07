@@ -11,7 +11,7 @@ const job_type_values = _.values(_.get(sails, 'config.custom.job_types', {}));
 module.exports = async function list(request, response) {
     var _response_object = {};
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['page', 'country', 'sort','visa_sponsered', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'work_authorization', 'zip_code', 'additional_fields']);
+    const filtered_query_data = _.pick(request_query, ['page','skills_filter', 'country', 'sort','visa_sponsered', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'work_authorization', 'zip_code', 'additional_fields']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
         { name: 'page', number: true, min: 1 },
@@ -76,6 +76,12 @@ module.exports = async function list(request, response) {
     }
     if (filtered_query_data.visa_sponsered == "false") {
         filtered_query_data.visa_sponsered = false;
+    }
+    if (filtered_query_data.skills_filter =="true") {
+        filtered_query_data.skills_filter = true;
+    }
+    if (filtered_query_data.skills_filter == "false") {
+        filtered_query_data.skills_filter = false;
     }
     if (filtered_query_data.type) {
         filtered_query_data.type = filtered_query_data.type.split(',');
@@ -219,9 +225,11 @@ module.exports = async function list(request, response) {
         }
 
 
-
+		query.cross_join('json_array_elements(to_json(job_posting.hands_on_experience)) skill_id(skillss)');
+		
         query.left_join(`${EmployerProfiles.tableName}`, `${EmployerProfiles.tableAlias}`, `${JobPostings.tableAlias}.company = ${EmployerProfiles.tableAlias}.id`);
-
+		
+		
         if (_.get(criteria, 'where.status')) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} = ${_.get(criteria, 'where.status')}`);
         } else {
@@ -232,7 +240,14 @@ module.exports = async function list(request, response) {
             query.where(`LOWER(${JobPostings.tableAlias}.${JobPostings.schema.title.columnName}) LIKE '${_.get(criteria, 'where.alphabet')}%'`);
         }
         if (_.get(criteria, 'where.skills')) {
-            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.skills.columnName} && '${_.get(criteria, 'where.skills')}'`);
+			query.where(`(skillss->>'skill_id') = ANY( '${_.get(criteria, 'where.skills')}')`);
+            //query.where(` ${JobPostings.tableAlias}.${JobPostings.schema.skills.columnName} && '${_.get(criteria, 'where.skills')}'`);
+        }
+        if (_.get(criteria, 'where.skills') && filtered_query_data.skills_filter == true) {
+			for(let i=0;i<filtered_query_data.skills.length;i++){
+				query.where(` ${JobPostings.tableAlias}.${JobPostings.schema.skills.columnName} && '{${filtered_query_data.skills[i]}}'`);
+			}
+            
         }
         if (_.get(criteria, 'where.min_salary')) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.salary.columnName} >= ${_.get(criteria, 'where.min_salary')}`);
@@ -282,6 +297,7 @@ module.exports = async function list(request, response) {
             query.where(`ST_DWithin(${generateGeom}, ST_SetSRID(ST_MakePoint(${_.get(criteria, 'where.location.latitude')}, ${_.get(criteria, 'where.location.longitude')}), 4326), ${_.get(criteria, 'where.location_miles')} * 1609)`);
         }
         if (count && !group) {
+			query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${EmployerProfiles.tableAlias}.${EmployerProfiles.schema.id.columnName}`);
             return query.toString();
         }else if (group) {
 			query.group(`${JobPostings.tableAlias}.${JobPostings.schema.country.columnName}`);
@@ -301,6 +317,7 @@ module.exports = async function list(request, response) {
             if (_.get(criteria, 'page')) {
                 query.offset(_.get(criteria, 'page'));
             }
+			query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${EmployerProfiles.tableAlias}.${EmployerProfiles.schema.id.columnName}`);
             return query.limit(_.get(criteria, 'limit')).toString();
         }
     }

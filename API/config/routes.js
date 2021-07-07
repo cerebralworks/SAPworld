@@ -136,6 +136,7 @@ module.exports.routes = {
     'GET /employers/saved-profiles': { controller: 'employers', action: 'saved-profiles' },
     /*Jobs routes*/
     'GET /jobpostings/list': { controller: 'jobpostings', action: 'list' },
+    'GET /jobpostings/list/users/count': { controller: 'users', action: 'users-job-count' },
     'GET /jobpostings/create': nonGetHandler,
     'POST /jobpostings/create': { controller: 'jobpostings', action: 'create' },
     'GET /jobpostings/view/:id': { controller: 'jobpostings', action: 'view' },
