@@ -111,13 +111,13 @@ module.exports = async function Scoring(request, response) {
 			
 		
         if (model.city && model.visa_sponsorship == false && !value.user_id) {
-			list_query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${model.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${model.city.toString()}}')`);
+			list_query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) = ANY( '{${model.city.toLowerCase()}}')) or (citys->>'city') = ANY( '{${model.city.toString()}}')`);
         }
         if (model.country && model.visa_sponsorship == false && !value.user_id) {
-            list_query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${model.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${model.country.toString()}}')`);
+            list_query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) = ANY( '{${model.country.toLowerCase()}}')) or (coun->>'country') = ANY( '{${model.country.toString()}}')`);
         }
         if (model.visa_sponsorship == true && !value.user_id) {
-            list_query.where(`(${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1 or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${model.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${model.country.toString()}}') or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${model.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${model.city.toString()}}') )`);
+            list_query.where(`(${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1 or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) = ANY( '{${model.country.toLowerCase()}}')) or (coun->>'country') = ANY( '{${model.country.toString()}}') or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) = ANY( '{${model.city.toLowerCase()}}')) or (citys->>'city') = ANY( '{${model.city.toString()}}') )`);
         }
         if (model.type && !value.user_id && model.visa_sponsorship == false ) {
            //list_query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} && ARRAY[${model.type.toString()}]::text[]`);
