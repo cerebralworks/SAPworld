@@ -83,7 +83,7 @@ module.exports.routes = {
     'GET /users/update-doc-cover': nonGetHandler,
     'POST /users/update-doc-cover': { controller: 'users', action: 'update-doc-cover' },
     'GET /users/delete-resume': nonGetHandler,
-    'POST /users/delete-resume': { controller: 'users', action: 'cover-delete' },
+    'POST /users/delete-resume': { controller: 'users', action: 'resume-delete' },
     'GET /users/delete-cover': nonGetHandler,
     'POST /users/delete-cover': { controller: 'users', action: 'cover-delete' },
     'GET /users/choose-default-resume': nonGetHandler,
