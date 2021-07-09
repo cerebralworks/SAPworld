@@ -30,7 +30,7 @@ module.exports = async function view(request, response) {
                 id: id,
                 'status': { '!=': _.get(sails.config.custom.status_codes, 'deleted') }
             }
-        });
+        }).populate('company');
 
         if (expand.includes('category')) {
             job_model.populate('category');
