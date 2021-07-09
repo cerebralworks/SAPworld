@@ -103,6 +103,9 @@ module.exports = async function list(request, response) {
         if (filtered_query_keys.includes('short_listed')) {
             query.where(JobApplications.tableAlias + '.' + JobApplications.schema.short_listed.columnName + "=" + (!!+criteria.short_listed));
         }
+        if (!filtered_query_keys.includes('short_listed')) {
+            query.where(JobApplications.tableAlias + '.' + JobApplications.schema.short_listed.columnName + "!= true or job_application.short_listed IS NULL " );
+        }
         //SKILL TAGS LOGIC BEGIN
         //Do not change the skill tags logic order. It must comes last at any cost. Add filters above this line if needed.
         var tag_input;

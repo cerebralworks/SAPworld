@@ -75,11 +75,11 @@ module.exports = async function update(request, response) {
 
     // Build and send response.
     function sendResponse(details) {
-        // if (_.get(details, 'short_listed')) {
+         if (_.get(details, 'short_listed')) {
         _response_object.message = 'Job application have been added to the short list successfully.';
-        // } else {
-        //     _response_object.message = 'Job application have been removed from the short list successfully.';
-        // }
+        } else if(_.get(details, 'short_listed')==false) {
+            _response_object.message = 'Job application is Not fit for this job.';
+        }
         _response_object['details'] = details;
         return response.ok(_response_object);
     };

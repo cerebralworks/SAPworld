@@ -11,7 +11,7 @@ const job_type_values = _.values(_.get(sails, 'config.custom.job_types', {}));
 module.exports = async function list(request, response) {
     var _response_object = {};
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['page','skills_filter', 'country', 'sort','visa_sponsered', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'work_authorization', 'zip_code', 'additional_fields']);
+    const filtered_query_data = _.pick(request_query, ['page','filterData','skills_filter', 'country', 'sort','visa_sponsered', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'work_authorization', 'zip_code', 'additional_fields']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
         { name: 'page', number: true, min: 1 },
