@@ -39,6 +39,9 @@ module.exports = async function saveProfile(request, response) {
     };
     await schema.validate(post_request_data, { abortEarly: false }).then(async value => {
         if (!value.delete) {
+			if(!value.description){
+				value.description = '';
+			}
             var company_profile = await SavedProfile.findOne({ employee_id: logged_in_user.employer_profile.id, user_id: value.user_id });
             value.employee_id = logged_in_user.employer_profile.id;
             if (!company_profile) {
@@ -54,7 +57,13 @@ module.exports = async function saveProfile(request, response) {
                     }
                 });
             } else {
-                sendResponse(company_profile);
+				  var company_profiles = await SavedProfile.updateOne({ employee_id: logged_in_user.employer_profile.id, user_id: value.user_id }).set(value);
+                if(company_profiles){
+					return response.status(200).json({ message: ' profile updated successfully.', user_id: value.user_id });
+				}else{
+					sendResponse(company_profile);
+				}
+                
             }
         } else {
             await SavedProfile.destroyOne({ employee_id: logged_in_user.employer_profile.id, user_id: value.user_id }).then(success => {

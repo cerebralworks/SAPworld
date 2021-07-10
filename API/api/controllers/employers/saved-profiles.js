@@ -80,6 +80,7 @@ module.exports = async function list(request, response) {
             } else {
                 //Selecting fields
                 fields = _.without(Object.keys(UserProfiles.schema), 'phone');
+				query.field(SavedProfile.tableAlias + '.' + SavedProfile.schema['description'].columnName, 'description');
                 fields.map(function(value) {
                     if (UserProfiles.schema[value].columnName || typeof UserProfiles.schema[value].columnName !== "undefined") {
                         query.field(UserProfiles.tableAlias + '.' + UserProfiles.schema[value].columnName, value);
