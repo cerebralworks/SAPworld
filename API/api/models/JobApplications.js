@@ -17,7 +17,7 @@ module.exports = {
     attributes: {
         comments: { type: 'string', allowNull: true },
         status: { type: 'number', defaultsTo: 1 },
-        short_listed: { type: 'boolean', defaultsTo: false },
+        short_listed: { type: 'boolean', allowNull: true },
         status_glossary: { type: 'string', allowNull: true },
         user: {
             model: 'userprofiles'
