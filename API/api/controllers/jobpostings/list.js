@@ -300,7 +300,7 @@ module.exports = async function list(request, response) {
 			query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${EmployerProfiles.tableAlias}.${EmployerProfiles.schema.id.columnName}`);
             return query.toString();
         }else if (group) {
-			query.group(`${JobPostings.tableAlias}.${JobPostings.schema.country.columnName}`);
+			query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName}`);
             return query.toString();
         } else {
             if (_.isArray(_.get(criteria, 'sort'))) {
