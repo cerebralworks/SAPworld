@@ -221,7 +221,7 @@ module.exports = async function list(request, response) {
         }
 		query.where(`(user_profile.privacy_protection->>'available_for_opportunity')::text = 'true'`);
         if (filtered_query_data.visa == true ) {
-            query.where(`((${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1 or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) =any( '{${criteria.country.toLowerCase()}}')) or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}') or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) =any( '{${criteria.city.toLowerCase()}}')) or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}') ))`);
+            query.where(`((${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1) or ((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) =any( '{${criteria.country.toLowerCase()}}')) or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}') or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) =any( '{${criteria.city.toLowerCase()}}')) or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}') ))`);
         }
         if (filtered_query_data.filter_location == true) {
             //query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${criteria.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}')`);

@@ -35,7 +35,7 @@ module.exports = async function list(request, response) {
     var input_attributes = [
         { name: 'page', number: true, min: 1 },
         { name: 'limit', number: true, min: 1 },
-        { name: 'status', enum: true, values: [0, 1] },
+        { name: 'status', enum: true, values: [0, 1,2,3,4,5,6,7,8,9] },
         { name: 'job_posting', number: true, min: 1 },
         { name: 'user', enum: true, min: 1 },
         { name: 'short_listed', enum: true, values: [0, 1] },
@@ -65,9 +65,9 @@ module.exports = async function list(request, response) {
         }
         if (filtered_query_keys.includes('status')) {
             query.where(JobApplications.tableAlias + '.' + JobApplications.schema.status.columnName + "=" + parseInt(criteria.status));
-        } else {
+        } /* else {
             query.where(JobApplications.tableAlias + '.' + JobApplications.schema.status.columnName + "=1");
-        }
+        } */
         if (filtered_query_keys.includes('job_posting')) {
             query.where(JobApplications.tableAlias + '.' + JobApplications.schema.job_posting.columnName + "=" + parseInt(criteria.job_posting));
         }
@@ -97,7 +97,7 @@ module.exports = async function list(request, response) {
                 query.where(JobApplications.tableAlias + '.' + JobApplications.schema.employer.columnName + "=" + parseInt(criteria.employer));
             }
         } else {
-            console.log(logged_in_user.employer_profile.id);
+           // console.log(logged_in_user.employer_profile.id);
             query.where(JobApplications.tableAlias + '.' + JobApplications.schema.employer.columnName + "=" + logged_in_user.employer_profile.id);
         }
         if (filtered_query_keys.includes('short_listed')) {
@@ -332,7 +332,7 @@ module.exports = async function list(request, response) {
                         map_array.push(value);
                     }
                 }
-                console.log(map_array)
+                //console.log(map_array)
                 sendResponse(map_array, details, total);
             });
         } else {

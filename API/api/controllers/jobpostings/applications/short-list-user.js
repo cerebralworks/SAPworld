@@ -13,12 +13,13 @@ module.exports = async function update(request, response) {
     var _response_object = {};
     const logged_in_user = request.user;
     pick_input = [
-        'short_listed', 'user', 'job_posting'
+        'short_listed', 'user', 'job_posting', 'status'
     ];
     var filtered_post_data = _.pick(_.merge(post_request_data, request_query), pick_input);
     const filtered_post_keys = Object.keys(filtered_post_data);
     var input_attributes = [
         { name: 'user', required: true, number: true, min: 1 },
+        { name: 'status', number: true, min: 1 },
         { name: 'job_posting', required: true, number: true, min: 1 },
         { name: 'short_listed', enum: true, values: [true, false], required: true }
     ];
@@ -88,6 +89,9 @@ module.exports = async function update(request, response) {
         if (valid) {
             if (filtered_post_keys.includes('id')) {
                 filtered_post_data.id = parseInt(filtered_post_data.id);
+            }
+            if (filtered_post_keys.includes('status')) {
+                filtered_post_data.status = parseInt(filtered_post_data.status);
             }
             let id = _.get(filtered_post_data, 'id');
             var job_application = await JobApplications.findOne({

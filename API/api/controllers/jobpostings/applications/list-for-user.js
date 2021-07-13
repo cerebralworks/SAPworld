@@ -20,13 +20,14 @@ module.exports = async function list(request,response) {
     const request_query = request.allParams();
     const logged_in_user = request.user;
     const filtered_query_data = _.pick(request_query, [
-        'page', 'sort', 'limit', 'status', 'expand', 'job_posting', 'employer'
+        'page', 'sort', 'limit', 'status', 'expand', 'job_posting', 'employer', 'short_listed'
     ]);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
         {name: 'page', number: true, min: 1},
         {name: 'limit', number: true, min: 1},
-        {name: 'status', enum: true, values: [0,1]},
+        {name: 'status', enum: true, values: [0, 1,2,3,4,5,6,7,8,9] },
+        { name: 'short_listed', enum: true, values: [0, 1] },
         {name: 'job_posting', number: true, min: 1},
         {name: 'user', enum: true, min: 1}
     ];
@@ -43,7 +44,10 @@ module.exports = async function list(request,response) {
         if(filtered_query_keys.includes('status')){
             query.where(JobApplications.tableAlias + '.' + JobApplications.schema.status.columnName + "=" + parseInt(criteria.status));
         }else{
-            query.where(JobApplications.tableAlias + '.' + JobApplications.schema.status.columnName + "=1");
+            //query.where(JobApplications.tableAlias + '.' + JobApplications.schema.status.columnName + "=1");
+        }
+        if (filtered_query_keys.includes('short_listed')) {
+            query.where(JobApplications.tableAlias + '.' + JobApplications.schema.short_listed.columnName + "=" + (!!+criteria.short_listed));
         }
         if(filtered_query_keys.includes('job_posting')){
             query.where(JobApplications.tableAlias + '.' + JobApplications.schema.job_posting.columnName + "=" + parseInt(criteria.job_posting));
