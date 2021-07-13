@@ -47,6 +47,17 @@ module.exports.custom = {
         payment_pending: 6,
         hide_profile: 7
     },
+    status_codes_application: {
+        open: 1,
+        selected: 2,
+        scheduled: 3,
+        rejected: 4,
+        hold: 5,
+        not_available: 6,
+        pending: 7,
+		applied: 8,
+		closed: 9
+    },
     access_role: {
         user: 0,
         employer: 1,

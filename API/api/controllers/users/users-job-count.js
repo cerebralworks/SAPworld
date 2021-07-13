@@ -42,7 +42,7 @@ LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user)
 				Count_Users = `SELECT COUNT(DISTINCT job_application.id),job_posting.id FROM  job_applications "job_application" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 
 LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) WHERE
-(job_application.status=1) AND job_application.short_listed = true AND (job_application.employer=${parseInt(filtered_query_data.company)}) Group BY job_posting.id`
+job_application.short_listed = true AND (job_application.employer=${parseInt(filtered_query_data.company)}) Group BY job_posting.id`
 			}
 			sails.sendNativeQuery(Count_Users, async function(err, Count_Users_value) {
 				if (err) {
