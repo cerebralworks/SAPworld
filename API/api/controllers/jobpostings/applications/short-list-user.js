@@ -98,7 +98,7 @@ module.exports = async function update(request, response) {
                 where: {
                     user: filtered_post_data.user,
                     job_posting: filtered_post_data.job_posting,
-                    status: { '!=': _.get(sails.config.custom.status_codes, 'deleted') },
+                    status: { '!=': _.get(sails.config.custom.status_codes_application, 'closed') },
                     employer: _.get(logged_in_user, 'employer_profile.id')
                 }
             });
