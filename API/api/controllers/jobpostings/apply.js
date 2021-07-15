@@ -11,7 +11,7 @@ module.exports = async function apply(request, response) {
     var _response_object = {};
     const logged_in_user = request.user;
     pick_input = [
-        'comments', 'job_posting', 'user_resume'
+        'comments', 'job_posting', 'user_resume', 'status'
     ];
     var filtered_post_data = _.pick(post_request_data, pick_input);
     const filtered_post_keys = Object.keys(filtered_post_data);
@@ -21,6 +21,20 @@ module.exports = async function apply(request, response) {
     //Add the JobApplication record to db.
     const addRecord = (post_data, callback) => {
         JobApplications.create(post_data, async function(err, application) {
+            if (err) {
+                await errorBuilder.build(err, function(error_obj) {
+                    _response_object.errors = error_obj;
+                    _response_object.count = error_obj.length;
+                    return response.status(500).json(_response_object);
+                });
+            } else {
+                return callback(application);
+            }
+        });
+    };
+    //Find the Employer Data .
+    const SearchEmployee = (id, callback) => {
+        EmployerProfiles.findOne({id:id}, async function(err, application) {
             if (err) {
                 await errorBuilder.build(err, function(error_obj) {
                     _response_object.errors = error_obj;
@@ -44,7 +58,7 @@ module.exports = async function apply(request, response) {
         }
         //Check a record already exist.
     const checkApplied = (post_data, callback) => {
-        let query = { job_posting: post_data.job_posting, user: post_data.user, status: { '!=': _.get(sails.config.custom.status_codes, 'deleted') } };
+        let query = { job_posting: post_data.job_posting, user: post_data.user, status: { '!=': _.get(sails.config.custom.status_codes_application, 'closed') } };
         console.log(query);
 
         JobApplications.findOne(query, async function(err, application) {
@@ -58,20 +72,35 @@ module.exports = async function apply(request, response) {
             if (_.isEmpty(application) || not_interested) {
                 return callback(application, not_interested);
             } else {
-                _response_object.message = 'Already applied for the job.';
-                return response.status(400).json(_response_object);
+				if(post_data.status==8){
+					let query = { job_posting: post_data.job_posting, user: post_data.user, status: 8 ,user_interest : 1 };
+					JobApplications.update({ user: post_data.user, job_posting: post_data.job_posting }, query, async function(err, job_application) {
+						if (err) {
+							await errorBuilder.build(err, function(error_obj) {
+								_response_object.errors = error_obj;
+								_response_object.count = error_obj.length;
+								return response.status(500).json(_response_object);
+							});
+						} else {
+							return callback(application, not_interested);
+						}
+					});
+				}else{
+					_response_object.message = 'Already applied for the job.';
+					return response.status(400).json(_response_object);
+				}
             }
         });
     };
     //Build and sending email
-    const sendEmail = async(job, user, application, callback) => {
+    const sendEmail = async(job, user, application,employee, callback) => {
         //Sending email
         let details = {};
         const mail_data = {
             template: 'jobpostings/apply',
-            data: { job: job, user: user, application: application },
-            to: job.email,
-            subject: 'New application received for a job via Shejobs.'
+            data: { job: job, user: user, application: application, employee: employee },
+            to: employee.email,
+            subject: 'New application received for a job via SAP.'
         };
         await mailService.sendMail(mail_data);
         callback(true);
@@ -102,12 +131,24 @@ module.exports = async function apply(request, response) {
                                 });
                             });
                         } else {
-                            await addRecord(filtered_post_data, async function(application) {
-                                //Send email
-                                await sendEmail(job, logged_in_user.user_profile, application, async function(email) {
-                                    sendResponse(application);
-                                });
-                            });
+							if(filtered_post_data.status ==8){
+								
+								await SearchEmployee(job.company, async function(employee) {
+									await sendEmail(job, logged_in_user.user_profile,filtered_post_data, employee, async function(email) {
+										sendResponse(filtered_post_data);
+									});
+								});
+								
+							}else{
+								await SearchEmployee(job.company, async function(employee) {
+								await addRecord(filtered_post_data, async function(application) {
+									//Send email
+									await sendEmail(job, logged_in_user.user_profile, application,employee, async function(email) {
+										sendResponse(application);
+									});
+								});
+								});
+							}
                         }
                     });
                 }

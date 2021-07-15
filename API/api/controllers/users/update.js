@@ -25,10 +25,10 @@ module.exports = async function update(request, response) {
         city: yup.string().required().lowercase(),
         zipcode: yup.number().required().positive().moreThan(1000),
         phone: yup.string().matches(/^([0|\+[0-9]{1,5})?([0-9]{10})$/, 'Mobile number must be like +919999999999'),
-        latlng: yup.object().shape({
+        /* latlng: yup.object().shape({
             lat: yup.number().min(-90).max(90),
             lng: yup.number().min(-180).max(180),
-        }).required(),
+        }).required(), */
         education_qualification: yup.array().of(
             yup.object().shape({
                 degree: yup.string().lowercase().required(),
@@ -77,9 +77,16 @@ module.exports = async function update(request, response) {
         available_for_opportunity: yup.boolean().default(true),
     });
     await schema.validate(post_request_data, { abortEarly: false }).then(async value => {
-        var point = value.latlng['lng'] + ' ' + value.latlng['lat'];
+		if(value.latlng['lng'] && value.latlng['lng'] !=undefined && value.latlng['lng'] !="undefined" &&
+		value.latlng['lat'] && value.latlng['lat'] !=undefined && value.latlng['lat'] !="undefined"){
+		var point = value.latlng['lng'] + ' ' + value.latlng['lat'];
         value.latlng_text = value.latlng.lat + ',' + value.latlng.lng;
         value.latlng = 'SRID=4326;POINT(' + point + ')';
+		}else{
+			var point = "1.00" + ' ' + "5.00";
+			value.latlng_text = "1.00" + ',' + "5.00";
+			value.latlng = 'SRID=4326;POINT(' + point + ')';	
+		}
 		if(value.phone){
 			await phoneEncryptor.encrypt(value.phone, function(encrypted_text) {
 				value.phone = encrypted_text;

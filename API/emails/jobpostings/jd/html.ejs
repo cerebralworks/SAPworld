@@ -84,7 +84,7 @@
         }
         /* MOBILE STYLES */
         
-        @media screen and (max-width:600px) {
+        @media screen and (max-width:700px) {
             h1 {
                 font-size: 32px !important;
                 line-height: 32px !important;
@@ -105,7 +105,7 @@
         <!-- LOGO -->
         <tr>
             <td bgcolor="#536ab2" align="center">
-                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 700px;">
                     <tr>
                         <td align="center" valign="top" style="padding: 30px 10px 30px 10px;"> </td>
                     </tr>
@@ -114,10 +114,10 @@
         </tr>
         <tr>
             <td bgcolor="#536ab2" align="center" style="padding: 0px 10px 0px 10px;">
-                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 700px;">
                     <tr>
                         <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 10px 10px 0px 0px;">
-                            <!-- LOGO IMAGE--><img src="<%= UtilsService.S3Images('Common', 'sj-logo.png', 'small') %>" width="180" style="display: block; border: 0px;" />
+							 <!-- LOGO IMAGE--> <img src="<%= sails.config.conf.webapp %>/assets/images/logo.png"  width="180" style="display: block; border: 0px;" />							
                         </td>
                     </tr>
                 </table>
@@ -126,17 +126,17 @@
         <!-- // LOGO -->
         <tr>
             <td bgcolor="#f4f4f4" align="center" style="padding: 0px 10px 0px 10px;">
-                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 700px;">
                     <tr>
                         <td bgcolor="#ffffff" align="left" style="padding: 20px; font-family: 'Lato', Helvetica, Arial, sans-serif;">
                             <div style=" border: 1px solid #ccc;  padding: 15px;  border-radius: 11px;">
-                                <h1 style="font-size: 20px; font-weight: 600; color:#536ab2; margin: 0 0 10px 0;">
+                                <h1 style="font-size: 20px; font-weight: 600; color:#536ab2; margin: 0 0 10px 0;text-transform: capitalize;">
                                     <%= title %>
                                 </h1>
                                 <p style="font-size: 14px; font-weight: 600; color: #465666; margin: 0 0 5px 0;">
 
                                 </p>
-                                <p style="font-size: 14px; font-weight: 600; color: #465666; margin: 0 ;">
+                                <p style="font-size: 14px; font-weight: 600; color: #465666; margin: 0 ;text-transform: capitalize;">
                                     <%= city %>,
                                         <%= state %>,
                                             <%= country %> –
@@ -148,7 +148,7 @@
 
                     <tr>
                         <td bgcolor="#ffffff" align="left" style="padding: 0px 20px 20px 20px; font-size: 14px; font-family: 'Lato', Helvetica, Arial, sans-serif;">
-                            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 700px;">
                                 <tr>
                                     <td width="40%" style="color: #777; font-weight: 500; padding: 0px 0 15px;">Total Years of Experience</td>
                                     <td width="60%" style="color: #333; font-weight: 600; padding: 0px 0 15px;">
@@ -161,13 +161,13 @@
                                 </tr>
                                 <tr>
                                     <td width="40%" style="color: #777; font-weight: 500; padding: 0px 0 15px;">Domain Experience in</td>
-                                    <td width="60%" style="color: #333; font-weight: 600; padding: 0px 0 15px;">
+                                    <td width="60%" style="color: #333; font-weight: 600; padding: 0px 0 15px;text-transform: capitalize;">
                                         <%= domain.join(',') %>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td width="40%" style="color: #777; font-weight: 500; padding: 0px 0 15px;">Hands on Experience</td>
-                                    <td width="60%" style="color: #333; font-weight: 600; padding: 0px 0 15px;">
+                                    <td width="60%" style="color: #333; font-weight: 600; padding: 0px 0 15px;text-transform: capitalize;">
                                         <%= hands_on_experience %>
                                     </td>
                                 </tr>
@@ -246,7 +246,7 @@
                                     <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                         <table border="0" cellspacing="0" cellpadding="0">
                                             <tr>
-                                                <td align="center" style="border-radius: 10px;" bgcolor="#71b11e"><a href="http://65.0.146.153/#/user/candidate-job-view/<%= id %> " target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 10px; border: 1px solid #71b11e; display: inline-block;">Click here to view</a></td>
+                                                <td align="center" style="border-radius: 10px;" bgcolor="#71b11e"><a href="<%= sails.config.conf.webapp %>/#/user/candidate-job-view/details?id=<%= id %>&show=apply " target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 10px; border: 1px solid #71b11e; display: inline-block;">Click here to view</a></td>
                                             </tr>
                                         </table>
                                     </td>
@@ -270,7 +270,7 @@
         </tr>
         <tr>
             <td bgcolor="#f4f4f4" align="center" style="padding: 0px 10px 0px 10px;">
-                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 700px;">
                     <tr>
                         <td bgcolor="#71b11e" align="center" style="padding: 30px 30px 30px 30px; border-radius: 0px 0px 10px 10px; color: #444; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 25px;">
                             <h2 style="font-size: 14px; font-weight: 400; color: #111111; margin: 0;color: #fff">Need more help?</h2>
@@ -283,7 +283,7 @@
         </tr>
         <tr>
             <td bgcolor="#f4f4f4" align="center" style="padding: 0px 10px 0px 10px;">
-                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 700px;">
                     <tr>
                         <td bgcolor="#f4f4f4" align="center" style="padding: 0px 30px 30px 30px; color: #444; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 18px;"> <br>
                             <p style="margin: 0;">If these emails get annoying, please feel free to <a href="#" target="_blank" style="color: #111111; font-weight: 700;">unsubscribe</a>.</p>

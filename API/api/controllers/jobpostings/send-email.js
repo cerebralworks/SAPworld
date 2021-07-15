@@ -13,7 +13,14 @@ module.exports = async function sendemail(request, response) {
     var _response_object = {};
     let yup = sails.yup;
     var model = {};
-
+	var jobTypeArray = [
+		{id: 1000, text: 'Full Time'},
+		{id: 1001, text: 'Part Time'},
+		{id: 1002, text: 'Contract'},
+		{id: 1003, text: 'Freelance'},
+		{id: 1004, text: 'Internship'},
+	  ];
+	  
     let schema = yup.object().shape({
         job_id: yup.number().positive().test('job_id', 'cant get any job', async(value) => {
             let query = { id: value, company: logged_in_user.employer_profile.id };
@@ -43,7 +50,16 @@ module.exports = async function sendemail(request, response) {
                 return value.name;
             });
         });
-        model.type = ['Full Time', 'Part Time', 'Freelance', 'Internship', 'Temporary', 'Remote', 'Contract', 'Day Job'];
+		if(model.type){
+			if(jobTypeArray.filter(function(a,b){ return a.id == model.type }).length!=0){
+				 model.type =jobTypeArray.filter(function(a,b){ return a.id == model.type })[0]['text'];
+			}else{
+				 model.type = ['Full Time', 'Part Time', 'Freelance', 'Internship', 'Temporary', 'Remote', 'Contract', 'Day Job'];
+			}
+		}else{
+			 model.type = ['Full Time', 'Part Time', 'Freelance', 'Internship', 'Temporary', 'Remote', 'Contract', 'Day Job'];
+		}
+       
         model.remote = model.remote == 1 ? 'Yes' : 'No';
         const mail_data = {
             template: 'jobpostings/jd',
