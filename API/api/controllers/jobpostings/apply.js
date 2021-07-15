@@ -71,7 +71,7 @@ module.exports = async function apply(request, response) {
             template: 'jobpostings/apply',
             data: { job: job, user: user, application: application },
             to: job.email,
-            subject: 'New application received for a job via Shejobs.'
+            subject: 'New application received for a job via SAP.'
         };
         await mailService.sendMail(mail_data);
         callback(true);

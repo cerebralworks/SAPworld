@@ -160,7 +160,7 @@ module.exports = async function list(request, response) {
 								return response.status(400).json(_response_object);
 							} else {
 								//console.log(group_query_Value);
-								return callback(_.get(job_postings, 'rows'), {}, parseInt(_.get(_.cloneDeep(total), 'rows[0].count')),_.get(group_query_Value, 'rows'));
+								return callback(_.get(job_postings, 'rows'), {}, parseInt(total.rowCount),_.get(group_query_Value, 'rows'));
 							}
 						});
                         //return callback(_.get(job_postings, 'rows'), {}, parseInt(_.get(_.cloneDeep(total), 'rows[0].count')));
@@ -224,9 +224,9 @@ module.exports = async function list(request, response) {
             query.field("COUNT(*)");
         }
 
-
-		query.cross_join('json_array_elements(to_json(job_posting.hands_on_experience)) skill_id(skillss)');
-		
+		if(!(count == true && group == false)){
+			query.cross_join('json_array_elements(to_json(job_posting.hands_on_experience)) skill_id(skillss)');
+		}
         query.left_join(`${EmployerProfiles.tableName}`, `${EmployerProfiles.tableAlias}`, `${JobPostings.tableAlias}.company = ${EmployerProfiles.tableAlias}.id`);
 		
 		
@@ -239,7 +239,7 @@ module.exports = async function list(request, response) {
         if (_.get(criteria, 'where.alphabet')) {
             query.where(`LOWER(${JobPostings.tableAlias}.${JobPostings.schema.title.columnName}) LIKE '${_.get(criteria, 'where.alphabet')}%'`);
         }
-        if (_.get(criteria, 'where.skills')) {
+        if (_.get(criteria, 'where.skills') && !(count == true && group == false) ) {
 			query.where(`(skillss->>'skill_id') = ANY( '${_.get(criteria, 'where.skills')}')`);
             //query.where(` ${JobPostings.tableAlias}.${JobPostings.schema.skills.columnName} && '${_.get(criteria, 'where.skills')}'`);
         }
@@ -266,11 +266,15 @@ module.exports = async function list(request, response) {
         }
 
         if (_.get(criteria, 'where.city') && filtered_query_data.work_authorization != 1 ) {
-            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.city.columnName}  = ANY('${_.get(criteria, 'where.city')}')`);
+            //query.where(`${JobPostings.tableAlias}.${JobPostings.schema.city.columnName}  = ANY('${_.get(criteria, 'where.city')}')`);
         }
-        if (_.get(criteria, 'where.country') && filtered_query_data.work_authorization != 1 ) {
+        if (_.get(criteria, 'where.city') && _.get(criteria, 'where.country') && filtered_query_data.work_authorization != 1 ) {
            // query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.country.columnName} = ANY('${_.get(criteria, 'where.country')}') or ${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = ${filtered_query_data.visa_sponsered} )`);
-		   query.where(`${JobPostings.tableAlias}.${JobPostings.schema.country.columnName}  = ANY('${_.get(criteria, 'where.country')}')`);
+		   query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.country.columnName}  = ANY('${_.get(criteria, 'where.country')}') or ${JobPostings.tableAlias}.${JobPostings.schema.city.columnName}  = ANY('${_.get(criteria, 'where.city')}') )`);
+        }
+        if (!(_.get(criteria, 'where.city')) && _.get(criteria, 'where.country') && filtered_query_data.work_authorization != 1 ) {
+           // query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.country.columnName} = ANY('${_.get(criteria, 'where.country')}') or ${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = ${filtered_query_data.visa_sponsered} )`);
+		   query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.country.columnName}  = ANY('${_.get(criteria, 'where.country')}'))`);
         }
         if ( filtered_query_data.visa_sponsered == false && filtered_query_data.work_authorization != 1) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = ${filtered_query_data.visa_sponsered} `);
