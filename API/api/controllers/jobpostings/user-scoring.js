@@ -78,13 +78,13 @@ module.exports = async function Scoring(request, response) {
 			//var tempData = model.skills;
 	  }
             list_query.where("status=1");
-            // .where("experience <=" + model.experience)
+            list_query.where("experience <=" + model.experience);
             //.where("sap_experience <=" + model.sap_experience)
-           // list_query.where(`skills && ARRAY[${tempData}]::bigint[]`);
+            list_query.where(`skills && ARRAY[${tempData}]::bigint[]`);
             //.where("lower(city) = lower('" + model.city + "')  OR ST_DistanceSphere(latlng, ST_MakePoint(" + model.latlng['coordinates'].toString() + ")) <=" + value.distance + " * 1609.34");
             //.where("lower(city) = lower('" + model.city + "') ");
-		list_query.cross_join('json_array_elements(to_json(job_posting.hands_on_experience)) skill_id(skillss)');
-		list_query.where(`(skillss->>'skill_id') = ANY( '{${tempData}}')`);
+		//list_query.cross_join('json_array_elements(to_json(job_posting.hands_on_experience)) skill_id(skillss)');
+		//list_query.where(`(skillss->>'skill_id') = ANY( '{${tempData}}')`);
         if (model.job_type && !value.job_id) {
             list_query.where(`${JobPostings.tableAlias}.${JobPostings.schema.type.columnName} = ANY('{${model.job_type}}')`);
         }
@@ -98,7 +98,7 @@ module.exports = async function Scoring(request, response) {
             list_query.where(`${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = ${filtered_query_data.visa_sponsered} `);
         }
         if (filtered_query_data.work_authorization == 1  && !value.job_id) {
-		list_query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = true or ${JobPostings.tableAlias}.${JobPostings.schema.country.columnName} = ANY('{${filtered_query_data.country}}') or ${JobPostings.tableAlias}.${JobPostings.schema.city.columnName}  = ANY('{${filtered_query_data.city}}') ) `);
+		list_query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = true or (${JobPostings.tableAlias}.${JobPostings.schema.country.columnName} = ANY('{${filtered_query_data.country}}') AND ${JobPostings.tableAlias}.${JobPostings.schema.city.columnName}  = ANY('{${filtered_query_data.city}}')) ) `);
         }
 		
         if (value.job_id) {
@@ -125,6 +125,9 @@ module.exports = async function Scoring(request, response) {
             score += 1;
         }
         list_query.limit(1).offset(value.page - 1);
+		var group_by = JobPostings.tableAlias + "." + JobPostings.schema.id.columnName;
+		//list_query.group(group_by);
+		//list_query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName}`);
         // var query_string = list_query.toString() + `(CASE WHEN applyed=(
         //     SELECT id from she_job_applications WHERE user=${value.user_id} and job_posting=${JobPostings.tableAlias}.id)
         //     THEN 'true' ELSE 'false' END) `;

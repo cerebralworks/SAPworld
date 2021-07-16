@@ -186,7 +186,7 @@ module.exports = async function list(request, response) {
 			 query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.employer_role_type.columnName + ") = '" + criteria.employer_role_type.toLowerCase() + "' ");
         }
         if (filtered_query_keys.includes('end_to_end_implementation')) {
-			 query.where( UserProfiles.tableAlias + '.' + UserProfiles.schema.end_to_end_implementation.columnName + " <= '" + criteria.end_to_end_implementation + "' ");
+			 query.where( UserProfiles.tableAlias + '.' + UserProfiles.schema.end_to_end_implementation.columnName + " >= '" + criteria.end_to_end_implementation + "' ");
         }
         if (filtered_query_keys.includes('remote')) {
 			 query.where( UserProfiles.tableAlias + '.' + UserProfiles.schema.remote_only.columnName + " = '" + criteria.remote + "' ");
@@ -203,33 +203,18 @@ module.exports = async function list(request, response) {
 		
 		
         if (filtered_query_keys.includes('city') && filtered_query_data.visa == false ) {
-          //query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${criteria.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}')`);
+          query.where(`(citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}')`);
         }
-        if (filtered_query_keys.includes('country') && filtered_query_keys.includes('city') && filtered_query_data.visa == false ) {
-            query.where(`((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) =any( '{${criteria.country.toLowerCase()}}')) or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}') or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) =any( '{${criteria.city.toLowerCase()}}')) or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}'))`);
-            //query.orWhere('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.country.columnName + ") = '" + criteria.country.toLowerCase() + "'");
-			//let search_texts = squel.expr();
-            // search_texts.or('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.preferred_locations.columnName + '->>' + UserProfiles.schema.country.columnName + ") LIKE '%" + criteria.country.toLowerCase() + "%'");
-             //query.where(search_texts);
-        }
-        if (filtered_query_keys.includes('country') && !filtered_query_keys.includes('city') && filtered_query_data.visa == false ) {
-            query.where(`((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${criteria.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}'))`);
-            //query.orWhere('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.country.columnName + ") = '" + criteria.country.toLowerCase() + "'");
-			//let search_texts = squel.expr();
-            // search_texts.or('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.preferred_locations.columnName + '->>' + UserProfiles.schema.country.columnName + ") LIKE '%" + criteria.country.toLowerCase() + "%'");
-             //query.where(search_texts);
+        if (filtered_query_keys.includes('country') && filtered_query_data.visa == false ) {
+            query.where(`(coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}')`);
+           // query.where(`((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) =any( '{${criteria.country.toLowerCase()}}')) or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}') or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) =any( '{${criteria.city.toLowerCase()}}')) or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}'))`);
+			
         }
 		query.where(`(user_profile.privacy_protection->>'available_for_opportunity')::text = 'true'`);
         if (filtered_query_data.visa == true ) {
-            query.where(`((${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1) or ((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) =any( '{${criteria.country.toLowerCase()}}')) or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}') or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) =any( '{${criteria.city.toLowerCase()}}')) or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}') ))`);
+            query.where(`((${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1) or ((coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}') AND (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}') ))`);
         }
-        if (filtered_query_data.filter_location == true) {
-            //query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) LIKE '{${criteria.city.toLowerCase()}}') or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}')`);
-			//query.where(`(LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) LIKE '{${criteria.country.toLowerCase()}}') or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}')`);       
-		}
-        if (filtered_query_keys.includes('work_authorization')) {
-            // query.where(UserProfiles.tableAlias + '.' + UserProfiles.schema.work_authorization.columnName + "="+criteria.work_authorization );
-        }
+		
         if (filtered_query_keys.includes('search')) {
             if (filtered_query_keys.includes('search_type') && parseInt(filtered_query_data.search_type) === 1) {
                 query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.email.columnName + ") LIKE '%" + criteria.search.toLowerCase() + "%'");
