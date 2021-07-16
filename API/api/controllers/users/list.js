@@ -22,7 +22,7 @@ module.exports = async function list(request, response) {
     const request_query = request.allParams();
     const logged_in_user = request.user;
     const filtered_query_data = _.pick(request_query, [
-        'page', 'sort','country','work_authorization', 'limit', 'status', 'expand', 'search', 'search_type', 'city','visa', 'job_types', 'skill_tags', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'job_posting', 'skill_tags_filter_type', 'additional_fields',
+        'page','knowledge', 'sort','country','work_authorization', 'limit', 'status', 'expand', 'search', 'search_type', 'city','visa', 'job_types', 'skill_tags', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'job_posting', 'skill_tags_filter_type', 'additional_fields',
 		'domain','skills.','programming_skills','availability',
 		'optinal_skills','certification',
 		'facing_role','employer_role_type',
@@ -106,6 +106,9 @@ module.exports = async function list(request, response) {
         filtered_query_data.education = filtered_query_data.education.toLocaleLowerCase();
     }
 	
+    if (filtered_query_data.knowledge) {
+        filtered_query_data.knowledge = filtered_query_data.knowledge.split(',');
+    }
     if (filtered_query_data.visa =="true") {
         filtered_query_data.visa = true;
     }
@@ -170,6 +173,9 @@ module.exports = async function list(request, response) {
 		
 		//Filter the Custom Data's
 		
+		if (filtered_query_keys.includes('knowledge')) {
+			query.where(` ${UserProfiles.tableAlias}.${UserProfiles.schema.skills.columnName} && ARRAY[${criteria.knowledge}]::bigint[]`);
+        }
         if (filtered_query_keys.includes('domain')) {
              query.where(UserProfiles.tableAlias + '.' + UserProfiles.schema.domains_worked.columnName + " && ARRAY["+criteria.domain+"]::bigint[]"  );
         }
