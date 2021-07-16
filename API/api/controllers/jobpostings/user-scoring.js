@@ -98,7 +98,7 @@ module.exports = async function Scoring(request, response) {
             list_query.where(`${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = ${filtered_query_data.visa_sponsered} `);
         }
         if (filtered_query_data.work_authorization == 1  && !value.job_id) {
-		list_query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = true or ${JobPostings.tableAlias}.${JobPostings.schema.country.columnName} = ANY('{${filtered_query_data.country}}') or ${JobPostings.tableAlias}.${JobPostings.schema.city.columnName}  = ANY('{${filtered_query_data.city}}') ) `);
+		list_query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = true or (${JobPostings.tableAlias}.${JobPostings.schema.country.columnName} = ANY('{${filtered_query_data.country}}') AND ${JobPostings.tableAlias}.${JobPostings.schema.city.columnName}  = ANY('{${filtered_query_data.city}}')) ) `);
         }
 		
         if (value.job_id) {
