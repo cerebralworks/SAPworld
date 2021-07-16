@@ -186,7 +186,7 @@ module.exports = async function list(request, response) {
 			 query.where('LOWER(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.employer_role_type.columnName + ") = '" + criteria.employer_role_type.toLowerCase() + "' ");
         }
         if (filtered_query_keys.includes('end_to_end_implementation')) {
-			 query.where( UserProfiles.tableAlias + '.' + UserProfiles.schema.end_to_end_implementation.columnName + " = '" + criteria.end_to_end_implementation + "' ");
+			 query.where( UserProfiles.tableAlias + '.' + UserProfiles.schema.end_to_end_implementation.columnName + " <= '" + criteria.end_to_end_implementation + "' ");
         }
         if (filtered_query_keys.includes('remote')) {
 			 query.where( UserProfiles.tableAlias + '.' + UserProfiles.schema.remote_only.columnName + " = '" + criteria.remote + "' ");
