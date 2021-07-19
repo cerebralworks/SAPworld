@@ -91,7 +91,7 @@ module.exports = async function view(request, response) {
         _response_object['details'] = details;
         return response.ok(_response_object);
     };
-
+	//Validating the request and pass on the appriopriate response.
     validateModel.validate(JobPostings, input_attributes, filtered_query_data, async function(valid, errors) {
         if (valid) {
             isJobPostingExist(parseInt(_.get(filtered_query_data, 'id')), function(job_posting) {

@@ -74,7 +74,7 @@ module.exports = async function deleteRecords(request, response) {
         _response_object['details'] = details;
         return response.ok(_response_object);
     };
-
+	//Validating the request and pass on the appriopriate response.
     validateModel.validate(JobPostings, input_attributes, filtered_post_data, async function(valid, errors) {
         if (valid) {
             let ids = [];

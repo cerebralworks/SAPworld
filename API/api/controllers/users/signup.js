@@ -98,7 +98,7 @@ module.exports = function signup(request, response) {
             }
         });
     };
-
+	//Validating the request and pass on the appriopriate response.
     schema.validate(post_request_data, { abortEarly: false }).then(async function(value) {
         await loginService.findExistingConnection(0, value.email, value.phone, async function(err, user) {
             if (err) {

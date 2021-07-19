@@ -95,6 +95,7 @@ module.exports = async function update(request, response) {
 			value.phone =null;
 		}
         value.status = 1;
+		//Update the user profile details
         UserProfiles.update(logged_in_user.user_profile.id, value, async function(err, profile) {
             if (err) {
                 await errorBuilder.build(err, function(error_obj) {

@@ -1,8 +1,3 @@
-/**
- *
- * @author Ilanchezhian Rajendiran <ilan@studioq.co.in>
- *
- */
 
 /* global _, UserProfiles, UserInformation, Users, sails */
 
@@ -25,6 +20,7 @@ module.exports = function create(request, response) {
         {name: 'degree', required: true, number: true, min: 1},
         {name: 'field', required: true, number: true, min: 1}
     ];
+	//Validating the request and pass on the appriopriate response.
     validateModel.validate(UserEducations, input_attributes, filtered_post_data, async function(valid, errors){
         if(valid){
             filtered_post_data.user = logged_in_user.user_profile.id;

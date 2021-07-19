@@ -37,7 +37,7 @@ module.exports = async function view(request, response) {
         _response_object['details'] = details;
         return response.ok(_response_object);
     };
-
+	//Validating the request and pass on the appriopriate response.
     validateModel.validate(EducationalInstitutions, input_attributes, {id}, async function(valid, errors){
         if(valid){  
             isEducationalInstitutionExist(id, function(educational_institution){

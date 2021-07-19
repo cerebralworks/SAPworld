@@ -112,6 +112,7 @@ module.exports = async function list(request, response) {
         const count_query = await buildNativeQueryToGetJobPostingList(criteria, true,false).then(function(query) {
             return query;
         });
+		//To count the fields
         sails.sendNativeQuery(count_query, async function(err, total) {
             if (err) {
                 var error = {
@@ -130,6 +131,7 @@ module.exports = async function list(request, response) {
                 const list_query = await buildNativeQueryToGetJobPostingList(criteria, false,false).then(function(query) {
                     return query;
                 });
+				//To list the all data's
                 sails.sendNativeQuery(list_query, async function(err, job_postings) {
                     if (err) {
                         var error = {
@@ -146,6 +148,7 @@ module.exports = async function list(request, response) {
 						const group_query = await buildNativeQueryToGetJobPostingList(criteria, true,true).then(function(query) {
 							return query;
 						});
+						//To get the country based data's
 						sails.sendNativeQuery(group_query, async function(err, group_query_Value) {
 							if (err) {
 								var error = {

@@ -126,6 +126,7 @@ module.exports = function signup(request, response) {
         if (filtered_post_keys.includes('password')) {
             user_input.password = await bcrypt.hash(filtered_post_data.password, SALT_WORK_FACTOR);
         }
+		
         Users.update(parseInt(user_data.id), user_input, async function(err, user) {
             if (err) {
                 await errorBuilder.build(err, function(error_obj) {
@@ -175,6 +176,7 @@ module.exports = function signup(request, response) {
             }
         });
     };
+	//Validating the request and pass on the appriopriate response.
     validateModel.validate(EmployerProfiles, input_attributes, filtered_post_data, async function(valid, errors) {
         if (valid) {
             if (filtered_post_keys.includes('email')) {

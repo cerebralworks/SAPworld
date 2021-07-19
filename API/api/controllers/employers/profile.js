@@ -115,7 +115,7 @@ module.exports = async function list(request,response) {
         _response_object['details'] = _.cloneDeep(details);
         return response.ok(_response_object);
     };
-    //Validating the request and pass on the appriopriate response
+    //Validating the request and pass on the appriopriate response.
     validateModel.validate(null, input_attributes, filtered_query_data, async function(valid, errors){
         if(valid){
             //Preparing data

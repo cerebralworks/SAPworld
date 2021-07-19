@@ -66,7 +66,7 @@ module.exports = async function Scoring(request, response) {
     if (filtered_query_keys.includes('job_types')) {
         filtered_query_data.job_types = filtered_query_data.job_types.split(',');
     }
-	
+	//Validate to form data
     yup.object().shape({
         id: yup.number().test('job_id', 'Cant find record', async(value) => {
             return await JobPostings.findOne({ company: logged_in_user.employer_profile.id || 0, id: value, status: 1 }).then((result) => {

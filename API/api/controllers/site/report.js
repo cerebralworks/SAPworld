@@ -107,6 +107,7 @@ module.exports = function reportPhoto(request, response) {
             }
         });
     };
+	//Validating the request and pass on the appriopriate response.
     validateModel.validate(ReportedContents, input_attributes, filtered_post_data, async function(valid, errors){
         if(valid){
               filtered_post_data.user = logged_in_user.user_profile.id;

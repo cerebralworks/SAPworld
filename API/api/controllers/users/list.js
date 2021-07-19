@@ -1,9 +1,3 @@
-/**
- *
- * @author Ilanchezhian Rajendiran <ilan@studioq.co.in>
- *
- */
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -305,6 +299,7 @@ module.exports = async function list(request, response) {
 		//queryss.group(`${UserProfiles.tableAlias}.${UserProfiles.schema.id.columnName}`);
         query_split = queryss.toString().split(/FROM(.+)/)[1].split(/GROUP(.+)/)[0];
         count_query = count_query + ' FROM ' + query_split.split(' ORDER')[0];
+		//find the count of searched results
         sails.sendNativeQuery(count_query, function(err, total_result) {
             if (err) {
                 var error = {

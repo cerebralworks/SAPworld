@@ -58,7 +58,7 @@ module.exports = function create(request, response) {
         _response_object.details = details;
         return response.status(200).json(_response_object);
     };
-
+	//Validating the request and pass on the appriopriate response.
     validateModel.validate(EducationalDegrees, input_attributes, filtered_post_data, async function(valid, errors){
         if(valid){ 
             if(filtered_post_keys.includes('name')){ 

@@ -80,6 +80,7 @@ module.exports = async function create(request, response) {
             }
         });
     };
+	//Validating the request and pass on the appriopriate response.
     await schema.validate(post_request_data, { abortEarly: false }).then(async value => {
             value.company = logged_in_user.employer_profile.id;
             var point = value.latlng['lng'] + ' ' + value.latlng['lat'];

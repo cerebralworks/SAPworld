@@ -45,6 +45,7 @@ module.exports = async function deleteRecords(request, response) {
             }
         });
     };
+	//Validating the request and pass on the appriopriate response.
     validateModel.validate(UserEmployments, input_attributes, filtered_post_data, async function(valid, errors){
           if(valid){
               filtered_post_data.user = logged_in_user.user_profile.id;

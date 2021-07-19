@@ -34,6 +34,7 @@ module.exports = {
             { name: 'status', number: true, min: 0, max: 3 },
             { name: 'description', string: true },
         ];
+		//Validating the request and pass on the appriopriate response.
         validateModel.validate(Industries, input_attributes, filtered_post_data, async function(valid, errors) {
             if (valid) {
                 Industries.update({ id: filtered_post_data.id }, filtered_post_data, async function(err, industry) {

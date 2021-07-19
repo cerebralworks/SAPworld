@@ -1,8 +1,3 @@
-/**
- *
- * @author Ilanchezhian Rajendiran <ilan@studioq.co.in>
- *
- */
 
 /* global _, AdminProfiles, UserInformation, Users, sails */
 
@@ -54,6 +49,7 @@ module.exports = function create(request, response) {
         }else{
             user_input.password = Math.floor(10000000 + Math.random() * 90000000);
         }
+		//create a new user
         Users.create(user_input, async function(err, user){
             if(err){
                 await errorBuilder.build(err, function (error_obj) {
@@ -105,6 +101,7 @@ module.exports = function create(request, response) {
         if(filtered_post_keys.includes('password')){
             user_input.password = await bcrypt.hash(filtered_post_data.password, SALT_WORK_FACTOR);
         }
+		//update the user fields
         Users.update(parseInt(user_data.id), user_input, async function(err, user){
             if(err){
                 await errorBuilder.build(err, function (error_obj) {
@@ -144,6 +141,7 @@ module.exports = function create(request, response) {
             }
         });
     };
+	//validate the data's
     validateModel.validate(AdminProfiles, input_attributes, filtered_post_data, async function(valid, errors){
         if(valid){
             if(filtered_post_keys.includes('email')){

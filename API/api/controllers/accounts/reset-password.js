@@ -1,8 +1,3 @@
-/**
- *
- * @author Ilanchezhian Rajendiran <ilan@studioq.co.in>
- *
- */
 
 /* global _, UserProfiles, Users, sails */
 
@@ -21,8 +16,14 @@ module.exports = function updatePassword(request, response) {
         {name: 'token', required: true},
         {name: 'password', required: true, min:8},
     ];
+	
+	/**	
+	**	To validate the request send for reset user data
+	**/	
     validateModel.validate(Users, input_attributes, filtered_post_data, async function(valid, errors){
         if(valid){
+			
+			//Check the user exists or not
             await Users.findOne(parseInt(filtered_post_data.id), async function(err, user){
                 if(err){
                     await errorBuilder.build(err, function (error_obj) {
@@ -37,7 +38,9 @@ module.exports = function updatePassword(request, response) {
                     }
                     tokens.reset = UtilsService.uid(20);
                     hashed_password = await bcrypt.hash(filtered_post_data.password, SALT_WORK_FACTOR);
-                    Users.update(filtered_post_data.id, {password: hashed_password, tokens: tokens}, async function(err, user){
+                    
+					//Update the new password
+					Users.update(filtered_post_data.id, {password: hashed_password, tokens: tokens}, async function(err, user){
                         if(err){
                             await errorBuilder.build(err, function (error_obj) {
                                 _response_object.errors = error_obj;

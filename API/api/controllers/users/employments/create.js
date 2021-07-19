@@ -31,6 +31,7 @@ module.exports = function create(request, response) {
         input_attributes.push({name: 'end_month', required: true, enum: true, values: [1,2,3,4,5,6,7,8,9,10,11,12]});
         input_attributes.push({name: 'end_year', required: true, number: true, min: 1970});
     }
+	//Validating the request and pass on the appriopriate response.
     validateModel.validate(UserEmployments, input_attributes, filtered_post_data, async function(valid, errors){
         if(valid){
             filtered_post_data.user = logged_in_user.user_profile.id;

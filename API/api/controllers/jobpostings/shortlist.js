@@ -82,6 +82,7 @@ module.exports = async function apply(request, response) {
         _response_object['details'] = details;
         return response.ok(_response_object);
     };
+	//Validating the request and pass on the appriopriate response.
     validateModel.validate(JobApplications, input_attributes, filtered_post_data, async function(valid, errors) {
         if (valid) {
             JobPostings.findOne(filtered_post_data.job_posting, async function(err, job) {

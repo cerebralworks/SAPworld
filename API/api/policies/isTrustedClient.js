@@ -1,8 +1,3 @@
-/**
- *
- * @author Ilanchezhian Rajendiran <ilan@studioq.co.in>
- *
- */
 
 /**
  * isTrustedClients policy
