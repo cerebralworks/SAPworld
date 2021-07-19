@@ -16,6 +16,7 @@ module.exports = function updateUserHandle(request, response) {
     var input_attributes = [
         {name: 'user_handle', required: true, min: 3, alphanumeric_underscore: true}
     ];
+	//Validating the request and pass on the appriopriate response.
     validateModel.validate(UserProfiles, input_attributes, filtered_post_data, async function(valid, errors){
         if(valid){
             var query = squel.select({tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"'}).from(UserProfiles.tableName);

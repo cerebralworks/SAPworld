@@ -57,7 +57,7 @@ module.exports = async function deleteRecords(request, response) {
             }
         });
     };
- 
+	// validate the Categories fields to delete
     validateModel.validate(Categories, input_attributes, filtered_post_data, async function(valid, errors){
         if(valid){ 
             const ids = [];

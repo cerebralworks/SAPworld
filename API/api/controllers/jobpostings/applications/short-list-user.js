@@ -54,26 +54,6 @@ module.exports = async function update(request, response) {
         });
     };
 
-    // // Check whether the job application id is exits in db.
-    // function isJobApplicationExist(data, successCallBack) {
-    //     var job_application JobApplications.findOne({
-    //             where: {
-    //                 user_id: data.user_id,
-    //                 job_id: data.job_id,
-    //                 status: { '!=': _.get(sails.config.custom.status_codes, 'deleted') },
-    //                 employer: _.get(logged_in_user, 'employer_profile.id')
-    //             }
-    //         },
-    //         function(err, job_application) {
-    //             if (!job_application) {
-    //                 _response_object.message = 'No job found with the given id.';
-    //                 return response.status(404).json(_response_object);
-    //             } else {
-    //                 successCallBack(job_application);
-    //             }
-    //         });
-    // }
-
     // Build and send response.
     function sendResponse(details) {
          if (_.get(details, 'short_listed')) {
@@ -84,7 +64,7 @@ module.exports = async function update(request, response) {
         _response_object['details'] = details;
         return response.ok(_response_object);
     };
-
+	//Validating the request and pass on the appriopriate response.
     validateModel.validate(JobApplications, input_attributes, filtered_post_data, async function(valid, errors) {
         if (valid) {
             if (filtered_post_keys.includes('id')) {

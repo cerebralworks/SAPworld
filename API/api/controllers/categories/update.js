@@ -61,7 +61,7 @@ module.exports = async function update(request, response) {
         _response_object.details = details;
         return response.status(200).json(_response_object);
     };
-
+	// validate the category fields data
     validateModel.validate(Categories, input_attributes, filtered_post_data, async function(valid, errors){
         if(valid){
             if(filtered_post_keys.includes('name')){ 

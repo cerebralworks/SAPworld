@@ -26,6 +26,7 @@ module.exports = function create(request, response) {
         }
         input_attributes.push({name: 'parent', required: true, number: true, min: 1, message: "Value need to be greater than zero" });
     }
+	//validate the input fileds
     validateModel.validate(Categories, input_attributes, filtered_post_data, async function(valid, errors){
         if(valid){
             if(filtered_post_keys.includes('type')){

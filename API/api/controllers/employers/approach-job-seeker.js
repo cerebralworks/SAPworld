@@ -127,7 +127,7 @@ module.exports = async function apply(request, response) {
         _response_object.message = 'Job approach invitation have been sent to jobseeker.';
         return response.ok(_response_object);
     };
-
+	//Validating the request and pass on the appriopriate response.
     validateModel.validate(null, input_attributes, filtered_post_data, async function(valid, errors){
           if(valid){
                 filtered_post_data.job_posting = parseInt(filtered_post_data.job_posting);

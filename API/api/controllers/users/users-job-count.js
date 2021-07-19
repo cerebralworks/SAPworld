@@ -19,6 +19,7 @@ module.exports = async function list(request, response) {
     const getJobPostings = async( callback) => {
 								
 		if (filtered_query_keys.includes('company')) {
+			//To get the job count details
 			var Count_Users = `SELECT job_posting.id,job_posting.title,COUNT(distinct user_profile.id) FROM user_employments "job_posting"
 	LEFT JOIN employer_profiles "employer" ON (job_posting.company = employer.id) 
 	CROSS JOIN user_profiles "user_profile" 
@@ -31,12 +32,14 @@ module.exports = async function list(request, response) {
 	AND (COALESCE(user_profile.experience) >= job_posting.experience)
 			group by job_posting.id`
 			if(filtered_query_data.view =='applicants'){
+				//To get the applicant count details
 				Count_Users = `SELECT COUNT(DISTINCT job_application.id),job_posting.id FROM  job_applications "job_application" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 
 LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) WHERE
 (job_application.status=1) AND job_application.short_listed IS NULL or job_application.short_listed != true AND (job_application.employer=${parseInt(filtered_query_data.company)}) Group BY job_posting.id`
 			}
 			if(filtered_query_data.view =='shortlisted'){
+				//To get the shortlisted users details query
 				Count_Users = `SELECT COUNT(DISTINCT job_application.id),job_posting.id FROM  job_applications "job_application" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 
 LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) WHERE

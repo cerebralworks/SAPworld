@@ -9,6 +9,7 @@
 module.exports = function create(request,response) {
     var _response_object = {};
     var request_data = request.body;
+	//create a new client data
     Clients.create(request_data).then(function (client) {
         _response_object.details = client;
         _response_object.message = 'Client created successfully';

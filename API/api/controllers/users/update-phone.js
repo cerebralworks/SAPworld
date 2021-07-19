@@ -20,6 +20,7 @@ module.exports = function updatePhone(request, response) {
     var input_attributes = [
         {name: 'phone', required: true, phone: true, message:"Have to be a valid US number (eg: 202-272-0167)."}
     ];
+	//Validating the request and pass on the appriopriate response.
     validateModel.validate(null, input_attributes, filtered_post_data, async function(valid, errors){
         if(valid){
                 await phoneEncryptor.encrypt(filtered_post_data.phone.toString(), function(encrypted_text){

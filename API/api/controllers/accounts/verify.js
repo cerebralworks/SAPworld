@@ -1,8 +1,3 @@
-/**
- *
- * @author Ilanchezhian Rajendiran <ilan@studioq.co.in>
- *
- */
 
 /* global _, UserProfiles, Users, sails */
 
@@ -20,8 +15,14 @@ module.exports = function verify(request, response) {
         {name: 'id', required: true},
         {name: 'token', required: true}
     ];
+	
+	/**	
+	**	To validate the request send for verify user
+	**/	
     validateModel.validate(Users, input_attributes, filtered_post_data, async function(valid, errors){
         if(valid){
+			
+			//find the user based on id
             await Users.findOne(parseInt(filtered_post_data.id), async function(err, user){
                 if(err){
                     await errorBuilder.build(err, function (error_obj) {
@@ -35,6 +36,8 @@ module.exports = function verify(request, response) {
                         tokens = user.tokens;
                     }
                     tokens.verification = UtilsService.uid(20);
+					
+					//Update the user is verified
                     Users.update(filtered_post_data.id, {verified: true, tokens: tokens}, async function(err, user){
                         if(err){
                             await errorBuilder.build(err, function (error_obj) {

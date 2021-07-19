@@ -17,6 +17,7 @@ module.exports = async function view(request,response) {
     if(filtered_query_keys.includes('expand')){
         expand = filtered_query_data.expand.split(',');
     }
+	//validate the id values
     validateModel.validate(null, input_attributes, filtered_query_data,function(valid, errors){
         if(valid){
             var admin_model = AdminProfiles.findOne({id: logged_in_user.admin_profile.id});

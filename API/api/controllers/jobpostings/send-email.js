@@ -45,11 +45,36 @@ module.exports = async function sendemail(request, response) {
                 return value.tag.split('-')[0];
             });
         });
+		for(let i=0;i<model.hands_on_experience.length;i++){
+			var hands_on_experience_data = model.hands_on_experience[i].toLocaleUpperCase();
+			var CheckData = model.skills.filter(function(a,b){ return a.toLocaleUpperCase() == hands_on_experience_data.toLocaleUpperCase()});
+			if(CheckData.length !=0){
+				model.skills = model.skills.filter(function(a,b){ return a.toLocaleUpperCase() != hands_on_experience_data.toLocaleUpperCase()});
+			}
+		}
         await Industries.find({ id: model.domain }).then(domain => {
             model.domain = domain.map(function(value) {
                 return value.name;
             });
         });
+		if(model.availability=="0"){
+			model.availability = "Immediately"
+		}else{
+			model.availability = model.availability+' Days'
+		}
+		if(model.salary_type==0){
+			model.salary_currency = model.salary_currency.toLocaleUpperCase();
+			model.salary = model.salary_currency +' '+ model.salary+' / hr';
+		}else if(model.salary_type==1){
+			model.salary_currency = model.salary_currency.toLocaleUpperCase();
+			model.salary = model.salary_currency +' '+ model.salary+' / Annual'
+		}else if(model.salary_type==2){
+			model.salary_currency = model.salary_currency.toLocaleUpperCase();
+			model.salary = model.salary_currency +' '+ model.salary+' / Monthly'
+		}
+		if(model.certification ==null || model.certification ==undefined){
+			model.certification = [];
+		}
 		if(model.type){
 			if(jobTypeArray.filter(function(a,b){ return a.id == model.type }).length!=0){
 				 model.type =jobTypeArray.filter(function(a,b){ return a.id == model.type })[0]['text'];
@@ -65,7 +90,7 @@ module.exports = async function sendemail(request, response) {
             template: 'jobpostings/jd',
             data: model,
             to: value.email_id,
-            subject: 'Job description from SAP world'
+            subject: 'An employer is interested in your profile'
         };
         await mailService.sendMail(mail_data);
         _response_object.message = 'Mail sent  successfully.';

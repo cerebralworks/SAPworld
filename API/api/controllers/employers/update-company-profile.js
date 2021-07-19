@@ -46,6 +46,7 @@ module.exports = async function updateCompanyProfile(request, response) {
         _response_object['details'] = _.cloneDeep(details);
         return response.ok(_response_object);
     };
+	//Validating the request and pass on the appriopriate response.
     await schema.validate(post_request_data, { abortEarly: false }).then(async value => {
 
         var point = value.latlng['lng'] + ' ' + value.latlng['lat'];

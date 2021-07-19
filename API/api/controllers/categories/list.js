@@ -29,6 +29,7 @@ module.exports = async function list(request, response) {
         const count_query = await buildNativeQueryToGetCategoryList(criteria, true).then(function(query) {
             return query;
         });
+		//return the total value
         sails.sendNativeQuery(count_query, async function(err, total) {
             if (err) {
                 var error = {
@@ -47,6 +48,7 @@ module.exports = async function list(request, response) {
                 const list_query = await buildNativeQueryToGetCategoryList(criteria, false).then(function(query) {
                     return query;
                 });
+				//return the list of data's
                 sails.sendNativeQuery(list_query, async function(err, categories) {
                     if (err) {
                         var error = {

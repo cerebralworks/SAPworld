@@ -153,7 +153,7 @@ module.exports = async function update(request, response) {
         _response_object.details = details;
         return response.status(200).json(_response_object);
     };
-
+	//Validating the request and pass on the appriopriate response.
     validateModel.validate(null, input_attributes, filtered_post_data, async function(valid, errors){
         if(valid){
             retrieveStripeSubscription(_.get(filtered_post_data, 'stripe_subscription_id'), function(stripe_subscription){

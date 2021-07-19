@@ -63,6 +63,7 @@ module.exports = async function list(request,response) {
         var count_query = squel.select().field('COUNT(DISTINCT '+ EmployerProfiles.tableAlias + '.' + EmployerProfiles.schema.id.columnName +')').toString();
         query_split = query.toString().split(/FROM(.+)/)[1];
         count_query = count_query + ' FROM ' + query_split.split(' ORDER')[0];
+		//To count the records of data filtered
         sails.sendNativeQuery(count_query,function (err, total_result) {
             if(err){
                 var error = {

@@ -1,8 +1,3 @@
-/**
- *
- * @author Ilanchezhian Rajendiran <ilan@studioq.co.in>
- *
- */
 
 /* global _, UserProfiles, Users, sails */
 
@@ -21,13 +16,18 @@ module.exports = function updateEmail(request, response) {
         {name: 'current_password', required: true, min: 6},
         {name: 'email', email: true, required: true}
     ];
+	
+	/**	
+	**	To validate the request send for reset user data
+	**/	
     validateModel.validate(Users, input_attributes, filtered_post_data,  function(valid, errors){
         if(valid){
             var query = squel.select({tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"'}).from(Users.tableName, Users.tableAlias);
             query.where(Users.tableAlias + "." + Users.schema.id.columnName + "=" + logged_in_user.id);
             query.field(Users.tableAlias + "." + Users.schema.id.columnName,'id');
             query.field(Users.tableAlias + "." + Users.schema.password.columnName,'password');
-            //Executing query
+            
+			//Executing query
             var user_model = sails.sendNativeQuery(query.toString());
             user_model.exec(async function(err, current_user){
                 if(err){
@@ -43,6 +43,8 @@ module.exports = function updateEmail(request, response) {
                             _response_object.count = 1;
                             return response.status(400).json(_response_object);
                         }else{
+							
+							//Update the password
                             filtered_post_data.password = await bcrypt.hash(filtered_post_data.current_password, SALT_WORK_FACTOR);
                             Users.update({id: logged_in_user.id}, {password: filtered_post_data.password}, async function(err, user){
                                 if(err){

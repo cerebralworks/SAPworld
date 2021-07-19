@@ -1,8 +1,3 @@
-/**
- *
- * @author Saravanan Karthikeyan <saravanan@studioq.co.in>
- *
- */
 
 /* global _, Categories, sails */
 
@@ -46,6 +41,7 @@ module.exports = async function update(request, response) {
         _response_object['details'] = {id: details.id, status: details.status};
         return response.ok(_response_object);
     };
+	//validate the category fields
     validateModel.validate(Categories, input_attributes, filtered_post_data, async function(valid, errors){
           if(valid){
             Categories.findOne(id, async function(err, category){

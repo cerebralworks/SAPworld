@@ -48,6 +48,7 @@ module.exports = async function list(request,response) {
         query.where(`${Categories.schema.id.columnName} = ${criteria.id}`).
         where(`${Categories.schema.status.columnName} != ${status_deleted_sign}`). 
         limit(1); 
+		//To get the particular category details
         sails.sendNativeQuery(query.toString(),function (err, category) {
             if(err){
                 var error = {

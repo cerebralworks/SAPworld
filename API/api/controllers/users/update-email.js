@@ -21,6 +21,7 @@ module.exports = function updateEmail(request, response) {
         {name: 'current_password', required: true, min: 6},
         {name: 'email', email: true, required: true}
     ];
+	//Validating the request and pass on the appriopriate response.
     validateModel.validate(Users, input_attributes, filtered_post_data, async function(valid, errors){
         if(valid){
           await loginService.findUserByEmail((post_request_data.email).toLowerCase(), async function(err, user){

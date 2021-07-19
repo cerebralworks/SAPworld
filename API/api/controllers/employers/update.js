@@ -26,6 +26,7 @@ module.exports = function update(request, response) {
         { name: 'state' },
         { name: 'privacy_protection' },
     ];
+	//Validating the request and pass on the appriopriate response.
     validateModel.validate(EmployerProfiles, input_attributes, filtered_post_data, async function(valid, errors) {
         if (valid) {
             filtered_not_post_keys = _.difference(pick_input, filtered_post_keys);

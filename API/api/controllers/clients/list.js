@@ -9,6 +9,7 @@
 module.exports = async function list(request,response) {
     var _response_object = {};
     var request_data = request.param();
+	//To show the list of data's
     Clients.find().then(function (clients) {
         _response_object.message = 'Client items retrieved successfully.';
         var meta = {};

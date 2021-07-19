@@ -64,7 +64,7 @@ module.exports = async function update(request, response) {
         _response_object['details'] = {id: details.id, status: details.status};
         return response.ok(_response_object);
     };
-
+	//Validating the request and pass on the appriopriate response.
     validateModel.validate(EducationalDegrees, input_attributes, filtered_post_data, async function(valid, errors){
         if(valid){ 
             if(filtered_post_keys.includes('status')){

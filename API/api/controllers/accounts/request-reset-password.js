@@ -1,13 +1,7 @@
-/**
- *
- * @author Ilanchezhian Rajendiran <ilan@studioq.co.in>
- *
- */
-
 /* global _, UserProfiles, Users, sails */
 
 module.exports = function resetPassword(request, response) {
-    const post_request_data = request.body;
+	const post_request_data = request.body;
     const logged_in_user = request.user;
     var _response_object = {};
     var filtered_post_data = _.pick(post_request_data,['email', 'type']);
@@ -25,6 +19,10 @@ module.exports = function resetPassword(request, response) {
         };
         mailService.sendMail(mail_data);
     };
+	
+	/**	
+	**	To validate the request send for requesting user
+	**/
     validateModel.validate(Users, input_attributes, filtered_post_data, async function(valid, errors){
         if(valid){
             var email = filtered_post_data.email.toLowerCase();

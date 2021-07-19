@@ -37,6 +37,7 @@ module.exports = async function saveProfile(request, response) {
         _response_object['details'] = _.cloneDeep(details);
         return response.ok(_response_object);
     };
+	//Validating the request and pass on the appriopriate response.
     await schema.validate(post_request_data, { abortEarly: false }).then(async value => {
         if (!value.delete) {
 			if(!value.description){

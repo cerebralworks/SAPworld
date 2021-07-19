@@ -47,6 +47,7 @@ module.exports = async function update(request, response) {
             }
         });
     };
+	//Validating the request and pass on the appriopriate response.
     validateModel.validate(UserEducations, input_attributes, filtered_post_data, async function(valid, errors){
           if(valid){
               let query = {id: id, user: logged_in_user.user_profile.id};
