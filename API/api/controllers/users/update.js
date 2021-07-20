@@ -73,6 +73,7 @@ module.exports = async function update(request, response) {
             phone: yup.boolean().default(true),
             email: yup.boolean().default(true),
             current_employer: yup.boolean().default(true),
+            available_for_opportunity: yup.boolean().default(true),
         }),
         available_for_opportunity: yup.boolean().default(true),
     });
