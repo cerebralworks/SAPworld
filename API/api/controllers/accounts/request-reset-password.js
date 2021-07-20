@@ -49,6 +49,7 @@ module.exports = function resetPassword(request, response) {
                             });
                         }else{
                             found_user.token = tokens.reset;
+                            found_user.email = email;
                             sendMail(found_user);
                             _response_object.message = 'Great. We shot you an email with a link for resetting your account password. Check your inbox.';
                             return response.status(200).json(_response_object);
