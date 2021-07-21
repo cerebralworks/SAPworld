@@ -227,9 +227,9 @@ module.exports = async function list(request, response) {
             query.field("COUNT(*)");
         }
 
-		if(!(count == true && group == false)){
+		//if(!(count == true && group == false)){
 			query.cross_join('json_array_elements(to_json(job_posting.hands_on_experience)) skill_id(skillss)');
-		}
+		//}
         query.left_join(`${EmployerProfiles.tableName}`, `${EmployerProfiles.tableAlias}`, `${JobPostings.tableAlias}.company = ${EmployerProfiles.tableAlias}.id`);
 		
 		
@@ -242,7 +242,7 @@ module.exports = async function list(request, response) {
         if (_.get(criteria, 'where.alphabet')) {
             query.where(`LOWER(${JobPostings.tableAlias}.${JobPostings.schema.title.columnName}) LIKE '${_.get(criteria, 'where.alphabet')}%'`);
         }
-        if (_.get(criteria, 'where.skills') && !(count == true && group == false) ) {
+        if (_.get(criteria, 'where.skills') ) {
 			query.where(`(skillss->>'skill_id') = ANY( '${_.get(criteria, 'where.skills')}')`);
             //query.where(` ${JobPostings.tableAlias}.${JobPostings.schema.skills.columnName} && '${_.get(criteria, 'where.skills')}'`);
         }
