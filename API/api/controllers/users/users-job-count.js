@@ -30,7 +30,7 @@ module.exports = async function list(request, response) {
 	WHERE (job_posting.status = 1) AND (job_posting.company = ${parseInt(filtered_query_data.company)}) AND
 	(user_account.status=1) AND (( user_profile.country like job_posting.country OR (coun->>'country') like job_posting.country ) AND ( user_profile.city like job_posting.city OR (citys->>'city') like job_posting.city) ) AND (user_profile.privacy_protection->>'available_for_opportunity')::text = 'true' AND (user_profile.skills && ARRAY[skillss->>'skill_id']::bigint[])
 	AND (COALESCE(user_profile.experience) >= job_posting.experience)
-			group by job_posting.id,user_profile.id`
+			group by job_posting.id`
 			if(filtered_query_data.view =='applicants'){
 				//To get the applicant count details
 				Count_Users = `SELECT COUNT(DISTINCT job_application.id),job_posting.id FROM  job_applications "job_application" 
