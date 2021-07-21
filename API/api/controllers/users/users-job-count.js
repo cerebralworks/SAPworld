@@ -27,7 +27,7 @@ module.exports = async function list(request, response) {
 	CROSS JOIN json_array_elements(to_json(preferred_locations)) country(coun) 
 	CROSS JOIN json_array_elements(to_json(preferred_locations)) city(citys) 
 	LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-	WHERE (job_posting.status = 1) AND (job_posting.company = ${parseInt(filtered_query_data.company)}) AND
+	WHERE (job_posting.status = 1) AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND  (job_posting.company = ${parseInt(filtered_query_data.company)}) AND
 	(user_account.status=1) AND (( user_profile.country like job_posting.country OR (coun->>'country') like job_posting.country ) AND ( user_profile.city like job_posting.city OR (citys->>'city') like job_posting.city) ) AND (user_profile.privacy_protection->>'available_for_opportunity')::text = 'true' AND (user_profile.skills && ARRAY[skillss->>'skill_id']::bigint[])
 	AND (COALESCE(user_profile.experience) >= job_posting.experience)
 			group by job_posting.id`
