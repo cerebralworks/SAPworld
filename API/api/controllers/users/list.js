@@ -202,17 +202,17 @@ module.exports = async function list(request, response) {
         }
 		
 		
-        if (filtered_query_keys.includes('city') && filtered_query_data.visa == false ) {
-          query.where(`(citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}')`);
+        if (filtered_query_keys.includes('city')  ) {
+          query.where(`((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) =any( '{${criteria.city.toLowerCase()}}')) or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}'))`);
         }
-        if (filtered_query_keys.includes('country') && filtered_query_data.visa == false ) {
-            query.where(`(coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}')`);
+        if (filtered_query_keys.includes('country') ) {
+            query.where(`((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) =any( '{${criteria.country.toLowerCase()}}')) or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}'))`);
            // query.where(`((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) =any( '{${criteria.country.toLowerCase()}}')) or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}') or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) =any( '{${criteria.city.toLowerCase()}}')) or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}'))`);
 			
         }
 		query.where(`(user_profile.privacy_protection->>'available_for_opportunity')::text = 'true'`);
         if (filtered_query_data.visa == true ) {
-            query.where(`((${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1) or ((coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}') AND (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}') ))`);
+           // query.where(`((${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1) or ( ((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) =any( '{${criteria.country.toLowerCase()}}')) or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}')) AND ( (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) =any( '{${criteria.city.toLowerCase()}}')) or  (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}') )))`);
         }
 		
         if (filtered_query_keys.includes('search')) {
