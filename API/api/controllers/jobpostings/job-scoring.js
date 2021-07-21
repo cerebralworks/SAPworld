@@ -120,7 +120,8 @@ module.exports = async function Scoring(request, response) {
         }
 		list_query.where(`(user_profile.privacy_protection->>'available_for_opportunity')::text = 'true'`);
         if (model.visa_sponsorship == true && !value.user_id) {
-            list_query.where(`(${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1 or  (( user_profile.country like {${model.country.toString()}} OR(coun->>'country') = ANY( '{${model.country.toString()}}')) AND ( user_profile.country like {${model.city.toString()}} OR (citys->>'city') = ANY( '{${model.city.toString()}}')) ))`);
+            //list_query.where(`(${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1 or  (( user_profile.country like {${model.country.toString()}} OR(coun->>'country') = ANY( '{${model.country.toString()}}')) AND ( user_profile.country like {${model.city.toString()}} OR (citys->>'city') = ANY( '{${model.city.toString()}}')) ))`);
+            list_query.where(`( (( user_profile.country like {${model.country.toString()}} OR(coun->>'country') = ANY( '{${model.country.toString()}}')) AND ( user_profile.country like {${model.city.toString()}} OR (citys->>'city') = ANY( '{${model.city.toString()}}')) ))`);
         }
         if (model.type && !value.user_id && model.visa_sponsorship == false ) {
            //list_query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} && ARRAY[${model.type.toString()}]::text[]`);
