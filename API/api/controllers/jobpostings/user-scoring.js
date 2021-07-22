@@ -125,7 +125,11 @@ module.exports = async function Scoring(request, response) {
             list_query.where("end_to_end_implementation >=" + model.end_to_end_implementation);
             score += 1;
         }
-        list_query.limit(1).offset(value.page - 1);
+		if (!value.job_id) {
+			list_query.limit(1).offset(value.page - 1);
+		}else{
+			list_query.limit(1);
+		}
 		var group_by = JobPostings.tableAlias + "." + JobPostings.schema.id.columnName;
 		//list_query.group(group_by);
 		//list_query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName}`);
