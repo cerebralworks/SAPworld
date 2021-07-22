@@ -11,7 +11,7 @@ const job_type_values = _.values(_.get(sails, 'config.custom.job_types', {}));
 module.exports = async function list(request, response) {
     var _response_object = {};
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['page','filterData','skills_filter', 'country', 'sort','visa_sponsered', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'work_authorization', 'zip_code', 'additional_fields']);
+    const filtered_query_data = _.pick(request_query, ['page','visa','filterData','skills_filter', 'country', 'sort','visa_sponsered', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'work_authorization', 'zip_code', 'additional_fields']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
         { name: 'page', number: true, min: 1 },
@@ -77,6 +77,12 @@ module.exports = async function list(request, response) {
     if (filtered_query_data.visa_sponsered == "false") {
         filtered_query_data.visa_sponsered = false;
     }
+    if (filtered_query_data.visa =="true") {
+        filtered_query_data.visa = true;
+    }
+    if (filtered_query_data.visa == "false") {
+        filtered_query_data.visa = false;
+    }
     if (filtered_query_data.skills_filter =="true") {
         filtered_query_data.skills_filter = true;
     }
@@ -128,7 +134,7 @@ module.exports = async function list(request, response) {
             } else if (_.get(total, 'count.rows[0].count') < 1) {
                 return callback([], {}, _.get(total, 'count.rows[0].count'));
             } else {
-                const list_query = await buildNativeQueryToGetJobPostingList(criteria, false,false).then(function(query) {
+                const list_query = await buildNativeQueryToGetJobPostingList(criteria, false,false,false).then(function(query) {
                     return query;
                 });
 				//To list the all data's
@@ -145,7 +151,7 @@ module.exports = async function list(request, response) {
                         _response_object.count = _response_object.errors.count;
                         return response.status(400).json(_response_object);
                     } else {
-						const group_query = await buildNativeQueryToGetJobPostingList(criteria, true,true).then(function(query) {
+						const group_query = await buildNativeQueryToGetJobPostingList(criteria, true,true,false).then(function(query) {
 							return query;
 						});
 						//To get the country based data's
@@ -163,7 +169,29 @@ module.exports = async function list(request, response) {
 								return response.status(400).json(_response_object);
 							} else {
 								//console.log(group_query_Value);
-								return callback(_.get(job_postings, 'rows'), {}, parseInt(total.rowCount),_.get(group_query_Value, 'rows'));
+								//return callback(_.get(job_postings, 'rows'), {}, parseInt(total.rowCount),_.get(group_query_Value, 'rows'));
+								
+								const visa_query = await buildNativeQueryToGetJobPostingList(criteria, false,false,true).then(function(query) {
+									return query;
+								});
+								//To get the country based data's
+								sails.sendNativeQuery(visa_query, async function(err, visa_query_Value) {
+									if (err) {
+										var error = {
+											'field': 'items',
+											'rules': [{
+												'rule': 'invalid',
+												'message': err.message
+											}]
+										};
+										_response_object.errors = [error];
+										_response_object.count = _response_object.errors.count;
+										return response.status(400).json(_response_object);
+									} else {
+										//console.log(group_query_Value);
+										return callback(_.get(job_postings, 'rows'), {}, parseInt(total.rowCount),_.get(group_query_Value, 'rows'), parseInt(visa_query_Value.rowCount));
+									}
+								});
 							}
 						});
                         //return callback(_.get(job_postings, 'rows'), {}, parseInt(_.get(_.cloneDeep(total), 'rows[0].count')));
@@ -174,14 +202,14 @@ module.exports = async function list(request, response) {
     };
 
     //Build sails native query
-    const buildNativeQueryToGetJobPostingList = async(criteria, count = false,group = false) => {
+    const buildNativeQueryToGetJobPostingList = async(criteria, count = false,group = false,visa = false) => {
 
         let query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).
         from(JobPostings.tableName, JobPostings.tableAlias);
 
         var fields = _.without(Object.keys(JobPostings.schema), 'company');
 
-        if (!count) {
+        if (!count && !visa) {
             await fields.forEach(function(attribute) {
                 query.field(`${JobPostings.tableAlias}.${JobPostings.schema[attribute].columnName}`);
             });
@@ -223,6 +251,8 @@ module.exports = async function list(request, response) {
 
         } else if(group){
             query.field("country,count(country)");
+        }else if(visa){
+            query.field("count(*)");
         } else {
             query.field("COUNT(*)");
         }
@@ -252,6 +282,13 @@ module.exports = async function list(request, response) {
 			}
             
         }
+		
+		if(visa ==true){
+			 query.where(`${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = true `);
+		}
+        if (filtered_query_data.visa) {
+			query.where(`${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = true `);
+        }
         if (_.get(criteria, 'where.min_salary')) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.salary.columnName} >= ${_.get(criteria, 'where.min_salary')}`);
         }
@@ -275,7 +312,7 @@ module.exports = async function list(request, response) {
            // query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.country.columnName} = ANY('${_.get(criteria, 'where.country')}') or ${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = ${filtered_query_data.visa_sponsered} )`);
 		   query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.country.columnName}  = ANY('${_.get(criteria, 'where.country')}'))`);
         }
-        if ( filtered_query_data.visa_sponsered == false ) {
+        if ( filtered_query_data.visa_sponsered == false && !filtered_query_data.visa) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = ${filtered_query_data.visa_sponsered} `);
         }
         if (filtered_query_data.work_authorization == 1 ) {
@@ -305,6 +342,9 @@ module.exports = async function list(request, response) {
         }else if (group) {
 			query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName}`);
             return query.toString();
+        }else if (visa) {
+			query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName}`);
+            return query.toString();
         } else {
             if (_.isArray(_.get(criteria, 'sort'))) {
                 await _.get(criteria, 'sort').forEach(function(field) {
@@ -326,11 +366,12 @@ module.exports = async function list(request, response) {
     }
 
     //Build and sending response
-    const sendResponse = (items, details, total,country) => {
+    const sendResponse = (items, details, total,country,visa) => {
         _response_object.message = 'Job items retrieved successfully.';
         var meta = {};
         meta['count'] = items.length;
         meta['total'] = total;
+        meta['visa'] = visa;
         meta['page'] = filtered_query_data.page ? filtered_query_data.page : 1;
         meta['limit'] = filtered_query_data.limit;
         meta['photo'] = {
@@ -345,6 +386,7 @@ module.exports = async function list(request, response) {
         _response_object['meta'] = meta;
         _response_object['items'] = _.cloneDeep(items);
         _response_object['country'] = _.cloneDeep(country);
+        _response_object['visa'] = _.cloneDeep(visa);
         if (!_.isEmpty(details)) {
             _response_object['details'] = _.cloneDeep(details);
         }
@@ -433,8 +475,8 @@ module.exports = async function list(request, response) {
                 }
             }
             //Preparing data
-            await getJobPostings(criteria, function(job_postings, details, total,country) {
-                sendResponse(job_postings, details, total,country);
+            await getJobPostings(criteria, function(job_postings, details, total,country,visa) {
+                sendResponse(job_postings, details, total,country,visa);
             });
         } else {
             _response_object.errors = errors;
