@@ -96,6 +96,33 @@ module.exports = async function apply(request, response) {
     const sendEmail = async(job, user, application,employee, callback) => {
         //Sending email
         let details = {};
+		var exprience_map = job.hands_on_experience.map(function(value) {
+            return value.skill_name.split('-')[0];
+        });
+        job.hands_on_experience = exprience_map;
+        await SkillTags.find({ id: job.skills }).then(skill => {
+            job.skills = skill.map(function(value) {
+                return value.tag.split('-')[0];
+            });
+        });
+		for(let i=0;i<job.hands_on_experience.length;i++){
+			var hands_on_experience_data = job.hands_on_experience[i].toLocaleUpperCase();
+			var CheckData = job.skills.filter(function(a,b){ return a.toLocaleUpperCase() == hands_on_experience_data.toLocaleUpperCase()});
+			if(CheckData.length !=0){
+				job.skills = job.skills.filter(function(a,b){ return a.toLocaleUpperCase() != hands_on_experience_data.toLocaleUpperCase()});
+			}
+		}
+        await Industries.find({ id: job.domain }).then(domain => {
+            job.domain = domain.map(function(value) {
+                return value.name;
+            });
+        });
+		if(job.availability=="0"){
+			job.availability = "Immediately"
+		}else{
+			job.availability = job.availability+' Days'
+		}
+		
         const mail_data = {
             template: 'jobpostings/apply',
             data: { job: job, user: user, application: application, employee: employee },
