@@ -96,23 +96,30 @@ module.exports = async function apply(request, response) {
     const sendEmail = async(job, user, application,employee, callback) => {
         //Sending email
         let details = {};
-		var exprience_map = job.hands_on_experience.map(function(value) {
+		var jobTypeArray = [
+			{id: 1000, text: 'Full Time'},
+			{id: 1001, text: 'Part Time'},
+			{id: 1002, text: 'Contract'},
+			{id: 1003, text: 'Freelance'},
+			{id: 1004, text: 'Internship'},
+		  ];
+		var exprience_map = user.hands_on_experience.map(function(value) {
             return value.skill_name.split('-')[0];
         });
         job.hands_on_experience = exprience_map;
-        await SkillTags.find({ id: job.skills }).then(skill => {
-            job.skills = skill.map(function(value) {
+        await SkillTags.find({ id: user.skills }).then(skill => {
+            user.skills = skill.map(function(value) {
                 return value.tag.split('-')[0];
             });
         });
 		for(let i=0;i<job.hands_on_experience.length;i++){
 			var hands_on_experience_data = job.hands_on_experience[i].toLocaleUpperCase();
-			var CheckData = job.skills.filter(function(a,b){ return a.toLocaleUpperCase() == hands_on_experience_data.toLocaleUpperCase()});
+			var CheckData = user.skills.filter(function(a,b){ return a.toLocaleUpperCase() == hands_on_experience_data.toLocaleUpperCase()});
 			if(CheckData.length !=0){
-				job.skills = job.skills.filter(function(a,b){ return a.toLocaleUpperCase() != hands_on_experience_data.toLocaleUpperCase()});
+				job.skills = user.skills.filter(function(a,b){ return a.toLocaleUpperCase() != hands_on_experience_data.toLocaleUpperCase()});
 			}
 		}
-        await Industries.find({ id: job.domain }).then(domain => {
+        await Industries.find({ id: user.domains_worked }).then(domain => {
             job.domain = domain.map(function(value) {
                 return value.name;
             });
@@ -122,6 +129,22 @@ module.exports = async function apply(request, response) {
 		}else{
 			job.availability = job.availability+' Days'
 		}
+		if(job.certification ==null || job.certification ==undefined){
+			job.certification = [];
+		}else{
+			job.certification = user.certification;
+		}
+		if(job.type){
+			if(jobTypeArray.filter(function(a,b){ return a.id == job.type }).length!=0){
+				 job.type =jobTypeArray.filter(function(a,b){ return a.id == job.type })[0]['text'];
+			}else{
+				 job.type = ['Full Time', 'Part Time', 'Freelance', 'Internship', 'Temporary', 'Remote', 'Contract', 'Day Job'];
+			}
+		}else{
+			 job.type = ['Full Time', 'Part Time', 'Freelance', 'Internship', 'Temporary', 'Remote', 'Contract', 'Day Job'];
+		}
+       
+        job.remote = user.remote == 1 ? 'Yes' : 'No';
 		
         const mail_data = {
             template: 'jobpostings/apply',
