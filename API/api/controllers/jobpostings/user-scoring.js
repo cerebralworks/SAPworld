@@ -79,7 +79,7 @@ module.exports = async function Scoring(request, response) {
 	  }
             list_query.where("status=1");
             list_query.where("experience <=" + model.experience);
-            list_query.where(`job_posting.hands_on_skills && '${tempData}' `);
+            list_query.where(`job_posting.hands_on_skills && '{${tempData}}' `);
             //.where("sap_experience <=" + model.sap_experience)
             //list_query.where(`skills && ARRAY[${tempData}]::bigint[]`);
             //.where("lower(city) = lower('" + model.city + "')  OR ST_DistanceSphere(latlng, ST_MakePoint(" + model.latlng['coordinates'].toString() + ")) <=" + value.distance + " * 1609.34");
