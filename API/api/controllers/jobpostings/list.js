@@ -258,7 +258,7 @@ module.exports = async function list(request, response) {
         }
 
 		//if(!(count == true && group == false)){
-			query.cross_join('json_array_elements(to_json(job_posting.hands_on_experience)) skill_id(skillss)');
+			//query.cross_join('json_array_elements(to_json(job_posting.hands_on_experience)) skill_id(skillss)');
 		//}
         query.left_join(`${EmployerProfiles.tableName}`, `${EmployerProfiles.tableAlias}`, `${JobPostings.tableAlias}.company = ${EmployerProfiles.tableAlias}.id`);
 		
