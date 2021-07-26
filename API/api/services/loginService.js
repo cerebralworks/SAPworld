@@ -212,6 +212,7 @@ exports.findUserByToken = function(access_token, callback) {
         });
 		var users2 ="'data',json_build_object(";
 		usersData[1].slice(0,usersData[1].length-1);
+		usersData[1][usersData[1].length]="account";
 		usersData[1].map(function(value) {
             if (UserProfiles.schema[value].columnName || typeof UserProfiles.schema[value].columnName !== "undefined") {
                 users2 += "'" + UserProfiles.schema[value].columnName + "'," + UserProfiles.tableAlias + "." + UserProfiles.schema[value].columnName + ",";

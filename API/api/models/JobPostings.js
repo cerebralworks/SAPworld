@@ -63,6 +63,7 @@ module.exports = {
         facing_role: { type: 'string', allowNull: true },
         training_experience: { type: 'string', allowNull: true },
 		authorized_to_work: { type: 'ref', columnType: 'bigint[]' },
+        hands_on_skills: { type: 'ref', columnType: 'bigint[]' },
 
     }
 };

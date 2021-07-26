@@ -75,7 +75,6 @@ module.exports = async function update(request, response) {
             current_employer: yup.boolean().default(true),
             available_for_opportunity: yup.boolean().default(true),
         }),
-        available_for_opportunity: yup.boolean().default(true),
     });
     await schema.validate(post_request_data, { abortEarly: false }).then(async value => {
 		if(value.latlng['lng'] && value.latlng['lng'] !=undefined && value.latlng['lng'] !="undefined" &&
@@ -96,6 +95,39 @@ module.exports = async function update(request, response) {
 			value.phone =null;
 		}
         value.status = 1;
+		var arr1= value.skills;
+		var arr2= value.hands_on_experience;
+		if ( arr2 && Array.isArray(arr2)) {
+			arr2 = arr2.filter(function(a,b){ return a.skill_id!=null && a.skill_id!='' });
+			value.hands_on_skills = arr2.map(function(a,b){ return a.skill_id });
+		}else{
+			value.hands_on_skills =[];
+		}
+		var arr3= value.language_known;
+		if (arr3 &&  Array.isArray(arr3) ) {
+			arr3 = arr3.filter(function(a,b){ return a.language!=null && a.language!='' });
+			value.language_id = arr3.map(function(a,b){ return a.language });
+			
+		}else{
+			value.language_id = [];
+		}
+		var arr4= value.education_qualification;
+		if (arr4 &&  Array.isArray(arr4) ) {
+			arr4 = arr4.filter(function(a,b){ return a.degree!=null && a.degree!='' });
+			value.education_degree = arr4.map(function(a,b){ return a.degree });
+		}else{
+			value.education_degree = [];
+		}
+		var arr5= value.preferred_locations;
+		if (arr5 &&  Array.isArray(arr5) ) {
+			arr5 = arr5.filter(function(a,b){ return a.country!=null && a.country!='' });
+			value.other_countries = arr5.map(function(a,b){ return a.country });
+			value.other_cities = arr5.map(function(a,b){ return a.city });
+		}else{
+			value.other_countries = [];
+			value.other_cities = [];
+		}
+		//console.log(value);
 		//Update the user profile details
         UserProfiles.update(logged_in_user.user_profile.id, value, async function(err, profile) {
             if (err) {

@@ -35,7 +35,6 @@ module.exports = {
         domains_worked: { type: 'ref', columnType: 'bigint[]' },
         clients_worked: { type: 'ref', columnType: 'text[]' },
         hands_on_experience: { type: 'ref', columnType: 'json[]' },
-       
         skills: { type: 'ref', columnType: 'bigint[]' },
         programming_skills: { type: 'ref', columnType: 'text[]' },
         other_skills: { type: 'ref', columnType: 'text[]' },
@@ -69,11 +68,14 @@ module.exports = {
 		reference: { type: 'ref', columnType: 'json[]' },
 		employer_role_type: { type: 'string', allowNull: true },
 		knowledge_on: { type: 'ref', columnType: 'bigint[]' },
-		preferred_countries: { type: 'ref', columnType: 'bigint[]' },
-		other_countries: { type: 'ref', columnType: 'json[]' },
+		other_cities: { type: 'ref', columnType: 'text[]' },
+		other_countries: { type: 'ref', columnType: 'text[]' },
         visa_sponsered: { type: 'boolean', allowNull: true },
         preferred_locations: { type: 'ref', columnType: 'json[]' },
-		doc_cover: { type: 'ref', columnType: 'json[]' }
+		doc_cover: { type: 'ref', columnType: 'json[]' },
+        hands_on_skills: { type: 'ref', columnType: 'bigint[]' },
+        education_degree: { type: 'ref', columnType: 'text[]' },
+        language_id: { type: 'ref', columnType: 'bigint[]' }
 		
 		
         
