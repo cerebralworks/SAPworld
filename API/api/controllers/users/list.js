@@ -142,19 +142,7 @@ module.exports = async function list(request, response) {
     const getUserProfiles = (criteria, callback) => {
         //Initializing query
         var query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(UserProfiles.tableName, UserProfiles.tableAlias);
-       query.cross_join('json_array_elements(to_json(hands_on_experience)) skill_id(skillss)');
-	   if (filtered_query_keys.includes('education')) {
-			query.cross_join('json_array_elements(to_json(education_qualification)) degree(ele)');
-	   }
-	   if (filtered_query_keys.includes('language')) {
-			query.cross_join('json_array_elements(to_json(language_known)) language(lang)');
-	   }
-	   if (filtered_query_keys.includes('country')) {
-			query.cross_join('json_array_elements(to_json(preferred_locations)) country(coun)');
-	   }
-	   if (filtered_query_keys.includes('city')) {
-			query.cross_join('json_array_elements(to_json(preferred_locations)) city(citys)');
-	   }
+      
         query.left_join(Users.tableName, Users.tableAlias, Users.tableAlias + '.' + Users.schema.id.columnName + "=" + UserProfiles.tableAlias + '.' + UserProfiles.schema.account.columnName);
         var group_by = UserProfiles.tableAlias + "." + UserProfiles.schema.id.columnName;
         group_by += "," + Users.tableAlias + "." + Users.schema.id.columnName;
@@ -203,10 +191,10 @@ module.exports = async function list(request, response) {
 		
 		
         if (filtered_query_keys.includes('city')  ) {
-          query.where(`((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) =any( '{${criteria.city.toLowerCase()}}')) or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}'))`);
+          query.where(`((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) =any( '{${criteria.city.toLowerCase()}}')) or ${UserProfiles.tableAlias}.${UserProfiles.schema.other_cities.columnName} && ARRAY['{${filtered_query_data.city}}']::text[] )`);
         }
         if (filtered_query_keys.includes('country') ) {
-            query.where(`((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) =any( '{${criteria.country.toLowerCase()}}')) or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}'))`);
+            query.where(`((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) =any( '{${criteria.country.toLowerCase()}}')) or ${UserProfiles.tableAlias}.${UserProfiles.schema.other_countries.columnName} && ARRAY['{${filtered_query_data.country}}']::text[] )`);
            // query.where(`((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) =any( '{${criteria.country.toLowerCase()}}')) or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}') or (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) =any( '{${criteria.city.toLowerCase()}}')) or (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}'))`);
 			
         }
@@ -229,21 +217,12 @@ module.exports = async function list(request, response) {
             //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} = ANY('{${filtered_query_data.job_types.toString()}}')`);
             query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} && ARRAY[${filtered_query_data.job_types.toString()}]::text[]`);
         }
-        /* if (filtered_query_keys.includes('education')) {
-            //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} = ANY('{${filtered_query_data.job_types.toString()}}')`);
-            query.where(`to_jsonb(${UserProfiles.tableAlias}.${UserProfiles.schema.education_qualification.columnName})->0->>'degree' =ANY('{"${filtered_query_data.education.toString()}"}')`);
-        } */
 		if (filtered_query_keys.includes('education')) {
-            //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} = ANY('{${filtered_query_data.job_types.toString()}}')`);
-            query.where(`(ele->>'degree') =ANY('{"${filtered_query_data.education.toString()}"}')`);
+            query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.education_degree.columnName} && ARRAY[${filtered_query_data.education.toString()}]::text[]`);
         }
-        /* if (filtered_query_keys.includes('language')) {
-            //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} = ANY('{${filtered_query_data.job_types.toString()}}')`);
-            query.where(`to_jsonb(${UserProfiles.tableAlias}.${UserProfiles.schema.language_known.columnName})->0->>'language' =ANY('{${filtered_query_data.language.toString()}}')`);
-        } */
 		if (filtered_query_keys.includes('language')) {
-            //query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} = ANY('{${filtered_query_data.job_types.toString()}}')`);
-            query.where(`(lang->>'language') =ANY('{${filtered_query_data.language.toString()}}')`);
+            //query.where(`(lang->>'language') =ANY('{${filtered_query_data.language.toString()}}')`);
+			query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.language_id.columnName} && ARRAY[${filtered_query_data.language.toString()}]::bigint[]`);
         }
         if (filtered_query_keys.includes('min_salary')) {
             query.where(`COALESCE(${UserProfiles.tableAlias}.${UserProfiles.schema.expected_salary.columnName}, 0) >= ${parseFloat(filtered_query_data.min_salary)}`);
@@ -258,16 +237,15 @@ module.exports = async function list(request, response) {
             query.where(`COALESCE(${UserProfiles.tableAlias}.${UserProfiles.schema.experience.columnName}, 0) <= ${parseInt(filtered_query_data.max_experience)}`);
         }
         if (filtered_query_keys.includes('skill_tags') && _.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 0)), 1)) {
-			query.where(`(skillss->>'skill_id') = ANY( '{${filtered_query_data.skill_tags}}' )`);
-			//query.where(`(skillss->>'skill_id') && ARRAY[${filtered_query_data.skill_tags}]::text[]`);
-            // skill_tags_filter_type is 0. it indicates that skill_tags values will be provided by client.
+			query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.hands_on_skills.columnName} && ARRAY[${filtered_query_data.skill_tags}]::bigint[]`);
+            
+			// skill_tags_filter_type is 0. it indicates that skill_tags values will be provided by client.
             query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.skills.columnName} && ARRAY[${filtered_query_data.skill_tags}]::bigint[]`);
         }
         if (filtered_query_keys.includes('skill_tags') && _.isEqual(parseInt(_.get(filtered_query_data, 'skill_tags_filter_type', 1)), 0)) {
 			
-			query.where(`(skillss->>'skill_id') = ANY( '{${filtered_query_data.skill_tags}}' )`);
+			query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.hands_on_skills.columnName} && ARRAY[${filtered_query_data.skill_tags}]::bigint[]`);
             // skill_tags_filter_type is 0. it indicates that skill_tags values will be provided by client.
-			
 			
 			for(let i=0;i<filtered_query_data.skill_tags.length;i++){
 				query.where(` ${UserProfiles.tableAlias}.${UserProfiles.schema.skills.columnName} && '{${filtered_query_data.skill_tags[i]}}'`);

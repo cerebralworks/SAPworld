@@ -79,8 +79,9 @@ module.exports = async function Scoring(request, response) {
 	  }
             list_query.where("status=1");
             list_query.where("experience <=" + model.experience);
+            list_query.where(`job_posting.hands_on_skills && '${tempData}' `);
             //.where("sap_experience <=" + model.sap_experience)
-            list_query.where(`skills && ARRAY[${tempData}]::bigint[]`);
+            //list_query.where(`skills && ARRAY[${tempData}]::bigint[]`);
             //.where("lower(city) = lower('" + model.city + "')  OR ST_DistanceSphere(latlng, ST_MakePoint(" + model.latlng['coordinates'].toString() + ")) <=" + value.distance + " * 1609.34");
             //.where("lower(city) = lower('" + model.city + "') ");
 		//list_query.cross_join('json_array_elements(to_json(job_posting.hands_on_experience)) skill_id(skillss)');

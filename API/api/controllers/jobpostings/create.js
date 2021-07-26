@@ -60,6 +60,15 @@ module.exports = async function create(request, response) {
         var point = value.latlng['lng'] + ' ' + value.latlng['lat'];
         value.latlng_text = value.latlng.lat + ',' + value.latlng.lng;
         value.latlng = 'SRID=4326;POINT(' + point + ')';
+		
+		var arr2= value.hands_on_experience;
+		if ( arr2 && Array.isArray(arr2)) {
+			arr2 = arr2.filter(function(a,b){ return a.skill_id!=null && a.skill_id!='' });
+			value.hands_on_skills = arr2.map(function(a,b){ return a.skill_id });
+		}else{
+			value.hands_on_skills =[];
+		}
+		
         //Creating record
         JobPostings.create(value, async function(err, job) {
             if (err) {

@@ -273,7 +273,8 @@ module.exports = async function list(request, response) {
             query.where(`LOWER(${JobPostings.tableAlias}.${JobPostings.schema.title.columnName}) LIKE '${_.get(criteria, 'where.alphabet')}%'`);
         }
         if (_.get(criteria, 'where.skills') ) {
-			query.where(`(skillss->>'skill_id') = ANY( '${_.get(criteria, 'where.skills')}')`);
+			query.where(`${JobPostings.tableAlias}.${JobPostings.schema.hands_on_skills.columnName} && '${_.get(criteria, 'where.skills')}' `);
+			//query.where(`(skillss->>'skill_id') = ANY( '${_.get(criteria, 'where.skills')}')`);
             //query.where(` ${JobPostings.tableAlias}.${JobPostings.schema.skills.columnName} && '${_.get(criteria, 'where.skills')}'`);
         }
         if (_.get(criteria, 'where.skills') && filtered_query_data.skills_filter == true) {
