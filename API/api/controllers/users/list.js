@@ -144,6 +144,7 @@ module.exports = async function list(request, response) {
         var query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(UserProfiles.tableName, UserProfiles.tableAlias);
       
         query.left_join(Users.tableName, Users.tableAlias, Users.tableAlias + '.' + Users.schema.id.columnName + "=" + UserProfiles.tableAlias + '.' + UserProfiles.schema.account.columnName);
+        query.left_join(Scoring.tableName, Scoring.tableAlias, Scoring.tableAlias + '.' + Scoring.schema.user_id.columnName + "=" + UserProfiles.tableAlias + '.' + UserProfiles.schema.id.columnName);
         var group_by = UserProfiles.tableAlias + "." + UserProfiles.schema.id.columnName;
         group_by += "," + Users.tableAlias + "." + Users.schema.id.columnName;
         if (filtered_query_keys.includes('status')) {
@@ -151,7 +152,8 @@ module.exports = async function list(request, response) {
         } else {
             query.where(Users.tableAlias + '.' + Users.schema.status.columnName + "=1");
         }
-		
+		query.where(` ${UserProfiles.tableAlias}.${UserProfiles.schema.id.columnName} = ${Scoring.tableAlias}.${Scoring.schema.user_id.columnName} `);
+		query.where(` ${Scoring.tableAlias}.${Scoring.schema.job_id.columnName} = ${filtered_query_data.job_posting}`);
 		
 		//Filter the Custom Data's
 		
@@ -360,7 +362,7 @@ module.exports = async function list(request, response) {
                 }
 
                 //Sorting fields
-                if (filtered_query_keys.includes('sort')) {
+                /* if (filtered_query_keys.includes('sort')) {
                     var sort = {};
                     const sort_array = filtered_query_data.sort.split(',');
                     if (sort_array.length > 0) {
@@ -376,7 +378,7 @@ module.exports = async function list(request, response) {
                             }
                         });
                     }
-                }
+                } */
                 //Setting pagination
                 query.limit(filtered_query_data.limit);
                 if (filtered_query_keys.includes('page')) {
@@ -386,6 +388,9 @@ module.exports = async function list(request, response) {
                 query.group(group_by);
 
                 //Executing query
+				query.group(`${Scoring.tableAlias}.${Scoring.schema.id.columnName}`);
+				query.order('scoring.score', false);
+				//query.order(`${Scoring.tableAlias}.${Scoring.schema.score.columnName} `);
                 var application_model = sails.sendNativeQuery(query.toString());
                 application_model.exec(async function(err, applications_result) {
                     if (err) {
