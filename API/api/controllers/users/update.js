@@ -164,11 +164,11 @@ module.exports = async function update(request, response) {
 						});
 					});
 				}
-				return response.status(200).json(_response_object);
+				
 				var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
 	CROSS JOIN user_profiles "user_profile" 
 	LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-	WHERE (job_posting.status = 1) AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${parseInt(checkDetails.id)}) AND
+	WHERE (job_posting.status = 1) AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = checkDetails.id ) AND
 	(user_account.status=1) AND (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) ) AND user_profile.hands_on_skills && job_posting.hands_on_skills 
 	AND (COALESCE(user_profile.experience) >= job_posting.experience)`
 				sails.sendNativeQuery(Count_Users, async function(err, Count_Users_value) {
@@ -184,7 +184,7 @@ module.exports = async function update(request, response) {
 					_response_object.count = _response_object.errors.count;
 					return response.status(400).json(_response_object);
 				} else {
-					
+					return response.status(200).json(_response_object);
 					if(Count_Users_value.rowCount!=0){
 						var responseMatch = Count_Users_value['rows'];
 						var ScoreMasters = await ScoreMaster.find();
