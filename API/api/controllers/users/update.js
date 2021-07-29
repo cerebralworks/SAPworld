@@ -164,6 +164,7 @@ module.exports = async function update(request, response) {
 						});
 					});
 				}
+				return response.status(200).json(_response_object);
 				var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
 	CROSS JOIN user_profiles "user_profile" 
 	LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
@@ -183,7 +184,7 @@ module.exports = async function update(request, response) {
 					_response_object.count = _response_object.errors.count;
 					return response.status(400).json(_response_object);
 				} else {
-					return response.status(200).json(_response_object);
+					
 					if(Count_Users_value.rowCount!=0){
 						var responseMatch = Count_Users_value['rows'];
 						var ScoreMasters = await ScoreMaster.find();
