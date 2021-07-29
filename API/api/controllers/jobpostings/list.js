@@ -11,7 +11,7 @@ const job_type_values = _.values(_.get(sails, 'config.custom.job_types', {}));
 module.exports = async function list(request, response) {
     var _response_object = {};
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['page','visa','filterData','skills_filter', 'country', 'sort','visa_sponsered', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'work_authorization', 'zip_code', 'additional_fields']);
+    const filtered_query_data = _.pick(request_query, ['page','user_id','user_list','visa','filterData','skills_filter', 'country', 'sort','visa_sponsered', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'work_authorization', 'zip_code', 'additional_fields']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
         { name: 'page', number: true, min: 1 },
@@ -73,6 +73,9 @@ module.exports = async function list(request, response) {
     }
     if (filtered_query_data.visa_sponsered =="true") {
         filtered_query_data.visa_sponsered = true;
+    }
+    if (filtered_query_data.user_list =="true") {
+        filtered_query_data.user_list = true;
     }
     if (filtered_query_data.visa_sponsered == "false") {
         filtered_query_data.visa_sponsered = false;
@@ -205,11 +208,19 @@ module.exports = async function list(request, response) {
     const buildNativeQueryToGetJobPostingList = async(criteria, count = false,group = false,visa = false) => {
 
         let query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).
-        from(JobPostings.tableName, JobPostings.tableAlias);
+		from(JobPostings.tableName, JobPostings.tableAlias);
 
         var fields = _.without(Object.keys(JobPostings.schema), 'company');
-
+		
+		// Join the Scoring Table
+		if(filtered_query_data.user_list ==true){
+			query.left_join(Scoring.tableName, Scoring.tableAlias, Scoring.tableAlias + '.' + Scoring.schema.job_id.columnName + "=" + JobPostings.tableAlias + '.' + JobPostings.schema.id.columnName);
+			query.where(` ${JobPostings.tableAlias}.${JobPostings.schema.id.columnName} = ${Scoring.tableAlias}.${Scoring.schema.job_id.columnName} `);
+			query.where(` ${Scoring.tableAlias}.${Scoring.schema.user_id.columnName} = ${filtered_query_data.user_id}`);
+		}
+		
         if (!count && !visa) {
+			
             await fields.forEach(function(attribute) {
                 query.field(`${JobPostings.tableAlias}.${JobPostings.schema[attribute].columnName}`);
             });
@@ -257,9 +268,6 @@ module.exports = async function list(request, response) {
             query.field("COUNT(*)");
         }
 
-		//if(!(count == true && group == false)){
-			//query.cross_join('json_array_elements(to_json(job_posting.hands_on_experience)) skill_id(skillss)');
-		//}
         query.left_join(`${EmployerProfiles.tableName}`, `${EmployerProfiles.tableAlias}`, `${JobPostings.tableAlias}.company = ${EmployerProfiles.tableAlias}.id`);
 		
 		
@@ -274,14 +282,11 @@ module.exports = async function list(request, response) {
         }
         if (_.get(criteria, 'where.skills') ) {
 			query.where(`${JobPostings.tableAlias}.${JobPostings.schema.hands_on_skills.columnName} && '${_.get(criteria, 'where.skills')}' `);
-			//query.where(`(skillss->>'skill_id') = ANY( '${_.get(criteria, 'where.skills')}')`);
-            //query.where(` ${JobPostings.tableAlias}.${JobPostings.schema.skills.columnName} && '${_.get(criteria, 'where.skills')}'`);
-        }
+		}
         if (_.get(criteria, 'where.skills') && filtered_query_data.skills_filter == true) {
 			for(let i=0;i<filtered_query_data.skills.length;i++){
 				query.where(` ${JobPostings.tableAlias}.${JobPostings.schema.skills.columnName} && '{${filtered_query_data.skills[i]}}'`);
 			}
-            
         }
 		
 		if(visa ==true){
@@ -337,33 +342,56 @@ module.exports = async function list(request, response) {
             const generateGeom = `ST_PointFromText(ST_AsEWKT(${JobPostings.tableAlias}.${JobPostings.schema.latlng.columnName}::geometry), 4326)::geography`;
             query.where(`ST_DWithin(${generateGeom}, ST_SetSRID(ST_MakePoint(${_.get(criteria, 'where.location.latitude')}, ${_.get(criteria, 'where.location.longitude')}), 4326), ${_.get(criteria, 'where.location_miles')} * 1609)`);
         }
-        if (count && !group) {
-			query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${EmployerProfiles.tableAlias}.${EmployerProfiles.schema.id.columnName}`);
-            return query.toString();
-        }else if (group) {
-			query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName}`);
-            return query.toString();
-        }else if (visa) {
-			query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName}`);
-            return query.toString();
-        } else {
-            if (_.isArray(_.get(criteria, 'sort'))) {
-                await _.get(criteria, 'sort').forEach(function(field) {
-                    let value = _.keys(field)[0];
-                    if (value === 'most_popular') {
-                        value = `array_length(${JobPostings.tableAlias}.${JobPostings.schema.skills.columnName}, 1)`
-                    } else {
-                        value = `${JobPostings.tableAlias}.${value}`;
-                    }
-                    query.order(value, field[_.keys(field)[0]] === 'DESC' ? false : true);
-                });
-            }
-            if (_.get(criteria, 'page')) {
-                query.offset(_.get(criteria, 'page'));
-            }
-			query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${EmployerProfiles.tableAlias}.${EmployerProfiles.schema.id.columnName}`);
-            return query.limit(_.get(criteria, 'limit')).toString();
-        }
+		if(filtered_query_data.user_list ==true){
+			if (count && !group) {
+				query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${EmployerProfiles.tableAlias}.${EmployerProfiles.schema.id.columnName},${Scoring.tableAlias}.${Scoring.schema.id.columnName}`);
+				query.order('scoring.score',  false );
+				return query.toString();
+			}else if (group) {
+				query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${JobPostings.tableAlias}.${JobPostings.schema.country.columnName},${Scoring.tableAlias}.${Scoring.schema.id.columnName}`);
+				query.order('scoring.score',  false );
+				return query.toString();
+			}else if (visa) {
+				query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${Scoring.tableAlias}.${Scoring.schema.id.columnName}`);
+				query.order('scoring.score',  false );
+				return query.toString();
+			}else {
+				query.order('scoring.score',  false );
+				if (_.get(criteria, 'page')) {
+					query.offset(_.get(criteria, 'page'));
+				}
+				query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${EmployerProfiles.tableAlias}.${EmployerProfiles.schema.id.columnName},${Scoring.tableAlias}.${Scoring.schema.id.columnName}`);
+				return query.limit(_.get(criteria, 'limit')).toString();
+			}
+		}else{
+			if (count && !group) {
+				query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${EmployerProfiles.tableAlias}.${EmployerProfiles.schema.id.columnName}`);
+				return query.toString();
+			}else if (group) {
+				query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName}`);
+				return query.toString();
+			}else if (visa) {
+				query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName}`);
+				return query.toString();
+			} else {
+				if (_.isArray(_.get(criteria, 'sort'))) {
+					await _.get(criteria, 'sort').forEach(function(field) {
+						let value = _.keys(field)[0];
+						if (value === 'most_popular') {
+							value = `array_length(${JobPostings.tableAlias}.${JobPostings.schema.skills.columnName}, 1)`
+						} else {
+							value = `${JobPostings.tableAlias}.${value}`;
+						}
+						query.order(value, field[_.keys(field)[0]] === 'DESC' ? false : true);
+					});
+				}
+				if (_.get(criteria, 'page')) {
+					query.offset(_.get(criteria, 'page'));
+				}
+				query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${EmployerProfiles.tableAlias}.${EmployerProfiles.schema.id.columnName}`);
+				return query.limit(_.get(criteria, 'limit')).toString();
+			}
+		}
     }
 
     //Build and sending response

@@ -59,7 +59,6 @@ module.exports = async function Scoring(request, response) {
         filtered_query_data.filter_location = false;
     }
 	
-	
     if (filtered_query_keys.includes('skill_tags')) {
         filtered_query_data.skill_tags = filtered_query_data.skill_tags.split(',');
     }
@@ -86,77 +85,34 @@ module.exports = async function Scoring(request, response) {
         end_to_end_implementation: yup.number().positive(),
     }).validate(post_request_data, { abortEarly: false }).then(value => {
 		
-        var list_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(UserProfiles.tableName, UserProfiles.tableAlias);
-		
-		
-	   if (model.country && !value.user_id) {
-			//list_query.cross_join('json_array_elements(to_json(preferred_locations)) country(coun)');
-	   }
-	   if (model.city && !value.user_id) {
-			//list_query.cross_join('json_array_elements(to_json(preferred_locations)) city(citys)');
-	   }
-	   if(model.skills){
-		   var tempData = model.hands_on_experience.map(function(a,b){ return a.skill_id });
-		   //var tempData = model.skills;
-	   }
-	   
-            list_query.where("status=1");
-            list_query.where("experience >=" + model.experience);
-            //.where("sap_experience >=" + model.sap_experience)
-            list_query.where(`user_profile.hands_on_skills && ARRAY[${tempData}]::bigint[]`);
-            //list_query.where("lower(city) = lower('" + model.city + "') OR willing_to_relocate=true ");
-            //.where("lower(city) = lower('" + model.city + "') OR willing_to_relocate=true OR ST_DistanceSphere(latlng, '" + model.latlng + "'::geometry) <=" + value.distance + " * 1609.34");
-		
-
+			var list_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(UserProfiles.tableName, UserProfiles.tableAlias);
+			if(model.skills){
+				var tempData = model.hands_on_experience.map(function(a,b){ return a.skill_id });
+			}
+            list_query.where("user_profile.status=1");
+            list_query.where("user_profile.experience >=" + model.experience);
+			list_query.left_join(`scorings "scoring" ON (scoring.user_id = user_profile.id) `);
 			
+			list_query.where("scoring.job_id =" +value.id );
+			list_query.where("scoring.user_id  = user_profile.id" );
 		
-		//list_query.cross_join('json_array_elements(to_json(user_profile.hands_on_experience)) skill_id(skillss)');
-		//list_query.where(`(skillss->>'skill_id') = ANY( '{${tempData}}')`);
-        if (model.city && model.visa_sponsorship == false && !value.user_id) {
-			list_query.where(`( user_profile.city like '{${model.city.toString()}}' OR user_profile.other_cities && ARRAY['${model.city.toString()}']::text[] )`);
-        }
-        if (model.country && model.visa_sponsorship == false && !value.user_id) {
-            list_query.where(`( user_profile.country like '{${model.country.toString()}}' OR user_profile.other_countries && ARRAY['${model.country.toString()}']::text[] )`);
-        }
-		list_query.where(`(user_profile.privacy_protection->>'available_for_opportunity')::text = 'true'`);
-        if (model.visa_sponsorship == true && !value.user_id) {
-            //list_query.where(`(${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1 or  (( user_profile.country like {${model.country.toString()}} OR(coun->>'country') = ANY( '{${model.country.toString()}}')) AND ( user_profile.country like {${model.city.toString()}} OR (citys->>'city') = ANY( '{${model.city.toString()}}')) ))`);
-            list_query.where(`( (( user_profile.country like '{${model.country.toString()}}' OR user_profile.other_countries && ARRAY['${model.country.toString()}']::text[] ) AND ( user_profile.country like '{${model.city.toString()}}' OR user_profile.other_cities && ARRAY['${model.city.toString()}']::text[] ) ))`);
-        }
-        if (model.type && !value.user_id && model.visa_sponsorship == false ) {
-           //list_query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} && ARRAY[${model.type.toString()}]::text[]`);
-        }
-       // if (model.includes('min_experience')) {
-           // list_query.where(`COALESCE(${UserProfiles.tableAlias}.${UserProfiles.schema.experience.columnName}, 0) >= ${parseInt(filtered_query_data.min_experience)}`);
-        //}
+            //list_query.where(`user_profile.hands_on_skills && ARRAY[${tempData}]::bigint[]`);
+			if (model.city && model.visa_sponsorship == false && !value.user_id) {
+				//list_query.where(`( user_profile.city like '{${model.city.toString()}}' OR user_profile.other_cities && ARRAY['${model.city.toString()}']::text[] )`);
+			}
+			if (model.country && model.visa_sponsorship == false && !value.user_id) {
+				//list_query.where(`( user_profile.country like '{${model.country.toString()}}' OR user_profile.other_countries && ARRAY['${model.country.toString()}']::text[] )`);
+			}
+			list_query.where(`(user_profile.privacy_protection->>'available_for_opportunity')::text = 'true'`);
+			if (model.visa_sponsorship == true && !value.user_id) {
+				// list_query.where(`( (( user_profile.country like '{${model.country.toString()}}' OR user_profile.other_countries && ARRAY['${model.country.toString()}']::text[] ) AND ( user_profile.country like '{${model.city.toString()}}' OR user_profile.other_cities && ARRAY['${model.city.toString()}']::text[] ) ))`);
+			}
+			if (value.user_id) {
+				list_query.where("user_profile.id =" + value.user_id);
+			}
+			var group_by = UserProfiles.tableAlias + "." + UserProfiles.schema.id.columnName +",scoring.id";
 		
-        if (value.user_id) {
-            list_query.where("id =" + value.user_id);
-        }
-        if (value.work_authorization) {
-            //list_query.where("work_authorization=" + model.work_authorization);
-            score += 1;
-        }
-        if (value.travel) {
-            list_query.where("travel >=" + model.travel);
-            score += 1;
-        }
-        if (value.job_type) {
-            list_query.where("job_type=" + model.job_type);
-            score += 1;
-        }
-        if (value.availability) {
-            list_query.where("availability >=" + model.availability);
-            score += 1;
-        }
-        if (value.end_to_end_implementation) {
-            list_query.where("end_to_end_implementation >=" + model.end_to_end_implementation);
-            score += 1;
-        }
-		var group_by = UserProfiles.tableAlias + "." + UserProfiles.schema.id.columnName;
-        //group_by += "," + Users.tableAlias + "." + Users.schema.id.columnName;
-		
-        value.page = value.page ? value.page : 1;
+			value.page = value.page ? value.page : 1;
 	        list_query.limit(1).offset(value.page - 1);
          
         var count_query = list_query.clone();
@@ -168,6 +124,7 @@ module.exports = async function Scoring(request, response) {
                 list_query.field(UserProfiles.tableAlias + '.' + UserProfiles.schema[value].columnName, value);
             }
         });
+		list_query.field("scoring.score as score");
         if (value.id) {
             let build_job_application_table_columns = '';
             _.forEach(_.keys(JobApplications.schema), attribute => {
@@ -184,6 +141,7 @@ module.exports = async function Scoring(request, response) {
             limit(1);
             list_query.field(`(${sub_query.toString()})`, 'job_application');
         }
+		list_query.order('scoring.score', false);
         sails.sendNativeQuery(list_query.toString(), async function(err, job_postings) {
             if (err) {
                 var error = {
@@ -201,25 +159,9 @@ module.exports = async function Scoring(request, response) {
                 let application = null;
                 if (profile.length) {
                     profile = profile[0]
-
-                    if (!value.work_authorization && model.work_authorization == profile.work_authorization) {
-                        score += 1;
-                    }
-                    if (!value.travel && model.travel_opportunity <= profile.travel) {
-                        score += 1;
-                    }
-                    if (!value.job_type && model.job_type == profile.job_type) {
-                        score += 1;
-                    }
-                    if (!value.availability && model.availability >= profile.availability) {
-                        score += 1;
-                    }
-                    if (!value.end_to_end_implementation && model.end_to_end_implementation <= profile.end_to_end_implementation) {
-                        score += 1;
-                    }
-                    // if ( model.domain = profile.domains_worked) {
-                    //     score += 1;
-                    // }
+					if(profile.score){
+						score = profile.score.toFixed(1);
+					}
                     if (profile.job_application) {
                         application = profile.job_application;
                         delete profile.job_application;

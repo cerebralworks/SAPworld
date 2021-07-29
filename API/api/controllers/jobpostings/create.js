@@ -85,7 +85,7 @@ module.exports = async function create(request, response) {
 	CROSS JOIN user_profiles "user_profile" 
 	LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 	WHERE (job_posting.status = 1) AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.id = ${parseInt(updated_job.id)}) AND
-	(user_account.status=1) AND (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) ) AND (user_profile.privacy_protection->>'available_for_opportunity')::text = 'true' AND user_profile.hands_on_skills && job_posting.hands_on_skills 
+	(user_account.status=1) AND (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) ) AND  user_profile.hands_on_skills && job_posting.hands_on_skills 
 	AND (COALESCE(user_profile.experience) >= job_posting.experience)`
 				sails.sendNativeQuery(Count_Users, async function(err, Count_Users_value) {
 				if (err) {
