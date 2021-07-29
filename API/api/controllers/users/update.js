@@ -156,7 +156,7 @@ module.exports = async function update(request, response) {
 					});
 				});
 				//GET AUTHORIZED COUNTRY ID TO STRING
-				if(checkDetails.authorized_country && checkDetails.authorized_country.length && checkDetails.authorized_country !=0){
+				if(checkDetails.authorized_country && checkDetails.authorized_country.length && checkDetails.authorized_country.length !=0){
 					
 					await Country.find({ id: checkDetails.authorized_country }).then(authorized_country => {
 						checkDetails.authorized_country = authorized_country.map(function(value) {
@@ -471,12 +471,12 @@ module.exports = async function update(request, response) {
 							});
 							
 						}
-						
+						return response.status(200).json(_response_object);
 					}
 						
 					}
 				});
-                return response.status(200).json(_response_object);
+                
             }
         });
     }).catch(err => {
