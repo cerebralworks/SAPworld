@@ -115,11 +115,14 @@ module.exports = async function Scoring(request, response) {
                 profile = _.get(job_postings, 'rows');
                 if (profile.length) {
                     profile = profile[0]
+					if(profile.score){
+						score = profile.score.toFixed(1);
+					}
 
                 } else profile = {};
                 var count_query = list_query.toString().replace("LIMIT 1", " ").replace("*", "COUNT(*)").replace(`OFFSET ${value.page-1}`, " ");
                 var count = sails.sendNativeQuery(count_query, async function(err, job_postings) {
-                    sendResponse(profile, job_postings['rows'][0]['count']);
+                    sendResponse(profile, job_postings['rowCount']);
                 });
 
 
