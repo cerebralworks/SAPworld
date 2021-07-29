@@ -156,7 +156,7 @@ module.exports = async function update(request, response) {
 					});
 				});
 				//GET AUTHORIZED COUNTRY ID TO STRING
-				if(checkDetails.authorized_country && checkDetails.authorized_country.length && checkDetails.authorized_country.length !=0){
+				if(checkDetails.authorized_country && checkDetails.authorized_country.length && checkDetails.authorized_country !=0){
 					
 					await Country.find({ id: checkDetails.authorized_country }).then(authorized_country => {
 						checkDetails.authorized_country = authorized_country.map(function(value) {
@@ -164,7 +164,6 @@ module.exports = async function update(request, response) {
 						});
 					});
 				}
-				
 				var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
 	CROSS JOIN user_profiles "user_profile" 
 	LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
@@ -184,7 +183,6 @@ module.exports = async function update(request, response) {
 					_response_object.count = _response_object.errors.count;
 					return response.status(400).json(_response_object);
 				} else {
-					 
 					if(Count_Users_value.rowCount!=0){
 						var responseMatch = Count_Users_value['rows'];
 						var ScoreMasters = await ScoreMaster.find();
@@ -475,13 +473,10 @@ module.exports = async function update(request, response) {
 						}
 						
 					}
-					_response_object.details = Count_Users_value ; 
-					return response.status(200).json(_response_object);
 						
 					}
-					
 				});
-                
+                return response.status(200).json(_response_object);
             }
         });
     }).catch(err => {
