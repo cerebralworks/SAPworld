@@ -99,6 +99,7 @@ module.exports = async function Scoring(request, response) {
 			list_query.field("scoring.score as score");
 			var group_by = JobPostings.tableAlias + "." + JobPostings.schema.id.columnName+",scoring.id";
 			list_query.group(group_by);
+			list_query.order('scoring.score', false);
         sails.sendNativeQuery(list_query.toString(), async function(err, job_postings) {
             if (err) {
                 var error = {

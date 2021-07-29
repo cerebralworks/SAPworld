@@ -18,11 +18,12 @@ module.exports = async function Scoring(request, response) {
     ]);
 	const filtered_query_keys = Object.keys(filtered_query_data);
     //Build and sending response
-    const sendResponse = (items, count, application) => {
+    const sendResponse = (items, count, application,matches) => {
         _response_object.message = 'Job items retrieved successfully.';
         _response_object.score = score;
         var meta = {};
         meta['count'] = count;
+        meta['matches'] = matches['rowCount'];
         meta['page'] = post_request_data.page ? post_request_data.page : 1;
         meta['limit'] = post_request_data.limit;
         meta['photo'] = {
@@ -41,6 +42,7 @@ module.exports = async function Scoring(request, response) {
         meta['doc_resume'].example = meta['doc_resume'].path + '/' + meta['doc_resume'].folder + '/doc-resume-55.png';
         _response_object['meta'] = meta;
         _response_object['profile'] = _.cloneDeep(items);
+        _response_object['matches'] = _.cloneDeep(matches['rows']);
         _response_object['job'] = _.cloneDeep(model);
         _response_object['application'] = _.cloneDeep(application);
         return response.ok(_response_object);
@@ -169,7 +171,14 @@ module.exports = async function Scoring(request, response) {
                 } else profile = {};
                 count_query = count_query.toString().replace("LIMIT 1", " ").replace("*", "COUNT(DISTINCT user_profile.id)").replace(`OFFSET ${value.page-1}`, " ");
                 var count = sails.sendNativeQuery(count_query, async function(err, job_postings) {
-                    sendResponse(profile, job_postings['rows'][0]['count'], application);
+                    var QueryData =`SELECT job_posting.id,job_posting.title,job_posting.company FROM user_employments "job_posting"
+CROSS JOIN user_profiles "user_profile" 
+LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
+WHERE (job_posting.status = 1) AND scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id AND 
+(job_posting.company = ${model.company} ) AND (user_profile.id = ${profile.id} ) `
+					var counts = sails.sendNativeQuery(QueryData, async function(err, user_matches) {
+						sendResponse(profile, job_postings['rows'][0]['count'], application,user_matches);
+					});
                 });
             }
         });
