@@ -258,10 +258,10 @@ module.exports = async function create(request, response) {
 								}
 							}
 							//AVAILABILITY CHECKING
-							if(!updated_job['availability']){
+							if(updated_job['availability'] ==null || updated_job['availability'] == undefined ){
 								arrayValue[i]['availability'] = 100 * ScoreMasters['availability'];
 							}else{
-								if(!checkDetails['availability']){
+								if(checkDetails['availability'] ==null || checkDetails['availability'] == undefined ){
 									arrayValue[i]['availability'] = 0 * ScoreMasters['availability'];
 								}else if(updated_job['availability'] >= checkDetails['availability'] ){
 									arrayValue[i]['availability'] = 100 * ScoreMasters['availability'];
