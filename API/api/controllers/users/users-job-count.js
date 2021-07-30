@@ -6,7 +6,7 @@ const job_type_values = _.values(_.get(sails, 'config.custom.job_types', {}));
 module.exports = async function list(request, response) {
     var _response_object = {};
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['page', 'sort', 'limit','company','view']);
+    const filtered_query_data = _.pick(request_query, ['page','id', 'sort', 'limit','company','view']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
         { name: 'page', number: true, min: 1 },
@@ -54,6 +54,22 @@ WHERE (job_posting.status = 1) AND scoring.user_id = user_profile.id AND scoring
 (user_account.status=1) AND (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) ) AND (user_profile.privacy_protection->>'available_for_opportunity')::text = 'true' AND user_profile.hands_on_skills && job_posting.hands_on_skills 
 AND (COALESCE(user_profile.experience) >= job_posting.experience)
 group by job_posting.id`
+			}
+			if(filtered_query_data.view =='users_matches'){
+				//To get the job details Count
+				Count_Users = `SELECT job_posting.id,job_posting.title,job_posting.company FROM user_employments "job_posting"
+CROSS JOIN user_profiles "user_profile" 
+LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
+WHERE (job_posting.status = 1) AND scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id AND 
+(job_posting.company = ${filtered_query_data.company} ) AND (user_profile.id = ${filtered_query_data.id} ) `
+			}
+			if(filtered_query_data.view =='users_matches_details'){
+				//To get the job details Count
+				Count_Users = `SELECT job_posting.*,scoring.score FROM user_employments "job_posting"
+CROSS JOIN user_profiles "user_profile" 
+LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
+WHERE (job_posting.status = 1) AND scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id AND 
+(job_posting.company = ${filtered_query_data.company} ) AND (user_profile.id = ${filtered_query_data.id} ) order by scoring.score desc`
 			}
 			sails.sendNativeQuery(Count_Users, async function(err, Count_Users_value) {
 				if (err) {
