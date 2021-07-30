@@ -123,7 +123,9 @@ console.log(process.env.STAGE_db_connection_string);
       * https://sailsjs.com/docs/concepts/models-and-orm/model-settings#?migrate *
       *                                                                          *
       ***************************************************************************/
-      migrate: 'safe',
+		migrate: 'alter',
+		//migrate: 'safe',
+		//migrate: 'drop',
 
       /***************************************************************************
       *                                                                          *

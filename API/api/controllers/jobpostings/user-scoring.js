@@ -2,7 +2,7 @@ var squel = require("squel");
 var async = require("async");
 module.exports = async function Scoring(request, response) {
     const post_request_data = request.allParams();
-	const filtered_query_data = _.pick(post_request_data, ['page', 'country', 'sort', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'zip_code', 'additional_fields', 'visa_sponsered', 'work_authorization']);
+	const filtered_query_data = _.pick(post_request_data, ['page','id', 'country', 'sort', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'zip_code', 'additional_fields', 'visa_sponsered', 'work_authorization']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var _response_object = {};
     const logged_in_user = request.user;
@@ -73,71 +73,33 @@ module.exports = async function Scoring(request, response) {
         // console.log(model.latlng['coordinates'].toString());
         var list_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(JobPostings.tableName, JobPostings.tableAlias);
 		
-		if(model.skills){
-		   var tempData = model.hands_on_experience.map(function(a,b){ return a.skill_id });
-			//var tempData = model.skills;
-	  }
-            list_query.where("status=1");
-            list_query.where("experience <=" + model.experience);
-            list_query.where(`job_posting.hands_on_skills && '{${tempData}}' `);
-            //.where("sap_experience <=" + model.sap_experience)
-            //list_query.where(`skills && ARRAY[${tempData}]::bigint[]`);
-            //.where("lower(city) = lower('" + model.city + "')  OR ST_DistanceSphere(latlng, ST_MakePoint(" + model.latlng['coordinates'].toString() + ")) <=" + value.distance + " * 1609.34");
-            //.where("lower(city) = lower('" + model.city + "') ");
-		//list_query.cross_join('json_array_elements(to_json(job_posting.hands_on_experience)) skill_id(skillss)');
-		//list_query.where(`(skillss->>'skill_id') = ANY( '{${tempData}}')`);
-        if (model.job_type && !value.job_id) {
-            list_query.where(`${JobPostings.tableAlias}.${JobPostings.schema.type.columnName} = ANY('{${model.job_type}}')`);
-        }
-        if (filtered_query_data.city && model.work_authorization != 1  && !value.job_id) {
-            list_query.where(`${JobPostings.tableAlias}.${JobPostings.schema.city.columnName}  = ANY('{${filtered_query_data.city}}')`);
-        }
-        if (filtered_query_data.country && model.work_authorization != 1  && !value.job_id) {
-		list_query.where(`${JobPostings.tableAlias}.${JobPostings.schema.country.columnName}  = ANY('{${filtered_query_data.country}}')`);
-        }
-        if ( filtered_query_data.visa_sponsered == false && model.work_authorization != 1 && !value.job_id) {
-            list_query.where(`${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = ${filtered_query_data.visa_sponsered} `);
-        }
-        if (filtered_query_data.work_authorization == 1  && !value.job_id) {
-		list_query.where(`( (${JobPostings.tableAlias}.${JobPostings.schema.country.columnName} = ANY('{${filtered_query_data.country}}') AND ${JobPostings.tableAlias}.${JobPostings.schema.city.columnName}  = ANY('{${filtered_query_data.city}}')) ) `);
-		//list_query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = true or (${JobPostings.tableAlias}.${JobPostings.schema.country.columnName} = ANY('{${filtered_query_data.country}}') AND ${JobPostings.tableAlias}.${JobPostings.schema.city.columnName}  = ANY('{${filtered_query_data.city}}')) ) `);
-        }
+            list_query.where("job_posting.status=1");
+            list_query.where("job_posting.experience <=" + model.experience);
+			
+			list_query.left_join(`scorings "scoring" ON (scoring.job_id = job_posting.id) `);
+			
+			list_query.where("scoring.job_id =job_posting.id" );
+			list_query.where("scoring.user_id  = "+filtered_query_data.id );
 		
-        if (value.job_id) {
-            list_query.where("id =" + value.job_id);
-        }
-        if (value.work_authorization) {
-            list_query.where("work_authorization=" + model.work_authorization);
-            score += 1;
-        }
-        if (value.travel) {
-            list_query.where("travel >=" + model.travel);
-            score += 1;
-        }
-        if (value.job_type) {
-            list_query.where("job_type=" + model.job_type);
-            score += 1;
-        }
-        if (value.availability) {
-            list_query.where("availability >=" + model.availability);
-            score += 1;
-        }
-        if (value.end_to_end_implementation) {
-            list_query.where("end_to_end_implementation >=" + model.end_to_end_implementation);
-            score += 1;
-        }
-		if (!value.job_id) {
-			list_query.limit(1).offset(value.page - 1);
-		}else{
-			list_query.limit(1);
-		}
-		var group_by = JobPostings.tableAlias + "." + JobPostings.schema.id.columnName;
-		//list_query.group(group_by);
-		//list_query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName}`);
-        // var query_string = list_query.toString() + `(CASE WHEN applyed=(
-        //     SELECT id from she_job_applications WHERE user=${value.user_id} and job_posting=${JobPostings.tableAlias}.id)
-        //     THEN 'true' ELSE 'false' END) `;
-
+			if (value.job_id) {
+				list_query.where("job_posting.id =" + value.job_id);
+			}
+			if (!value.job_id) {
+				list_query.limit(1).offset(value.page - 1);
+			}else{
+				list_query.limit(1);
+			}
+			 //Selecting fields
+			fields = Object.keys(JobPostings.schema);
+			fields.map(function(value) {
+				if (JobPostings.schema[value].columnName || typeof JobPostings.schema[value].columnName !== "undefined") {
+					list_query.field(JobPostings.tableAlias + '.' + JobPostings.schema[value].columnName, value);
+				}
+			});
+			list_query.field("scoring.score as score");
+			var group_by = JobPostings.tableAlias + "." + JobPostings.schema.id.columnName+",scoring.id";
+			list_query.group(group_by);
+			list_query.order('scoring.score', false);
         sails.sendNativeQuery(list_query.toString(), async function(err, job_postings) {
             if (err) {
                 var error = {
@@ -154,29 +116,14 @@ module.exports = async function Scoring(request, response) {
                 profile = _.get(job_postings, 'rows');
                 if (profile.length) {
                     profile = profile[0]
+					if(profile.score){
+						score = profile.score.toFixed(1);
+					}
 
-                    if (!value.work_authorization && model.work_authorization == profile.work_authorization) {
-                        score += 1;
-                    }
-                    if (!value.travel && model.travel_opportunity <= profile.travel) {
-                        score += 1;
-                    }
-                    if (!value.job_type && model.job_type == profile.job_type) {
-                        score += 1;
-                    }
-                    if (!value.availability && model.availability >= profile.availability) {
-                        score += 1;
-                    }
-                    if (!value.end_to_end_implementation && model.end_to_end_implementation <= profile.end_to_end_implementation) {
-                        score += 1;
-                    }
-                    // if ( model.domain = profile.domains_worked) {
-                    //     score += 1;
-                    // }
                 } else profile = {};
                 var count_query = list_query.toString().replace("LIMIT 1", " ").replace("*", "COUNT(*)").replace(`OFFSET ${value.page-1}`, " ");
                 var count = sails.sendNativeQuery(count_query, async function(err, job_postings) {
-                    sendResponse(profile, job_postings['rows'][0]['count']);
+                    sendResponse(profile, job_postings['rowCount']);
                 });
 
 

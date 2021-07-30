@@ -11,7 +11,7 @@
  * @docs        :: https://sailsjs.com/docs/concepts/models-and-orm/models
  */
 
-module.exports = {
+/* module.exports = {
     tableName: 'user_employments',
     tableAlias: 'user_employment',
     attributes: {
@@ -34,4 +34,4 @@ module.exports = {
             required: true
         }
     }
-};
+}; */

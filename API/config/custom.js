@@ -76,5 +76,37 @@ module.exports.custom = {
     user_job_interest: {
         not_interested: 0,
         interested: 1
-    }
+    },
+	educationItems : [
+		{  id:0, text: 'high school' },
+		{  id:1, text: 'diploma' },
+		{  id:2, text: 'bachelors' },
+		{  id:3, text: 'masters' },
+		{  id:4, text: 'doctorate' }
+	],
+	weightage: {
+		total_experience:1,
+		sap_experience:1,
+		hands_on_experience: 1,
+		job_types: 1,
+		work_auth: 1,
+		job_location: 1,
+		knowledge: 1,
+		end_to_end_implemention: 0.5,
+		education: 0.25,
+		job_role: 1,
+		availability: 1,
+		programming: 1,
+		other_skills: 1,
+		certification : 1,
+		domain: 1,
+		remote: 0.5,
+		travel: 0.5,
+		language: 0.25
+	},
+	weightage_percentage: {		
+		Knowledge:100,
+		hands_on_experience:100		
+	}
+	
 };
