@@ -47,7 +47,7 @@ module.exports = async function create(request, response) {
             experience: yup.number().required().positive(),
             exp_type: yup.string().required().lowercase().oneOf(['years', 'months']),
         })).required(),
-        skills: yup.array().of(yup.number().positive()).required(),
+        skills: yup.array().of(yup.number().positive()),
         programming_skills: yup.array().of(yup.string()).required(),
         optinal_skills: yup.array().of(yup.string()),
         certification: yup.array().of(yup.string()),
@@ -94,6 +94,9 @@ module.exports = async function create(request, response) {
 			}else{
 				value.hands_on_skills =[];
 			}
+			if(!value.skills || !value.skills.length || value.skills.length ==0){
+				value.skills = value.hands_on_skills;
+			}
 		
             updateRecord(value, async function(updated_job) {
                 _response_object.message = 'Job has been update successfully.';
@@ -106,7 +109,7 @@ module.exports = async function create(request, response) {
 	(user_account.status=1) AND (user_profile.work_authorization == 1 OR (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] )) ) AND  user_profile.hands_on_skills && job_posting.hands_on_skills 
 	AND (COALESCE(user_profile.experience) >= job_posting.experience) group by user_profile.id `
 				}else{
-					var Count_Users = `SELECT  user_profile.*,job_posting.id as "job_id" FROM user_employments "job_posting"
+					var Count_Users = `SELECT  user_profile.* as "job_id" FROM user_employments "job_posting"
 	CROSS JOIN user_profiles "user_profile" 
 	LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 	WHERE (job_posting.status = 1) AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.id = ${parseInt(updated_job.id)}) AND
