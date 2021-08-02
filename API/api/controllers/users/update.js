@@ -164,12 +164,22 @@ module.exports = async function update(request, response) {
 						});
 					});
 				}
-				var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
+				if(checkDetails.work_authorization == 1){
+					var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
 	CROSS JOIN user_profiles "user_profile" 
 	LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 	WHERE (job_posting.status = 1) AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
-	(user_account.status=1) AND (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) ) AND user_profile.hands_on_skills && job_posting.hands_on_skills 
-	AND (COALESCE(user_profile.experience) >= job_posting.experience)`
+	(user_account.status=1) AND (job_posting.visa_sponsorship = true OR (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] )) ) AND user_profile.hands_on_skills && job_posting.hands_on_skills 
+	AND (COALESCE(user_profile.experience) >= job_posting.experience) group by job_posting.id `
+				}else{
+					var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
+	CROSS JOIN user_profiles "user_profile" 
+	LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
+	WHERE (job_posting.status = 1) AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
+	(user_account.status=1) AND ((( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] )) ) AND user_profile.hands_on_skills && job_posting.hands_on_skills 
+	AND (COALESCE(user_profile.experience) >= job_posting.experience) group by job_posting.id `
+				}
+				
 				sails.sendNativeQuery(Count_Users, async function(err, Count_Users_value) {
 				if (err) {
 					var error = {
@@ -188,6 +198,7 @@ module.exports = async function update(request, response) {
 						var ScoreMasters = await ScoreMaster.find();
 						ScoreMasters = ScoreMasters[0];
 						var arrayValue =[];
+							await Scoring.destroy(checkDetails.id);
 						for(let i=0;i<responseMatch.length;i++){
 							updated_job = responseMatch[i];
 							arrayValue.push({});
@@ -438,7 +449,7 @@ module.exports = async function update(request, response) {
 							arrayValue[i]['user_id'] = checkDetails['id'];
 							var post_data ={};
 							post_data['user_id'] = arrayValue[i]['user_id'];
-							await Scoring.destroy(post_data);
+							
 							post_data['job_id'] = arrayValue[i]['job_id'];
 							await Scoring.find(post_data).exec(async(err, user)=> {
 								if (err) {
