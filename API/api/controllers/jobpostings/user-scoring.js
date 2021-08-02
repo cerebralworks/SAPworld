@@ -2,7 +2,7 @@ var squel = require("squel");
 var async = require("async");
 module.exports = async function Scoring(request, response) {
     const post_request_data = request.allParams();
-	const filtered_query_data = _.pick(post_request_data, ['page','id', 'country', 'sort', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'zip_code', 'additional_fields', 'visa_sponsered', 'work_authorization']);
+	const filtered_query_data = _.pick(post_request_data, ['page','expand','id', 'country', 'sort', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'zip_code', 'additional_fields', 'visa_sponsered', 'work_authorization']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var _response_object = {};
     const logged_in_user = request.user;
@@ -77,6 +77,11 @@ module.exports = async function Scoring(request, response) {
             list_query.where("job_posting.experience <=" + model.experience);
 			
 			list_query.left_join(`scorings "scoring" ON (scoring.job_id = job_posting.id) `);
+			list_query.left_join(`employer_profiles "employer" ON (job_posting.company = employer.id)  `);
+			
+			//if (filtered_query_data.expand =="company") {
+                list_query.field(`employer.company AS "company_name" `);
+            //}
 			
 			list_query.where("scoring.job_id =job_posting.id" );
 			list_query.where("scoring.user_id  = "+filtered_query_data.id );
@@ -97,7 +102,7 @@ module.exports = async function Scoring(request, response) {
 				}
 			});
 			list_query.field("scoring.score as score");
-			var group_by = JobPostings.tableAlias + "." + JobPostings.schema.id.columnName+",scoring.id";
+			var group_by = JobPostings.tableAlias + "." + JobPostings.schema.id.columnName+",scoring.id,employer.id";
 			list_query.group(group_by);
 			list_query.order('scoring.score', false);
         sails.sendNativeQuery(list_query.toString(), async function(err, job_postings) {

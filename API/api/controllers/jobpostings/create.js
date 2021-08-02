@@ -119,6 +119,7 @@ module.exports = async function create(request, response) {
 						var arrayValue =[];
 						for(let i=0;i<responseMatch.length;i++){
 							checkDetails = responseMatch[i];
+							var TotalCheckItems = 15;
 							arrayValue.push({});
 							//TOTAL EXPERIENCE CHECKING
 							if(checkDetails['experience'] >= updated_job['experience']){
@@ -138,24 +139,11 @@ module.exports = async function create(request, response) {
 							}else{
 								arrayValue[i]['job_types'] = 0 * ScoreMasters['job_types'];
 							}
-							//GET NATIONALITY ID TO STRING
-							await Country.find({ id: checkDetails.nationality }).then(nationality => {
-								checkDetails.nationality = nationality.map(function(value) {
-									return value.nicename;
-								});
-							});
-							//GET AUTHORIZED COUNTRY ID TO STRING
-							if(checkDetails.authorized_country && checkDetails.authorized_country.length && checkDetails.authorized_country !=0){
-								
-								await Country.find({ id: checkDetails.authorized_country }).then(authorized_country => {
-									checkDetails.authorized_country = authorized_country.map(function(value) {
-										return value.nicename;
-									});
-								});
-							}
 							//WORK AUTHORIZATION CHECKING
-							if(!updated_job.work_authorization){
-								arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_auth'];
+							if(updated_job.work_authorization ==null || updated_job.work_authorization ==undefined){
+								//arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_auth'];
+								arrayValue[i]['work_auth'] = 0;
+								TotalCheckItems = TotalCheckItems-1;
 							}else if(updated_job.work_authorization){
 								if(checkDetails.work_authorization ==1 && updated_job.visa_sponsorship == true){
 									arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_auth'];
@@ -186,17 +174,24 @@ module.exports = async function create(request, response) {
 							//LOCATION CHECKING
 							arrayValue[i]['job_location'] =100 * ScoreMasters['job_location'];
 							//KNOWLEDGE CHECKING
-							updated_job.skills = updated_job.skills.filter(function(item, pos) {
-								return !updated_job.hands_on_skills.includes(item) ;
-							})
-							if(!updated_job.skills || updated_job.skills.length ==0){
-								arrayValue[i]['knowledge'] =100 * ScoreMasters['knowledge'];
+							if(!updated_job.skills || !updated_job.skills.length || updated_job.skills.length ==0){
+								arrayValue[i]['knowledge'] = 0;
+								TotalCheckItems = TotalCheckItems-1;
 							}else{
-								var getDetails = updated_job.skills.filter(function(item, pos) {
-									return checkDetails.skills.includes(item);
-								});
-								var lengthData = (getDetails.length/updated_job.skills.length)*100;
-								arrayValue[i]['knowledge'] =lengthData  * ScoreMasters['knowledge'];
+								updated_job.skills = updated_job.skills.filter(function(item, pos) {
+									return !updated_job.hands_on_skills.includes(item) ;
+								})
+								if(!updated_job.skills || updated_job.skills.length ==0){
+									//arrayValue[i]['knowledge'] =100 * ScoreMasters['knowledge'];
+									arrayValue[i]['work_auth'] = 0;
+									TotalCheckItems = TotalCheckItems-1;
+								}else{
+									var getDetails = updated_job.skills.filter(function(item, pos) {
+										return checkDetails.skills.includes(item);
+									});
+									var lengthData = (getDetails.length/updated_job.skills.length)*100;
+									arrayValue[i]['knowledge'] =lengthData  * ScoreMasters['knowledge'];
+								}
 							}
 							//HANDS ON EXPERIENCE CHECKING
 							var hands_on_Length = updated_job.hands_on_skills.filter(function(item, pos) {
@@ -212,15 +207,22 @@ module.exports = async function create(request, response) {
 											(hands_on_Length_skills.length/updated_job.hands_on_skills.length*25 ))
 							arrayValue[i]['hands_on_experience'] =lengthDatas  * ScoreMasters['hands_on_experience'];
 							//END TO END IMPLEMENTATION CHECKING
-							if(checkDetails['end_to_end_implementation'] >= updated_job['end_to_end_implementation']){
-								arrayValue[i]['end_to_end_implemention'] = 100  * ScoreMasters['end_to_end_implemention'];
+							if(!checkDetails['end_to_end_implementation']){
+								arrayValue[i]['end_to_end_implemention'] = 0;
+								TotalCheckItems = TotalCheckItems-0.5;
 							}else{
-								arrayValue[i]['end_to_end_implemention'] = 0  * ScoreMasters['end_to_end_implemention'];
+								if(checkDetails['end_to_end_implementation'] >= updated_job['end_to_end_implementation']){
+									arrayValue[i]['end_to_end_implemention'] = 100  * ScoreMasters['end_to_end_implemention'];
+								}else{
+									arrayValue[i]['end_to_end_implemention'] = 0  * ScoreMasters['end_to_end_implemention'];
+								}
 							}
 							//EDUCATION CHECKING
 							const educationItems = _.values(_.get(sails, 'config.custom.educationItems', {}));
 							if(!updated_job.education){
-								arrayValue[i]['education'] = 100  * ScoreMasters['education'];
+								//arrayValue[i]['education'] = 100  * ScoreMasters['education'];
+								arrayValue[i]['education'] = 0;
+								TotalCheckItems = TotalCheckItems-0.25;
 							}else{							
 								if(checkDetails.education_qualification && checkDetails.education_qualification.length && checkDetails.education_qualification.length !=0 ){
 									var datas = educationItems.filter((el) => {
@@ -242,7 +244,9 @@ module.exports = async function create(request, response) {
 							}
 							// ROLE TYPE CHECKING
 							if(!updated_job['employer_role_type']){
-								arrayValue[i]['job_role'] = 100 * ScoreMasters['job_role'];
+								//arrayValue[i]['job_role'] = 100 * ScoreMasters['job_role'];
+								arrayValue[i]['job_role'] = 0;
+								TotalCheckItems = TotalCheckItems-1;
 							}else{
 								if(!checkDetails['employer_role_type']){
 									arrayValue[i]['job_role'] = 0 * ScoreMasters['job_role'];
@@ -266,7 +270,9 @@ module.exports = async function create(request, response) {
 							}
 							//CERTIFICATION SKILLS CHECKING
 							if(!updated_job['certification']){
-								arrayValue[i]['certification'] = 100 * ScoreMasters['certification'];
+								//arrayValue[i]['certification'] = 100 * ScoreMasters['certification'];
+								arrayValue[i]['certification'] = 0;
+								TotalCheckItems = TotalCheckItems-1;
 							}else{
 								if(!checkDetails['certification']){
 									arrayValue[i]['certification'] = 0 * ScoreMasters['certification'];									
@@ -357,8 +363,10 @@ module.exports = async function create(request, response) {
 								arrayValue[i]['travel'] = 0 * ScoreMasters['travel'];
 							}
 							//LANGUAGE CHECKING
-							if(!updated_job['language']){
-								arrayValue[i]['language'] = 100 * ScoreMasters['language'];
+							if(!updated_job['language'] || !updated_job['language'].length || updated_job['language'].length ==0 ){
+								//arrayValue[i]['language'] = 100 * ScoreMasters['language'];
+								arrayValue[i]['language'] = 0;
+								TotalCheckItems = TotalCheckItems-0.25;
 							}else{
 								if(!checkDetails['language_id']){
 									arrayValue[i]['language'] = 0 * ScoreMasters['language'];									
@@ -377,12 +385,13 @@ module.exports = async function create(request, response) {
 								}
 							}
 							arrayValue[i]['score'] = Object.keys(arrayValue[i]).reduce((sum,key)=>sum+parseFloat(arrayValue[i][key]||0),0);
-							arrayValue[i]['score'] =arrayValue[i]['score']/ScoreMasters['total'];
+							arrayValue[i]['score'] =arrayValue[i]['score']/(10*TotalCheckItems);
 							arrayValue[i]['job_id'] = updated_job['id'];
 							arrayValue[i]['user_id'] = checkDetails['id'];
 							var post_data ={};
-							post_data['job_id'] = arrayValue[i]['job_id'];
 							post_data['user_id'] = arrayValue[i]['user_id'];
+							
+							post_data['job_id'] = arrayValue[i]['job_id'];
 							await Scoring.find(post_data).exec(async(err, user)=> {
 								if (err) {
 									console.log(err);
