@@ -166,6 +166,21 @@ module.exports = async function create(request, response) {
 								arrayValue[i]['job_types'] = 0 * ScoreMasters['type'];
 								TotalCheckItems = TotalCheckItems +ScoreMasters['type'];
 							}
+							//GET NATIONALITY ID TO STRING
+							await Country.find({ id: checkDetails.nationality }).then(nationality => {
+								checkDetails.nationality = nationality.map(function(value) {
+									return value.nicename;
+								});
+							});
+							//GET AUTHORIZED COUNTRY ID TO STRING
+							if(checkDetails.authorized_country && checkDetails.authorized_country.length && checkDetails.authorized_country !=0){
+								
+								await Country.find({ id: checkDetails.authorized_country }).then(authorized_country => {
+									checkDetails.authorized_country = authorized_country.map(function(value) {
+										return value.nicename;
+									});
+								});
+							}
 							//WORK AUTHORIZATION CHECKING
 							if(updated_job.work_authorization ==null || updated_job.work_authorization ==undefined){
 								//arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_auth'];
