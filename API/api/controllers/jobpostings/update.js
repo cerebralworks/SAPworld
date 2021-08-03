@@ -435,11 +435,11 @@ module.exports = async function create(request, response) {
 							}
 							//CHECK TRAVEL
 							if(checkDetails.travel >=updated_job.travel_opportunity){
-								arrayValue[i]['travel'] = 100 * 0.5;
-								TotalCheckItems = TotalCheckItems + 0.5;
+								arrayValue[i]['travel'] = 100 * ScoreMasters['travel_opportunity'];
+								TotalCheckItems = TotalCheckItems + ScoreMasters['travel_opportunity'];
 							}else{
-								arrayValue[i]['travel'] = 0 * 0.5;
-								TotalCheckItems = TotalCheckItems + 0.5;
+								arrayValue[i]['travel'] = 0 * ScoreMasters['travel_opportunity'];
+								TotalCheckItems = TotalCheckItems + ScoreMasters['travel_opportunity'];
 							}
 							//LANGUAGE CHECKING
 							if(!updated_job['language'] || !updated_job['language'].length || updated_job['language'].length ==0 ){
