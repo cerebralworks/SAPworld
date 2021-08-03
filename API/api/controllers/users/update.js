@@ -195,84 +195,115 @@ module.exports = async function update(request, response) {
 				} else {
 					if(Count_Users_value.rowCount!=0){
 						var responseMatch = Count_Users_value['rows'];
-						var ScoreMasters = await ScoreMaster.find();
-						ScoreMasters = ScoreMasters[0];
+						var ScoreMasters ='';
+						var ScoreMastersData = await ScoreMaster.find();
+						ScoreMastersData = ScoreMastersData[0];
 						var arrayValue =[];
 							await Scoring.destroy(checkDetails.id);
 						for(let i=0;i<responseMatch.length;i++){
-							var TotalCheckItems = 15;
+							var TotalCheckItems = 0;
 							updated_job = responseMatch[i];
 							arrayValue.push({});
+							// Validate the Score calculate value
+							var tempSelect = Object.entries(updated_job.match_select).map(k =>{ 
+								if(k[1] == "0"){
+									return ({[k[0]]: ScoreMastersData['required'] });
+								}if(k[1] == "1"){
+									return({[k[0]]: ScoreMastersData['desired'] });
+								}if(k[1] == "2"){
+									return ({[k[0]]: ScoreMastersData['optional'] });
+								}else{
+									return ({[k[0]]: parseInt(0) });
+								}
+							});
+							
+							ScoreMasters = tempSelect.reduce(function(result, item) {
+							  var key = Object.keys(item)[0]; //first property
+							  result[key] = item[key];
+							  return result;
+							}, {});
 							//TOTAL EXPERIENCE CHECKING
 							if(checkDetails['experience'] >= updated_job['experience']){
-								arrayValue[i]['total_experience'] = 100 * ScoreMasters['total_experience'];
+								arrayValue[i]['total_experience'] = 100 * ScoreMasters['experience'];
+								TotalCheckItems = TotalCheckItems +ScoreMasters['experience'];
 							}else{
-								arrayValue[i]['total_experience'] = 0  * ScoreMasters['total_experience'];
+								arrayValue[i]['total_experience'] = 0  * ScoreMasters['experience'];
+								TotalCheckItems = TotalCheckItems +ScoreMasters['experience'];
 							}
 							//SAP EXPERIENCE CHECKING
 							if(checkDetails['sap_experience'] >= updated_job['sap_experience']){
 								arrayValue[i]['sap_experience'] = 100 * ScoreMasters['sap_experience'];
+								TotalCheckItems = TotalCheckItems +ScoreMasters['sap_experience'];
 							}else{
 								arrayValue[i]['sap_experience'] = 0 * ScoreMasters['sap_experience'];
+								TotalCheckItems = TotalCheckItems +ScoreMasters['sap_experience'];
 							}
 							//JOB TYPE CHECKING
 							if(checkDetails.job_type.includes(updated_job.type)){
-								arrayValue[i]['job_types'] = 100 * ScoreMasters['job_types'];
+								arrayValue[i]['job_types'] = 100 * ScoreMasters['type'];
+								TotalCheckItems = TotalCheckItems +ScoreMasters['type'];
 							}else{
-								arrayValue[i]['job_types'] = 0 * ScoreMasters['job_types'];
+								arrayValue[i]['job_types'] = 0 * ScoreMasters['type'];
+								TotalCheckItems = TotalCheckItems +ScoreMasters['type'];
 							}
 							//WORK AUTHORIZATION CHECKING
 							if(updated_job.work_authorization ==null || updated_job.work_authorization ==undefined){
 								//arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_auth'];
 								arrayValue[i]['work_auth'] = 0;
-								TotalCheckItems = TotalCheckItems-1;
 							}else if(updated_job.work_authorization){
 								if(checkDetails.work_authorization ==1 && updated_job.visa_sponsorship == true){
-									arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_auth'];
+									arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_authorization'];
+									TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
 								}
 								if(updated_job.work_authorization ==0 ){
 									if(updated_job.country.toLocaleLowerCase() == checkDetails.nationality.toLocaleLowerCase()){
-										arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_auth'];
+										arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_authorization'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
 									}else{
-										arrayValue[i]['work_auth'] = 0 * ScoreMasters['work_auth'];
+										arrayValue[i]['work_auth'] = 0 * ScoreMasters['work_authorization'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
 									}
 								}
 								if(updated_job.work_authorization ==1 ){
 									if(checkDetails.authorized_country && checkDetails.authorized_country.length && checkDetails.authorized_country !=0){
 										if(checkDetails.authorized_country.filter(function(a,b){ return a.toLocaleLowerCase() == updated_job.country.toLocaleLowerCase() }).length !=0){
-											arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_auth'];
+											arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_authorization'];
+											TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
 										}else{
-											arrayValue[i]['work_auth'] = 0 * ScoreMasters['work_auth'];
+											arrayValue[i]['work_auth'] = 0 * ScoreMasters['work_authorization'];
+											TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
 										}
 									}else{
-										arrayValue[i]['work_auth'] = 0 * ScoreMasters['work_auth'];
+										arrayValue[i]['work_auth'] = 0 * ScoreMasters['work_authorization'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
 									}
 								}
 								if(updated_job.work_authorization ==2 ){
-									arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_auth'];
+									arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_authorization'];
+									TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
 								}
 										
 							}
 							//LOCATION CHECKING
-							arrayValue[i]['job_location'] =100 * ScoreMasters['job_location'];
+							arrayValue[i]['job_location'] =100 * 1;
+							TotalCheckItems = TotalCheckItems +1;
 							//KNOWLEDGE CHECKING
 							if(!updated_job.skills || !updated_job.skills.length || updated_job.skills.length ==0){
 								arrayValue[i]['knowledge'] = 0;
-								TotalCheckItems = TotalCheckItems-1;
 							}else{
 								updated_job.skills = updated_job.skills.filter(function(item, pos) {
 									return !updated_job.hands_on_skills.includes(item) ;
 								})
 								if(!updated_job.skills || updated_job.skills.length ==0){
 									//arrayValue[i]['knowledge'] =100 * ScoreMasters['knowledge'];
-									arrayValue[i]['work_auth'] = 0;
-									TotalCheckItems = TotalCheckItems-1;
+									arrayValue[i]['knowledge'] = 0;
 								}else{
 									var getDetails = updated_job.skills.filter(function(item, pos) {
 										return checkDetails.skills.includes(item);
 									});
 									var lengthData = (getDetails.length/updated_job.skills.length)*100;
-									arrayValue[i]['knowledge'] =lengthData  * ScoreMasters['knowledge'];
+									arrayValue[i]['knowledge'] =lengthData  * ScoreMasters['skills'];
+									TotalCheckItems = TotalCheckItems +ScoreMasters['skills'];
 								}
 							}
 							//HANDS ON EXPERIENCE CHECKING
@@ -288,15 +319,19 @@ module.exports = async function update(request, response) {
 							var lengthDatas = ((hands_on_Length.length/updated_job.hands_on_skills.length*100 )+
 											(hands_on_Length_skills.length/updated_job.hands_on_skills.length*25 ))
 							arrayValue[i]['hands_on_experience'] =lengthDatas  * ScoreMasters['hands_on_experience'];
+							TotalCheckItems = TotalCheckItems +ScoreMasters['hands_on_experience'];
 							//END TO END IMPLEMENTATION CHECKING
 							if(!checkDetails['end_to_end_implementation']){
 								arrayValue[i]['end_to_end_implemention'] = 0;
-								TotalCheckItems = TotalCheckItems-0.5;
 							}else{
 								if(checkDetails['end_to_end_implementation'] >= updated_job['end_to_end_implementation']){
-									arrayValue[i]['end_to_end_implemention'] = 100  * ScoreMasters['end_to_end_implemention'];
+									arrayValue[i]['end_to_end_implemention'] = 100  * ScoreMasters['end_to_end_implementation'];
+									TotalCheckItems = TotalCheckItems +ScoreMasters['end_to_end_implementation'];
+									
+									
 								}else{
-									arrayValue[i]['end_to_end_implemention'] = 0  * ScoreMasters['end_to_end_implemention'];
+									arrayValue[i]['end_to_end_implemention'] = 0  * ScoreMasters['end_to_end_implementation'];
+									TotalCheckItems = TotalCheckItems +ScoreMasters['end_to_end_implementation'];
 								}
 							}
 							//EDUCATION CHECKING
@@ -304,7 +339,6 @@ module.exports = async function update(request, response) {
 							if(!updated_job.education){
 								//arrayValue[i]['education'] = 100  * ScoreMasters['education'];
 								arrayValue[i]['education'] = 0;
-								TotalCheckItems = TotalCheckItems-0.25;
 							}else{							
 								if(checkDetails.education_qualification && checkDetails.education_qualification.length && checkDetails.education_qualification.length !=0 ){
 									var datas = educationItems.filter((el) => {
@@ -316,48 +350,57 @@ module.exports = async function update(request, response) {
 									
 									if(datas.filter(function(a,b){ return a.id >= value }).length !=0 ){
 										arrayValue[i]['education'] = 100 * ScoreMasters['education'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['education'];
 									}else{
 										arrayValue[i]['education'] = 0 * ScoreMasters['education'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['education'];
 									}
 					
 								}else{
 									arrayValue[i]['education'] = 0 * ScoreMasters['education'];
+									TotalCheckItems = TotalCheckItems +ScoreMasters['education'];
 								}
 							}
 							// ROLE TYPE CHECKING
 							if(!updated_job['employer_role_type']){
 								//arrayValue[i]['job_role'] = 100 * ScoreMasters['job_role'];
 								arrayValue[i]['job_role'] = 0;
-								TotalCheckItems = TotalCheckItems-1;
 							}else{
 								if(!checkDetails['employer_role_type']){
-									arrayValue[i]['job_role'] = 0 * ScoreMasters['job_role'];
+									arrayValue[i]['job_role'] = 0 * ScoreMasters['employer_role_type'];
+									TotalCheckItems = TotalCheckItems +ScoreMasters['employer_role_type'];
 								}else if(checkDetails['employer_role_type'].toLocaleLowerCase() == updated_job['employer_role_type'].toLocaleLowerCase()){
-									arrayValue[i]['job_role'] = 100 * ScoreMasters['job_role'];
+									arrayValue[i]['job_role'] = 100 * ScoreMasters['employer_role_type'];
+									TotalCheckItems = TotalCheckItems +ScoreMasters['employer_role_type'];
 								}else{
-									arrayValue[i]['job_role'] = 0 * ScoreMasters['job_role'];
+									arrayValue[i]['job_role'] = 0 * ScoreMasters['employer_role_type'];
+									TotalCheckItems = TotalCheckItems +ScoreMasters['employer_role_type'];
 								}
 							}
 							//AVAILABILITY CHECKING
 							if(updated_job['availability'] ==null || updated_job['availability'] == undefined ){
 								arrayValue[i]['availability'] = 100 * ScoreMasters['availability'];
+									TotalCheckItems = TotalCheckItems +ScoreMasters['availability'];
 							}else{
 								if(checkDetails['availability'] ==null || checkDetails['availability'] == undefined ){
 									arrayValue[i]['availability'] = 0 * ScoreMasters['availability'];
+									TotalCheckItems = TotalCheckItems +ScoreMasters['availability'];
 								}else if(updated_job['availability'] >= checkDetails['availability'] ){
 									arrayValue[i]['availability'] = 100 * ScoreMasters['availability'];
+									TotalCheckItems = TotalCheckItems +ScoreMasters['availability'];
 								}else{
 									arrayValue[i]['availability'] = 0 * ScoreMasters['availability'];
+									TotalCheckItems = TotalCheckItems +ScoreMasters['availability'];
 								}
 							}
 							//CERTIFICATION SKILLS CHECKING
 							if(!updated_job['certification']){
 								//arrayValue[i]['certification'] = 100 * ScoreMasters['certification'];
 								arrayValue[i]['certification'] = 0;
-								TotalCheckItems = TotalCheckItems-1;
 							}else{
 								if(!checkDetails['certification']){
-									arrayValue[i]['certification'] = 0 * ScoreMasters['certification'];									
+									arrayValue[i]['certification'] = 0 * ScoreMasters['certification'];	
+									TotalCheckItems = TotalCheckItems +ScoreMasters['certification'];								
 								}else if(updated_job['certification']){
 									var certification = updated_job.certification.filter((el) => {
 										return checkDetails.certification.some((f) => {
@@ -367,17 +410,21 @@ module.exports = async function update(request, response) {
 									if(certification.length !=0){
 										certification	=(certification.length/updated_job.certification.length*100);
 										arrayValue[i]['certification'] = certification * ScoreMasters['certification'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['certification'];	
 									}else{
 										arrayValue[i]['certification'] = 0 * ScoreMasters['certification'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['certification'];	
 									}
 								}
 							}
 							//PROGRAMMING SKILLS CHECKING
 							if(!updated_job['programming_skills']){
-								arrayValue[i]['programming'] = 100 * ScoreMasters['programming'];
+								arrayValue[i]['programming'] = 100 * ScoreMasters['programming_skills'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['programming_skills'];
 							}else{
 								if(!checkDetails['programming_skills']){
-									arrayValue[i]['programming'] = 0 * ScoreMasters['programming'];									
+									arrayValue[i]['programming'] = 0 * ScoreMasters['programming_skills'];	
+										TotalCheckItems = TotalCheckItems +ScoreMasters['programming_skills'];								
 								}else if(updated_job['programming_skills']){
 									var programming = updated_job.programming_skills.filter((el) => {
 										return checkDetails.programming_skills.some((f) => {
@@ -386,18 +433,22 @@ module.exports = async function update(request, response) {
 									});
 									if(programming.length !=0){
 										programming	=(programming.length/updated_job.programming_skills.length*100);
-										arrayValue[i]['programming'] = programming * ScoreMasters['programming'];
+										arrayValue[i]['programming'] = programming * ScoreMasters['programming_skills'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['programming_skills'];
 									}else{
-										arrayValue[i]['programming'] = 0 * ScoreMasters['programming'];
+										arrayValue[i]['programming'] = 0 * ScoreMasters['programming_skills'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['programming_skills'];
 									}
 								}
 							}
 							//OPTIONAL  SKILLS CHECKING
 							if(!updated_job['optinal_skills']){
-								arrayValue[i]['other_skills'] = 100 * ScoreMasters['other_skills'];
+								arrayValue[i]['other_skills'] = 100 * ScoreMasters['optinal_skills'];
+								TotalCheckItems = TotalCheckItems +ScoreMasters['optinal_skills'];
 							}else{
 								if(!checkDetails['other_skills']){
-									arrayValue[i]['other_skills'] = 0 * ScoreMasters['other_skills'];									
+									arrayValue[i]['other_skills'] = 0 * ScoreMasters['optinal_skills'];
+									TotalCheckItems = TotalCheckItems +ScoreMasters['optinal_skills'];									
 								}else if(updated_job['optinal_skills']){
 									var other_skills = updated_job.optinal_skills.filter((el) => {
 										return checkDetails.other_skills.some((f) => {
@@ -406,18 +457,22 @@ module.exports = async function update(request, response) {
 									});
 									if(other_skills.length !=0){
 										other_skills=(other_skills.length/updated_job.optinal_skills.length*100);
-										arrayValue[i]['other_skills'] = other_skills * ScoreMasters['other_skills'];
+										arrayValue[i]['other_skills'] = other_skills * ScoreMasters['optinal_skills'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['optinal_skills'];	
 									}else{
-										arrayValue[i]['other_skills'] = 0  * ScoreMasters['other_skills'];
+										arrayValue[i]['other_skills'] = 0  * ScoreMasters['optinal_skills'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['optinal_skills'];	
 									}
 								}
 							}
 							//DOMAIN CHECKING
 							if(!updated_job['domain']){
 								arrayValue[i]['domain'] = 100 * ScoreMasters['domain'];
+								TotalCheckItems = TotalCheckItems +ScoreMasters['domain'];			
 							}else{
 								if(!checkDetails['domains_worked']){
-									arrayValue[i]['domain'] = 0 * ScoreMasters['domain'];									
+									arrayValue[i]['domain'] = 0 * ScoreMasters['domain'];	
+									TotalCheckItems = TotalCheckItems +ScoreMasters['domain'];	
 								}else if(updated_job['domain']){
 									var domains_worked = updated_job.domain.filter((el) => {
 										return checkDetails.domains_worked.some((f) => {
@@ -427,31 +482,37 @@ module.exports = async function update(request, response) {
 									if(domains_worked.length !=0){
 										domains_worked=(domains_worked.length/updated_job.domain.length*100);
 										arrayValue[i]['domain'] = domains_worked * ScoreMasters['domain'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['domain'];	
 									}else{
 										arrayValue[i]['domain'] = 0 * ScoreMasters['domain'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['domain'];	
 									}
 								}
 							}
 							//CHECK REMOTE
 							if(updated_job['remote'] == checkDetails['remote_only']){
-								arrayValue[i]['remote'] = 100 * ScoreMasters['remote'];
+								arrayValue[i]['remote'] = 100 * 0.5;
+								TotalCheckItems = TotalCheckItems + 0.5;
 							}else{
-								arrayValue[i]['remote'] = 0 * ScoreMasters['remote'];
+								arrayValue[i]['remote'] = 0 * 0.5;
+								TotalCheckItems = TotalCheckItems + 0.5;
 							}
 							//CHECK TRAVEL
 							if(checkDetails.travel >=updated_job.travel_opportunity){
-								arrayValue[i]['travel'] = 100 * ScoreMasters['travel'];
+								arrayValue[i]['travel'] = 100 * 0.5;
+								TotalCheckItems = TotalCheckItems + 0.5;
 							}else{
-								arrayValue[i]['travel'] = 0 * ScoreMasters['travel'];
+								arrayValue[i]['travel'] = 0 * 0.5;
+								TotalCheckItems = TotalCheckItems + 0.5;
 							}
 							//LANGUAGE CHECKING
 							if(!updated_job['language'] || !updated_job['language'].length || updated_job['language'].length ==0 ){
 								//arrayValue[i]['language'] = 100 * ScoreMasters['language'];
 								arrayValue[i]['language'] = 0;
-								TotalCheckItems = TotalCheckItems-0.25;
 							}else{
 								if(!checkDetails['language_id']){
-									arrayValue[i]['language'] = 0 * ScoreMasters['language'];									
+									arrayValue[i]['language'] = 0 * ScoreMasters['language'];	
+									TotalCheckItems = TotalCheckItems +ScoreMasters['language'];								
 								}else if(updated_job['language']){
 									var language_id = updated_job.language.filter((el) => {
 										return checkDetails.language_id.some((f) => {
@@ -461,8 +522,10 @@ module.exports = async function update(request, response) {
 									if(language_id.length !=0){
 										language_id=(language_id.length/updated_job.language.length*100);
 										arrayValue[i]['language'] = language_id * ScoreMasters['language'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['language'];
 									}else{
 										arrayValue[i]['language'] = 0 * ScoreMasters['language'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['language'];
 									}
 								}
 							}
