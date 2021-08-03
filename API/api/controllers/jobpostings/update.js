@@ -466,7 +466,7 @@ module.exports = async function create(request, response) {
 								}
 							}
 							arrayValue[i]['score'] = Object.keys(arrayValue[i]).reduce((sum,key)=>sum+parseFloat(arrayValue[i][key]||0),0);
-							arrayValue[i]['score'] =arrayValue[i]['score']/ScoreMasters['total'];
+							arrayValue[i]['score'] =arrayValue[i]['score']/(10*TotalCheckItems);
 							arrayValue[i]['job_id'] = updated_job['id'];
 							arrayValue[i]['user_id'] = checkDetails['id'];
 							var post_data ={};
