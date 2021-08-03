@@ -154,6 +154,7 @@ module.exports = async function create(request, response) {
 						}, {});
 
 						var arrayValue =[];
+						await Scoring.destroy(updated_job.id);
 						for(let i=0;i<responseMatch.length;i++){
 							checkDetails = responseMatch[i];
 							var TotalCheckItems = 0;
