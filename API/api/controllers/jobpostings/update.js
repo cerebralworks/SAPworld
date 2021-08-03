@@ -217,7 +217,10 @@ module.exports = async function create(request, response) {
 									}
 								}
 								if(updated_job.work_authorization ==1 ){
-									if(checkDetails.authorized_country && checkDetails.authorized_country.length && checkDetails.authorized_country !=0){
+									if(updated_job.country.toLocaleLowerCase() == checkDetails.nationality.toLocaleLowerCase()){
+										arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_authorization'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
+									}else if(checkDetails.authorized_country && checkDetails.authorized_country.length && checkDetails.authorized_country !=0){
 										if(checkDetails.authorized_country.filter(function(a,b){ return a.toLocaleLowerCase() == updated_job.country.toLocaleLowerCase() }).length !=0){
 											arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_authorization'];
 											TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
