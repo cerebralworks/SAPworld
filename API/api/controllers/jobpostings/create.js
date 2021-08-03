@@ -211,6 +211,9 @@ module.exports = async function create(request, response) {
 											arrayValue[i]['work_auth'] = 0 * ScoreMasters['work_authorization'];
 											TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
 										}
+									}else if( updated_job.visa_sponsorship == false ){
+										arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_authorization'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
 									}else{
 										arrayValue[i]['work_auth'] = 0 * ScoreMasters['work_authorization'];
 										TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
