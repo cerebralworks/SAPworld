@@ -35,7 +35,7 @@ module.exports = {
         programming_skills: { type: 'ref', columnType: 'text[]' },
         optinal_skills: { type: 'ref', columnType: 'text[]' },
         certification: { type: 'ref', columnType: 'text[]' },
-        work_authorization: { type: 'number'},
+        work_authorization: { type: 'number', allowNull: true},
         travel_opportunity: { type: 'number' },
         visa_sponsorship: { type: 'boolean', defaultsTo: false },
         willing_to_relocate: { type: 'boolean', defaultsTo: false },
@@ -49,6 +49,7 @@ module.exports = {
         match_select: { type: 'ref', columnType: 'json' },
         number_of_positions: { type: 'number', defaultsTo: 1 },
         extra_criteria: { type: 'ref', columnType: 'json[]' },
+        screening_process: { type: 'ref', columnType: 'json[]' },
         photo: { type: 'string' },
         contract_duration: { type: 'number', defaultsTo: 0 },
 		

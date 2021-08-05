@@ -115,7 +115,9 @@ module.exports = async function Scoring(request, response) {
 			var group_by = UserProfiles.tableAlias + "." + UserProfiles.schema.id.columnName +",scoring.id";
 		
 			value.page = value.page ? value.page : 1;
-	        list_query.limit(1).offset(value.page - 1);
+			if (!value.user_id) {
+				list_query.limit(1).offset(value.page - 1);
+			}
          
         var count_query = list_query.clone();
 		list_query.group(group_by);
@@ -169,6 +171,7 @@ module.exports = async function Scoring(request, response) {
                         delete profile.job_application;
                     }
                 } else profile = {};
+				count_query.limit(1).offset(value.page - 1);
                 count_query = count_query.toString().replace("LIMIT 1", " ").replace("*", "COUNT(DISTINCT user_profile.id)").replace(`OFFSET ${value.page-1}`, " ");
                 var count = sails.sendNativeQuery(count_query, async function(err, job_postings) {
                     var QueryData =`SELECT job_posting.id,job_posting.title,job_posting.company FROM user_employments "job_posting"
