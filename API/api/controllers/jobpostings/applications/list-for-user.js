@@ -91,7 +91,8 @@ module.exports = async function list(request,response) {
                     job_fields = _.without(Object.keys(JobPostings.schema), 'location_geom');
                     job = '';
                     job_fields.map(function(value){
-                        if(JobPostings.schema[value].columnName || typeof JobPostings.schema[value].columnName !== "undefined"){
+                         if ((JobPostings.schema[value].columnName || typeof JobPostings.schema[value].columnName !== "undefined" )&&
+						JobPostings.schema[value].columnName !== 'created_at' && JobPostings.schema[value].columnName !=='updated_at' ) {
                             job += "'"+ value + "'," + JobPostings.tableAlias + "." + JobPostings.schema[value].columnName + ",";
                         }
                     });
@@ -108,6 +109,11 @@ module.exports = async function list(request,response) {
 						UserProfiles.schema[value].columnName !== 'created_at' && UserProfiles.schema[value].columnName !=='updated_at' &&
 						UserProfiles.schema[value].columnName !== 'social_media_link' && UserProfiles.schema[value].columnName !=='preferred_location' &&
 						UserProfiles.schema[value].columnName !== 'latlng' && UserProfiles.schema[value].columnName !== 'latlng_text'
+						&& UserProfiles.schema[value].columnName !== 'hands_on_skills'
+						&& UserProfiles.schema[value].columnName !== 'education_degree'
+						&& UserProfiles.schema[value].columnName !== 'language_id'
+						&& UserProfiles.schema[value].columnName !== 'other_cities'
+						&& UserProfiles.schema[value].columnName !== 'other_countries'
 						&& UserProfiles.schema[value].columnName !== 'privacy_protection'){
                             user += "'"+ value + "'," + UserProfiles.tableAlias + "." + UserProfiles.schema[value].columnName + ",";
                         }
