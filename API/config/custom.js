@@ -56,7 +56,7 @@ module.exports.custom = {
         not_available: 6,
         pending: 7,
 		applied: 8,
-		closed: 9
+		closed: 99
     },
     access_role: {
         user: 0,
