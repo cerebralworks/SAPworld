@@ -6,12 +6,11 @@ const job_type_values = _.values(_.get(sails, 'config.custom.job_types', {}));
 module.exports = async function list(request, response) {
     var _response_object = {};
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['page','id', 'sort', 'limit','company','view']);
+    const filtered_query_data = _.pick(request_query, ['page','status','id', 'sort', 'limit','company','view']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
         { name: 'page', number: true, min: 1 },
-        { name: 'limit', number: true, min: 1 },
-        { name: 'status', enum: true, values: _.values(_.pick(sails.config.custom.status_codes, ['inactive', 'active'])) }
+        { name: 'limit', number: true, min: 1 }
        
     ];
 
@@ -75,6 +74,10 @@ WHERE (job_posting.status = 1) AND scoring.user_id = user_profile.id AND scoring
 				//To get the job details Count
 				Count_Users = `SELECT job_posting.screening_process,job_posting.id,job_posting.title FROM user_employments "job_posting"
 WHERE job_posting.screening_process is not null and (job_posting.company = ${filtered_query_data.company} ) ORDER BY job_posting.id DESC limit ${filtered_query_data.limit}`
+			}
+			if(filtered_query_data.view =='update_status'){
+				//To get the job details Count
+				Count_Users = `update job_applications set view = ${filtered_query_data.status} where id = ${filtered_query_data.id}`
 			}
 			sails.sendNativeQuery(Count_Users, async function(err, Count_Users_value) {
 				if (err) {

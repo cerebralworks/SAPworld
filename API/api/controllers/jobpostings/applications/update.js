@@ -15,7 +15,7 @@ module.exports = async function update(request, response) {
     const id = parseInt(request_query.id);
     var _response_object = {};
     pick_input = [
-        'title', 'company', 'description', 'roles', 'location',
+        'title', 'company', 'description', 'roles', 'location', 'view',
         'start_month', 'start_year', 'end_month', 'end_year', 'currently_working'
     ];
     var filtered_post_data = _.pick(post_request_data, pick_input);
@@ -28,6 +28,7 @@ module.exports = async function update(request, response) {
         {name: 'start_month', required: true, enum: true, values: [1,2,3,4,5,6,7,8,9,10,11,12]},
         {name: 'start_year', required: true, number: true, min: 1970, max: current_date.getFullYear()},
         {name: 'currently_working', required: true, boolean: true},
+        {name: 'view',  boolean: false},
     ];
     if(filtered_post_keys.includes('currently_working') && !filtered_post_data.currently_working){
         input_attributes.push({name: 'end_month', required: true, enum: true, values: [1,2,3,4,5,6,7,8,9,10,11,12]});
