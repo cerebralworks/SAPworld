@@ -22,7 +22,7 @@ module.exports = async function companyProfile(request, response) {
     var profile = await CompanyProfile.findOne({ user_id: logged_in_user.id });
     if (!profile) {
         _response_object.message = 'No record found';
-        return response.status(500).json(_response_object);
+        return response.status(200).json(_response_object);
 
     } else {
         sendResponse(profile);
