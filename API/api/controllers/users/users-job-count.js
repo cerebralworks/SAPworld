@@ -71,6 +71,11 @@ LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id)
 WHERE (job_posting.status = 1) AND scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id AND 
 (job_posting.company = ${filtered_query_data.company} ) AND (user_profile.id = ${filtered_query_data.id} ) order by scoring.score desc`
 			}
+			if(filtered_query_data.view =='screening_process'){
+				//To get the job details Count
+				Count_Users = `SELECT job_posting.screening_process,job_posting.id,job_posting.title FROM user_employments "job_posting"
+WHERE job_posting.screening_process is not null and (job_posting.company = ${filtered_query_data.company} ) ORDER BY job_posting.id DESC limit ${filtered_query_data.limit}`
+			}
 			sails.sendNativeQuery(Count_Users, async function(err, Count_Users_value) {
 				if (err) {
 					var error = {
