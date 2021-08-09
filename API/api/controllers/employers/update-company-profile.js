@@ -22,10 +22,10 @@ module.exports = async function updateCompanyProfile(request, response) {
         zipcode: yup.number().positive(),
         contact: yup.array().of(yup.string()),
         description: yup.string().max(5000),
-        latlng: yup.object().shape({
+        /* latlng: yup.object().shape({
             lat: yup.number().min(-90).max(90),
             lng: yup.number().min(-180).max(180),
-        }),
+        }), */
         website: yup.string().url().required().lowercase(),
     });
     //Build and sending response
@@ -49,9 +49,19 @@ module.exports = async function updateCompanyProfile(request, response) {
 	//Validating the request and pass on the appriopriate response.
     await schema.validate(post_request_data, { abortEarly: false }).then(async value => {
 
-        var point = value.latlng['lng'] + ' ' + value.latlng['lat'];
+        /* var point = value.latlng['lng'] + ' ' + value.latlng['lat'];
+        value.latlng_text = value.latlng.lat + ',' + value.latlng.lng;
+        value.latlng = 'SRID=4326;POINT(' + point + ')'; */
+		if(value.latlng['lng'] && value.latlng['lng'] !=undefined && value.latlng['lng'] !="undefined" &&
+		value.latlng['lat'] && value.latlng['lat'] !=undefined && value.latlng['lat'] !="undefined"){
+		var point = value.latlng['lng'] + ' ' + value.latlng['lat'];
         value.latlng_text = value.latlng.lat + ',' + value.latlng.lng;
         value.latlng = 'SRID=4326;POINT(' + point + ')';
+		}else{
+			var point = "1.00" + ' ' + "5.00";
+			value.latlng_text = "1.00" + ',' + "5.00";
+			value.latlng = 'SRID=4326;POINT(' + point + ')';	
+		}
         value.user_id = logged_in_user.id;
         console.log(value)
         var company_profile = await CompanyProfile.findOne({ user_id: value.user_id });
