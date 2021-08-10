@@ -9,7 +9,7 @@
 module.exports = async function view(request, response) {
 
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['id', 'expand', 'additional_fields']);
+    const filtered_query_data = _.pick(request_query, ['id','user_id', 'expand', 'additional_fields', 'is_job_applied']);
     var _response_object = {};
     var input_attributes = [
         { name: 'id', required: true, number: true, min: 1 }
@@ -66,8 +66,8 @@ module.exports = async function view(request, response) {
                 if (additional_fields.includes('no_of_shortlisted_applicants')) {
                     job_posting.no_of_shortlisted_applicants = await JobApplications.count({ job_posting: _.get(job_posting, 'id'), status: { '!=': _.get(sails.config.custom.status_codes, 'deleted') }, short_listed: true });
                 }
-                if (additional_fields.includes('is_job_applied')) {
-                    job_posting.is_job_applied = await JobApplications.count({ job_posting: _.get(job_posting, 'id'), status: { '!=': _.get(sails.config.custom.status_codes, 'deleted') }, user: _.get(request, 'user.user_profile.id', "") });
+                if (filtered_query_data.is_job_applied && filtered_query_data.user_id) {
+                    job_posting.is_job_applied = await JobApplications.count({ job_posting: _.get(job_posting, 'id'), user: filtered_query_data.user_id });
                 }
                 successCallBack(job_posting);
             }

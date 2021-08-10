@@ -82,7 +82,12 @@ module.exports = async function Scoring(request, response) {
 			//if (filtered_query_data.expand =="company") {
                 list_query.field(`employer.company AS "company_name" `);
             //}
-			
+			let sub_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).
+                from(JobApplications.tableName, JobApplications.tableAlias).
+                where(`${JobApplications.tableAlias}.${JobApplications.schema.job_posting.columnName} = ${JobPostings.tableAlias}.${JobPostings.schema.id.columnName}`).
+                where(`${JobApplications.tableAlias}.${JobApplications.schema.user.columnName} = ${filtered_query_data.id}`);
+                list_query.field(`EXISTS(${sub_query})`, 'is_job_applied');
+				
 			list_query.where("scoring.job_id =job_posting.id" );
 			list_query.where("scoring.user_id  = "+filtered_query_data.id );
 		
