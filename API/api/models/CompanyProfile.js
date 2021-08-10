@@ -25,7 +25,7 @@ module.exports = {
         city: { type: 'string' },
         state: { type: 'string' },
         country: { type: 'string' },
-        zipcode: { type: 'number' },
+        zipcode: { type: 'number', allowNull: true  },
         latlng: { type: 'string' },
         latlng_text: { type: 'string' },
         description: { type: 'string' },
