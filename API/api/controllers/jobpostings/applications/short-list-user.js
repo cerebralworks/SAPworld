@@ -13,7 +13,7 @@ module.exports = async function update(request, response) {
     var _response_object = {};
     const logged_in_user = request.user;
     pick_input = [
-        'short_listed', 'user', 'job_posting', 'status', 'application_status'
+        'short_listed', 'user', 'job_posting', 'status', 'application_status', 'view'
     ];
     var filtered_post_data = _.pick(_.merge(post_request_data, request_query), pick_input);
     const filtered_post_keys = Object.keys(filtered_post_data);
@@ -21,7 +21,8 @@ module.exports = async function update(request, response) {
         { name: 'user', required: true, number: true, min: 1 },
         { name: 'status', number: true, min: 1 },
         { name: 'job_posting', required: true, number: true, min: 1 },
-        { name: 'short_listed', enum: true, values: [true, false], required: true }
+        { name: 'short_listed', enum: true, values: [true, false], required: true },
+        { name: 'view', enum: false, values: [true, false] }
     ];
     // Update the Job Application record to db.
     function CreateJobApplication(data, callback) {
@@ -66,32 +67,32 @@ module.exports = async function update(request, response) {
     };
 	//Validating the request and pass on the appriopriate response.
     validateModel.validate(JobApplications, input_attributes, filtered_post_data, async function(valid, errors) {
-        if (valid) {
-            if (filtered_post_keys.includes('id')) {
-                filtered_post_data.id = parseInt(filtered_post_data.id);
-            }
-            if (filtered_post_keys.includes('status')) {
-                filtered_post_data.status = parseInt(filtered_post_data.status);
-            }
-            let id = _.get(filtered_post_data, 'id');
-            var job_application = await JobApplications.findOne({
-                where: {
-                    user: filtered_post_data.user,
-                    job_posting: filtered_post_data.job_posting,
-                    status: { '!=': _.get(sails.config.custom.status_codes_application, 'closed') },
-                    employer: _.get(logged_in_user, 'employer_profile.id')
-                }
-            });
-            filtered_post_data.employer = _.get(logged_in_user, 'employer_profile.id');
-            if (job_application) {
-                updateJobApplication(filtered_post_data, function(job_application) {
-                    sendResponse(job_application);
-                });
-            } else {
-                CreateJobApplication(filtered_post_data, function(job_application) {
-                    sendResponse(job_application);
-                });
-            }
+        if (valid) {			
+			if (filtered_post_keys.includes('id')) {
+				filtered_post_data.id = parseInt(filtered_post_data.id);
+			}
+			if (filtered_post_keys.includes('status')) {
+				filtered_post_data.status = parseInt(filtered_post_data.status);
+			}
+			let id = _.get(filtered_post_data, 'id');
+			var job_application = await JobApplications.findOne({
+				where: {
+					user: filtered_post_data.user,
+					job_posting: filtered_post_data.job_posting,
+					status: { '!=': _.get(sails.config.custom.status_codes_application, 'closed') },
+					employer: _.get(logged_in_user, 'employer_profile.id')
+				}
+			});
+			filtered_post_data.employer = _.get(logged_in_user, 'employer_profile.id');
+			if (job_application) {
+				updateJobApplication(filtered_post_data, function(job_application) {
+					sendResponse(job_application);
+				});
+			} else {
+				CreateJobApplication(filtered_post_data, function(job_application) {
+					sendResponse(job_application);
+				});
+			}
         } else {
             _response_object.errors = errors;
             _response_object.count = errors.length;
