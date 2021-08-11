@@ -379,8 +379,13 @@ module.exports = async function update(request, response) {
 									arrayValue[i]['job_role'] = 100 * ScoreMasters['employer_role_type'];
 									TotalCheckItems = TotalCheckItems +ScoreMasters['employer_role_type'];
 								}else{
-									arrayValue[i]['job_role'] = 0 * ScoreMasters['employer_role_type'];
-									TotalCheckItems = TotalCheckItems +ScoreMasters['employer_role_type'];
+									if(checkDetails['employer_role_type'].toLocaleLowerCase() == 'technofunctional'){
+										arrayValue[i]['job_role'] = 100 * ScoreMasters['employer_role_type'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['employer_role_type'];
+									}else{
+										arrayValue[i]['job_role'] = 0 * ScoreMasters['employer_role_type'];
+										TotalCheckItems = TotalCheckItems +ScoreMasters['employer_role_type'];
+									}
 								}
 							}
 							//AVAILABILITY CHECKING
