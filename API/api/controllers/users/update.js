@@ -154,7 +154,11 @@ module.exports = async function update(request, response) {
 					checkDetails.nationality = nationality.map(function(value) {
 						return value.nicename;
 					});
+					if(checkDetails.nationality.length!=0){
+						checkDetails.nationality = checkDetails.nationality[0];
+					}
 				});
+				
 				//GET AUTHORIZED COUNTRY ID TO STRING
 				if(checkDetails.authorized_country && checkDetails.authorized_country.length && checkDetails.authorized_country !=0){
 					
