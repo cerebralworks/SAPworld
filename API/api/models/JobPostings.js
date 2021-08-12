@@ -42,7 +42,7 @@ module.exports = {
         end_to_end_implementation: { type: 'number', defaultsTo: 0 },
         company: { model: 'employerprofiles' },
         status: { type: 'number', defaultsTo: 1 },
-        status_glossary: { type: 'string', allowNull: true },
+        //status_glossary: { type: 'string', allowNull: true },
         latlng: { type: 'string' },
         latlng_text: { type: 'string' },
         must_match: { type: 'ref', columnType: 'json' },
@@ -65,6 +65,7 @@ module.exports = {
         training_experience: { type: 'string', allowNull: true },
 		authorized_to_work: { type: 'ref', columnType: 'bigint[]' },
         hands_on_skills: { type: 'ref', columnType: 'bigint[]' },
+        others: { type: 'ref', columnType: 'json[]' },
 
     }
 };
