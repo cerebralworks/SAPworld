@@ -33,5 +33,6 @@ module.exports = {
         user_interest: { type: 'number', allowNull: true },
         user_resume: { type: 'string', allowNull: true },
         application_status: { type: 'ref', columnType: 'json[]' },
+        others: { type: 'ref', columnType: 'json[]' },
     }
 };

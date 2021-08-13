@@ -158,7 +158,6 @@ module.exports = async function update(request, response) {
 						checkDetails.nationality = checkDetails.nationality[0];
 					}
 				});
-				
 				//GET AUTHORIZED COUNTRY ID TO STRING
 				if(checkDetails.authorized_country && checkDetails.authorized_country.length && checkDetails.authorized_country !=0){
 					

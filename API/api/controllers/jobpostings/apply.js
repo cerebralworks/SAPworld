@@ -11,7 +11,7 @@ module.exports = async function apply(request, response) {
     var _response_object = {};
     const logged_in_user = request.user;
     pick_input = [
-        'comments', 'job_posting', 'user_resume', 'status'
+        'comments', 'job_posting', 'user_resume', 'status', 'others'
     ];
     var filtered_post_data = _.pick(post_request_data, pick_input);
     const filtered_post_keys = Object.keys(filtered_post_data);
