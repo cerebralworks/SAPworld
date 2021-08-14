@@ -587,7 +587,18 @@ module.exports = async function update(request, response) {
 						
 					}
 				});
-                return response.status(200).json(_response_object);
+				sails.sendNativeQuery(Count_Users, async function(err, Count_Users_value) {
+				if (err) {
+					_response_object.matches = false;
+					return response.status(200).json(_response_object);
+				} else {
+					_response_object.matches = false;
+					if(Count_Users_value.rowCount!=0){
+						_response_object.matches = true;
+					}
+					return response.status(200).json(_response_object);
+				}
+				});
             }
         });
     }).catch(err => {
