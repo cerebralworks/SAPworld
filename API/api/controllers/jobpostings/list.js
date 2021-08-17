@@ -16,7 +16,7 @@ module.exports = async function list(request, response) {
     var input_attributes = [
         { name: 'page', number: true, min: 1 },
         { name: 'limit', number: true, min: 1 },
-        { name: 'status', enum: true, values: _.values(_.pick(sails.config.custom.status_codes, ['inactive', 'active'])) },
+        { name: 'status', enum: true, values: _.values(_.pick(sails.config.custom.status_codes, ['inactive', 'active', 'paused'])) },
         { name: 'skills', array: true, individual_rule: { number: true, min: 1 } },
         { name: 'type', array: true, individual_rule: { number: true, min: _.min(job_type_values), max: _.max(job_type_values) } },
         { name: 'min_salary', number: true, positive: true },
@@ -271,7 +271,7 @@ module.exports = async function list(request, response) {
         query.left_join(`${EmployerProfiles.tableName}`, `${EmployerProfiles.tableAlias}`, `${JobPostings.tableAlias}.company = ${EmployerProfiles.tableAlias}.id`);
 		
 		
-        if (_.get(criteria, 'where.status')) {
+        if (_.get(criteria, 'where.status') || filtered_query_keys.includes('status') ) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} = ${_.get(criteria, 'where.status')}`);
         } else {
             // We should not take deleted job posting into the list. ie: status (row_deleted_sign: variable) indicates the job posting is had been removed.

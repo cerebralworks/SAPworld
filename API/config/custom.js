@@ -45,7 +45,9 @@ module.exports.custom = {
         reported: 4,
         accepted: 5,
         payment_pending: 6,
-        hide_profile: 7
+        hide_profile: 7,
+		paused: 98,
+		closed: 99
     },
     status_codes_application: {
         open: 1,
