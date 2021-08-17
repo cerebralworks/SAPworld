@@ -1,46 +1,54 @@
 /**
  *
- * @author Saravanan Karthikeyan <saravanan@studioq.co.in>
+ * @author Ilanchezhian Rajendiran <ilan@studioq.co.in>
  *
  */
 
-/* global _, JobPostings, sails */
-
-module.exports = async function create(request, response) {
+/* global _, UserProfiles, UserInformation, Users, sails */
+module.exports = async function update(request, response) {
     const post_request_data = request.body;
-    const request_query = request.allParams();
     const logged_in_user = request.user;
+    post_request_data.id = logged_in_user.id;
     var _response_object = {};
     let yup = sails.yup;
     let schema = yup.object().shape({
-        id: yup.number().positive().test('id', 'cant find any record', async(value) => {
-            let query = { id: value, company: logged_in_user.employer_profile.id };
-            return await JobPostings.findOne(query).then(job => {
-                //console.log(job)
-                return true;
-            }).catch(err => {
-                //console.log(err)
-                return false
-            });
+        id: yup.number().test('user_profile', 'Cant find record', async(value) => {
+            return await UserProfiles.find().where({ account: value }).limit(1).then(result => {
+                return result.length > 0 ? true : false;
+            })
         }),
-        title: yup.string().required().lowercase().min(3),
-        type: yup.string().required(),
-        description: yup.string().min(100),
-        salary_type: yup.number().required().oneOf([0, 1, 2]),
-        salary_currency: yup.string().required().min(3).max(10).lowercase().required(),
-        salary: yup.number().required().positive(),
+        first_name: yup.string().required().lowercase().min(3),
+        last_name: yup.string().required().lowercase(),
+        bio: yup.string(),
         country: yup.string().required().lowercase(),
         state: yup.string().required().lowercase(),
         city: yup.string().required().lowercase(),
         zipcode: yup.number().required().positive().moreThan(1000),
-        availability: yup.number().required().oneOf([0, 15, 30, 45, 60]),
-        latlng: yup.object().shape({
+        phone: yup.string().matches(/^([0|\+[0-9]{1,5})?([0-9]{10})$/, 'Mobile number must be like +919999999999'),
+        /* latlng: yup.object().shape({
             lat: yup.number().min(-90).max(90),
             lng: yup.number().min(-180).max(180),
-        }).required(),
+        }).required(), */
+        education_qualification: yup.array().of(
+            yup.object().shape({
+                degree: yup.string().lowercase().required(),
+                field_of_study: yup.string().lowercase().required(),
+                year_of_completion: yup.number().positive().required()
+            })
+        ).default([]),
+        preferred_locations: yup.array().of(
+            yup.object().shape({
+                city: yup.string().lowercase(),
+                state: yup.string().lowercase(),
+                country: yup.string().lowercase()
+            })
+        ).default([]),
         experience: yup.number().positive().default(1).required(),
         sap_experience: yup.number().positive().default(1).required(),
-        domain: yup.array().of(yup.number().positive()).required(),
+        current_employer: yup.string().required().lowercase(),
+        current_employer_role: yup.string().required().lowercase(),
+        domains_worked: yup.array().of(yup.number().positive()).required(),
+        clients_worked: yup.array().of(yup.string()),
         hands_on_experience: yup.array().of(yup.object().shape({
             skill_id: yup.number().required().positive(),
             skill_name: yup.string().required().lowercase(),
@@ -49,26 +57,79 @@ module.exports = async function create(request, response) {
         })).required(),
         skills: yup.array().of(yup.number().positive()),
         programming_skills: yup.array().of(yup.string()).required(),
-        optinal_skills: yup.array().of(yup.string()),
+        other_skills: yup.array().of(yup.string()),
         certification: yup.array().of(yup.string()),
-        travel_opportunity: yup.number().required().oneOf([0, 25, 50, 75, 100]),
-        //work_authorization: yup.number(),
-        visa_sponsorship: yup.boolean(),
-        must_match: yup.object().nullable(),
+        job_type: yup.array().of(yup.string()),
+        job_role: yup.string().default(''),
+        preferred_location: yup.number().oneOf([0, 1, 2, 3, 4, 5, 6, 7]),
+        availability: yup.number().required().oneOf([0, 15, 30, 45, 60]),
+        travel: yup.number().required().oneOf([0, 25, 50, 75, 100]),
+        work_authorization: yup.boolean(),
+        willing_to_relocate: yup.boolean().required(),
+        remote_only: yup.boolean().required(),
         end_to_end_implementation: yup.number().min(0),
-        extra_criteria: yup.array().of(yup.object().shape({
-            title: yup.string().required().lowercase(),
-            value: yup.string().required().lowercase()
-        })).nullable(),
-        number_of_positions: yup.number().required().positive(),
-        contract_duration: yup.number().min(0).when("type", {
-            is: (val) => { val == 5 ? true : false },
-            then: yup.string().required()
+        privacy_protection: yup.object().shape({
+            photo: yup.boolean().default(true),
+            phone: yup.boolean().default(true),
+            email: yup.boolean().default(true),
+            current_employer: yup.boolean().default(true),
+            available_for_opportunity: yup.boolean().default(true),
         }),
     });
-    //Update the JobPostings record to db.
-    const updateRecord = (post_data, callback) => {
-        JobPostings.update(post_data.id, post_data, async function(err, job) {
+    await schema.validate(post_request_data, { abortEarly: false }).then(async value => {
+		if(value.latlng['lng'] && value.latlng['lng'] !=undefined && value.latlng['lng'] !="undefined" &&
+		value.latlng['lat'] && value.latlng['lat'] !=undefined && value.latlng['lat'] !="undefined"){
+		var point = value.latlng['lng'] + ' ' + value.latlng['lat'];
+        value.latlng_text = value.latlng.lat + ',' + value.latlng.lng;
+        value.latlng = 'SRID=4326;POINT(' + point + ')';
+		}else{
+			var point = "1.00" + ' ' + "5.00";
+			value.latlng_text = "1.00" + ',' + "5.00";
+			value.latlng = 'SRID=4326;POINT(' + point + ')';	
+		}
+		if(value.phone){
+			await phoneEncryptor.encrypt(value.phone, function(encrypted_text) {
+				value.phone = encrypted_text;
+			});
+		}else{
+			value.phone =null;
+		}
+        value.status = 1;
+		var arr1= value.skills;
+		var arr2= value.hands_on_experience;
+		if ( arr2 && Array.isArray(arr2)) {
+			arr2 = arr2.filter(function(a,b){ return a.skill_id!=null && a.skill_id!='' });
+			value.hands_on_skills = arr2.map(function(a,b){ return a.skill_id });
+		}else{
+			value.hands_on_skills =[];
+		}
+		var arr3= value.language_known;
+		if (arr3 &&  Array.isArray(arr3) ) {
+			arr3 = arr3.filter(function(a,b){ return a.language!=null && a.language!='' });
+			value.language_id = arr3.map(function(a,b){ return a.language });
+			
+		}else{
+			value.language_id = [];
+		}
+		var arr4= value.education_qualification;
+		if (arr4 &&  Array.isArray(arr4) ) {
+			arr4 = arr4.filter(function(a,b){ return a.degree!=null && a.degree!='' });
+			value.education_degree = arr4.map(function(a,b){ return a.degree });
+		}else{
+			value.education_degree = [];
+		}
+		var arr5= value.preferred_locations;
+		if (arr5 &&  Array.isArray(arr5) ) {
+			arr5 = arr5.filter(function(a,b){ return a.country!=null && a.country!='' });
+			value.other_countries = arr5.map(function(a,b){ return a.country });
+			value.other_cities = arr5.map(function(a,b){ return a.city });
+		}else{
+			value.other_countries = [];
+			value.other_cities = [];
+		}
+		//console.log(value);
+		//Update the user profile details
+        UserProfiles.update(logged_in_user.user_profile.id, value, async function(err, profile) {
             if (err) {
                 await errorBuilder.build(err, function(error_obj) {
                     _response_object.errors = error_obj;
@@ -76,46 +137,52 @@ module.exports = async function create(request, response) {
                     return response.status(500).json(_response_object);
                 });
             } else {
-                return callback(job[0]);
-            }
-        });
-    };
-	//Validating the request and pass on the appriopriate response.
-    await schema.validate(post_request_data, { abortEarly: false }).then(async value => {
-            value.company = logged_in_user.employer_profile.id;
-            var point = value.latlng['lng'] + ' ' + value.latlng['lat'];
-            value.latlng_text = value.latlng.lat + ',' + value.latlng.lng;
-            value.latlng = 'SRID=4326;POINT(' + point + ')';
-			
-			var arr2= value.hands_on_experience;
-			if ( arr2 && Array.isArray(arr2)) {
-				arr2 = arr2.filter(function(a,b){ return a.skill_id!=null && a.skill_id!='' });
-				value.hands_on_skills = arr2.map(function(a,b){ return a.skill_id });
-			}else{
-				value.hands_on_skills =[];
-			}
-			if(!value.skills || !value.skills.length || value.skills.length ==0){
-				value.skills = value.hands_on_skills;
-			}
-		
-            updateRecord(value, async function(updated_job) {
-                _response_object.message = 'Job has been update successfully.';
-                _response_object.details = updated_job;
-				if(updated_job.visa_sponsorship ==true ){
-				var Count_Users = `SELECT  user_profile.* as "job_id" FROM user_employments "job_posting"
-	CROSS JOIN user_profiles "user_profile" 
-	LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-	WHERE (job_posting.status = 1) AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.id = ${parseInt(updated_job.id)}) AND
-	(user_account.status=1) AND (user_profile.work_authorization == 1 OR (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] )) ) AND  user_profile.hands_on_skills && job_posting.hands_on_skills 
-	AND (COALESCE(user_profile.experience) >= job_posting.experience) group by user_profile.id `
-				}else{
-					var Count_Users = `SELECT  user_profile.* as "job_id" FROM user_employments "job_posting"
-	CROSS JOIN user_profiles "user_profile" 
-	LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-	WHERE (job_posting.status = 1) AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.id = ${parseInt(updated_job.id)}) AND
-	(user_account.status=1) AND (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) ) AND  user_profile.hands_on_skills && job_posting.hands_on_skills 
-	AND (COALESCE(user_profile.experience) >= job_posting.experience) group by user_profile.id `
+                var status = value.available_for_opportunity == false ? 7 : logged_in_user.status;
+                Users.update(logged_in_user.id, { status: status }, function(err, profile) {});
+                if (profile[0].email) {
+                    delete profile[0].email;
+                }
+                if (profile[0].phone) {
+                    delete profile[0].phone;
+                }
+                _response_object.message = 'Profile has been updated successfully.';
+                _response_object.details = profile;
+				
+				var checkDetails = profile[0];
+				//GET NATIONALITY ID TO STRING
+				await Country.find({ id: checkDetails.nationality }).then(nationality => {
+					checkDetails.nationality = nationality.map(function(value) {
+						return value.nicename;
+					});
+					if(checkDetails.nationality.length!=0){
+						checkDetails.nationality = checkDetails.nationality[0];
+					}
+				});
+				//GET AUTHORIZED COUNTRY ID TO STRING
+				if(checkDetails.authorized_country && checkDetails.authorized_country.length && checkDetails.authorized_country !=0){
+					
+					await Country.find({ id: checkDetails.authorized_country }).then(authorized_country => {
+						checkDetails.authorized_country = authorized_country.map(function(value) {
+							return value.nicename;
+						});
+					});
 				}
+				if(checkDetails.work_authorization == 1){
+					var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
+	CROSS JOIN user_profiles "user_profile" 
+	LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
+	WHERE (job_posting.status = 1) AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
+	(user_account.status=1) AND (job_posting.visa_sponsorship = true OR (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] )) ) AND user_profile.hands_on_skills && job_posting.hands_on_skills 
+	AND (COALESCE(user_profile.experience) >= job_posting.experience) group by job_posting.id `
+				}else{
+					var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
+	CROSS JOIN user_profiles "user_profile" 
+	LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
+	WHERE (job_posting.status = 1) AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
+	(user_account.status=1) AND ((( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] )) ) AND user_profile.hands_on_skills && job_posting.hands_on_skills 
+	AND (COALESCE(user_profile.experience) >= job_posting.experience) group by job_posting.id `
+				}
+				
 				sails.sendNativeQuery(Count_Users, async function(err, Count_Users_value) {
 				if (err) {
 					var error = {
@@ -134,31 +201,30 @@ module.exports = async function create(request, response) {
 						var ScoreMasters ='';
 						var ScoreMastersData = await ScoreMaster.find();
 						ScoreMastersData = ScoreMastersData[0];
-												// Validate the Score calculate value
-						var tempSelect = Object.entries(updated_job.match_select).map(k =>{ 
-							if(k[1] == "0"){
-								return ({[k[0]]: ScoreMastersData['required'] });
-							}if(k[1] == "1"){
-								return({[k[0]]: ScoreMastersData['desired'] });
-							}if(k[1] == "2"){
-								return ({[k[0]]: ScoreMastersData['optional'] });
-							}else{
-								return ({[k[0]]: parseInt(0) });
-							}
-						});
-						
-						ScoreMasters = tempSelect.reduce(function(result, item) {
-						  var key = Object.keys(item)[0]; //first property
-						  result[key] = item[key];
-						  return result;
-						}, {});
-
 						var arrayValue =[];
-						await Scoring.destroy(updated_job.id);
+							await Scoring.destroy(checkDetails.id);
 						for(let i=0;i<responseMatch.length;i++){
-							checkDetails = responseMatch[i];
 							var TotalCheckItems = 0;
+							updated_job = responseMatch[i];
 							arrayValue.push({});
+							// Validate the Score calculate value
+							var tempSelect = Object.entries(updated_job.match_select).map(k =>{ 
+								if(k[1] == "0"){
+									return ({[k[0]]: ScoreMastersData['required'] });
+								}if(k[1] == "1"){
+									return({[k[0]]: ScoreMastersData['desired'] });
+								}if(k[1] == "2"){
+									return ({[k[0]]: ScoreMastersData['optional'] });
+								}else{
+									return ({[k[0]]: parseInt(0) });
+								}
+							});
+							
+							ScoreMasters = tempSelect.reduce(function(result, item) {
+							  var key = Object.keys(item)[0]; //first property
+							  result[key] = item[key];
+							  return result;
+							}, {});
 							//TOTAL EXPERIENCE CHECKING
 							if(checkDetails['experience'] >= updated_job['experience']){
 								arrayValue[i]['total_experience'] = 100 * ScoreMasters['experience'];
@@ -182,21 +248,6 @@ module.exports = async function create(request, response) {
 							}else{
 								arrayValue[i]['job_types'] = 0 * ScoreMasters['type'];
 								TotalCheckItems = TotalCheckItems +ScoreMasters['type'];
-							}
-							//GET NATIONALITY ID TO STRING
-							await Country.find({ id: checkDetails.nationality }).then(nationality => {
-								checkDetails.nationality = nationality.map(function(value) {
-									return value.nicename;
-								});
-							});
-							//GET AUTHORIZED COUNTRY ID TO STRING
-							if(checkDetails.authorized_country && checkDetails.authorized_country.length && checkDetails.authorized_country !=0){
-								
-								await Country.find({ id: checkDetails.authorized_country }).then(authorized_country => {
-									checkDetails.authorized_country = authorized_country.map(function(value) {
-										return value.nicename;
-									});
-								});
 							}
 							//WORK AUTHORIZATION CHECKING
 							if(updated_job.work_authorization ==null || updated_job.work_authorization ==undefined){
@@ -497,8 +548,9 @@ module.exports = async function create(request, response) {
 							arrayValue[i]['job_id'] = updated_job['id'];
 							arrayValue[i]['user_id'] = checkDetails['id'];
 							var post_data ={};
-							post_data['job_id'] = arrayValue[i]['job_id'];
 							post_data['user_id'] = arrayValue[i]['user_id'];
+							
+							post_data['job_id'] = arrayValue[i]['job_id'];
 							await Scoring.find(post_data).exec(async(err, user)=> {
 								if (err) {
 									console.log(err);
@@ -535,15 +587,24 @@ module.exports = async function create(request, response) {
 						
 					}
 				});
-                return response.status(200).json(_response_object);
-            });
-
-        })
-        .catch(err => {
-            console.log(err)
-            _response_object.errors = err.inner;
-            // _response_object.count = err.inner.length;
-            return response.status(400).json(err.inner);
+				sails.sendNativeQuery(Count_Users, async function(err, Count_Users_value) {
+				if (err) {
+					_response_object.matches = false;
+					return response.status(200).json(_response_object);
+				} else {
+					_response_object.matches = false;
+					if(Count_Users_value.rowCount!=0){
+						_response_object.matches = true;
+					}
+					return response.status(200).json(_response_object);
+				}
+				});
+            }
         });
+    }).catch(err => {
+        _response_object.errors = err.inner;
+        _response_object.count = err.inner.length;
+        return response.status(400).json(err.inner);
+    });
 
 };
