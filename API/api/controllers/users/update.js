@@ -253,7 +253,7 @@ module.exports = async function update(request, response) {
 							if(updated_job.work_authorization ==null || updated_job.work_authorization ==undefined){
 								//arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_auth'];
 								arrayValue[i]['work_auth'] = 0;
-							}else if(updated_job.work_authorization){
+							}else if(updated_job.work_authorization == 1 || updated_job.work_authorization == 0 || updated_job.work_authorization == 2 ){
 								if(checkDetails.work_authorization ==1 && updated_job.visa_sponsorship == true){
 									arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_authorization'];
 									TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];

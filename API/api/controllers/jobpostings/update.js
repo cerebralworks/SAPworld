@@ -188,6 +188,9 @@ module.exports = async function create(request, response) {
 								checkDetails.nationality = nationality.map(function(value) {
 									return value.nicename;
 								});
+								if(checkDetails.nationality.length!=0){
+									checkDetails.nationality = checkDetails.nationality[0];
+								}
 							});
 							//GET AUTHORIZED COUNTRY ID TO STRING
 							if(checkDetails.authorized_country && checkDetails.authorized_country.length && checkDetails.authorized_country !=0){
@@ -202,7 +205,7 @@ module.exports = async function create(request, response) {
 							if(updated_job.work_authorization ==null || updated_job.work_authorization ==undefined){
 								//arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_auth'];
 								arrayValue[i]['work_auth'] = 0;
-							}else if(updated_job.work_authorization){
+							}else if( updated_job.work_authorization || updated_job.work_authorization == 1 || updated_job.work_authorization == 0 || updated_job.work_authorization == 2 ){
 								if(checkDetails.work_authorization ==1 && updated_job.visa_sponsorship == true){
 									arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_authorization'];
 									TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];

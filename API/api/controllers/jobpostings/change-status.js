@@ -14,7 +14,7 @@ module.exports = async function update(request, response) {
     const logged_in_user = request.user;
     var input_attributes = [
         {name: 'id', required:true, number: true, min:1},
-        {name: 'status', enum: true, values: _.values(_.pick(sails.config.custom.status_codes,['inactive', 'active'] )), required: true},
+        {name: 'status', enum: true, values: _.values(_.pick(sails.config.custom.status_codes,['inactive', 'active', 'paused'] )), required: true},
         {name: 'status_glossary', required: true}
     ];
     pick_input = [
@@ -63,6 +63,8 @@ module.exports = async function update(request, response) {
     function sendResponse(details){
         if(parseInt(details.status) === 1){
             _response_object.message = 'Job has been activated successfully.';
+        }else if(parseInt(details.status) === 98){
+            _response_object.message = 'Job has been paused successfully.';
         }else{
             _response_object.message = 'Job has been deactivated successfully.';
         }
