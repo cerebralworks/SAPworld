@@ -326,14 +326,20 @@ module.exports = async function list(request, response) {
            // query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.country.columnName} = ANY('${_.get(criteria, 'where.country')}') or ${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = ${filtered_query_data.visa_sponsered} )`);
 		   query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.country.columnName}  = ANY('${_.get(criteria, 'where.country')}'))`);
         }
-		if( filtered_query_data.visa_sponsered == true){
+		if( filtered_query_data.visa_sponsered == true && _.get(criteria, 'where.country') && _.get(criteria, 'where.city')){
 			 query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = true OR (${JobPostings.tableAlias}.${JobPostings.schema.city.columnName}  = ANY('${_.get(criteria, 'where.city')}') AND (${JobPostings.tableAlias}.${JobPostings.schema.country.columnName}  = ANY('${_.get(criteria, 'where.country')}'))))`);
+		}
+		if( filtered_query_data.visa_sponsered == true && _.get(criteria, 'where.country') && !filtered_query_data.city ){
+			 query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = true OR ((${JobPostings.tableAlias}.${JobPostings.schema.country.columnName}  = ANY('${_.get(criteria, 'where.country')}'))))`);
 		}
         if ( filtered_query_data.visa_sponsered == false && !filtered_query_data.visa) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = ${filtered_query_data.visa_sponsered} `);
         }
-        if (filtered_query_data.work_authorization == 1 ) {
+        if (filtered_query_data.work_authorization == 1 && _.get(criteria, 'where.country')  && _.get(criteria, 'where.city')  ) {
             query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = true or (${JobPostings.tableAlias}.${JobPostings.schema.country.columnName} = ANY('${_.get(criteria, 'where.country')}') AND ${JobPostings.tableAlias}.${JobPostings.schema.city.columnName}  = ANY('${_.get(criteria, 'where.city')}') )) `);
+        }
+        if (filtered_query_data.work_authorization == 1 && _.get(criteria, 'where.country') && !filtered_query_data.city  ) {
+            query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = true or (${JobPostings.tableAlias}.${JobPostings.schema.country.columnName} = ANY('${_.get(criteria, 'where.country')}'))) `);
         }
         if (_.get(criteria, 'where.company')) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.company.columnName} = ${_.get(criteria, 'where.company')}`);
