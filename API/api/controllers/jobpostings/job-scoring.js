@@ -70,7 +70,7 @@ module.exports = async function Scoring(request, response) {
 	//Validate to form data
     yup.object().shape({
         id: yup.number().test('job_id', 'Cant find record', async(value) => {
-            return await JobPostings.findOne({ company: logged_in_user.employer_profile.id || 0, id: value, status: 1 }).then((result) => {
+            return await JobPostings.findOne({ company: logged_in_user.employer_profile.id || 0, id: value }).then((result) => {
                 model = result;
                 return true;
             }).catch(err => {
@@ -177,7 +177,7 @@ module.exports = async function Scoring(request, response) {
                     var QueryData =`SELECT job_posting.id,job_posting.title,job_posting.company FROM user_employments "job_posting"
 CROSS JOIN user_profiles "user_profile" 
 LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
-WHERE (job_posting.status = 1) AND scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id AND 
+WHERE (job_posting.status = 1 OR job_posting.status = 98 ) AND scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id AND 
 (job_posting.company = ${model.company} ) AND (user_profile.id = ${profile.id} ) `
 					var counts = sails.sendNativeQuery(QueryData, async function(err, user_matches) {
 						sendResponse(profile, job_postings['rows'][0]['count'], application,user_matches);
