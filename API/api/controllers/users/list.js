@@ -221,7 +221,7 @@ module.exports = async function list(request, response) {
             query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.job_type.columnName} && ARRAY[${filtered_query_data.job_types.toString()}]::text[]`);
         }
 		if (filtered_query_keys.includes('education')) {
-            query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.education_degree.columnName} && ARRAY[${filtered_query_data.education.toString()}]::text[]`);
+            query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.education_degree.columnName} && ARRAY['${filtered_query_data.education.toString()'}]::text[]`);
         }
 		if (filtered_query_keys.includes('language')) {
             //query.where(`(lang->>'language') =ANY('{${filtered_query_data.language.toString()}}')`);
