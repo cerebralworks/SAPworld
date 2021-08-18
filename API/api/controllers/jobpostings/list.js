@@ -11,7 +11,7 @@ const job_type_values = _.values(_.get(sails, 'config.custom.job_types', {}));
 module.exports = async function list(request, response) {
     var _response_object = {};
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['page','user_id','user_list','visa','filterData','skills_filter', 'country', 'sort','visa_sponsered', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'work_authorization', 'zip_code', 'additional_fields']);
+    const filtered_query_data = _.pick(request_query, ['page','is_user_get','user_id','user_list','visa','filterData','skills_filter', 'country', 'sort','visa_sponsered', 'limit', 'expand', 'search', 'status', 'type', 'skills', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'city', 'alphabet', 'location', 'location_miles', 'is_job_applied', 'company', 'work_authorization', 'zip_code', 'additional_fields']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
         { name: 'page', number: true, min: 1 },
@@ -85,6 +85,12 @@ module.exports = async function list(request, response) {
     }
     if (filtered_query_data.visa == "false") {
         filtered_query_data.visa = false;
+    }
+    if (filtered_query_data.is_user_get =="true") {
+        filtered_query_data.is_user_get = true;
+    }
+    if (filtered_query_data.is_user_get == "false") {
+        filtered_query_data.is_user_get = false;
     }
     if (filtered_query_data.skills_filter =="true") {
         filtered_query_data.skills_filter = true;
@@ -270,8 +276,10 @@ module.exports = async function list(request, response) {
 
         query.left_join(`${EmployerProfiles.tableName}`, `${EmployerProfiles.tableAlias}`, `${JobPostings.tableAlias}.company = ${EmployerProfiles.tableAlias}.id`);
 		
-		
-        if (_.get(criteria, 'where.status') || filtered_query_keys.includes('status') ) {
+		if(filtered_query_keys.includes('is_user_get')){
+		 query.where(`( ${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} = ${_.get(criteria, 'where.status')} OR job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${filtered_query_data.user_id} )))`);
+		  query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} != 0`);
+        }else if (_.get(criteria, 'where.status') || filtered_query_keys.includes('status') ) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} = ${_.get(criteria, 'where.status')}`);
         } else {
             // We should not take deleted job posting into the list. ie: status (row_deleted_sign: variable) indicates the job posting is had been removed.
