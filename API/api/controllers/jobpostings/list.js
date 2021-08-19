@@ -124,7 +124,7 @@ module.exports = async function list(request, response) {
 
     //Find the JobPostings based on general criteria.
     const getJobPostings = async(criteria, callback) => {
-        const count_query = await buildNativeQueryToGetJobPostingList(criteria, true,false).then(function(query) {
+        const count_query = await buildNativeQueryToGetJobPostingList(criteria, true,false,false).then(function(query) {
             return query;
         });
 		//To count the fields
@@ -143,7 +143,7 @@ module.exports = async function list(request, response) {
             } else if (_.get(total, 'count.rows[0].count') < 1) {
                 return callback([], {}, _.get(total, 'count.rows[0].count'));
             } else {
-                const list_query = await buildNativeQueryToGetJobPostingList(criteria, false,false,false).then(function(query) {
+                const list_query = await buildNativeQueryToGetJobPostingList(criteria, false,false,false,false).then(function(query) {
                     return query;
                 });
 				//To list the all data's
@@ -160,7 +160,7 @@ module.exports = async function list(request, response) {
                         _response_object.count = _response_object.errors.count;
                         return response.status(400).json(_response_object);
                     } else {
-						const group_query = await buildNativeQueryToGetJobPostingList(criteria, true,true,false).then(function(query) {
+						const group_query = await buildNativeQueryToGetJobPostingList(criteria, true,true,false,false).then(function(query) {
 							return query;
 						});
 						//To get the country based data's
@@ -180,7 +180,7 @@ module.exports = async function list(request, response) {
 								//console.log(group_query_Value);
 								//return callback(_.get(job_postings, 'rows'), {}, parseInt(total.rowCount),_.get(group_query_Value, 'rows'));
 								
-								const visa_query = await buildNativeQueryToGetJobPostingList(criteria, false,false,true).then(function(query) {
+								const visa_query = await buildNativeQueryToGetJobPostingList(criteria, false,false,true,false).then(function(query) {
 									return query;
 								});
 								//To get the country based data's
@@ -198,7 +198,29 @@ module.exports = async function list(request, response) {
 										return response.status(400).json(_response_object);
 									} else {
 										//console.log(group_query_Value);
-										return callback(_.get(job_postings, 'rows'), {}, parseInt(total.rowCount),_.get(group_query_Value, 'rows'), parseInt(visa_query_Value.rowCount));
+										//return callback(_.get(job_postings, 'rows'), {}, parseInt(total.rowCount),_.get(group_query_Value, 'rows'), parseInt(visa_query_Value.rowCount));
+										
+										const status_query = await buildNativeQueryToGetJobPostingList(criteria, false,false,false,true).then(function(query) {
+											return query;
+										});
+										//To get the country based data's
+										sails.sendNativeQuery(status_query, async function(err, status_query_Value) {
+											if (err) {
+												var error = {
+													'field': 'items',
+													'rules': [{
+														'rule': 'invalid',
+														'message': err.message
+													}]
+												};
+												_response_object.errors = [error];
+												_response_object.count = _response_object.errors.count;
+												return response.status(400).json(_response_object);
+											} else {
+												//console.log(group_query_Value);
+												return callback(_.get(job_postings, 'rows'), {}, parseInt(total.rowCount),_.get(group_query_Value, 'rows'), parseInt(visa_query_Value.rowCount),status_query_Value);
+											}
+										});
 									}
 								});
 							}
@@ -211,7 +233,7 @@ module.exports = async function list(request, response) {
     };
 
     //Build sails native query
-    const buildNativeQueryToGetJobPostingList = async(criteria, count = false,group = false,visa = false) => {
+    const buildNativeQueryToGetJobPostingList = async(criteria, count = false,group = false,visa = false,status_Data = false) => {
 
         let query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).
 		from(JobPostings.tableName, JobPostings.tableAlias);
@@ -225,7 +247,7 @@ module.exports = async function list(request, response) {
 			query.where(` ${Scoring.tableAlias}.${Scoring.schema.user_id.columnName} = ${filtered_query_data.user_id}`);
 		}
 		
-        if (!count && !visa) {
+        if (!count && !visa&& !status_Data) {
 			
             await fields.forEach(function(attribute) {
                 query.field(`${JobPostings.tableAlias}.${JobPostings.schema[attribute].columnName}`);
@@ -270,21 +292,39 @@ module.exports = async function list(request, response) {
             query.field("country,count(country)");
         }else if(visa){
             query.field("count(*)");
+        }else if(status_Data){
+            query.field("status,count(status)");
         } else {
             query.field("COUNT(*)");
         }
 
         query.left_join(`${EmployerProfiles.tableName}`, `${EmployerProfiles.tableAlias}`, `${JobPostings.tableAlias}.company = ${EmployerProfiles.tableAlias}.id`);
-		
-		if(filtered_query_keys.includes('is_user_get')){
-		 query.where(`( ${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} = ${_.get(criteria, 'where.status')} OR job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${filtered_query_data.user_id} )))`);
-		  query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} != 0`);
-        }else if (_.get(criteria, 'where.status') || filtered_query_keys.includes('status') ) {
-            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} = ${_.get(criteria, 'where.status')}`);
-        } else {
-            // We should not take deleted job posting into the list. ie: status (row_deleted_sign: variable) indicates the job posting is had been removed.
-            query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} != ${row_deleted_sign}`);
-        }
+		if(status_Data){
+			query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} != ${row_deleted_sign}`);
+			if( filtered_query_data.is_user_get == false){
+				query.where(`( ${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} = 98 AND job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${filtered_query_data.user_id} )))`);
+				query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} != 0`);
+			 }else if(filtered_query_data.is_user_get == true ){
+				 query.where(`( ${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} = 98 AND job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${filtered_query_data.user_id} )))`);
+				 query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} != 0`);
+			 
+			 }
+		}else{
+			if(filtered_query_keys.includes('is_user_get')){
+			 if( filtered_query_data.is_user_get == true){
+				query.where(`( ${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} = ${_.get(criteria, 'where.status')} AND job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${filtered_query_data.user_id} )))`);
+				query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} != 0`);
+			 }else{
+				query.where(`( ${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} = ${_.get(criteria, 'where.status')} OR job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${filtered_query_data.user_id} )))`);
+				query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} != 0`);
+			 }
+			}else if (_.get(criteria, 'where.status') || filtered_query_keys.includes('status') ) {
+				query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} = ${_.get(criteria, 'where.status')}`);
+			} else {
+				// We should not take deleted job posting into the list. ie: status (row_deleted_sign: variable) indicates the job posting is had been removed.
+				query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} != ${row_deleted_sign}`);
+			}
+		}
         if (_.get(criteria, 'where.alphabet')) {
             query.where(`LOWER(${JobPostings.tableAlias}.${JobPostings.schema.title.columnName}) LIKE '${_.get(criteria, 'where.alphabet')}%'`);
         }
@@ -372,6 +412,9 @@ module.exports = async function list(request, response) {
 				query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${Scoring.tableAlias}.${Scoring.schema.id.columnName}`);
 				query.order('scoring.score',  false );
 				return query.toString();
+			}else if (status_Data) {
+				query.group(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName}`);
+				return query.toString();
 			}else {
 				query.order('scoring.score',  false );
 				if (_.get(criteria, 'page')) {
@@ -412,12 +455,13 @@ module.exports = async function list(request, response) {
     }
 
     //Build and sending response
-    const sendResponse = (items, details, total,country,visa) => {
+    const sendResponse = (items, details, total,country,visa,status) => {
         _response_object.message = 'Job items retrieved successfully.';
         var meta = {};
         meta['count'] = items.length;
         meta['total'] = total;
         meta['visa'] = visa;
+        meta['status'] = status['rows'];
         meta['page'] = filtered_query_data.page ? filtered_query_data.page : 1;
         meta['limit'] = filtered_query_data.limit;
         meta['photo'] = {
@@ -521,8 +565,8 @@ module.exports = async function list(request, response) {
                 }
             }
             //Preparing data
-            await getJobPostings(criteria, function(job_postings, details, total,country,visa) {
-                sendResponse(job_postings, details, total,country,visa);
+            await getJobPostings(criteria, function(job_postings, details, total,country,visa,status) {
+                sendResponse(job_postings, details, total,country,visa,status);
             });
         } else {
             _response_object.errors = errors;
