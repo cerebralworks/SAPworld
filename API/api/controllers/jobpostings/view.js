@@ -9,7 +9,7 @@
 module.exports = async function view(request, response) {
 
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['id','user_id', 'expand', 'additional_fields', 'is_job_applied']);
+    const filtered_query_data = _.pick(request_query, ['id','is_users_view','user_id', 'expand', 'additional_fields', 'is_job_applied']);
     var _response_object = {};
     var input_attributes = [
         { name: 'id', required: true, number: true, min: 1 }
@@ -25,12 +25,21 @@ module.exports = async function view(request, response) {
 
     // Check whether the job posting id is exits in db.
     function isJobPostingExist(id, successCallBack) {
-        let job_model = JobPostings.findOne({
-            where: {
-                id: id,
-                'status': { '!=': _.get(sails.config.custom.status_codes, 'deleted') }
-            }
-        }).populate('company');
+		if(filtered_query_data.is_users_view){
+			let job_model = JobPostings.findOne({
+				where: {
+					id: id
+				}
+			}).populate('company');
+		}else{
+			let job_model = JobPostings.findOne({
+				where: {
+					id: id,
+					'status': { '!=': _.get(sails.config.custom.status_codes, 'deleted') }
+				}
+			}).populate('company');
+		}
+        
 
         if (expand.includes('category')) {
             job_model.populate('category');
