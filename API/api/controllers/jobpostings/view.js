@@ -25,17 +25,18 @@ module.exports = async function view(request, response) {
 
     // Check whether the job posting id is exits in db.
     function isJobPostingExist(id, successCallBack) {
-		if(filtered_query_data.is_users_view){
-			let job_model = JobPostings.findOne({
-				where: {
-					id: id
-				}
-			}).populate('company');
-		}else{
-			let job_model = JobPostings.findOne({
+		let job_model = JobPostings.findOne({
 				where: {
 					id: id,
 					'status': { '!=': _.get(sails.config.custom.status_codes, 'deleted') }
+				}
+			}).populate('company');
+			
+		if(filtered_query_data.is_users_view){
+			job_model = '';
+			job_model = JobPostings.findOne({
+				where: {
+					id: id
 				}
 			}).populate('company');
 		}
