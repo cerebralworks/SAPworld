@@ -6,11 +6,32 @@
 
 /* global _, JobPostings, sails */
 
-module.exports = async function create(request, response) {
+module.exports = function create(request, response) {
     const post_request_data = request.body;
     const logged_in_user = request.user;
     var _response_object = {};
     let yup = sails.yup;
+	
+	var programming_id = [];
+	var programming_ids = '';
+	var programming_skills = [];
+	for(let i=0;i<post_request_data.programming_skills.length;i++){
+		if(post_request_data.programming_skills[i] !=null &&post_request_data.programming_skills[i] !=undefined){
+			post_request_data.programming_skills[i] = post_request_data.programming_skills[i].replace(/\b\w/g, l => l.toUpperCase());
+			programming_skills.push(post_request_data.programming_skills[i]);
+		}
+	}
+	for(let i=0;i<post_request_data.programming_skills.length;i++){
+		if(post_request_data.programming_skills[i] !=null &&post_request_data.programming_skills[i] !=undefined){
+			var tempCriteria = {'name':post_request_data.programming_skills[i]};
+			programming_ids = Program.findOrCreate(tempCriteria,tempCriteria,function (err, record){
+				if(record && record['id']){
+					programming_id.push(record['id']);
+				}
+			});
+		}
+	}
+	
     let schema = yup.object().shape({
         title: yup.string().required().lowercase().min(3),
         type: yup.string().required(),
@@ -38,6 +59,7 @@ module.exports = async function create(request, response) {
         })).required(),
         skills: yup.array().of(yup.number().positive()),
         programming_skills: yup.array().of(yup.string()).required(),
+        programming_id: yup.array().of(yup.string()),
         optinal_skills: yup.array().of(yup.string()),
         certification: yup.array().of(yup.string()),
         travel_opportunity: yup.number().required().oneOf([0, 25, 50, 75, 100]),
@@ -55,7 +77,7 @@ module.exports = async function create(request, response) {
             then: yup.string().required()
         }),
     });
-    await schema.validate(post_request_data, { abortEarly: false }).then(async value => {
+    schema.validate(post_request_data, { abortEarly: false }).then(async value => {
         value.company = logged_in_user.employer_profile.id;
         var point = value.latlng['lng'] + ' ' + value.latlng['lat'];
         value.latlng_text = value.latlng.lat + ',' + value.latlng.lng;
@@ -71,6 +93,8 @@ module.exports = async function create(request, response) {
 		if(!value.skills || !value.skills.length || value.skills.length ==0){
 			value.skills = value.hands_on_skills;
 		}
+        value['programming_id'] = programming_id;
+        value['programming_skills'] = programming_skills;
 		
         //Creating record
         JobPostings.create(value, async function(err, job) {

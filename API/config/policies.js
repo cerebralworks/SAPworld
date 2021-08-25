@@ -136,6 +136,9 @@ module.exports.policies = {
     'skill-tags/list': ['noOauthBearer'],
     'skill-tags/create': ['oauthBearer', 'isUser'],
 
+    'program/list': ['noOauthBearer'],
+    'program/create': ['noOauthBearer'],
+	
     'subscription-plans/create': ['oauthBearer', 'isAdmin'],
     'subscription-plans/update': ['oauthBearer', 'isAdmin'],
     'subscription-plans/change-status': ['oauthBearer', 'isAdmin'],

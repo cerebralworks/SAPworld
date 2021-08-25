@@ -61,11 +61,12 @@ module.exports = {
         education: { type: 'string', allowNull: true },
         employer_role_type: { type: 'string', allowNull: true  },
         need_reference: { type: 'boolean', defaultsTo: false },
-        facing_role: { type: 'string', allowNull: true },
-        training_experience: { type: 'string', allowNull: true },
+        //facing_role: { type: 'string', allowNull: true },
+       // training_experience: { type: 'string', allowNull: true },
 		authorized_to_work: { type: 'ref', columnType: 'bigint[]' },
         hands_on_skills: { type: 'ref', columnType: 'bigint[]' },
         others: { type: 'ref', columnType: 'json[]' },
+        programming_id: { type: 'ref', columnType: 'bigint[]' }
 
     }
 };
