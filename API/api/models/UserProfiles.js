@@ -54,7 +54,7 @@ module.exports = {
         latlng_text: { type: 'string' },
         doc_resume: { type: 'ref', columnType: 'json[]' },
         status: { type: 'number', allowNull: true },
-        status_glossary: { type: 'string' },
+        //status_glossary: { type: 'string' },
         privacy_protection: { type: 'ref', columnType: 'json' },
 		
 		nationality: { type: 'string', allowNull: true },
