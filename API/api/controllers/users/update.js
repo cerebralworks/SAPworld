@@ -5,12 +5,33 @@
  */
 
 /* global _, UserProfiles, UserInformation, Users, sails */
-module.exports = async function update(request, response) {
+module.exports = function update(request, response) {
     const post_request_data = request.body;
     const logged_in_user = request.user;
     post_request_data.id = logged_in_user.id;
     var _response_object = {};
     let yup = sails.yup;
+	
+	var programming_id = [];
+	var programming_ids = '';
+	var programming_skills = [];
+	for(let i=0;i<post_request_data.programming_skills.length;i++){
+		if(post_request_data.programming_skills[i] !=null &&post_request_data.programming_skills[i] !=undefined){
+			post_request_data.programming_skills[i] = post_request_data.programming_skills[i].replace(/\b\w/g, l => l.toUpperCase());
+			programming_skills.push(post_request_data.programming_skills[i]);
+		}
+	}
+	for(let i=0;i<post_request_data.programming_skills.length;i++){
+		if(post_request_data.programming_skills[i] !=null &&post_request_data.programming_skills[i] !=undefined){
+			var tempCriteria = {'name':post_request_data.programming_skills[i]};
+			programming_ids =  Program.findOrCreate(tempCriteria,tempCriteria, function (err, record){
+				if(record && record['id']){
+					programming_id.push(record['id']);
+				}
+			});
+		}
+	}
+	//console.log(programming_id);
     let schema = yup.object().shape({
         id: yup.number().test('user_profile', 'Cant find record', async(value) => {
             return await UserProfiles.find().where({ account: value }).limit(1).then(result => {
@@ -57,6 +78,7 @@ module.exports = async function update(request, response) {
         })).required(),
         skills: yup.array().of(yup.number().positive()),
         programming_skills: yup.array().of(yup.string()).required(),
+        programming_id: yup.array().of(yup.string()),
         other_skills: yup.array().of(yup.string()),
         certification: yup.array().of(yup.string()),
         job_type: yup.array().of(yup.string()),
@@ -76,7 +98,7 @@ module.exports = async function update(request, response) {
             available_for_opportunity: yup.boolean().default(true),
         }),
     });
-    await schema.validate(post_request_data, { abortEarly: false }).then(async value => {
+    schema.validate(post_request_data, { abortEarly: false }).then(async value => {
 		if(value.latlng['lng'] && value.latlng['lng'] !=undefined && value.latlng['lng'] !="undefined" &&
 		value.latlng['lat'] && value.latlng['lat'] !=undefined && value.latlng['lat'] !="undefined"){
 		var point = value.latlng['lng'] + ' ' + value.latlng['lat'];
@@ -95,6 +117,8 @@ module.exports = async function update(request, response) {
 			value.phone =null;
 		}
         value.status = 1;
+        value['programming_id'] = programming_id;
+        value['programming_skills'] = programming_skills;
 		var arr1= value.skills;
 		var arr2= value.hands_on_experience;
 		if ( arr2 && Array.isArray(arr2)) {
@@ -127,7 +151,8 @@ module.exports = async function update(request, response) {
 			value.other_countries = [];
 			value.other_cities = [];
 		}
-		//console.log(value);
+		
+		console.log(value);
 		//Update the user profile details
         UserProfiles.update(logged_in_user.user_profile.id, value, async function(err, profile) {
             if (err) {

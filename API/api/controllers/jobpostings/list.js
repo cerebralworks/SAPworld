@@ -307,7 +307,6 @@ module.exports = async function list(request, response) {
 			 }else if(filtered_query_data.is_user_get == true ){
 				 query.where(`( ${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} = 98 AND job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${filtered_query_data.user_id} )))`);
 				 query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} != 0`);
-			 
 			 }
 		}else{
 			if(filtered_query_keys.includes('is_user_get')){

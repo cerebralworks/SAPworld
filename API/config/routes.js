@@ -252,6 +252,11 @@ module.exports.routes = {
     'GET /skill-tags/create': nonGetHandler,
     'POST /skill-tags/create': { controller: 'skill-tags', action: 'create' },
 
+    /*Program routes*/
+    'GET /program/list': { controller: 'program', action: 'list' },
+    'GET /program/create': nonGetHandler,
+    'POST /program/create': { controller: 'program', action: 'create' },
+	
     /*Subscription plans routes*/
     'GET /subscription-plans/create': nonGetHandler,
     'POST /subscription-plans/create': { controller: 'subscription-plans', action: 'create' },
