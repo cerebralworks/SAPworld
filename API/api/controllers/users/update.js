@@ -25,6 +25,9 @@ module.exports = function update(request, response) {
 		if(post_request_data.programming_skills[i] !=null &&post_request_data.programming_skills[i] !=undefined){
 			var tempCriteria = {'name':post_request_data.programming_skills[i]};
 			programming_ids =  Program.findOrCreate(tempCriteria,tempCriteria, function (err, record){
+				if(err){
+					console.log(err);
+				}
 				if(record && record['id']){
 					programming_id.push(record['id']);
 				}
