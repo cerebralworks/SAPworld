@@ -42,7 +42,6 @@ module.exports = {
             type: 'ref',
             columnType: 'text[]'
         },
-        job_type: { type: 'ref', columnType: 'text[]' },
         job_role: { type: 'string', allowNull: true },
         preferred_location: { type: 'number', allowNull: true },
         availability: { type: 'number', allowNull: true },
@@ -57,26 +56,33 @@ module.exports = {
         status: { type: 'number', allowNull: true },
         status_glossary: { type: 'string' },
         privacy_protection: { type: 'ref', columnType: 'json' },
-		account: {
-            model: 'users'
-        },
+		
 		nationality: { type: 'string', allowNull: true },
 		previous_employee: { type: 'ref', columnType: 'bigint[]' },
 		authorized_country: { type: 'ref', columnType: 'bigint[]' },
-		language_known: { type: 'ref', columnType: 'json[]' },
-		visa_type: { type: 'ref', columnType: 'text[]' },
+		
+		
 		reference: { type: 'ref', columnType: 'json[]' },
 		employer_role_type: { type: 'string', allowNull: true },
 		knowledge_on: { type: 'ref', columnType: 'bigint[]' },
-		other_cities: { type: 'ref', columnType: 'text[]' },
 		other_countries: { type: 'ref', columnType: 'text[]' },
-        visa_sponsered: { type: 'boolean', allowNull: true },
-        preferred_locations: { type: 'ref', columnType: 'json[]' },
+		account: {
+            model: 'users'
+        },
+		language_known: { type: 'ref', columnType: 'json[]' },
+		visa_type: { type: 'ref', columnType: 'text[]' },
 		doc_cover: { type: 'ref', columnType: 'json[]' },
-        hands_on_skills: { type: 'ref', columnType: 'bigint[]' },
+       
+		
+        visa_sponsered: { type: 'boolean', allowNull: true },
+        job_type: { type: 'ref', columnType: 'text[]' },
+        preferred_locations: { type: 'ref', columnType: 'json[]' },
+		 hands_on_skills: { type: 'ref', columnType: 'bigint[]' },
         education_degree: { type: 'ref', columnType: 'text[]' },
         language_id: { type: 'ref', columnType: 'bigint[]' },
+		other_cities: { type: 'ref', columnType: 'text[]' },
         programming_id: { type: 'ref', columnType: 'bigint[]' }
+		
 		
 		
         
