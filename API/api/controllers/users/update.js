@@ -5,7 +5,7 @@
  */
 
 /* global _, UserProfiles, UserInformation, Users, sails */
-module.exports = function update(request, response) {
+module.exports =async function update(request, response) {
     const post_request_data = request.body;
     const logged_in_user = request.user;
     post_request_data.id = logged_in_user.id;
@@ -98,7 +98,7 @@ module.exports = function update(request, response) {
             available_for_opportunity: yup.boolean().default(true),
         }),
     });
-    schema.validate(post_request_data, { abortEarly: false }).then(async value => {
+    await schema.validate(post_request_data, { abortEarly: false }).then(async value => {
 		if(value.latlng['lng'] && value.latlng['lng'] !=undefined && value.latlng['lng'] !="undefined" &&
 		value.latlng['lat'] && value.latlng['lat'] !=undefined && value.latlng['lat'] !="undefined"){
 		var point = value.latlng['lng'] + ' ' + value.latlng['lat'];
