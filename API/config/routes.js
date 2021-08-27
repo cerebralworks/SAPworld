@@ -184,6 +184,9 @@ module.exports.routes = {
     'GET /admins/create': nonGetHandler,
     'POST /admins/create': { controller: 'admins', action: 'create' },
     'GET /admins/profile': { controller: 'admins', action: 'profile' },
+	'GET /admins/dashboard-details': nonGetHandler,
+    'POST /admins/dashboard-details': { controller: 'admins', action: 'dashboard-details' },
+    'GET /admins/list': { controller: 'admins', action: 'list' },
 
     /*Location routes*/
     'GET /locations/states': { controller: 'locations', action: 'states' },
