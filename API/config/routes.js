@@ -180,12 +180,17 @@ module.exports.routes = {
     'GET /accounts/update-password': nonGetHandler,
     'POST /accounts/update-password': { controller: 'accounts', action: 'update-password' },
 
+    
     /*Admins routes*/
     'GET /admins/create': nonGetHandler,
     'POST /admins/create': { controller: 'admins', action: 'create' },
     'GET /admins/profile': { controller: 'admins', action: 'profile' },
 	'GET /admins/dashboard-details': nonGetHandler,
     'POST /admins/dashboard-details': { controller: 'admins', action: 'dashboard-details' },
+	'GET /admins/user-list': nonGetHandler,
+    'POST /admins/user-list': { controller: 'admins', action: 'user-list' },
+	'GET /admins/employee-list': nonGetHandler,
+    'POST /admins/employee-list': { controller: 'admins', action: 'employee-list' },
     'GET /admins/list': { controller: 'admins', action: 'list' },
 
     /*Location routes*/

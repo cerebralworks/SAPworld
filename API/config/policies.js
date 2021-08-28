@@ -94,10 +94,13 @@ module.exports.policies = {
     'accounts/verify': ['noOauthBearer'],
     'accounts/update-password': ['oauthBearer'],
 
-	'admins/profile': ['oauthBearer', 'isAdmin'],
+
+    'admins/profile': ['oauthBearer', 'isAdmin'],
     'admins/create': ['oauthBearer', 'isAdmin'],
 	'admins/list': ['oauthBearer', 'isAdmin'],
 	'admins/dashboard-details': ['oauthBearer', 'isAdmin'],
+	'admins/employee-list': ['oauthBearer', 'isAdmin'],
+	'admins/user-list': ['oauthBearer', 'isAdmin'],
 
     'locations/states': ['noOauthBearer'],
     'locations/countries': ['noOauthBearer'],

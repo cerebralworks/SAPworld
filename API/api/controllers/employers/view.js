@@ -12,7 +12,7 @@ module.exports = async function list(request, response) {
     var _response_object = {};
     const request_query = request.allParams();
     const logged_in_user = request.user;
-    const filtered_query_data = _.pick(request_query, ['id', 'expand']);
+    const filtered_query_data = _.pick(request_query, ['id', 'expand', 'company']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
         { name: 'id', required: true, number: true },
@@ -27,6 +27,7 @@ module.exports = async function list(request, response) {
         //Initializing query
         var query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(EmployerProfiles.tableName, EmployerProfiles.tableAlias);
         query.left_join(Users.tableName, Users.tableAlias, Users.tableAlias + '.' + Users.schema.id.columnName + "=" + EmployerProfiles.tableAlias + '.' + EmployerProfiles.schema.account.columnName);
+        query.left_join(CompanyProfile.tableName, CompanyProfile.tableAlias, CompanyProfile.tableAlias + '.' + CompanyProfile.schema.user_id.columnName + "=" + EmployerProfiles.tableAlias + '.' + EmployerProfiles.schema.account.columnName);
         var group_by = EmployerProfiles.tableAlias + "." + EmployerProfiles.schema.id.columnName;
         query.where(EmployerProfiles.tableAlias + '.' + EmployerProfiles.schema.id.columnName + "=" + parseInt(filtered_query_data.id));
         //Selecting fields
@@ -48,6 +49,25 @@ module.exports = async function list(request, response) {
             group_by += ',' + Users.tableAlias + "." + Users.schema.id.columnName;
             query.field(account, 'account');
         }
+        if (expand.includes('company')) {
+            company_profiles = _.without(Object.keys(CompanyProfile.schema), 'status_glossary');
+            company_profile = '';
+            company_profiles.map(function(value) {
+                if (CompanyProfile.schema[value].columnName || typeof CompanyProfile.schema[value].columnName !== "undefined") {
+                    company_profile += "'" + value + "'," + CompanyProfile.tableAlias + "." + CompanyProfile.schema[value].columnName + ",";
+                }
+            });
+            company_profile = 'json_build_object(' + company_profile.slice(0, -1) + ')';
+            group_by += ',' + CompanyProfile.tableAlias + "." + CompanyProfile.schema.id.columnName;
+            query.field(company_profile, 'company_profile');
+        }
+		if (expand.includes('job')) {
+			jobs = `(SELECT count(*)
+			FROM user_employments "job_posting" 
+			LEFT JOIN employer_profiles "employer" ON (job_posting.company = employer.id)
+			where job_posting.status != 3)`;
+			query.field(jobs, 'jobs');
+		}
         if (expand.includes('city')) {
             let sub_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(Cities.tableName, Cities.tableAlias);
             sub_query.where(Cities.tableAlias + "." + Cities.schema.id.columnName + '=' + EmployerProfiles.tableAlias + "." + EmployerProfiles.schema.city.columnName);
