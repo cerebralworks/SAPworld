@@ -124,6 +124,9 @@ module.exports = async function apply(request, response) {
                 return value.name;
             });
         });
+		job.experience = user.experience;
+		job.sap_experience = user.sap_experience;
+		job.availability = user.availability;
 		if(job.availability=="0"){
 			job.availability = "Immediately"
 		}else{
