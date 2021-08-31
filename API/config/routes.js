@@ -111,6 +111,8 @@ module.exports.routes = {
     'POST /users/educations/delete': { controller: 'users', action: 'educations/delete' },
     'GET /users/change-status': nonGetHandler,
     'POST /users/change-status/:id': { controller: 'users', action: 'change-status' },
+    'GET /users/user-dashboard': nonGetHandler,
+    'POST /users/user-dashboard': { controller: 'users', action: 'user-dashboard' },
     'GET /users/job-approach-invitation': { controller: 'users', action: 'job-approach-invitation' },
     /*Employers routes*/
     'GET /employers/list': { controller: 'employers', action: 'list' },

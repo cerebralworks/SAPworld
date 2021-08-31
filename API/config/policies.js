@@ -47,6 +47,7 @@ module.exports.policies = {
     'users/educations/create': ['oauthBearer', 'isUser'],
     'users/educations/update': ['oauthBearer', 'isUser'],
     'users/educations/delete': ['oauthBearer', 'isUser'],
+    'users/user-dashboard': ['oauthBearer', 'isUser'],
     'users/list': ['oauthBearer', 'isEmployerOrAdmin'],
     'users/change-status': ['oauthBearer', 'isAdmin'],
     'users/job-approach-invitation': ['noOauthBearer'],
