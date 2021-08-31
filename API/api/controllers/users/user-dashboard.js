@@ -21,7 +21,7 @@ module.exports = async function UserDashboard(request, response) {
 				Query = `SELECT  job_posting.country,count(distinct(job_posting.id)) FROM user_employments "job_posting"
 				CROSS JOIN user_profiles "user_profile" 
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-				WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND
+				WHERE (job_posting.status != 3 )  AND
 				(user_account.status=1)  AND user_profile.hands_on_skills && job_posting.hands_on_skills 
 				AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by job_posting.country `
 			}
@@ -30,7 +30,7 @@ module.exports = async function UserDashboard(request, response) {
 				Query = `SELECT  job_posting.availability,count(distinct(job_posting.id)) FROM user_employments "job_posting"
 				CROSS JOIN user_profiles "user_profile" 
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-				WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND
+				WHERE (job_posting.status != 3 )  AND
 				(user_account.status=1)  AND user_profile.hands_on_skills && job_posting.hands_on_skills 
 				AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by job_posting.availability `
 			}
@@ -39,16 +39,16 @@ module.exports = async function UserDashboard(request, response) {
 				Query = `SELECT  job_posting.type,count(distinct(job_posting.id)) FROM user_employments "job_posting"
 				CROSS JOIN user_profiles "user_profile" 
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-				WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND
+				WHERE (job_posting.status != 3 )  AND
 				(user_account.status=1)  AND user_profile.hands_on_skills && job_posting.hands_on_skills 
 				AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by job_posting.type `
 			}
 			if(filtered_query_data.view =='visa'){
 				//To get the Matched type based Details
 				Query = `SELECT  job_posting.country,count(distinct(job_posting.id)) FROM user_employments "job_posting"
-				CROSS JOIN user_profiles "user_profile" 
+				LEFT JOIN user_profiles "user_profile" 
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-				WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND
+				WHERE (job_posting.status != 3 ) AND
 				(user_account.status=1)  AND user_profile.hands_on_skills && job_posting.hands_on_skills AND job_posting.visa_sponsorship = true  
 				AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by job_posting.country`
 			}
@@ -56,10 +56,9 @@ module.exports = async function UserDashboard(request, response) {
 				//To get the Matched type based Details
 				Query = `SELECT  job_posting.country ,count(distinct(job_posting.id)) FROM job_applications "job_application"
 				LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 	
-				CROSS JOIN user_profiles "user_profile" 
-				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-				WHERE (job_posting.status = 1 OR  job_posting.status=0 OR  job_posting.status=98 ) AND (user_profile.id=${parseInt(filtered_query_data.id)})  
-				AND (user_account.status=1) group by job_posting.country `
+				LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) 
+				WHERE   (user_profile.id=${parseInt(filtered_query_data.id)} )  
+				 group by job_posting.country `
 			}
 			
 			sails.sendNativeQuery(Query, async function(err, details) {
