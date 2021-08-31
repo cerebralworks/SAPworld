@@ -127,10 +127,10 @@ module.exports = async function apply(request, response) {
 		job.experience = user.experience;
 		job.sap_experience = user.sap_experience;
 		job.availability = user.availability;
-		if(job.availability=="0"){
+		if(user.availability=="0"){
 			job.availability = "Immediately"
 		}else{
-			job.availability = job.availability+' Days'
+			job.availability = user.availability+' Days'
 		}
 		if(job.certification ==null || job.certification ==undefined){
 			job.certification = [];
