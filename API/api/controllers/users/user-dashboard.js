@@ -46,7 +46,7 @@ module.exports = async function UserDashboard(request, response) {
 			if(filtered_query_data.view =='visa'){
 				//To get the Matched type based Details
 				Query = `SELECT  job_posting.country,count(distinct(job_posting.id)) FROM user_employments "job_posting"
-				LEFT JOIN user_profiles "user_profile" 
+				CROSS JOIN user_profiles "user_profile" 
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 				WHERE (job_posting.status != 3 ) AND
 				(user_account.status=1)  AND user_profile.hands_on_skills && job_posting.hands_on_skills AND job_posting.visa_sponsorship = true  
