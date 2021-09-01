@@ -72,9 +72,9 @@ module.exports = async function Scoring(request, response) {
         model = logged_in_user.user_profile;
         // console.log(model.latlng['coordinates'].toString());
         var list_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(JobPostings.tableName, JobPostings.tableAlias);
-		
             list_query.where(`( job_posting.status =1 OR job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${parseInt(filtered_query_data.id)} ))  )`);
             list_query.where("job_posting.status !=0");
+            list_query.where("job_posting.status !=3");
             list_query.where("job_posting.experience <=" + model.experience);
 			
 			list_query.left_join(`scorings "scoring" ON (scoring.job_id = job_posting.id) `);
