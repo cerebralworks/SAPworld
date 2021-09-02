@@ -42,19 +42,26 @@ module.exports = async function EmployersDashboard(request, response) {
 	AND (COALESCE(user_profile.experience) >= job_posting.experience)
 			group by job_posting.id `
 			}
+			if(filtered_query_data.view =='applicant'){
+				//To get the Matched applicant based Details
+				Query =`SELECT COUNT(DISTINCT job_application.id),job_posting.id,job_posting.title,job_posting.id FROM  job_applications "job_application" 
+LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 
+LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) WHERE (job_posting.status = 1 OR  job_posting.status=0 OR  job_posting.status=98 ) AND
+(job_application.status=1) AND (job_application.short_listed IS NULL or job_application.short_listed != true) AND (job_application.employer=${parseInt(filtered_query_data.id)}) Group BY job_posting.id`
+			}
 			if(filtered_query_data.view =='shortlisted'){
 				//To get the Matched shortlisted based Details
-				Query = `SELECT COUNT(DISTINCT job_application.id),job_posting.id FROM  job_applications "job_application" 
+				Query = `SELECT COUNT(DISTINCT job_application.id),job_posting.id,job_posting.title,job_posting.id FROM  job_applications "job_application" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 
 LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) WHERE  (job_posting.status = 1 OR  job_posting.status=98 OR  job_posting.status=0 ) AND
 job_application.short_listed = true AND (job_application.employer=${parseInt(filtered_query_data.id)}) Group BY job_posting.id`
 			}
 			if(filtered_query_data.view =='hired'){
 				//To get the Matched type based Details
-				Query = `SELECT COUNT(DISTINCT job_application.id),job_posting.id FROM  job_applications "job_application" 
+				Query = `SELECT COUNT(DISTINCT job_application.id),job_posting.id,job_posting.title,job_posting.id FROM  job_applications "job_application" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 
 LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) WHERE  (job_posting.status = 1 OR  job_posting.status=98 OR  job_posting.status=0 ) AND
-job_application.short_listed = true AND (job_application.employer=${parseInt(filtered_query_data.id)}) Group BY job_posting.id`
+job_application.short_listed = true AND job_application.status =  2 AND (job_application.employer=${parseInt(filtered_query_data.id)}) Group BY job_posting.id`
 			}
 			
 			sails.sendNativeQuery(Query, async function(err, details) {
@@ -83,7 +90,6 @@ job_application.short_listed = true AND (job_application.employer=${parseInt(fil
 
     //Build and sending response
     const sendResponse = (users) => {
-        _response_object.message = 'Dashboard Details Retrived successfully.';
         _response_object.data = users;
         _response_object.count = users.length;
         return response.ok(_response_object);
