@@ -91,7 +91,6 @@ module.exports = async function UserDashboard(request, response) {
 
     //Build and sending response
     const sendResponse = (users) => {
-        _response_object.message = 'Dashboard Details Retrived successfully.';
         _response_object.data = users;
         _response_object.count = users.length;
         return response.ok(_response_object);
