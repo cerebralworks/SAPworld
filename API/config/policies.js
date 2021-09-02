@@ -66,6 +66,7 @@ module.exports.policies = {
     'employers/company-profile': ['oauthBearer', 'isEmployer'],
     'employers/saved-profiles': ['oauthBearer', 'isEmployer'],
     'employers/save-profile': ['oauthBearer', 'isEmployer'],
+    'employers/employers-dashboard': ['oauthBearer', 'isEmployer'],
 
 
     'jobpostings/create': ['oauthBearer', 'isEmployer'],
