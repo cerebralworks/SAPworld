@@ -57,7 +57,20 @@ module.exports.routes = {
      ***************************************************************************/
 	/*Country routes*/
     'GET /country/list': { controller: 'country', action: 'list' },
+	'POST /country/create': { controller: 'country', action: 'create' },
+    'POST /country/find': { controller: 'country', action: 'find' },
+    'GET /country/findone/:id': { controller: 'country', action: 'findone' },
+    'PUT /country/update/:id': { controller: 'country', action: 'update' },
+    'POST /country/delete' : { controller: 'country', action: 'delete' },
+	
+	
+	/*language routes*/
     'GET /language/list': { controller: 'language', action: 'list' },
+    'POST /language/find': { controller: 'language', action: 'find' },
+    'POST /language/create': { controller: 'language', action: 'create' },
+    'GET /language/findone/:id': { controller: 'language', action: 'findone' },
+    'PUT /language/update/:id': { controller: 'language', action: 'update' },
+    'POST /language/delete' : { controller: 'language', action: 'delete' },
 	
     /*Client routes*/
     'GET /clients/create': nonGetHandler,
@@ -184,7 +197,6 @@ module.exports.routes = {
     'GET /accounts/update-password': nonGetHandler,
     'POST /accounts/update-password': { controller: 'accounts', action: 'update-password' },
 
-    
     /*Admins routes*/
     'GET /admins/create': nonGetHandler,
     'POST /admins/create': { controller: 'admins', action: 'create' },
@@ -253,22 +265,34 @@ module.exports.routes = {
     'GET /educations/institutions/list': { controller: 'educations', action: 'institutions/list' },
 
     /*Industries routes*/
-    'GET /industries/list': { controller: 'industriesController', action: 'list' },
-    'GET /industries/view/:id': { controller: 'industriesController', action: 'view' },
-    'POST /industries/update-photo/:id': { controller: 'industriesController', action: 'update-photo' },
-    'POST /industries/create': 'industriesController.create',
-    'POST /industries/update': 'industriesController.update',
+    'GET /industries/list': { controller: 'industries', action: 'list' },
+    'GET /industries/view/:id': { controller: 'industries', action: 'view' },
+    'POST /industries/update-photo/:id': { controller: 'industries', action: 'update-photo' },
+    'POST /industries/create': { controller: 'industries', action: 'create' },
+	
+    'POST /industries/update/:id': { controller: 'industries', action: 'update' },
+    'GET /industries/find': { controller: 'industries', action: 'find' },
+    'GET /industries/findone/:id': { controller: 'industries', action: 'findone' },
+    'DELETE /industries/delete/:id' : { controller : 'industries' , action : 'delete'},
 
     /*Skill_tags routes*/
     'GET /skill-tags/list': { controller: 'skill-tags', action: 'list' },
     'GET /skill-tags/create': nonGetHandler,
     'POST /skill-tags/create': { controller: 'skill-tags', action: 'create' },
-
+	
+    'POST /skill-tags/creates': { controller: 'skill-tags', action: 'creates' },
+    'POST /skill-tags/update/:id': { controller: 'skill-tags', action: 'update' },
+    'GET /skill-tags/find': { controller: 'skill-tags', action: 'find' },
+    'GET /skill-tags/findone/:id': { controller: 'skill-tags', action: 'findone' },
+    'DELETE /skill-tags/delete/:id': { controller: 'skill-tags', action: 'delete' },
+	
+	
     /*Program routes*/
     'GET /program/list': { controller: 'program', action: 'list' },
     'GET /program/create': nonGetHandler,
     'POST /program/create': { controller: 'program', action: 'create' },
-	
+
+
     /*Subscription plans routes*/
     'GET /subscription-plans/create': nonGetHandler,
     'POST /subscription-plans/create': { controller: 'subscription-plans', action: 'create' },

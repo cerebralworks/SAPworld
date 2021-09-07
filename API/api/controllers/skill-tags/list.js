@@ -83,7 +83,7 @@ module.exports = async function list(request, response) {
             filtered_query_data.page = parseInt(filtered_query_data.page);
             var criteria = {
                 limit: filtered_query_data.limit,
-                where: _.omit(filtered_query_data, ['page', 'limit', 'search', 'sort', 'skill_tags_ids'])
+                where: _.omit(filtered_query_data, ['page', 'limit', 'search','sorting' , 'sort', 'skill_tags_ids'])
             };
             if (filtered_query_keys.includes('search')) {
                 criteria.where.tag = { 'like': "%" + filtered_query_data.search.toLowerCase() + "%" };
@@ -118,8 +118,11 @@ module.exports = async function list(request, response) {
                 }
             } */
 			
-			if(!filtered_query_keys.sorting){
+			if(!filtered_query_keys.includes('sorting')){
 				criteria.sort = "id desc"
+			}
+			else{
+				criteria.sort = filtered_query_data.sorting;
 			}
             //Preparing data.
             await getSkillTags(criteria, function(skill_tags, details, total) {

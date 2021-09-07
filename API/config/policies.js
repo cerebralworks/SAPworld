@@ -47,8 +47,8 @@ module.exports.policies = {
     'users/educations/create': ['oauthBearer', 'isUser'],
     'users/educations/update': ['oauthBearer', 'isUser'],
     'users/educations/delete': ['oauthBearer', 'isUser'],
-    'users/list': ['oauthBearer', 'isEmployerOrAdmin'],
     'users/user-dashboard': ['oauthBearer', 'isUser'],
+    'users/list': ['oauthBearer', 'isEmployerOrAdmin'],
     'users/change-status': ['oauthBearer', 'isAdmin'],
     'users/job-approach-invitation': ['noOauthBearer'],
 
@@ -87,7 +87,9 @@ module.exports.policies = {
     'jobpostings/user-scoring': ['oauthBearer', 'isUser'],
     'jobpostings/send-email': ['oauthBearer', 'isEmployer'],
 
-
+	
+	
+	
     'site/health': ['noOauthBearer'],
     'site/report': ['oauthBearer', 'isUser'],
 
@@ -95,7 +97,6 @@ module.exports.policies = {
     'accounts/reset-password': ['noOauthBearer'],
     'accounts/verify': ['noOauthBearer'],
     'accounts/update-password': ['oauthBearer'],
-
 
     'admins/profile': ['oauthBearer', 'isAdmin'],
     'admins/create': ['oauthBearer', 'isAdmin'],
@@ -139,13 +140,22 @@ module.exports.policies = {
 
     'industries/list': ['noOauthBearer'],
     'industries/create': ['oauthBearer', 'isAdmin'],
+    'industries/update': ['oauthBearer', 'isAdmin'],
+    'industries/find': ['oauthBearer', 'isAdmin'],
+    'industries/findone': ['oauthBearer', 'isAdmin'],
+    'industries/delete': ['oauthBearer', 'isAdmin'],
 
     'skill-tags/list': ['noOauthBearer'],
-    'skill-tags/create': ['oauthBearer', 'isUser'],
-
+    'skill-tags/create': ['oauthBearer', 'isAdmin'],
+    'skill-tags/creates': ['oauthBearer', 'isAdmin'],
+    'skill-tags/update': ['oauthBearer', 'isAdmin'],
+    'skill-tags/find': ['oauthBearer', 'isAdmin'],
+    'skill-tags/findone': ['oauthBearer', 'isAdmin'],
+    'skill-tags/delete': ['oauthBearer', 'isAdmin'],
+	
     'program/list': ['noOauthBearer'],
     'program/create': ['noOauthBearer'],
-	
+
     'subscription-plans/create': ['oauthBearer', 'isAdmin'],
     'subscription-plans/update': ['oauthBearer', 'isAdmin'],
     'subscription-plans/change-status': ['oauthBearer', 'isAdmin'],
