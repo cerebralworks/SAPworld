@@ -9,7 +9,7 @@
 module.exports = async function list(request, response) {
     var _response_object = {};
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['page', 'sort', 'limit', 'search', 'status', 'skill_tags_ids']);
+    const filtered_query_data = _.pick(request_query, ['page', 'sort', 'limit','sorting', 'search', 'status', 'skill_tags_ids']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
         { name: 'page', number: true, min: 1 },
@@ -100,7 +100,7 @@ module.exports = async function list(request, response) {
                 // We should exclude deleted skill tags.
                 criteria.where.status = { '!=': _.get(sails.config.custom.status_codes, 'deleted') };
             }
-            if (filtered_query_keys.includes('sort')) {
+            /* if (filtered_query_keys.includes('sort')) {
                 criteria.sort = [];
                 const sort_array = filtered_query_data.sort.split(',');
                 if (sort_array.length > 0) {
@@ -116,7 +116,11 @@ module.exports = async function list(request, response) {
                         criteria.sort.push(sort);
                     });
                 }
-            }
+            } */
+			
+			if(!filtered_query_keys.sorting){
+				criteria.sort = "id desc"
+			}
             //Preparing data.
             await getSkillTags(criteria, function(skill_tags, details, total) {
                 sendResponse(skill_tags, details, total);
