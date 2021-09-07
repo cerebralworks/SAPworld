@@ -6,7 +6,7 @@ const job_type_values = _.values(_.get(sails, 'config.custom.job_types', {}));
 module.exports = async function EmployersDashboard(request, response) {
     var _response_object = {};
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['id', 'view', 'country']);
+    const filtered_query_data = _.pick(request_query, ['id', 'view', 'city']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
         { name: 'id', number: true }
@@ -17,13 +17,13 @@ module.exports = async function EmployersDashboard(request, response) {
     const getUserDashboardDetails = async( callback) => {
 		if(filtered_query_data.view && filtered_query_data.id){
 			countryQuery =``;
-			if(filtered_query_data.country){
-				countryQuery = `AND job_posting.country = ANY('{ ${filtered_query_data.country} }')`;
+			if(filtered_query_data.city){
+				countryQuery = `AND job_posting.city = ANY('{ ${filtered_query_data.city} }')`;
 			}
 			if(filtered_query_data.view =='location'){
-				//To get the Matched country based Details
-				Query = `SELECT  job_posting.country,count(distinct(job_posting.id)) FROM user_employments "job_posting"
-						WHERE (job_posting.status = 1 OR  job_posting.status=98 ) AND job_posting.company = ${parseInt(filtered_query_data.id)} GROUP BY job_posting.country `
+				//To get the Matched city based Details
+				Query = `SELECT  job_posting.city,count(distinct(job_posting.id)) FROM user_employments "job_posting"
+						WHERE (job_posting.status = 1 OR  job_posting.status=98 ) AND job_posting.company = ${parseInt(filtered_query_data.id)} GROUP BY job_posting.city `
 			}
 			if(filtered_query_data.view =='type'){
 				//To get the Matched Type based Details
@@ -38,7 +38,7 @@ module.exports = async function EmployersDashboard(request, response) {
 	LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
 	LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 	WHERE (job_posting.status = 1 OR  job_posting.status=98 ) AND scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.company = ${parseInt(filtered_query_data.id)}) AND
-	(user_account.status=1) AND (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) OR ( job_posting.visa_sponsorship = true AND user_profile.work_authorization = 1 )) AND (user_profile.privacy_protection->>'available_for_opportunity')::text = 'true' AND user_profile.hands_on_skills && job_posting.hands_on_skills 
+	(user_account.status=1) AND (( user_profile.city like job_posting.city OR  user_profile.other_countries && ARRAY[job_posting.city]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) OR ( job_posting.visa_sponsorship = true AND user_profile.work_authorization = 1 )) AND (user_profile.privacy_protection->>'available_for_opportunity')::text = 'true' AND user_profile.hands_on_skills && job_posting.hands_on_skills 
 	AND (COALESCE(user_profile.experience) >= job_posting.experience)
 			group by job_posting.id `
 			}
