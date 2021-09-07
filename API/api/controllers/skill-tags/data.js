@@ -4,25 +4,30 @@
  *
  */
 
-/* global _, Industries, validateModel, sails */
+/* global _, SkillTags, validateModel, sails */
 
-module.exports = async function list(request, response) {
+module.exports = async function data(request, response) {
     var _response_object = {};
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['page', 'sort','sorting', 'limit', 'search', 'status']);
+    const filtered_query_data = _.pick(request_query, ['page', 'sort', 'limit', 'search', 'status', 'skill_tags_ids']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
         { name: 'page', number: true, min: 1 },
         { name: 'limit', number: true, min: 1 },
-        { name: 'status', enum: true, values: _.values(_.pick(sails.config.custom.status_codes, ['inactive', 'active'])) }
+        { name: 'status', enum: true, values: _.values(_.pick(sails.config.custom.status_codes, ['inactive', 'active'])) },
+        { name: 'skill_tags_ids', array: true, individual_rule: { number: true, min: 1 }, message: "Has to be a comma seperated integer. ie: each value should be greater than 0." },
     ];
 
-    //Find the Industries based on general criteria.
-    const getIndustries = (criteria, callback) => {
-        Industries.count(criteria.where, function(err, total) {
+    if (filtered_query_keys.includes('skill_tags_ids')) {
+        filtered_query_data.skill_tags_ids = filtered_query_data.skill_tags_ids.split(',');
+    }
+
+    //Find the SkillTags based on general criteria.
+    const getSkillTags = (criteria, callback) => {
+        SkillTags.count(criteria.where, function(err, total) {
             if (err) {
                 var error = {
-                    'institution': 'count',
+                    'tag': 'count',
                     'rules': [{
                         'rule': 'invalid',
                         'message': err.message
@@ -34,11 +39,11 @@ module.exports = async function list(request, response) {
             } else if (total < 1) {
                 return callback([], {}, total);
             } else {
-                var industries_model = Industries.find(criteria);
-                industries_model.exec(async function(err, industries) {
+                var skill_tag_model = SkillTags.find(criteria).meta({ makeLikeModifierCaseInsensitive: true });;
+                skill_tag_model.exec(async function(err, skill_tags) {
                     if (err) {
                         var error = {
-                            'institution': 'items',
+                            'tag': 'items',
                             'rules': [{
                                 'rule': 'invalid',
                                 'message': err.message
@@ -48,7 +53,7 @@ module.exports = async function list(request, response) {
                         _response_object.count = _response_object.errors.count;
                         return response.status(400).json(_response_object);
                     } else {
-                        return callback(industries, {}, total);
+                        return callback(skill_tags, {}, total);
                     }
                 });
             }
@@ -57,7 +62,7 @@ module.exports = async function list(request, response) {
 
     //Build and sending response.
     const sendResponse = (items, details, total) => {
-        _response_object.message = 'Industry items retrieved successfully.';
+        _response_object.message = 'Skill tag items retrieved successfully.';
         var meta = {};
         meta['count'] = items.length;
         meta['total'] = total;
@@ -78,21 +83,24 @@ module.exports = async function list(request, response) {
             filtered_query_data.page = parseInt(filtered_query_data.page);
             var criteria = {
                 limit: filtered_query_data.limit,
-                where: _.omit(filtered_query_data, ['page','sorting', 'limit', 'search', 'sort'])
+                where: _.omit(filtered_query_data, ['page', 'limit', 'search', 'sort', 'skill_tags_ids'])
             };
             if (filtered_query_keys.includes('search')) {
-                criteria.where.name = { 'contains': filtered_query_data.search };
+                criteria.where.tag = { 'like': "%" + filtered_query_data.search.toLowerCase() + "%" };
             }
             if (filtered_query_keys.includes('page')) {
                 criteria.skip = ((parseInt(filtered_query_data.page)) - 1) * criteria.limit;
             }
+            if (filtered_query_keys.includes('skill_tags_ids')) {
+                criteria.where.id = { 'in': filtered_query_data.skill_tags_ids };
+            }
             if (filtered_query_keys.includes('status')) {
                 criteria.where.status = filtered_query_data.status;
             } else {
-                // We should exclude deleted educational institutions.
+                // We should exclude deleted skill tags.
                 criteria.where.status = { '!=': _.get(sails.config.custom.status_codes, 'deleted') };
             }
-            /*if (filtered_query_keys.includes('sort')) {
+            if (filtered_query_keys.includes('sort')) {
                 criteria.sort = [];
                 const sort_array = filtered_query_data.sort.split(',');
                 if (sort_array.length > 0) {
@@ -108,18 +116,12 @@ module.exports = async function list(request, response) {
                         criteria.sort.push(sort);
                     });
                 }
-            }*/
-			if(!filtered_query_keys.includes('sorting')){
-				criteria.sort = "id desc"
-			}
-			else{
-				criteria.sort = filtered_query_data.sorting;
-			}
+            }
             //Preparing data.
-            await getIndustries(criteria, function(industries, details, total) {
-                sendResponse(industries, details, total);
+            await getSkillTags(criteria, function(skill_tags, details, total) {
+                sendResponse(skill_tags, details, total);
             });
-            } else {
+        } else {
             _response_object.errors = errors;
             _response_object.count = errors.length;
             return response.status(400).json(_response_object);

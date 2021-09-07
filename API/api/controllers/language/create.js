@@ -1,11 +1,9 @@
-/* global _, Industries, sails */
 module.exports = async function create(request, response) {
 
     var _response_object = {};
     var request_data = request.body;
-    Industries.create(request_data).then(function(industry) {
-        _response_object.details = industry;
-        _response_object.message = 'Client created successfully';
+    Language.create(request_data).then(function(data) {
+        _response_object.details = data;
         return response.status(201).json(_response_object);
     }).catch(async function(err) {
         await errorBuilder.build(err, function(error_obj) {

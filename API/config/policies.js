@@ -87,7 +87,9 @@ module.exports.policies = {
     'jobpostings/user-scoring': ['oauthBearer', 'isUser'],
     'jobpostings/send-email': ['oauthBearer', 'isEmployer'],
 
-
+	
+	
+	
     'site/health': ['noOauthBearer'],
     'site/report': ['oauthBearer', 'isUser'],
 
@@ -96,14 +98,12 @@ module.exports.policies = {
     'accounts/verify': ['noOauthBearer'],
     'accounts/update-password': ['oauthBearer'],
 
-
     'admins/profile': ['oauthBearer', 'isAdmin'],
     'admins/create': ['oauthBearer', 'isAdmin'],
 	'admins/list': ['oauthBearer', 'isAdmin'],
 	'admins/dashboard-details': ['oauthBearer', 'isAdmin'],
 	'admins/employee-list': ['oauthBearer', 'isAdmin'],
 	'admins/user-list': ['oauthBearer', 'isAdmin'],
-	
 
     'locations/states': ['noOauthBearer'],
     'locations/countries': ['noOauthBearer'],
@@ -140,13 +140,22 @@ module.exports.policies = {
 
     'industries/list': ['noOauthBearer'],
     'industries/create': ['oauthBearer', 'isAdmin'],
+    'industries/update': ['oauthBearer', 'isAdmin'],
+    'industries/find': ['oauthBearer', 'isAdmin'],
+    'industries/findone': ['oauthBearer', 'isAdmin'],
+    'industries/delete': ['oauthBearer', 'isAdmin'],
 
     'skill-tags/list': ['noOauthBearer'],
-    'skill-tags/create': ['oauthBearer', 'isUser'],
-
+    'skill-tags/create': ['oauthBearer', 'isAdmin'],
+    'skill-tags/creates': ['oauthBearer', 'isAdmin'],
+    'skill-tags/update': ['oauthBearer', 'isAdmin'],
+    'skill-tags/find': ['oauthBearer', 'isAdmin'],
+    'skill-tags/findone': ['oauthBearer', 'isAdmin'],
+    'skill-tags/delete': ['oauthBearer', 'isAdmin'],
+	
     'program/list': ['noOauthBearer'],
     'program/create': ['noOauthBearer'],
-	
+
     'subscription-plans/create': ['oauthBearer', 'isAdmin'],
     'subscription-plans/update': ['oauthBearer', 'isAdmin'],
     'subscription-plans/change-status': ['oauthBearer', 'isAdmin'],
