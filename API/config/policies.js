@@ -104,6 +104,7 @@ module.exports.policies = {
 	'admins/dashboard-details': ['oauthBearer', 'isAdmin'],
 	'admins/employee-list': ['oauthBearer', 'isAdmin'],
 	'admins/user-list': ['oauthBearer', 'isAdmin'],
+    'admins/update-photo': ['oauthBearer', 'isAdmin'],
 
     'locations/states': ['noOauthBearer'],
     'locations/countries': ['noOauthBearer'],

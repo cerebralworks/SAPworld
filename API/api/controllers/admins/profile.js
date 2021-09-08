@@ -33,7 +33,7 @@ module.exports = async function view(request,response) {
                     var meta = {};
                     meta['photo'] = {
                       path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
-                      folder: 'public/images/Users',
+                      folder: 'public/images/Admins',
                       sizes: {
                         small: 256,
                         medium: 512

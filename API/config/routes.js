@@ -208,6 +208,8 @@ module.exports.routes = {
 	'GET /admins/employee-list': nonGetHandler,
     'POST /admins/employee-list': { controller: 'admins', action: 'employee-list' },
     'GET /admins/list': { controller: 'admins', action: 'list' },
+    'GET /admins/update-photo': nonGetHandler,
+    'POST /admins/update-photo': { controller: 'admins', action: 'update-photo' },
 
     /*Location routes*/
     'GET /locations/states': { controller: 'locations', action: 'states' },
@@ -291,6 +293,9 @@ module.exports.routes = {
     'GET /program/list': { controller: 'program', action: 'list' },
     'GET /program/create': nonGetHandler,
     'POST /program/create': { controller: 'program', action: 'create' },
+     'DELETE /program/delete/:id' : { controller : 'program' , action : 'delete'},
+    'GET /program/update/:id': nonGetHandler,
+     'POST /program/update/:id': { controller: 'program', action: 'update' },
 
 
     /*Subscription plans routes*/
