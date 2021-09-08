@@ -3,7 +3,7 @@
 module.exports = async function list(request, response) {
     var _response_object = {};
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['page', 'sort', 'limit', 'search', 'status', 'program_name_ids']);
+    const filtered_query_data = _.pick(request_query, ['page', 'sort','sorting', 'limit', 'search', 'status', 'program_name_ids']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
         { name: 'page', number: true, min: 1 },
@@ -17,7 +17,7 @@ module.exports = async function list(request, response) {
     }
 
     //Find the Program based on general criteria.
-    const getSkillTags = (criteria, callback) => {
+    const getTechskill = (criteria, callback) => {
         Program.count(criteria.where, function(err, total) {
             if (err) {
                 var error = {
@@ -34,7 +34,7 @@ module.exports = async function list(request, response) {
                 return callback([], {}, total);
             } else {
                 var program_name_model = Program.find(criteria).meta({ makeLikeModifierCaseInsensitive: true });;
-                program_name_model.exec(async function(err, skill_tags) {
+                program_name_model.exec(async function(err, program) {
                     if (err) {
                         var error = {
                             'name': 'items',
@@ -47,7 +47,7 @@ module.exports = async function list(request, response) {
                         _response_object.count = _response_object.errors.count;
                         return response.status(400).json(_response_object);
                     } else {
-                        return callback(skill_tags, {}, total);
+                        return callback(program, {}, total);
                     }
                 });
             }
@@ -77,7 +77,7 @@ module.exports = async function list(request, response) {
             filtered_query_data.page = parseInt(filtered_query_data.page);
             var criteria = {
                 limit: filtered_query_data.limit,
-                where: _.omit(filtered_query_data, ['page', 'limit', 'search', 'sort', 'program_name_ids'])
+                where: _.omit(filtered_query_data, ['page', 'limit', 'search','sorting', 'sort', 'program_name_ids'])
             };
             if (filtered_query_keys.includes('search')) {
                 criteria.where.name = { 'like': "%" + filtered_query_data.search.toLowerCase() + "%" };
@@ -94,26 +94,16 @@ module.exports = async function list(request, response) {
                 // We should exclude deleted skill tags.
                 criteria.where.status = { '!=': _.get(sails.config.custom.status_codes, 'deleted') };
             }
-            if (filtered_query_keys.includes('sort')) {
-                criteria.sort = [];
-                const sort_array = filtered_query_data.sort.split(',');
-                if (sort_array.length > 0) {
-                    _.forEach(sort_array, function(value, key) {
-                        const sort_direction = value.split('.');
-                        var sort = {};
-                        sort[sort_direction[0]] = 'ASC';
-                        if (sort_direction.length > 1) {
-                            if (sort_direction[1] === 'desc') {
-                                sort[sort_direction[0]] = 'DESC';
-                            }
-                        }
-                        criteria.sort.push(sort);
-                    });
-                }
-            }
+			if(!filtered_query_keys.includes('sorting')){
+				criteria.sort = "id desc"
+			}
+			else{
+				criteria.sort = filtered_query_data.sorting;
+			}
+            
             //Preparing data.
-            await getSkillTags(criteria, function(skill_tags, details, total) {
-                sendResponse(skill_tags, details, total);
+            await getTechskill(criteria, function(program, details, total) {
+                sendResponse(program, details, total);
             });
         } else {
             _response_object.errors = errors;

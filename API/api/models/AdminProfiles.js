@@ -23,7 +23,19 @@ module.exports = {
         account: {
           columnName: 'user',
           model: 'users'
-        }
+        },
+		address: { type: 'string', allowNull:true },
+		name: { type: 'string' , allowNull:true},
+        city: { type: 'string', allowNull:true },
+        state: { type: 'string', allowNull:true },
+        country: { type: 'string' , allowNull:true},
+        zipcode: { type: 'number', allowNull: true  },
+        latlng: { type: 'string', allowNull:true },
+        latlng_text: { type: 'string' , allowNull:true},
+        description: { type: 'string' , allowNull:true},
+        website: { type: 'string', allowNull:true },
+        social_media_link: { type: 'ref', columnType: 'json[]' },
+        contact: { type: 'ref', columnType: 'varchar[]' },
     },
     afterCreate: async function(profile, callback) {
         if(profile.id){
