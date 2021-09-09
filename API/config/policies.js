@@ -144,6 +144,7 @@ module.exports.policies = {
     'industries/update': ['oauthBearer', 'isAdmin'],
     'industries/find': ['oauthBearer', 'isAdmin'],
     'industries/findone': ['oauthBearer', 'isAdmin'],
+    'industries/delete': ['oauthBearer', 'isAdmin'],
     //'industries/delete': ['oauthBearer'],
 
     'skill-tags/list': ['noOauthBearer'],
@@ -152,10 +153,11 @@ module.exports.policies = {
     'skill-tags/update': ['oauthBearer', 'isAdmin'],
     'skill-tags/find': ['oauthBearer', 'isAdmin'],
     'skill-tags/findone': ['oauthBearer', 'isAdmin'],
+    'skill-tags/delete': ['oauthBearer', 'isAdmin'],
     //'skill-tags/delete': ['oauthBearer'],
 	
     'program/list': ['noOauthBearer'],
-    'program/create': ['noOauthBearer'],
+    'program/create': ['oauthBearer', 'isAdmin'],
 
     'subscription-plans/create': ['oauthBearer', 'isAdmin'],
     'subscription-plans/update': ['oauthBearer', 'isAdmin'],

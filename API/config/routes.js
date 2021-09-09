@@ -275,7 +275,7 @@ module.exports.routes = {
     'POST /industries/update/:id': { controller: 'industries', action: 'update' },
     'GET /industries/find': { controller: 'industries', action: 'find' },
     'GET /industries/findone/:id': { controller: 'industries', action: 'findone' },
-    'DELETE /industries/delete/:id' : { controller : 'industries' , action : 'delete'},
+    'POST /industries/delete/:id' : { controller : 'industries' , action : 'delete'},
 
     /*Skill_tags routes*/
     'GET /skill-tags/list': { controller: 'skill-tags', action: 'list' },
@@ -286,14 +286,14 @@ module.exports.routes = {
     'POST /skill-tags/update/:id': { controller: 'skill-tags', action: 'update' },
     'GET /skill-tags/find': { controller: 'skill-tags', action: 'find' },
     'GET /skill-tags/findone/:id': { controller: 'skill-tags', action: 'findone' },
-    'DELETE /skill-tags/delete/:id': { controller: 'skill-tags', action: 'delete' },
+    'POST /skill-tags/delete/:id': { controller: 'skill-tags', action: 'delete' },
 	
 	
     /*Program routes*/
     'GET /program/list': { controller: 'program', action: 'list' },
     'GET /program/create': nonGetHandler,
     'POST /program/create': { controller: 'program', action: 'create' },
-     'DELETE /program/delete/:id' : { controller : 'program' , action : 'delete'},
+     'POST /program/delete/:id' : { controller : 'program' , action : 'delete'},
     'GET /program/update/:id': nonGetHandler,
      'POST /program/update/:id': { controller: 'program', action: 'update' },
 
