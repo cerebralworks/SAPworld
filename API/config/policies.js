@@ -155,7 +155,7 @@ module.exports.policies = {
     'skill-tags/delete': ['oauthBearer', 'isAdmin'],
 	
     'program/list': ['noOauthBearer'],
-    'program/create': ['noOauthBearer'],
+    'program/create': ['oauthBearer', 'isAdmin'],
 
     'subscription-plans/create': ['oauthBearer', 'isAdmin'],
     'subscription-plans/update': ['oauthBearer', 'isAdmin'],
