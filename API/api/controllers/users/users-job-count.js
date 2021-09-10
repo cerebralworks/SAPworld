@@ -19,7 +19,7 @@ module.exports = async function list(request, response) {
 			var visa_sponsorshipData =``;
 			if(filtered_query_data.view =='users'){
 				if(filtered_query_data.visa_sponsered == 'true' ){
-					visa_sponsorshipData =`AND (job_posting.visa_sponsorship = true )`;
+					//visa_sponsorshipData =`AND (job_posting.visa_sponsorship = true )`;
 				}if(filtered_query_data.visa_sponsered == 'false'){
 					//visa_sponsorshipData =`AND (job_posting.visa_sponsorship = false )`;
 				}
