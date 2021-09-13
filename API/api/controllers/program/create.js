@@ -6,8 +6,42 @@
 
 /* global _, Program, validateModel, sails */
 
-var squel = require("squel");
+//var squel = require("squel");
 module.exports = function create(request, response) {
+
+
+    var _response_object = {};
+    var request_data = request.body;
+    Program.find().then(data=>{
+        var isData = data.filter((a)=>{
+        if(_.toLower(a.name)===_.toLower(request.body.name)){
+            return a;
+        }
+              
+    })
+    if(isData.length !=0){
+       return response.status(400).json({meesage : "already exist"});
+    }else{
+        Program.create(request_data).then(function(wa) {
+           _response_object.details = wa;
+           return response.status(201).json(_response_object);
+           }).catch(async function(err) {
+               await errorBuilder.build(err, function(error_obj) {
+                   _response_object.errors = error_obj;
+                   _response_object.count = error_obj.length;
+                   return response.status(500).json(_response_object);
+               });
+               });
+       }
+       
+    
+})
+
+
+
+
+
+/*
     const post_request_data = request.body;
     var _response_object = {};
     pick_input = [
@@ -58,7 +92,7 @@ module.exports = function create(request, response) {
         if(valid){ 
             if(filtered_post_keys.includes('name')){ 
                 filtered_post_data.name = _.toLower(filtered_post_data.name);
-            }
+            
             isProgramNameIsUnique(_.pick(filtered_post_data, ['name']), function(){ 
                 createProgram(filtered_post_data, function(program_name){
                     sendResponse(program_name);
@@ -70,5 +104,6 @@ module.exports = function create(request, response) {
             _response_object.count = errors.length;
             return response.status(400).json(_response_object);
         }
-    }); 
+    });
+    */
 };

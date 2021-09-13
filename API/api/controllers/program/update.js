@@ -12,7 +12,7 @@ module.exports = async function update(request,response){
      ];
      Program.find().then(data=>{
         var isdata = data.filter((a)=>{
-             if(a.name==request.body.name){
+             if(_.toLower(a.name)===_.toLower(request.body.name)){
                  return a;
              }  
          })

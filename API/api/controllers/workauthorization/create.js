@@ -6,7 +6,7 @@ module.exports = async function create(request, response) {
     var request_data = request.body;
          WorkAuthorization.find().then(data=>{
              var isData = data.filter((a)=>{
-             if(a.name===request.body.name && a.visa==request.body.visa){
+             if(a.name===request.body.name && _.toLower(a.visa)===_.toLower(request.body.visa)){
                  return a;
              }      
          })

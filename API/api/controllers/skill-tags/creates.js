@@ -6,10 +6,10 @@ module.exports = async function create(request, response) {
     var request_data = request.body;
     SkillTags.find().then(data=>{
         var isData = data.filter((a)=>{
-        if(a.tag===request.body.tag && a.long_tag==request.body.long_tag){
+        if(_.toLower(a.tag)===_.toLower(request.body.tag) && _.toLower(a.long_tag)===_.toLower(request.body.long_tag)){
             return a;
         }
-        else if(a.tag===request.body.tag || a.long_tag==request.body.long_tag){
+        else if(_.toLower(a.tag)===_.toLower(request.body.tag) || _.toLower(a.long_tag)===_.toLower(request.body.long_tag)){
             return a;
         }      
     })
