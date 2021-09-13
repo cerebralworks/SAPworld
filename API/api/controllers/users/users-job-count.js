@@ -23,7 +23,8 @@ module.exports = async function list(request, response) {
 				}if(filtered_query_data.visa_sponsered == 'false'){
 					//visa_sponsorshipData =`AND (job_posting.visa_sponsorship = false )`;
 				}
-			}					
+			}
+			
 		if (filtered_query_keys.includes('company')) {
 			//To get the job count details
 			var Count_Users = `SELECT job_posting.id,job_posting.title,COUNT(distinct user_profile.id) FROM user_employments "job_posting"
@@ -59,7 +60,7 @@ LEFT JOIN users "user_account" ON (user_account.id=user_profile.account)
 WHERE (( job_posting.status = 1 OR job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${parseInt(filtered_query_data.company)} )))) AND (job_posting.status != 0)  
  AND job_posting.status != 3 AND scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${parseInt(filtered_query_data.company)} ) AND
 (user_account.status=1) AND (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] )  OR ( job_posting.visa_sponsorship = true AND user_profile.work_authorization = 1 ) ) AND (user_profile.privacy_protection->>'available_for_opportunity')::text = 'true' AND user_profile.hands_on_skills && job_posting.hands_on_skills 
-AND (COALESCE(user_profile.experience) >= job_posting.experience)  ${visa_sponsorshipData}
+AND (COALESCE(user_profile.experience) >= job_posting.experience) ${visa_sponsorshipData}
 group by job_posting.id`
 			}
 			if(filtered_query_data.view =='users_matches'){

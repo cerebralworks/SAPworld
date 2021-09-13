@@ -11,12 +11,38 @@ module.exports = async function update(request,response){
         { name: 'status', number: true},
         { name: 'long_tag', required: true},
         ];
-        validateModel.validate(SkillTags,reqFields,filter,(valid,error)=>{
-            if(valid){
-            SkillTags.update(request.params.id,filter).then(data=>{
-                return response.status(200).json(data);
-               })
+        SkillTags.find().then(data=>{
+            var isdata = data.filter((a)=>{
+                 if(a.tag==request.body.tag){
+                     return a;
+                 }  
+             })
+            if(isdata.length !=0){
+
+                if(parseInt(isdata[0]['id'])==parseInt(request.params.id)){
+                    validateModel.validate(SkillTags,reqFields,filter,(valid,error)=>{
+                        if(valid){
+                           SkillTags.update(request.params.id,filter).then(data=>{
+                            return response.status(200).json(data);
+                           })
+                        }
+                        else return response.status(400).send(error)
+                    })
+                }else{
+                    return response.status(400).json({meesage : "already exist"});
+                }
+            }else{
+                validateModel.validate(SkillTags,reqFields,filter,(valid,error)=>{
+                    if(valid){
+                       SkillTags.update(request.params.id,filter).then(data=>{
+                        return response.status(200).json(data);
+                       })
+                    }
+                    else return response.status(400).send(error)
+                })
             }
-            else return response.status(400).send(error)
-        })
+            
+                 
+         })
+
 }

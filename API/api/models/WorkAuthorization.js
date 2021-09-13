@@ -11,6 +11,7 @@ module.exports = {
     tableAlias: 'workauthorizations',
     attributes: {
           visa: {type:'string', required: true },
+          name: {type:'string', required: true },
           country: {type:'number', required: true },
           status: {type:'number', defaultsTo: 1},
           status_glossary: {type: 'string', allowNull: true}

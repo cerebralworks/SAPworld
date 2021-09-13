@@ -1,16 +1,18 @@
-/* global _, Program, validateModel, sails */
+/* global _, WorkAuthorization, validateModel, sails */
+
 module.exports = async function update(request,response){
     var id = request.params.id;
     var reqData = request.body;
-    var inputs = ['name','description','status'];
+    var inputs = ['name','visa','country'];
     var filter = _.pick(reqData,inputs)
     var reqFields = [
      { name: 'id', number: true },
      { name: 'name', required: true },
-     { name: 'description'},
-     { name: 'status',number : true},
+     { name: 'visa', required: true},
+     { name: 'country', required: true},
      ];
-     Program.find().then(data=>{
+
+     WorkAuthorization.find().then(data=>{
         var isdata = data.filter((a)=>{
              if(a.name==request.body.name){
                  return a;
@@ -19,9 +21,9 @@ module.exports = async function update(request,response){
         if(isdata.length !=0){
 
             if(parseInt(isdata[0]['id'])==parseInt(request.params.id)){
-                validateModel.validate(Program,reqFields,filter,(valid,error)=>{
+                validateModel.validate(WorkAuthorization,reqFields,filter,(valid,error)=>{
                     if(valid){
-                        Program.update(request.params.id,filter).then(data=>{
+                        WorkAuthorization.update(request.params.id,filter).then(data=>{
                         return response.status(200).json(data);
                        })
                     }
@@ -31,9 +33,9 @@ module.exports = async function update(request,response){
                 return response.status(400).json({meesage : "already exist"});
             }
         }else{
-            validateModel.validate(Program,reqFields,filter,(valid,error)=>{
+            validateModel.validate(WorkAuthorization,reqFields,filter,(valid,error)=>{
                 if(valid){
-                    Program.update(request.params.id,filter).then(data=>{
+                    WorkAuthorization.update(request.params.id,filter).then(data=>{
                     return response.status(200).json(data);
                    })
                 }

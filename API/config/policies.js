@@ -89,6 +89,10 @@ module.exports.policies = {
 
 	
 	
+    'workauthorization/list' : ['noOauthBearer'],
+    'workauthorization/create' : ['oauthBearer', 'isAdmin'],
+    'workauthorization/delete' :['oauthBearer', 'isAdmin'],
+    'workauthorization/update' : ['oauthBearer', 'isAdmin'],
 	
     'site/health': ['noOauthBearer'],
     'site/report': ['oauthBearer', 'isUser'],
@@ -145,7 +149,6 @@ module.exports.policies = {
     'industries/find': ['oauthBearer', 'isAdmin'],
     'industries/findone': ['oauthBearer', 'isAdmin'],
     'industries/delete': ['oauthBearer', 'isAdmin'],
-    //'industries/delete': ['oauthBearer'],
 
     'skill-tags/list': ['noOauthBearer'],
     'skill-tags/create': ['oauthBearer', 'isAdmin'],
@@ -153,11 +156,9 @@ module.exports.policies = {
     'skill-tags/update': ['oauthBearer', 'isAdmin'],
     'skill-tags/find': ['oauthBearer', 'isAdmin'],
     'skill-tags/findone': ['oauthBearer', 'isAdmin'],
-    'skill-tags/delete': ['oauthBearer', 'isAdmin'],
-    //'skill-tags/delete': ['oauthBearer'],
 	
     'program/list': ['noOauthBearer'],
-    'program/create': ['oauthBearer', 'isAdmin'],
+    'program/create': ['noOauthBearer', 'isAdmin'],
 
     'subscription-plans/create': ['oauthBearer', 'isAdmin'],
     'subscription-plans/update': ['oauthBearer', 'isAdmin'],
