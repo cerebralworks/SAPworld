@@ -297,7 +297,13 @@ module.exports.routes = {
     'GET /program/update/:id': nonGetHandler,
      'POST /program/update/:id': { controller: 'program', action: 'update' },
 
+     /*workauthorization routes */
+     'GET /workauthorization/list': { controller: 'workauthorization', action: 'list' },
+     'POST /workauthorization/create': { controller: 'workauthorization', action: 'create' },
+     'POST /workauthorization/delete/:id' : { controller : 'workauthorization' , action : 'delete'},
+     'POST /workauthorization/update/:id': { controller: 'workauthorization', action: 'update' },
 
+ 
     /*Subscription plans routes*/
     'GET /subscription-plans/create': nonGetHandler,
     'POST /subscription-plans/create': { controller: 'subscription-plans', action: 'create' },
