@@ -13,7 +13,7 @@ module.exports = async function update(request,response){
         ];
         SkillTags.find().then(data=>{
             var isdata = data.filter((a)=>{
-                 if(a.tag==request.body.tag){
+                 if(_.toLower(a.tag)===_.toLower(request.body.tag)){
                      return a;
                  }  
              })
