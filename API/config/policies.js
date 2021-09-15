@@ -151,8 +151,8 @@ module.exports.policies = {
     'industries/delete': ['oauthBearer', 'isAdmin'],
 
     'skill-tags/list': ['noOauthBearer'],
-    'skill-tags/create': ['oauthBearer', 'isAdmin'],
-    'skill-tags/creates': ['oauthBearer', 'isAdmin'],
+    'skill-tags/create': ['oauthBearer', 'isEmployerOrAdmin'],
+    'skill-tags/creates': ['oauthBearer', 'isEmployerOrAdmin'],
     'skill-tags/update': ['oauthBearer', 'isAdmin'],
     'skill-tags/find': ['oauthBearer', 'isAdmin'],
     'skill-tags/findone': ['oauthBearer', 'isAdmin'],
