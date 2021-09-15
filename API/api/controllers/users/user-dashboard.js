@@ -6,11 +6,10 @@ const job_type_values = _.values(_.get(sails, 'config.custom.job_types', {}));
 module.exports = async function UserDashboard(request, response) {
     var _response_object = {};
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['id', 'view', 'city']);
+    const filtered_query_data = _.pick(request_query, ['id', 'view', 'city', 'isActive', 'isClosed', 'isDeleted', 'isPaused', 'startDate', 'endDate' ]);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
         { name: 'id', number: true }
-       
     ];
 
     //Find the Dashboard Details based on general criteria.
@@ -20,12 +19,37 @@ module.exports = async function UserDashboard(request, response) {
 			if(filtered_query_data.city){
 				countryQuery = `AND job_posting.city = ANY('{ ${filtered_query_data.city} }')`;
 			}
+			filterDate = ``;
+			if(filtered_query_data.startDate && filtered_query_data.endDate){
+				filterDate =`AND (job_posting.created_at between  '${filtered_query_data.startDate.toString()}' AND '${filtered_query_data.endDate.toString()}' )`;
+			}
+			statusFilter =[];
+			
+			if(filtered_query_data.isActive ==true ||filtered_query_data.isActive =='true' ){
+				statusFilter.push(1);
+			}
+			if(filtered_query_data.isClosed ==true ||filtered_query_data.isClosed =='true' ){
+				statusFilter.push(3);
+			}
+			if(filtered_query_data.isDeleted ==true ||filtered_query_data.isDeleted =='true' ){
+				statusFilter.push(99);
+			}
+			if(filtered_query_data.isPaused ==true ||filtered_query_data.isPaused =='true' ){
+				statusFilter.push(98);
+			}
+			
+			filterStatus = ``;
+			if(statusFilter.length !=0){
+				filterStatus = `(job_posting.status = ANY('{${statusFilter}}') ) `
+			}else{
+				filterStatus = `(job_posting.status = ANY('{1,98,99,3}') ) `
+			}
 			if(filtered_query_data.view =='matches'){
 				//To get the Matched city based Details
 				Query = `SELECT  job_posting.city,count(distinct(job_posting.id)) FROM user_employments "job_posting"
 				CROSS JOIN user_profiles "user_profile" 
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-				WHERE (job_posting.status != 3 )  AND
+				WHERE ${filterStatus} ${filterDate} AND
 				(user_account.status=1)  AND user_profile.hands_on_skills && job_posting.hands_on_skills 
 				AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by job_posting.city `
 			}
@@ -34,7 +58,7 @@ module.exports = async function UserDashboard(request, response) {
 				Query = `SELECT  job_posting.availability,count(distinct(job_posting.id)) FROM user_employments "job_posting"
 				CROSS JOIN user_profiles "user_profile" 
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-				WHERE (job_posting.status != 3 )  ${countryQuery} AND
+				WHERE  ${filterStatus}  ${filterDate}   ${countryQuery} AND
 				(user_account.status=1)  AND user_profile.hands_on_skills && job_posting.hands_on_skills 
 				AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by job_posting.availability `
 			}
@@ -43,7 +67,7 @@ module.exports = async function UserDashboard(request, response) {
 				Query = `SELECT  job_posting.type,count(distinct(job_posting.id)) FROM user_employments "job_posting"
 				CROSS JOIN user_profiles "user_profile" 
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-				WHERE (job_posting.status != 3 )   ${countryQuery}  AND
+				WHERE  ${filterStatus}  ${filterDate}   ${countryQuery}  AND
 				(user_account.status=1)  AND user_profile.hands_on_skills && job_posting.hands_on_skills 
 				AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by job_posting.type `
 			}
@@ -52,7 +76,7 @@ module.exports = async function UserDashboard(request, response) {
 				Query = `SELECT  job_posting.city,count(distinct(job_posting.id)) FROM user_employments "job_posting"
 				CROSS JOIN user_profiles "user_profile" 
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-				WHERE (job_posting.status != 3 ) AND
+				WHERE  ${filterStatus}   ${filterDate} AND
 				(user_account.status=1)  AND user_profile.hands_on_skills && job_posting.hands_on_skills AND job_posting.visa_sponsorship = true  
 				AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by job_posting.city`
 			}
@@ -61,7 +85,7 @@ module.exports = async function UserDashboard(request, response) {
 				Query = `SELECT  job_posting.city ,count(distinct(job_posting.id)) FROM job_applications "job_application"
 				LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 	
 				LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) 
-				WHERE   (user_profile.id=${parseInt(filtered_query_data.id)} )   ${countryQuery} 
+				WHERE  ${filterStatus}  ${filterDate} AND (user_profile.id=${parseInt(filtered_query_data.id)} )   ${countryQuery} 
 				 group by job_posting.city `
 			}
 			

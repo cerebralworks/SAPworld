@@ -72,6 +72,9 @@ module.exports = async function updateCompanyProfile(request, response) {
 		}else{
 			value.contact=null;
 		}
+		var company ={
+			company:value.name
+		};
         if (!company_profile) {
             CompanyProfile.create(value, async function(err, profile) {
                 console.log(err);
@@ -95,7 +98,20 @@ module.exports = async function updateCompanyProfile(request, response) {
                         return response.status(500).json(_response_object);
                     });
                 } else {
-                    sendResponse(profile);
+                   // sendResponse(profile);
+				   
+					EmployerProfiles.update(value.user_id, company, async function(errs, profiles) {
+						console.log(errs);
+						if (errs) {
+							await errorBuilder.build(errs, function(error_obj) {
+								_response_object.errors = error_obj;
+								_response_object.count = error_obj.length;
+								return response.status(500).json(_response_object);
+							});
+						} else {
+							sendResponse(profile);
+						}
+					});
                 }
             });
         }
