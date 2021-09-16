@@ -49,14 +49,14 @@ module.exports = async function EmployersDashboard(request, response) {
 			if(statusFilter.length !=0){
 				filterStatus = `(job_posting.status = ANY('{${statusFilter}}') ) `
 			}else{
-				filterStatus = `(job_posting.status = ANY('{1,98,99,3}') ) `
+				filterStatus = `(job_posting.status = ANY('{1,98}') ) `
 			}
 			
 			filterStatuss = ``;
 			if(statusFilter.length !=0){
 				filterStatuss = `(job_postings.status = ANY('{${statusFilter}}') ) `
 			}else{
-				filterStatuss = `(job_postings.status = ANY('{1,98,99,3}') ) `
+				filterStatuss = `(job_postings.status = ANY('{1,98}') ) `
 			}
 			
 			
