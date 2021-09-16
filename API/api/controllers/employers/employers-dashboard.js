@@ -119,7 +119,7 @@ LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationsss.j
  WHERE job_posting.id = job_postings.id  ${filterUpdatedDate}  AND (job_applicationsss.short_listed = true AND job_applicationsss.status =  2 ) AND (job_applicationsss.employer=${parseInt(filtered_query_data.id)} ) ) as hired,
 
 job_postings.id,job_postings.title FROM  user_employments "job_postings" 
-where ${filterStatuss}  `
+where ${filterStatuss}  ${filterDate} `
 				
 			}
 			
