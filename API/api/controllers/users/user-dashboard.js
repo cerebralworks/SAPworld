@@ -50,7 +50,7 @@ module.exports = async function UserDashboard(request, response) {
 				CROSS JOIN user_profiles "user_profile" 
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 				WHERE ${filterStatus} ${filterDate} AND
-				(user_account.status=1)  AND user_profile.hands_on_skills && job_posting.hands_on_skills 
+				(user_account.status=1)  AND ( user_profile.hands_on_skills && job_posting.hands_on_skills OR (user_profile.entry = true AND job_posting.entry =true ))
 				AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by job_posting.city `
 			}
 			if(filtered_query_data.view =='availability'){

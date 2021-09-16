@@ -66,7 +66,8 @@ module.exports = {
 		authorized_to_work: { type: 'ref', columnType: 'bigint[]' },
         hands_on_skills: { type: 'ref', columnType: 'bigint[]' },
         others: { type: 'ref', columnType: 'json[]' },
-        programming_id: { type: 'ref', columnType: 'bigint[]' }
+        programming_id: { type: 'ref', columnType: 'bigint[]' },
+        entry: { type: 'boolean', defaultsTo: false }
 
     }
 };

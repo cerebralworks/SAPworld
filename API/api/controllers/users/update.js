@@ -31,7 +31,7 @@ module.exports = async function update(request, response) {
 			});
 		}
 	}
-	//console.log(programming_id);
+		//console.log(programming_id);
     let schema = yup.object().shape({
         id: yup.number().test('user_profile', 'Cant find record', async(value) => {
             return await UserProfiles.find().where({ account: value }).limit(1).then(result => {
@@ -64,8 +64,8 @@ module.exports = async function update(request, response) {
                 country: yup.string().lowercase()
             })
         ).default([]),
-        experience: yup.number().positive().default(1).required(),
-        sap_experience: yup.number().positive().default(1).required(),
+        experience: yup.number().positive().default(0).required(),
+        sap_experience: yup.number().positive().default(0).required(),
         current_employer: yup.string().required().lowercase(),
         current_employer_role: yup.string().required().lowercase(),
         domains_worked: yup.array().of(yup.number().positive()).required(),
@@ -98,6 +98,70 @@ module.exports = async function update(request, response) {
             available_for_opportunity: yup.boolean().default(true),
         }),
     });
+	if(post_request_data.entry==true){
+		post_request_data.hands_on_experience={};
+		//console.log(programming_id);
+    schema = yup.object().shape({
+        id: yup.number().test('user_profile', 'Cant find record', async(value) => {
+            return await UserProfiles.find().where({ account: value }).limit(1).then(result => {
+                return result.length > 0 ? true : false;
+            })
+        }),
+        first_name: yup.string().required().lowercase().min(3),
+        last_name: yup.string().required().lowercase(),
+        bio: yup.string(),
+        country: yup.string().required().lowercase(),
+        state: yup.string().required().lowercase(),
+        city: yup.string().required().lowercase(),
+        zipcode: yup.number().required().positive().moreThan(1000),
+        phone: yup.string().matches(/^([0|\+[0-9]{1,5})?([0-9]{10})$/, 'Mobile number must be like +919999999999'),
+        /* latlng: yup.object().shape({
+            lat: yup.number().min(-90).max(90),
+            lng: yup.number().min(-180).max(180),
+        }).required(), */
+        education_qualification: yup.array().of(
+            yup.object().shape({
+                degree: yup.string().lowercase().required(),
+                field_of_study: yup.string().lowercase().required(),
+                year_of_completion: yup.number().positive().required()
+            })
+        ).default([]),
+        preferred_locations: yup.array().of(
+            yup.object().shape({
+                city: yup.string().lowercase(),
+                state: yup.string().lowercase(),
+                country: yup.string().lowercase()
+            })
+        ).default([]),
+        current_employer: yup.string().required().lowercase(),
+        current_employer_role: yup.string().required().lowercase(),
+        domains_worked: yup.array().of(yup.number().positive()).required(),
+        clients_worked: yup.array().of(yup.string()),
+        skills: yup.array().of(yup.number().positive()),
+        programming_skills: yup.array().of(yup.string()).required(),
+        programming_id: yup.array().of(yup.string()),
+        other_skills: yup.array().of(yup.string()),
+        certification: yup.array().of(yup.string()),
+        job_type: yup.array().of(yup.string()),
+        job_role: yup.string().default(''),
+        preferred_location: yup.number().oneOf([0, 1, 2, 3, 4, 5, 6, 7]),
+        availability: yup.number().required().oneOf([0, 15, 30, 45, 60]),
+        travel: yup.number().required().oneOf([0, 25, 50, 75, 100]),
+        work_authorization: yup.boolean(),
+        willing_to_relocate: yup.boolean().required(),
+        remote_only: yup.boolean().required(),
+        end_to_end_implementation: yup.number().min(0),
+        privacy_protection: yup.object().shape({
+            photo: yup.boolean().default(true),
+            phone: yup.boolean().default(true),
+            email: yup.boolean().default(true),
+            current_employer: yup.boolean().default(true),
+            available_for_opportunity: yup.boolean().default(true),
+        }),
+    });
+	}
+	
+	
    await schema.validate(post_request_data, { abortEarly: false }).then(async value => {
 		if(value.latlng['lng'] && value.latlng['lng'] !=undefined && value.latlng['lng'] !="undefined" &&
 		value.latlng['lat'] && value.latlng['lat'] !=undefined && value.latlng['lat'] !="undefined"){
@@ -192,22 +256,39 @@ module.exports = async function update(request, response) {
 						});
 					});
 				}
-				if(checkDetails.work_authorization == 1){
-					var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
-	CROSS JOIN user_profiles "user_profile" 
-	LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-	WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
-	(user_account.status=1) AND (job_posting.visa_sponsorship = true OR (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] )) ) AND user_profile.hands_on_skills && job_posting.hands_on_skills 
-	AND (COALESCE(user_profile.experience) >= job_posting.experience) group by job_posting.id `
+				if(checkDetails.entry == true){
+					if(checkDetails.work_authorization == 1){
+						var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
+		CROSS JOIN user_profiles "user_profile" 
+		LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
+		WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
+		(user_account.status=1) AND (job_posting.visa_sponsorship = true OR (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] )) ) 
+		AND (COALESCE(user_profile.experience) >= job_posting.experience) group by job_posting.id `
+					}else{
+						var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
+		CROSS JOIN user_profiles "user_profile" 
+		LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
+		WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
+		(user_account.status=1) AND ((( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] )) )
+		AND (COALESCE(user_profile.experience) >= job_posting.experience) group by job_posting.id `
+					}
 				}else{
-					var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
-	CROSS JOIN user_profiles "user_profile" 
-	LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-	WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
-	(user_account.status=1) AND ((( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] )) ) AND user_profile.hands_on_skills && job_posting.hands_on_skills 
-	AND (COALESCE(user_profile.experience) >= job_posting.experience) group by job_posting.id `
+					if(checkDetails.work_authorization == 1){
+						var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
+		CROSS JOIN user_profiles "user_profile" 
+		LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
+		WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
+		(user_account.status=1) AND (job_posting.visa_sponsorship = true OR (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] )) ) AND user_profile.hands_on_skills && job_posting.hands_on_skills 
+		AND (COALESCE(user_profile.experience) >= job_posting.experience) group by job_posting.id `
+					}else{
+						var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
+		CROSS JOIN user_profiles "user_profile" 
+		LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
+		WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
+		(user_account.status=1) AND ((( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] )) ) AND user_profile.hands_on_skills && job_posting.hands_on_skills 
+		AND (COALESCE(user_profile.experience) >= job_posting.experience) group by job_posting.id `
+					}
 				}
-				
 				sails.sendNativeQuery(Count_Users, async function(err, Count_Users_value) {
 				if (err) {
 					var error = {
@@ -567,6 +648,10 @@ module.exports = async function update(request, response) {
 										TotalCheckItems = TotalCheckItems +ScoreMasters['language'];
 									}
 								}
+							}
+							if(updated_job['entry']==true){
+								arrayValue[i]['hands_on_experience'] =0;
+								arrayValue[i]['sap_experience'] =0;
 							}
 							arrayValue[i]['score'] = Object.keys(arrayValue[i]).reduce((sum,key)=>sum+parseFloat(arrayValue[i][key]||0),0);
 							arrayValue[i]['score'] =arrayValue[i]['score']/(10*TotalCheckItems);
