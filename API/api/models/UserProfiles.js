@@ -76,7 +76,8 @@ module.exports = {
         hands_on_skills: { type: 'ref', columnType: 'bigint[]' },
         education_degree: { type: 'ref', columnType: 'text[]' },
         language_id: { type: 'ref', columnType: 'bigint[]' },
-        programming_id: { type: 'ref', columnType: 'bigint[]' }
+        programming_id: { type: 'ref', columnType: 'bigint[]' },
+        entry: { type: 'boolean', defaultsTo: false }
 		
 		
         
