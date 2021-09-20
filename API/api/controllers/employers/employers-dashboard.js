@@ -23,8 +23,10 @@ module.exports = async function EmployersDashboard(request, response) {
 			
 			
 			filterDate = ``;
+			filterDates = ``;
 			if(filtered_query_data.startDate && filtered_query_data.endDate){
 				filterDate =`AND (job_posting.created_at between  '${filtered_query_data.startDate.toString()}' AND '${filtered_query_data.endDate.toString()}' )`;
+				filterDates =`AND (job_postings.created_at between  '${filtered_query_data.startDate.toString()}' AND '${filtered_query_data.endDate.toString()}' )`;
 			}
 			filterUpdatedDate = ``;
 			if(filtered_query_data.startDate && filtered_query_data.endDate){
@@ -49,14 +51,14 @@ module.exports = async function EmployersDashboard(request, response) {
 			if(statusFilter.length !=0){
 				filterStatus = `(job_posting.status = ANY('{${statusFilter}}') ) `
 			}else{
-				filterStatus = `(job_posting.status = ANY('{1,98,99,3}') ) `
+				filterStatus = `(job_posting.status = ANY('{1,98}') ) `
 			}
 			
 			filterStatuss = ``;
 			if(statusFilter.length !=0){
 				filterStatuss = `(job_postings.status = ANY('{${statusFilter}}') ) `
 			}else{
-				filterStatuss = `(job_postings.status = ANY('{1,98,99,3}') ) `
+				filterStatuss = `(job_postings.status = ANY('{1,98}') ) `
 			}
 			
 			
@@ -119,7 +121,7 @@ LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationsss.j
  WHERE job_posting.id = job_postings.id  ${filterUpdatedDate}  AND (job_applicationsss.short_listed = true AND job_applicationsss.status =  2 ) AND (job_applicationsss.employer=${parseInt(filtered_query_data.id)} ) ) as hired,
 
 job_postings.id,job_postings.title FROM  user_employments "job_postings" 
-where ${filterStatuss}  `
+where ${filterStatuss}  ${filterDates} `
 				
 			}
 			

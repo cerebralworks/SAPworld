@@ -64,8 +64,8 @@ module.exports = async function update(request, response) {
                 country: yup.string().lowercase()
             })
         ).default([]),
-        experience: yup.number().positive().default(0).required(),
-        sap_experience: yup.number().positive().default(0).required(),
+        experience: yup.number().min(0).default(0).required(),
+        sap_experience: yup.number().min(0).default(0).required(),
         current_employer: yup.string().required().lowercase(),
         current_employer_role: yup.string().required().lowercase(),
         domains_worked: yup.array().of(yup.number().positive()).required(),
