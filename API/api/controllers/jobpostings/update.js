@@ -59,8 +59,8 @@ module.exports = function create(request, response) {
             lat: yup.number().min(-90).max(90),
             lng: yup.number().min(-180).max(180),
         }).required(),
-        experience: yup.number().positive().default(0).required(),
-        sap_experience: yup.number().positive().default(0).required(),
+        experience: yup.number().min(0).default(0).required(),
+        sap_experience: yup.number().min(0).default(0).required(),
         domain: yup.array().of(yup.number().positive()).required(),
         hands_on_experience: yup.array().of(yup.object().shape({
             skill_id: yup.number().required().positive(),
