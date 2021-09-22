@@ -61,7 +61,7 @@ module.exports = function create(request, response) {
         }).required(),
         experience: yup.number().min(0).default(0).required(),
         sap_experience: yup.number().min(0).default(0).required(),
-        domain: yup.array().of(yup.number().positive()).required(),
+        domain: yup.array().of(yup.number().positive()),
         hands_on_experience: yup.array().of(yup.object().shape({
             skill_id: yup.number().required().positive(),
             skill_name: yup.string().required().lowercase(),

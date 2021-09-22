@@ -50,7 +50,7 @@ module.exports = function create(request, response) {
         }).required(),
         experience: yup.number().min(0).default(0).required(),
         sap_experience: yup.number().min(0).default(0).required(),
-        domain: yup.array().of(yup.number().positive()).required(),
+        domain: yup.array().of(yup.number().positive()),
         hands_on_experience: yup.array().of(yup.object().shape({
             skill_id: yup.number().required().positive(),
             skill_name: yup.string().required().lowercase(),
@@ -295,6 +295,9 @@ module.exports = function create(request, response) {
 								}
 							}
 							//HANDS ON EXPERIENCE CHECKING
+							if(!checkDetails.hands_on_skills || !checkDetails.hands_on_skills.length){
+								checkDetails.hands_on_skills=[];
+							}
 							var hands_on_Length = updated_job.hands_on_skills.filter(function(item, pos) {
 								return checkDetails.hands_on_skills.includes(item);
 							})

@@ -422,6 +422,9 @@ module.exports = async function update(request, response) {
 								}
 							}
 							//HANDS ON EXPERIENCE CHECKING
+							if(!checkDetails.hands_on_skills || !checkDetails.hands_on_skills.length){
+								checkDetails.hands_on_skills=[];
+							}
 							var hands_on_Length = updated_job.hands_on_skills.filter(function(item, pos) {
 								return checkDetails.hands_on_skills.includes(item);
 							})
