@@ -25,8 +25,8 @@ module.exports = async function EmployersDashboard(request, response) {
 			filterDate = ``;
 			filterDates = ``;
 			if(filtered_query_data.startDate && filtered_query_data.endDate){
-				filterDate =`AND (job_posting.created_at between  '${filtered_query_data.startDate.toString()}' AND '${filtered_query_data.endDate.toString()}' )`;
-				filterDates =`AND (job_postings.created_at between  '${filtered_query_data.startDate.toString()}' AND '${filtered_query_data.endDate.toString()}' )`;
+				filterDate =`AND (job_posting.updated_at between  '${filtered_query_data.startDate.toString()}' AND '${filtered_query_data.endDate.toString()}' )`;
+				filterDates =`AND (job_postings.updated_at between  '${filtered_query_data.startDate.toString()}' AND '${filtered_query_data.endDate.toString()}' )`;
 			}
 			filterUpdatedDate = ``;
 			if(filtered_query_data.startDate && filtered_query_data.endDate){
