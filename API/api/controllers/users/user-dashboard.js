@@ -21,7 +21,7 @@ module.exports = async function UserDashboard(request, response) {
 			}
 			filterDate = ``;
 			if(filtered_query_data.startDate && filtered_query_data.endDate){
-				filterDate =`AND (job_posting.created_at between  '${filtered_query_data.startDate.toString()}' AND '${filtered_query_data.endDate.toString()}' )`;
+				filterDate =`AND (job_posting.updated_at between  '${filtered_query_data.startDate.toString()}' AND '${filtered_query_data.endDate.toString()}' )`;
 			}
 			statusFilter =[];
 			
@@ -29,10 +29,10 @@ module.exports = async function UserDashboard(request, response) {
 				statusFilter.push(1);
 			}
 			if(filtered_query_data.isClosed ==true ||filtered_query_data.isClosed =='true' ){
-				statusFilter.push(3);
+				statusFilter.push(0);
 			}
 			if(filtered_query_data.isDeleted ==true ||filtered_query_data.isDeleted =='true' ){
-				statusFilter.push(99);
+				statusFilter.push(3);
 			}
 			if(filtered_query_data.isPaused ==true ||filtered_query_data.isPaused =='true' ){
 				statusFilter.push(98);
@@ -42,7 +42,7 @@ module.exports = async function UserDashboard(request, response) {
 			if(statusFilter.length !=0){
 				filterStatus = `(job_posting.status = ANY('{${statusFilter}}') ) `
 			}else{
-				filterStatus = `(job_posting.status = ANY('{1,98,99,3}') ) `
+				filterStatus = `(job_posting.status = ANY('{1,98}') ) `
 			}
 			if(filtered_query_data.view =='matches'){
 				//To get the Matched city based Details
@@ -50,7 +50,7 @@ module.exports = async function UserDashboard(request, response) {
 				CROSS JOIN user_profiles "user_profile" 
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 				WHERE ${filterStatus} ${filterDate} AND
-				(user_account.status=1)  AND ( user_profile.hands_on_skills && job_posting.hands_on_skills OR (user_profile.entry = true AND job_posting.entry =true ))
+				(user_account.status=1)  AND ( user_profile.hands_on_skills && job_posting.hands_on_skills OR ( job_posting.entry =true ))
 				AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by job_posting.city `
 			}
 			if(filtered_query_data.view =='availability'){
@@ -59,7 +59,7 @@ module.exports = async function UserDashboard(request, response) {
 				CROSS JOIN user_profiles "user_profile" 
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 				WHERE  ${filterStatus}  ${filterDate}   ${countryQuery} AND
-				(user_account.status=1)  AND user_profile.hands_on_skills && job_posting.hands_on_skills 
+				(user_account.status=1)  AND ( user_profile.hands_on_skills && job_posting.hands_on_skills OR ( job_posting.entry =true ))
 				AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by job_posting.availability `
 			}
 			if(filtered_query_data.view =='type'){
@@ -68,7 +68,7 @@ module.exports = async function UserDashboard(request, response) {
 				CROSS JOIN user_profiles "user_profile" 
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 				WHERE  ${filterStatus}  ${filterDate}   ${countryQuery}  AND
-				(user_account.status=1)  AND user_profile.hands_on_skills && job_posting.hands_on_skills 
+				(user_account.status=1)  AND ( user_profile.hands_on_skills && job_posting.hands_on_skills OR ( job_posting.entry =true ))
 				AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by job_posting.type `
 			}
 			if(filtered_query_data.view =='visa'){
@@ -77,7 +77,7 @@ module.exports = async function UserDashboard(request, response) {
 				CROSS JOIN user_profiles "user_profile" 
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 				WHERE  ${filterStatus}   ${filterDate} AND
-				(user_account.status=1)  AND user_profile.hands_on_skills && job_posting.hands_on_skills AND job_posting.visa_sponsorship = true  
+				(user_account.status=1)  AND ( user_profile.hands_on_skills && job_posting.hands_on_skills OR ( job_posting.entry =true ))  AND job_posting.visa_sponsorship = true  
 				AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by job_posting.city`
 			}
 			if(filtered_query_data.view =='applied'){

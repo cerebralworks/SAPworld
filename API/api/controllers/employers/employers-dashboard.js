@@ -25,8 +25,8 @@ module.exports = async function EmployersDashboard(request, response) {
 			filterDate = ``;
 			filterDates = ``;
 			if(filtered_query_data.startDate && filtered_query_data.endDate){
-				filterDate =`AND (job_posting.created_at between  '${filtered_query_data.startDate.toString()}' AND '${filtered_query_data.endDate.toString()}' )`;
-				filterDates =`AND (job_postings.created_at between  '${filtered_query_data.startDate.toString()}' AND '${filtered_query_data.endDate.toString()}' )`;
+				filterDate =`AND (job_posting.updated_at between  '${filtered_query_data.startDate.toString()}' AND '${filtered_query_data.endDate.toString()}' )`;
+				filterDates =`AND (job_postings.updated_at between  '${filtered_query_data.startDate.toString()}' AND '${filtered_query_data.endDate.toString()}' )`;
 			}
 			filterUpdatedDate = ``;
 			if(filtered_query_data.startDate && filtered_query_data.endDate){
@@ -38,10 +38,10 @@ module.exports = async function EmployersDashboard(request, response) {
 				statusFilter.push(1);
 			}
 			if(filtered_query_data.isClosed ==true ||filtered_query_data.isClosed =='true' ){
-				statusFilter.push(3);
+				statusFilter.push(0);
 			}
 			if(filtered_query_data.isDeleted ==true ||filtered_query_data.isDeleted =='true' ){
-				statusFilter.push(99);
+				statusFilter.push(3);
 			}
 			if(filtered_query_data.isPaused ==true ||filtered_query_data.isPaused =='true' ){
 				statusFilter.push(98);
@@ -80,7 +80,7 @@ module.exports = async function EmployersDashboard(request, response) {
 	LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
 	LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 	WHERE   ${filterStatus}  ${filterDate} AND scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.company = ${parseInt(filtered_query_data.id)}) AND
-	(user_account.status=1) AND (( user_profile.city like job_posting.city OR  user_profile.other_countries && ARRAY[job_posting.city]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) OR ( job_posting.visa_sponsorship = true AND user_profile.work_authorization = 1 )) AND (user_profile.privacy_protection->>'available_for_opportunity')::text = 'true' AND ( user_profile.hands_on_skills && job_posting.hands_on_skills OR (user_profile.entry = true AND job_posting.entry =true ))
+	(user_account.status=1) AND (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) OR ( job_posting.visa_sponsorship = true AND user_profile.work_authorization = 1 ))  AND (user_profile.privacy_protection->>'available_for_opportunity')::text = 'true' AND ( user_profile.hands_on_skills && job_posting.hands_on_skills OR (user_profile.entry = true OR job_posting.entry =true ))
 	AND (COALESCE(user_profile.experience) >= job_posting.experience)
 			group by job_posting.id `
 			}
@@ -121,7 +121,7 @@ LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationsss.j
  WHERE job_posting.id = job_postings.id  ${filterUpdatedDate}  AND (job_applicationsss.short_listed = true AND job_applicationsss.status =  2 ) AND (job_applicationsss.employer=${parseInt(filtered_query_data.id)} ) ) as hired,
 
 job_postings.id,job_postings.title FROM  user_employments "job_postings" 
-where ${filterStatuss}  ${filterDates}  AND job_postings.company = ${parseInt(filtered_query_data.id)} `
+where ${filterStatuss}  ${filterDates} AND job_postings.company = ${parseInt(filtered_query_data.id)} `
 				
 			}
 			
