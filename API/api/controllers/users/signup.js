@@ -30,14 +30,7 @@ module.exports = function signup(request, response) {
     });
     //Build and sending response
     const sendResponse = (details) => {
-        //Sending email
-        const mail_data = {
-            template: 'users/signup',
-            data: details,
-            to: post_request_data.email,
-            subject: 'Welcome to SAP WORLD.'
-        };
-        mailService.sendMail(mail_data);
+        
         _response_object.message = 'User signed up successfully.';
         var meta = {};
         meta['photo'] = {
@@ -79,6 +72,18 @@ module.exports = function signup(request, response) {
                 post_data.latlng = 'SRID=4326;POINT(0 0)';
                 // post_data.latlng_text = latlng_o['lat'] + ',' + latlng_o['lng'];
 				console.log(post_data);
+				//Sending email
+				user.token = user.tokens.verification;
+                user.name = post_data.first_name;
+                user.account = user.id;
+				const mail_data = {
+					template: 'users/signup',
+					data: user,
+					to: post_request_data.email,
+					subject: 'Welcome to SAP WORLD.'
+				};
+				mailService.sendMail(mail_data);
+		
                 UserProfiles.create(post_data, async function(err, profile) {
 					
                     if (err) {

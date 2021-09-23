@@ -193,7 +193,7 @@ module.exports = async function list(request, response) {
 		
 		
         if (filtered_query_keys.includes('city') && filtered_query_data.visa != true  ) {
-          query.where(`((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) =any( '{${criteria.city.toLowerCase()}}')) or ${UserProfiles.tableAlias}.${UserProfiles.schema.other_cities.columnName} && ARRAY['${filtered_query_data.city}']::text[] )`);
+          query.where(`((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) =any( '{${criteria.city.toLowerCase()}}')) or ${UserProfiles.tableAlias}.${UserProfiles.schema.other_cities.columnName} && ARRAY['${filtered_query_data.city}']::text[] ) OR user_profile.willing_to_relocate =true  `);
         }
         if (filtered_query_keys.includes('country') && filtered_query_data.visa != true ) {
             query.where(`((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) =any( '{${criteria.country.toLowerCase()}}')) or ${UserProfiles.tableAlias}.${UserProfiles.schema.other_countries.columnName} && ARRAY['${filtered_query_data.country}']::text[] )`);
