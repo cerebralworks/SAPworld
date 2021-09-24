@@ -138,7 +138,7 @@ module.exports = function create(request, response) {
 		CROSS JOIN user_profiles "user_profile" 
 		LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 		WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.id = ${parseInt(updated_job.id)}) AND
-		(user_account.status=1) AND (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) OR user_profile.willing_to_relocate =true ) )
+		(user_account.status=1) AND ( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] OR user_profile.willing_to_relocate =true ) 
 		AND (COALESCE(user_profile.experience) >= job_posting.experience) group by user_profile.id `
 					}
 
@@ -213,12 +213,14 @@ module.exports = function create(request, response) {
 								TotalCheckItems = TotalCheckItems +ScoreMasters['experience'];
 							}
 							//SAP EXPERIENCE CHECKING
-							if(checkDetails['sap_experience'] >= updated_job['sap_experience']){
-								arrayValue[i]['sap_experience'] = 100 * ScoreMasters['sap_experience'];
-								TotalCheckItems = TotalCheckItems +ScoreMasters['sap_experience'];
-							}else{
-								arrayValue[i]['sap_experience'] = 0 * ScoreMasters['sap_experience'];
-								TotalCheckItems = TotalCheckItems +ScoreMasters['sap_experience'];
+							if(updated_job['entry']!=true){
+								if(checkDetails['sap_experience'] >= updated_job['sap_experience']){
+									arrayValue[i]['sap_experience'] = 100 * ScoreMasters['sap_experience'];
+									TotalCheckItems = TotalCheckItems +ScoreMasters['sap_experience'];
+								}else{
+									arrayValue[i]['sap_experience'] = 0 * ScoreMasters['sap_experience'];
+									TotalCheckItems = TotalCheckItems +ScoreMasters['sap_experience'];
+								}								
 							}
 							//JOB TYPE CHECKING
 							if(checkDetails.job_type.includes(updated_job.type)){
@@ -313,22 +315,24 @@ module.exports = function create(request, response) {
 								}
 							}
 							//HANDS ON EXPERIENCE CHECKING
-							if(!checkDetails.hands_on_skills || !checkDetails.hands_on_skills.length){
-								checkDetails.hands_on_skills=[];
+							if(updated_job['entry']!=true){
+								if(!checkDetails.hands_on_skills || !checkDetails.hands_on_skills.length){
+									checkDetails.hands_on_skills=[];
+								}
+								var hands_on_Length = updated_job.hands_on_skills.filter(function(item, pos) {
+									return checkDetails.hands_on_skills.includes(item);
+								})
+								checkDetails.skills = checkDetails.skills.filter(function(item, pos) {
+									return !checkDetails.hands_on_skills.includes(item);
+								})
+								var hands_on_Length_skills = updated_job.hands_on_skills.filter(function(item, pos) {
+									return checkDetails.skills.includes(item);
+								})
+								var lengthDatas = ((hands_on_Length.length/updated_job.hands_on_skills.length*100 )+
+												(hands_on_Length_skills.length/updated_job.hands_on_skills.length*25 ))
+								arrayValue[i]['hands_on_experience'] =lengthDatas  * ScoreMasters['hands_on_experience'];
+								TotalCheckItems = TotalCheckItems +ScoreMasters['hands_on_experience'];
 							}
-							var hands_on_Length = updated_job.hands_on_skills.filter(function(item, pos) {
-								return checkDetails.hands_on_skills.includes(item);
-							})
-							checkDetails.skills = checkDetails.skills.filter(function(item, pos) {
-								return !checkDetails.hands_on_skills.includes(item);
-							})
-							var hands_on_Length_skills = updated_job.hands_on_skills.filter(function(item, pos) {
-								return checkDetails.skills.includes(item);
-							})
-							var lengthDatas = ((hands_on_Length.length/updated_job.hands_on_skills.length*100 )+
-											(hands_on_Length_skills.length/updated_job.hands_on_skills.length*25 ))
-							arrayValue[i]['hands_on_experience'] =lengthDatas  * ScoreMasters['hands_on_experience'];
-							TotalCheckItems = TotalCheckItems +ScoreMasters['hands_on_experience'];
 							//END TO END IMPLEMENTATION CHECKING
 							if(!checkDetails['end_to_end_implementation']){
 								arrayValue[i]['end_to_end_implemention'] = 0;
