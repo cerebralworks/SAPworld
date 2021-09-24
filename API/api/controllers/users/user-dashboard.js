@@ -49,7 +49,9 @@ module.exports = async function UserDashboard(request, response) {
 				Query = `SELECT  job_posting.city,count(distinct(job_posting.id)) FROM user_employments "job_posting"
 				CROSS JOIN user_profiles "user_profile" 
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-				WHERE ${filterStatus} ${filterDate} AND
+				WHERE ${filterStatus} ${filterDate} 
+				AND (job_posting.visa_sponsorship = true OR (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) 
+				AND (( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) OR user_profile.willing_to_relocate =true ) ) ) AND
 				(user_account.status=1)  AND ( user_profile.hands_on_skills && job_posting.hands_on_skills OR ( job_posting.entry =true ))
 				AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by job_posting.city `
 			}
@@ -58,7 +60,9 @@ module.exports = async function UserDashboard(request, response) {
 				Query = `SELECT  job_posting.availability,count(distinct(job_posting.id)) FROM user_employments "job_posting"
 				CROSS JOIN user_profiles "user_profile" 
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-				WHERE  ${filterStatus}  ${filterDate}   ${countryQuery} AND
+				WHERE  ${filterStatus}  ${filterDate}   ${countryQuery} 
+				AND (job_posting.visa_sponsorship = true OR (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) 
+				AND (( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) OR user_profile.willing_to_relocate =true ) ) ) AND
 				(user_account.status=1)  AND ( user_profile.hands_on_skills && job_posting.hands_on_skills OR ( job_posting.entry =true ))
 				AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by job_posting.availability `
 			}
@@ -67,7 +71,9 @@ module.exports = async function UserDashboard(request, response) {
 				Query = `SELECT  job_posting.type,count(distinct(job_posting.id)) FROM user_employments "job_posting"
 				CROSS JOIN user_profiles "user_profile" 
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-				WHERE  ${filterStatus}  ${filterDate}   ${countryQuery}  AND
+				WHERE  ${filterStatus}  ${filterDate}   ${countryQuery}  
+				AND (job_posting.visa_sponsorship = true OR (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) 
+				AND (( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) OR user_profile.willing_to_relocate =true ) ) ) AND
 				(user_account.status=1)  AND ( user_profile.hands_on_skills && job_posting.hands_on_skills OR ( job_posting.entry =true ))
 				AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by job_posting.type `
 			}

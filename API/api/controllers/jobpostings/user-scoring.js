@@ -91,6 +91,23 @@ module.exports = async function Scoring(request, response) {
 				
 			list_query.where("scoring.job_id =job_posting.id" );
 			list_query.where("scoring.user_id  = "+filtered_query_data.id );
+			
+			if (filtered_query_data.id) {
+				let build_job_application_table_columns = '';
+				_.forEach(_.keys(JobApplications.schema), attribute => {
+					if (!_.isEmpty(JobApplications.schema[attribute].columnName)) {
+						build_job_application_table_columns += `'${JobApplications.schema[attribute].columnName}',${JobApplications.tableAlias}.${JobApplications.schema[attribute].columnName},`;
+					}
+				});
+				build_job_application_table_columns = build_job_application_table_columns.slice(0, -1);
+				let sub_querys = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).
+				from(JobApplications.tableName, JobApplications.tableAlias).
+				field(`json_build_object(${build_job_application_table_columns})`).
+				where(`${JobApplications.tableAlias}.${JobApplications.schema.user.columnName} = ${parseInt(filtered_query_data.id)}`).
+				where(`${JobApplications.tableAlias}.${JobApplications.schema.job_posting.columnName} = ${JobPostings.tableAlias}.${JobPostings.schema.id.columnName}`).
+				limit(1);
+				list_query.field(`(${sub_querys.toString()})`, 'job_application');
+        }
 		
 			if (value.job_id) {
 				list_query.where("job_posting.id =" + value.job_id);
