@@ -159,9 +159,33 @@ module.exports = async function apply(request, response) {
         callback(true);
     };
     //Build and sending response
-    const sendResponse = (details) => {
+    const sendResponse = (details,logged_in_user,job,employee) => {
         _response_object.message = 'Applied for the job successfully.';
         _response_object['details'] = details;
+		var postDetails = {};
+		postDetails.name=logged_in_user.user_profile.first_name+' '+logged_in_user.user_profile.last_name;
+		postDetails.message='You have a new applicant '+postDetails.name+' for the post '+job.title +' (' + job.city +')';
+		postDetails.account=employee.account;
+		postDetails.user_id=logged_in_user.user_profile.id;
+		postDetails.job_id=job.id;
+		postDetails.employer=employee.id;		
+		postDetails.view=0;		
+		Notification.create(postDetails, function(err, job) {
+			
+		}); 
+		
+		postDetails.name=job.title;
+		postDetails.message='Your application for '+postDetails.name+' is uder review ';
+		postDetails.account=logged_in_user.id;
+		postDetails.user_id=logged_in_user.user_profile.id;
+		postDetails.job_id=job.id;
+		postDetails.employer=employee.id;		
+		postDetails.view=0;	
+		
+		Notification.create(postDetails, function(err, job) {
+			
+		}); 
+		
         return response.ok(_response_object);
     };
     validateModel.validate(JobApplications, input_attributes, filtered_post_data, async function(valid, errors) {
@@ -188,7 +212,7 @@ module.exports = async function apply(request, response) {
 								
 								await SearchEmployee(job.company, async function(employee) {
 									await sendEmail(job, logged_in_user.user_profile,filtered_post_data, employee, async function(email) {
-										sendResponse(filtered_post_data);
+										sendResponse(filtered_post_data,logged_in_user,job,employee);
 									});
 								});
 								
@@ -197,7 +221,7 @@ module.exports = async function apply(request, response) {
 								await addRecord(filtered_post_data, async function(application) {
 									//Send email
 									await sendEmail(job, logged_in_user.user_profile, application,employee, async function(email) {
-										sendResponse(application);
+										sendResponse(application,logged_in_user,job,employee);
 									});
 								});
 								});

@@ -56,13 +56,38 @@ module.exports = async function update(request, response) {
     };
 
     // Build and send response.
-    function sendResponse(details) {
+    function sendResponse(details,job,profile,logged_in_user) {
+		
+		
+		var postDetails = {};
+		postDetails.name=job.title;
          if (_.get(details, 'short_listed')) {
-        _response_object.message = 'Job application have been added to the short list successfully.';
-        } else if(_.get(details, 'short_listed')==false) {
+			_response_object.message = 'Job application have been added to the short list successfully.';
+			postDetails.message='Your profile is shortlisted for interview ( '+postDetails.name+' )';
+			if(details['status'] !=1){
+				var application_status = details.application_status.filter(function(a,b) { return parseInt(a.id) == parseInt(details.status )});
+				if(application_status.length!=0){
+					var statusCheck = application_status[0]['status'].toLowerCase();
+					postDetails.message='You application for the '+job.title+' status is changed to '+statusCheck;
+				}
+
+			}
+			
+		} else if(_.get(details, 'short_listed')==false) {
             _response_object.message = 'Job application is Not fit for this job.';
-        }
+			postDetails.message='Your application for the '+job.title+' was not successful ';
+		}
         _response_object['details'] = details;
+		
+		postDetails.account=profile.account;
+		postDetails.user_id=profile.id;
+		postDetails.job_id=job.id;
+		postDetails.employer=logged_in_user.employer_profile.id;		
+		postDetails.view=0;		
+		Notification.create(postDetails, function(err, job) {
+			
+		}); 
+		
         return response.ok(_response_object);
     };
 	//Validating the request and pass on the appriopriate response.
@@ -83,16 +108,20 @@ module.exports = async function update(request, response) {
 					employer: _.get(logged_in_user, 'employer_profile.id')
 				}
 			});
-			filtered_post_data.employer = _.get(logged_in_user, 'employer_profile.id');
-			if (job_application) {
-				updateJobApplication(filtered_post_data, function(job_application) {
-					sendResponse(job_application);
+			await JobPostings.findOne(filtered_post_data.job_posting, async function(err, job) {
+				await UserProfiles.findOne(filtered_post_data.user, async function(err, profile) {
+					filtered_post_data.employer = _.get(logged_in_user, 'employer_profile.id');
+					if (job_application) {
+						updateJobApplication(filtered_post_data, async function(job_application) {
+							sendResponse(job_application,job,profile,logged_in_user);
+						});
+					} else {
+						CreateJobApplication(filtered_post_data, async function(job_application) {
+							sendResponse(job_application,job,profile,logged_in_user);
+						});
+					}
 				});
-			} else {
-				CreateJobApplication(filtered_post_data, function(job_application) {
-					sendResponse(job_application);
-				});
-			}
+			});
         } else {
             _response_object.errors = errors;
             _response_object.count = errors.length;

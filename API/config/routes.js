@@ -63,6 +63,11 @@ module.exports.routes = {
     'PUT /country/update/:id': { controller: 'country', action: 'update' },
     'POST /country/delete' : { controller: 'country', action: 'delete' },
 	
+	/* Notification routes */
+	
+    'POST /notification/count': { controller: 'notification', action: 'count' },
+    'POST /notification/details': { controller: 'notification', action: 'details' },
+	
 	
 	/*language routes*/
     'GET /language/list': { controller: 'language', action: 'list' },
