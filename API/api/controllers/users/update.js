@@ -234,7 +234,7 @@ module.exports = async function update(request, response) {
 							if(data && data.length !=0){
 								var message = 'You saved profile '+profile[0]['first_name']+' is open for opportunities';
 								var names= profile[0]['first_name']+' '+profile[0]['first_name'];
-								var datas = data.map(function(a,b){ return {employer: a.employee_id,user_id:a.user_id,account:a.account,view:0,title:'Open for opportunity ',message:message}});
+								var datas = data.map(function(a,b){ return {employer: a.employee_id,user_id:a.user_id,account:a.account,view:0,title:'Open for opportunity ',message:message,name:names}});
 								await Notification.createEach(datas);
 
 							}
