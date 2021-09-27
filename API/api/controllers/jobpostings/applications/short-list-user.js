@@ -64,11 +64,13 @@ module.exports = async function update(request, response) {
          if (_.get(details, 'short_listed')) {
 			_response_object.message = 'Job application have been added to the short list successfully.';
 			postDetails.message='Your profile is shortlisted for interview ( '+postDetails.name+' )';
+			postDetails.title='Application Shortlisted';
 			if(details['status'] !=1){
 				var application_status = details.application_status.filter(function(a,b) { return parseInt(a.id) == parseInt(details.status )});
 				if(application_status.length!=0){
 					var statusCheck = application_status[0]['status'].toLowerCase();
 					postDetails.message='You application for the '+job.title+' status is changed to '+statusCheck;
+					postDetails.title= statusCheck;
 				}
 
 			}
@@ -76,6 +78,7 @@ module.exports = async function update(request, response) {
 		} else if(_.get(details, 'short_listed')==false) {
             _response_object.message = 'Job application is Not fit for this job.';
 			postDetails.message='Your application for the '+job.title+' was not successful ';
+			postDetails.title='Application Not fit for this job';
 		}
         _response_object['details'] = details;
 		

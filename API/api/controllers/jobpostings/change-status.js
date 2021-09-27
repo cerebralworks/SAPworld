@@ -26,7 +26,7 @@ module.exports = async function update(request, response) {
     }
     var filtered_post_data = _.pick(_.merge(post_request_data, request_query), pick_input);
     const filtered_post_keys = Object.keys(filtered_post_data);
-
+	filtered_post_data.logged_in_user=logged_in_user;
     // Update the Job Posting record to db.
     function updateJobPosting(id, data, callback){
         JobPostings.update(id, data, async function(err, job_posting){
@@ -60,15 +60,32 @@ module.exports = async function update(request, response) {
     }
 
     // Build and send response.
-    function sendResponse(details){
+    function sendResponse(details,filtered_post_data){
+		var postDetailss = {};
+		postDetailss.name=details.title;
         if(parseInt(details.status) === 1){
             _response_object.message = 'Job has been activated successfully.';
+			postDetailss.message=postDetailss.name+' is Open ';
+			postDetailss.title=postDetailss.name+' is Open ';
         }else if(parseInt(details.status) === 98){
             _response_object.message = 'Job has been paused successfully.';
+			postDetailss.message=postDetailss.name+' is Paused ';
+			postDetailss.title=postDetailss.name+' is Paused ';
         }else{
             _response_object.message = 'Job has been deactivated successfully.';
+			postDetailss.message=postDetailss.name+' is closed ';
+			postDetailss.title=postDetailss.name+' is closed ';
         }
         _response_object['details'] = {id: details.id, status: details.status};
+		
+		postDetailss.account=filtered_post_data.logged_in_user.id;
+		postDetailss.job_id=details.id;
+		postDetailss.employer=filtered_post_data.logged_in_user.employer_profile.id;		
+		postDetailss.view=0;	
+		
+		Notification.create(postDetailss, function(err, job) {
+			
+		}); 
         return response.ok(_response_object);
     };
 	//Validating the request and pass on the appriopriate response.
@@ -81,9 +98,9 @@ module.exports = async function update(request, response) {
                 filtered_post_data.status = parseInt(filtered_post_data.status);
             }
             let id = _.get(filtered_post_data, 'id');
-            isJobPostingExist(id,_.pick(filtered_post_data, ['employer']), function(){
-                updateJobPosting(id, _.omit(filtered_post_data, ['id', 'employer']), function (job_posting) {
-                    sendResponse(job_posting);
+            isJobPostingExist(id,_.pick(filtered_post_data, ['employer']),async function(){
+                updateJobPosting(id, _.omit(filtered_post_data, ['id', 'employer']),async function (job_posting) {
+                    sendResponse(job_posting,filtered_post_data);
                 });
             });
         }else{

@@ -43,8 +43,9 @@ module.exports = async function saveProfile(request, response) {
 			if(!value.description){
 				value.description = '';
 			}
-            var company_profile = await SavedProfile.findOne({ employee_id: logged_in_user.employer_profile.id, user_id: value.user_id });
+            var company_profile = await SavedProfile.findOne({ account:logged_in_user.id, employee_id: logged_in_user.employer_profile.id, user_id: value.user_id });
             value.employee_id = logged_in_user.employer_profile.id;
+            value.account = logged_in_user.id;
             if (!company_profile) {
                 SavedProfile.create(value, async function(err, profile) {
                     if (err) {
@@ -58,7 +59,7 @@ module.exports = async function saveProfile(request, response) {
                     }
                 });
             } else {
-				  var company_profiles = await SavedProfile.updateOne({ employee_id: logged_in_user.employer_profile.id, user_id: value.user_id }).set(value);
+				  var company_profiles = await SavedProfile.updateOne({ account:logged_in_user.id,employee_id: logged_in_user.employer_profile.id, user_id: value.user_id }).set(value);
                 if(company_profiles){
 					return response.status(200).json({ message: ' profile updated successfully.', user_id: value.user_id });
 				}else{

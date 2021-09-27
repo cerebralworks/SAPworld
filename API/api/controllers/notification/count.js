@@ -18,11 +18,11 @@ module.exports = async function Details(request, response) {
 		Count_Users=``;
 		if(filtered_query_data.view =='user'){
 			//To get the job details Count
-			Count_Users = `SELECT count(*) FROM notifications where account = ${logged_in_user.id} AND view = 0 `
+			Count_Users = `UPDATE  notifications SET view = 1 WHERE account = ${logged_in_user.id} AND view = 0 AND status = 1 RETURNING * `;
 		}
 		if(filtered_query_data.view =='employee'){
 			//To get the job details Count
-			Count_Users = `SELECT count(*) FROM notifications where account = ${logged_in_user.id} AND view = 0 `
+			Count_Users = `UPDATE  notifications SET view = 1 WHERE account = ${logged_in_user.id} AND view = 0 AND status = 1 RETURNING * `;
 		}
 		sails.sendNativeQuery(Count_Users, async function(err, Count_notification) {
 			if (err) {
@@ -47,7 +47,7 @@ module.exports = async function Details(request, response) {
     //Build and sending response
     const sendResponse = (notification) => {
         _response_object.data = notification;
-        _response_object.count = notification['0'];
+        _response_object.count = notification['length'];
         return response.ok(_response_object);
     };
 

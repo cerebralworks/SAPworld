@@ -20,6 +20,9 @@ module.exports = {
         user_id: { type: 'number' },
         employee_id: { type: 'number' },
         description: { type: 'string' },
+		account: {
+            model: 'users'
+        },
     },
 
 };
