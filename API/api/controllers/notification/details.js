@@ -10,7 +10,7 @@ module.exports = async function Details(request, response) {
     const filtered_query_data = _.pick(request_query, ['page','limit','id', 'sort','view']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
-        { name: 'page', number: true, min: 1 },
+        { name: 'page', number: true, min: 0 },
         { name: 'limit', number: true, min: 1 }
        
     ];
@@ -21,13 +21,14 @@ module.exports = async function Details(request, response) {
 		Count_UsersTotal=``;
 		if(filtered_query_data.view =='user'){
 			//To get the job details Count
-			Count_Users = `SELECT * FROM notifications where account = ${logged_in_user.id} AND view = 0 LIMIT ${filtered_query_data.limit} OFFSET ${filtered_query_data.page}`
-			Count_UsersTotal = `SELECT count(*) FROM notifications where account = ${logged_in_user.id} AND view = 0 `
+			Notification.update({account:logged_in_user.id}).set({status:0,view:1});
+			Count_Users = `SELECT * FROM notifications where account = ${logged_in_user.id}  ORDER BY updated_at DESC LIMIT ${filtered_query_data.limit} OFFSET ${filtered_query_data.page}`
+			Count_UsersTotal = `SELECT count(*) FROM notifications where account = ${logged_in_user.id} `
 		}
 		if(filtered_query_data.view =='employee'){
 			//To get the job details Count
-			Count_Users = `SELECT * FROM notifications where account = ${logged_in_user.id} AND view = 0 LIMIT ${filtered_query_data.limit} OFFSET ${filtered_query_data.page}`
-			Count_UsersTotal = `SELECT count(*) FROM notifications where account = ${logged_in_user.id} AND view = 0 `
+			Count_Users = `SELECT * FROM notifications where account = ${logged_in_user.id}  ORDER BY updated_at DESC LIMIT ${filtered_query_data.limit} OFFSET ${filtered_query_data.page}`
+			Count_UsersTotal = `SELECT count(*) FROM notifications where account = ${logged_in_user.id}  `
 		}
 		sails.sendNativeQuery(Count_Users, async function(err, Count_Users_value) {
 			if (err) {

@@ -11,6 +11,7 @@ module.exports = {
     attributes: {
         message: { type: 'string' },
         name: { type: 'string' },
+        title: { type: 'string' },
         status: { type: 'number', defaultsTo: 1 },
         view: { type: 'number', defaultsTo: 1 },
         account: {

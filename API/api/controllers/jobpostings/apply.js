@@ -164,6 +164,7 @@ module.exports = async function apply(request, response) {
         _response_object['details'] = details;
 		var postDetails = {};
 		postDetails.name=logged_in_user.user_profile.first_name+' '+logged_in_user.user_profile.last_name;
+		postDetails.title='New Application Request';
 		postDetails.message='You have a new applicant '+postDetails.name+' for the post '+job.title +' (' + job.city +')';
 		postDetails.account=employee.account;
 		postDetails.user_id=logged_in_user.user_profile.id;
@@ -173,16 +174,17 @@ module.exports = async function apply(request, response) {
 		Notification.create(postDetails, function(err, job) {
 			
 		}); 
+		var postDetailss = {};
+		postDetailss.name=job.title;
+		postDetailss.title='Application Under Review';
+		postDetailss.message='Your application for '+postDetails.name+' is uder review ';
+		postDetailss.account=logged_in_user.id;
+		postDetailss.user_id=logged_in_user.user_profile.id;
+		postDetailss.job_id=job.id;
+		postDetailss.employer=employee.id;		
+		postDetailss.view=0;	
 		
-		postDetails.name=job.title;
-		postDetails.message='Your application for '+postDetails.name+' is uder review ';
-		postDetails.account=logged_in_user.id;
-		postDetails.user_id=logged_in_user.user_profile.id;
-		postDetails.job_id=job.id;
-		postDetails.employer=employee.id;		
-		postDetails.view=0;	
-		
-		Notification.create(postDetails, function(err, job) {
+		Notification.create(postDetailss, function(err, job) {
 			
 		}); 
 		

@@ -19,6 +19,7 @@ module.exports = async function deleteRecords(request, response) {
     var input_attributes = [
         { name: 'ids', required: true, array: true, individual_rule: { number: true, min: 1 }, min: 1 }
     ];
+	filtered_post_data.logged_in_user=logged_in_user;
     // Delete the Job Posting records from db.
     function deleteJobPosting(ids, data, callback) {
         JobPostings.update({ id: { in: ids } }, data, async function(err, job_postings) {
@@ -69,9 +70,22 @@ module.exports = async function deleteRecords(request, response) {
     }
 
     // Build and send response.
-    function sendResponse(details) {
+    function sendResponse(details,filtered_post_data) {
         _response_object.message = 'Job has been deleted successfully.';
         _response_object['details'] = details;
+		
+		var postDetailss = {};
+		postDetailss.name=details[0].title;
+		postDetailss.message=postDetailss.name+' is Removed ';
+		postDetailss.account=filtered_post_data.logged_in_user.id;
+		postDetailss.job_id=details[0].id;
+		postDetailss.employer=filtered_post_data.logged_in_user.employer_profile.id;		
+		postDetailss.view=0;	
+		
+		Notification.create(postDetailss, function(err, job) {
+			
+		}); 
+		
         return response.ok(_response_object);
     };
 	//Validating the request and pass on the appriopriate response.
@@ -81,12 +95,12 @@ module.exports = async function deleteRecords(request, response) {
             await filtered_post_data.ids.forEach(function(id) {
                 ids.push(parseInt(id));
             });
-            filtered_post_data = { status: _.get(sails.config.custom.status_codes, 'deleted') };
+            var filtered_post_datas = { status: _.get(sails.config.custom.status_codes, 'deleted') };
             isJobPostingExist(ids, async function(job_postings) {
                 // storing extracted job posting ids
                 ids = await _.map(job_postings, 'id');
-                deleteJobPosting(ids, filtered_post_data, function(job_postings) {
-                    sendResponse(job_postings);
+                deleteJobPosting(ids, filtered_post_datas,async function(job_postings) {
+                    sendResponse(job_postings,filtered_post_data);
                 });
             });
         } else {

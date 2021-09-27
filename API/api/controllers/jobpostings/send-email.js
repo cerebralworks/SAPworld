@@ -10,6 +10,7 @@ module.exports = async function sendemail(request, response) {
     const request_query = request.allParams();
     const id = parseInt(request_query.id);
     const logged_in_user = request.user;
+	request_query.logged_in_user=logged_in_user;
     var _response_object = {};
     let yup = sails.yup;
     var model = {};
@@ -93,6 +94,19 @@ module.exports = async function sendemail(request, response) {
             subject: 'An employer is interested in your profile'
         };
         await mailService.sendMail(mail_data);
+		var postDetailss = {};
+		postDetailss.name=model.title;
+		postDetailss.title='Job Invitation';
+		postDetailss.message=value.logged_in_user.employer_profile.first_name +' '+value.logged_in_user.employer_profile.last_name +' employer invited you to apply for '+model.title+' - ' +model.city;
+		postDetailss.account=value.account;
+		postDetailss.user_id=value.id;
+		postDetailss.job_id=model.id;
+		postDetailss.employer=value.logged_in_user.employer_profile.id;		
+		postDetailss.view=0;	
+		
+		Notification.create(postDetailss, function(err, job) {
+			
+		}); 
         _response_object.message = 'Mail sent  successfully.';
         _response_object.details = {};
         return response.status(200).json(_response_object);
