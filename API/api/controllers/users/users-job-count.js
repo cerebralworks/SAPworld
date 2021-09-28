@@ -35,20 +35,20 @@ module.exports = async function list(request, response) {
 	WHERE (job_posting.status = 1 OR  job_posting.status=98 ) AND scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.company = ${parseInt(filtered_query_data.company)}) AND
 	(user_account.status=1) AND (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND (( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] )OR user_profile.willing_to_relocate =true ) OR ( job_posting.visa_sponsorship = true AND user_profile.work_authorization = 1 )) AND (user_profile.privacy_protection->>'available_for_opportunity')::text = 'true' AND ( user_profile.hands_on_skills && job_posting.hands_on_skills OR (user_profile.entry = true OR job_posting.entry =true ))
 	AND (COALESCE(user_profile.experience) >= job_posting.experience)
-			group by job_posting.id`
+			group by job_posting.id ORDER BY job_posting.id`
 			if(filtered_query_data.view =='applicants'){
 				//To get the applicant count details
 				Count_Users = `SELECT COUNT(DISTINCT job_application.id),job_posting.id FROM  job_applications "job_application" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 
 LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) WHERE (job_posting.status = 1 OR  job_posting.status=0 OR  job_posting.status=98 ) AND
-(job_application.status=1) AND (job_application.short_listed IS NULL or job_application.short_listed != true) AND (job_application.employer=${parseInt(filtered_query_data.company)}) Group BY job_posting.id`
+(job_application.status=1) AND (job_application.short_listed IS NULL or job_application.short_listed != true) AND (job_application.employer=${parseInt(filtered_query_data.company)}) Group BY job_posting.id ORDER BY job_posting.id`
 			}
 			if(filtered_query_data.view =='shortlisted'){
 				//To get the shortlisted users details query
 				Count_Users = `SELECT COUNT(DISTINCT job_application.id),job_posting.id FROM  job_applications "job_application" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 
 LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) WHERE  (job_posting.status = 1 OR  job_posting.status=98 OR  job_posting.status=0 ) AND
-job_application.short_listed = true AND (job_application.employer=${parseInt(filtered_query_data.company)}) Group BY job_posting.id`
+job_application.short_listed = true AND (job_application.employer=${parseInt(filtered_query_data.company)}) Group BY job_posting.id ORDER BY job_posting.id`
 			}
 			if(filtered_query_data.view =='users'){
 				//To get the job details Count
