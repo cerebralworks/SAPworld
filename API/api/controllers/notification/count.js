@@ -15,16 +15,19 @@ module.exports = async function Details(request, response) {
 
     //Find the Dashboard Details based on general criteria.
     const getNotificationCount = async( callback) => {
+		Count_Users_details=``;
 		Count_Users=``;
 		if(filtered_query_data.view =='user'){
 			//To get the job details Count
-			Count_Users = `UPDATE  notifications SET view = 1 WHERE account = ${logged_in_user.id} AND view = 0 AND status = 1 RETURNING * `;
+			Count_Users_details = `UPDATE  notifications SET view = 1 WHERE account = ${logged_in_user.id} AND view = 0 AND status = 1 RETURNING * `;
+			Count_Users = `SELECT count(*) FROM notifications WHERE account = ${logged_in_user.id} AND status = 1 `;
 		}
 		if(filtered_query_data.view =='employee'){
 			//To get the job details Count
-			Count_Users = `UPDATE  notifications SET view = 1 WHERE account = ${logged_in_user.id} AND view = 0 AND status = 1 RETURNING * `;
+			Count_Users_details = `UPDATE  notifications SET view = 1 WHERE account = ${logged_in_user.id} AND view = 0 AND status = 1 RETURNING * `;
+			Count_Users = `SELECT count(*) FROM notifications WHERE account = ${logged_in_user.id} AND status = 1 `;
 		}
-		sails.sendNativeQuery(Count_Users, async function(err, Count_notification) {
+		sails.sendNativeQuery(Count_Users_details, async function(err, Count_notification_detail) {
 			if (err) {
 				var error = {
 					'field': 'items',
@@ -38,16 +41,35 @@ module.exports = async function Details(request, response) {
 				return response.status(400).json(_response_object);
 			} else {
 				//console.log(group_query_Value);
-				return callback(_.get(Count_notification, 'rows'));
+				//return callback(_.get(Count_notification, 'rows'));
+				sails.sendNativeQuery(Count_Users, async function(err, Count_notification) {
+					if (err) {
+						var error = {
+							'field': 'items',
+							'rules': [{
+								'rule': 'invalid',
+								'message': err.message
+							}]
+						};
+						_response_object.errors = [error];
+						_response_object.count = _response_object.errors.count;
+						return response.status(400).json(_response_object);
+					} else {
+						//console.log(group_query_Value);
+						return callback(_.get(Count_notification_detail, 'rows'),_.get(Count_notification, 'rows'));
+					}
+				});
+				
+				
 			}
 		});		
     };
 
 
     //Build and sending response
-    const sendResponse = (notification) => {
+    const sendResponse = (notification,count) => {
         _response_object.data = notification;
-        _response_object.count = notification['length'];
+        _response_object.count = count[0]['count'];
         return response.ok(_response_object);
     };
 
@@ -56,8 +78,8 @@ module.exports = async function Details(request, response) {
         if (valid) {
             
             //Preparing data
-            await getNotificationCount( function(notification_details) {
-                sendResponse(notification_details);
+            await getNotificationCount( function(notification_details,count) {
+                sendResponse(notification_details,count);
             });
         } else {
             _response_object.errors = errors;

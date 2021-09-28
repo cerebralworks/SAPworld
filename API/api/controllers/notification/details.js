@@ -19,15 +19,16 @@ module.exports = async function Details(request, response) {
     const getNotification = async( callback) => {
 		Count_Users=``;
 		Count_UsersTotal=``;
+		await Notification.update({account:logged_in_user.id}).set({status:0,view:1});
 		if(filtered_query_data.view =='user'){
 			//To get the job details Count
-			Notification.update({account:logged_in_user.id}).set({status:0,view:1});
-			Count_Users = `SELECT * FROM notifications where account = ${logged_in_user.id}  ORDER BY updated_at DESC LIMIT ${filtered_query_data.limit} OFFSET ${filtered_query_data.page}`
+			
+			Count_Users = `SELECT * FROM notifications where account = ${logged_in_user.id}  ORDER BY id DESC LIMIT ${filtered_query_data.limit} OFFSET ${filtered_query_data.page}`
 			Count_UsersTotal = `SELECT count(*) FROM notifications where account = ${logged_in_user.id} `
 		}
 		if(filtered_query_data.view =='employee'){
 			//To get the job details Count
-			Count_Users = `SELECT * FROM notifications where account = ${logged_in_user.id}  ORDER BY updated_at DESC LIMIT ${filtered_query_data.limit} OFFSET ${filtered_query_data.page}`
+			Count_Users = `SELECT * FROM notifications where account = ${logged_in_user.id}  ORDER BY id DESC LIMIT ${filtered_query_data.limit} OFFSET ${filtered_query_data.page}`
 			Count_UsersTotal = `SELECT count(*) FROM notifications where account = ${logged_in_user.id}  `
 		}
 		sails.sendNativeQuery(Count_Users, async function(err, Count_Users_value) {
