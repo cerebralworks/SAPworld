@@ -154,7 +154,8 @@ module.exports = async function list(request, response) {
                     job = '';
                     job_fields.map(function(value) {
                         if ((JobPostings.schema[value].columnName || typeof JobPostings.schema[value].columnName !== "undefined" )&&
-						JobPostings.schema[value].columnName !== 'created_at' && JobPostings.schema[value].columnName !=='updated_at' ) {
+						JobPostings.schema[value].columnName !== 'created_at' && JobPostings.schema[value].columnName !=='updated_at'
+						&& JobPostings.schema[value].columnName !=='end_to_end_implementation' ) {
                             job += "'" + value + "'," + JobPostings.tableAlias + "." + JobPostings.schema[value].columnName + ",";
                         }
                     });
@@ -174,6 +175,7 @@ module.exports = async function list(request, response) {
 						&& UserProfiles.schema[value].columnName !== 'language_id'
 						&& UserProfiles.schema[value].columnName !== 'other_cities'
 						&& UserProfiles.schema[value].columnName !== 'other_countries'
+						&& UserProfiles.schema[value].columnName !== 'end_to_end_implementation'
 						&& UserProfiles.schema[value].columnName !== 'privacy_protection'){
                           user += "'" + value + "'," + UserProfiles.tableAlias + "." + UserProfiles.schema[value].columnName + ",";
                         }

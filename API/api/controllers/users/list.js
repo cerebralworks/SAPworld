@@ -391,6 +391,7 @@ module.exports = async function list(request, response) {
                 //Executing query
 				query.group(`${Scoring.tableAlias}.${Scoring.schema.id.columnName}`);
 				query.order('scoring.score', false);
+				query.field('scoring.mail');
 				//query.order(`${Scoring.tableAlias}.${Scoring.schema.score.columnName} `);
                 var application_model = sails.sendNativeQuery(query.toString());
                 application_model.exec(async function(err, applications_result) {

@@ -31,7 +31,8 @@ module.exports = {
         remote: { type: 'number' },
         travel: { type: 'number' },
         language: { type: 'number' },
-        score: { type: 'number' }
+        score: { type: 'number' },
+        mail: { type: 'boolean', defaultsTo: false , allowNull: true }
 		
     }
 };
