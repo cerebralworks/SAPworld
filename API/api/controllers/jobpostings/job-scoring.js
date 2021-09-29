@@ -129,6 +129,7 @@ module.exports = async function Scoring(request, response) {
             }
         });
 		list_query.field("scoring.score as score");
+		list_query.field("scoring.mail as mail");
         if (value.id) {
             let build_job_application_table_columns = '';
             _.forEach(_.keys(JobApplications.schema), attribute => {
@@ -166,6 +167,7 @@ module.exports = async function Scoring(request, response) {
 					if(profile.score){
 						score = profile.score.toFixed(1);
 					}
+					
                     if (profile.job_application) {
                         application = profile.job_application;
                         delete profile.job_application;
