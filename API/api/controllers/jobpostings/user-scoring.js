@@ -155,7 +155,7 @@ FROM user_employments "job_posting"
 LEFT JOIN scorings "scoring" ON (scoring.job_id = job_posting.id)  
 LEFT JOIN employer_profiles "employer" ON (job_posting.company = employer.id)   
 WHERE (( job_posting.status =1 OR job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${filtered_query_data.id} ))  )) 
-AND (job_posting.status !=0) AND (job_posting.status !=3) AND (job_posting.experience <=8) AND 
+AND (job_posting.status !=0) AND (job_posting.status !=3) AND 
 (scoring.job_id =job_posting.id) AND (scoring.user_id  =  ${filtered_query_data.id} )   `;
                 var count = sails.sendNativeQuery(count_query, async function(err, job_postings) {
                     sendResponse(profile, job_postings['rows'][0]['count']);
