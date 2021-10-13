@@ -69,7 +69,12 @@ module.exports = async function update(request, response) {
 				var application_status = details.application_status.filter(function(a,b) { return parseInt(a.id) == parseInt(details.status )});
 				if(application_status.length!=0){
 					var statusCheck = application_status[0]['status'].toLowerCase();
-					postDetails.message='You application for the '+job.title+' status is changed to '+statusCheck;
+					var commentsCheck = application_status[0]['comments'].toLowerCase();
+					if(commentsCheck.length !=0){
+						postDetails.message='Your application for the '+job.title+' status is '+statusCheck + '  and got a new meesage';
+					}else{
+						postDetails.message='Your application for the '+job.title+' status is changed to '+statusCheck;
+					}
 					postDetails.title= statusCheck;
 				}
 
