@@ -67,7 +67,8 @@ module.exports = {
         hands_on_skills: { type: 'ref', columnType: 'bigint[]' },
         others: { type: 'ref', columnType: 'json[]' },
         programming_id: { type: 'ref', columnType: 'bigint[]' },
-        entry: { type: 'boolean', defaultsTo: false }
+        entry: { type: 'boolean', defaultsTo: false },
+        negotiable: { type: 'boolean', defaultsTo: false , allowNull: true}
 
     }
 };
