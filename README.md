@@ -1,4 +1,4 @@
-# Shejobs Service
+# SAP Service
 
 Rest API service for job discovery app.
 
