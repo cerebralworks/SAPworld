@@ -1,0 +1,1676 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.9.1" last-position="405,0" last-zoom="1"
+	 default-owner="postgres">
+<database name="sap-development" encoding="UTF8" lc-collate="en_IN" lc-ctype="en_IN" is-template="false" allow-conns="true">
+	<role name="postgres"/>
+	<tablespace name="pg_default"/>
+</database>
+
+<schema name="public" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<schema name="tiger" rect-visible="true" fill-color="#9f95d0">
+	<role name="postgres"/>
+</schema>
+
+<schema name="tiger_data" rect-visible="true" fill-color="#670a12">
+	<role name="postgres"/>
+</schema>
+
+<schema name="topology" rect-visible="true" fill-color="#5278ab">
+	<role name="postgres"/>
+	<comment><![CDATA[PostGIS Topology schema]]></comment>
+</schema>
+
+<extension name="address_standardizer" cur-version="2.4.4">
+	<schema name="public"/>
+	<comment><![CDATA[Used to parse an address into constituent elements. Generally used to support geocoding address normalization step.]]></comment>
+</extension>
+
+<extension name="address_standardizer_data_us" cur-version="2.4.4">
+	<schema name="public"/>
+	<comment><![CDATA[Address Standardizer US dataset example]]></comment>
+</extension>
+
+<extension name="fuzzystrmatch" cur-version="1.1">
+	<schema name="public"/>
+	<comment><![CDATA[determine similarities and distance between strings]]></comment>
+</extension>
+
+<extension name="pgcrypto" cur-version="1.3">
+	<schema name="public"/>
+	<comment><![CDATA[cryptographic functions]]></comment>
+</extension>
+
+<extension name="postgis" cur-version="2.4.4">
+	<schema name="public"/>
+	<comment><![CDATA[PostGIS geometry, geography, and raster spatial types and functions]]></comment>
+</extension>
+
+<extension name="postgis_tiger_geocoder" cur-version="2.4.4">
+	<schema name="tiger"/>
+	<comment><![CDATA[PostGIS tiger geocoder and reverse geocoder]]></comment>
+</extension>
+
+<extension name="postgis_topology" cur-version="2.4.4">
+	<schema name="topology"/>
+	<comment><![CDATA[PostGIS topology spatial types and functions]]></comment>
+</extension>
+
+<function name="exec"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="text" length="1"/>
+	</return-type>
+	<parameter name="_param1">
+		<type name="text" length="0"/>
+	</parameter>
+	<definition><![CDATA[ BEGIN EXECUTE $1; RETURN $1; END; ]]></definition>
+</function>
+
+<function name="hop_points_summary"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="1"/>
+	</return-type>
+	<definition><![CDATA[
+BEGIN
+  IF new.recipient_type = 0 THEN
+  	UPDATE hop_user_hop_points
+    SET
+  		current_points = ((SELECT coalesce(SUM(points),0) FROM hop_hop_points WHERE "user" = new.user AND recipient_type = 0 AND type=1)-(SELECT coalesce(SUM(points),0) FROM hop_hop_points WHERE "user" = new.user AND recipient_type = 0 AND type=0)),
+  	 	earned_points = (SELECT coalesce(SUM(points),0) FROM hop_hop_points WHERE "user" = new.user AND recipient_type = 0 AND type=1),
+  	  spent_points = (SELECT coalesce(SUM(points),0) FROM hop_hop_points WHERE "user" = new.user AND recipient_type = 0 AND type=0)
+  	WHERE "user" = new.user;
+  	RETURN new;
+  ELSIF new.recipient_type = 1 THEN
+    UPDATE hop_restaurant_hop_points
+    SET
+      current_points = ((SELECT coalesce(SUM(points),0) FROM hop_hop_points WHERE restaurant = new.restaurant AND recipient_type = 1 AND type=1)-(SELECT coalesce(SUM(points),0) FROM hop_hop_points WHERE restaurant = new.restaurant AND recipient_type = 1 AND type=0)),
+      earned_points = (SELECT coalesce(SUM(points),0) FROM hop_hop_points WHERE restaurant = new.restaurant AND recipient_type = 1 AND type=1),
+      spent_points = (SELECT coalesce(SUM(points),0) FROM hop_hop_points WHERE restaurant = new.restaurant AND recipient_type = 1 AND type=0)
+    WHERE restaurant = new.restaurant;
+		RETURN new;
+	ELSE
+		RETURN new;
+  END IF;
+END;
+]]></definition>
+</function>
+
+<function name="hop_points_then_balance"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="1"/>
+	</return-type>
+	<definition><![CDATA[
+BEGIN
+	IF new.recipient_type = 0 THEN
+			UPDATE hop_hop_points
+			SET
+			then_balance = ((SELECT coalesce(SUM(points),0) FROM hop_hop_points WHERE "user" = new.user AND recipient_type = 0 AND type=1 AND id <= new.id)-(SELECT coalesce(SUM(points),0) FROM hop_hop_points WHERE "user" = new.user AND recipient_type = 0 AND type=0 AND id <= new.id))
+			WHERE id = new.id;
+			RETURN new;
+	ELSIF new.recipient_type = 1 THEN
+			UPDATE hop_hop_points
+			SET
+				then_balance = ((SELECT coalesce(SUM(points),0) FROM hop_hop_points WHERE restaurant = new.restaurant AND recipient_type = 1 AND type=1 AND id <= new.id)-(SELECT coalesce(SUM(points),0) FROM hop_hop_points WHERE restaurant = new.restaurant AND recipient_type = 1 AND type=0 AND id <= new.id))
+			WHERE id = new.id;
+			RETURN new;
+  ELSE
+		new.then_balance = null;
+		RETURN new;
+	END IF;
+END;
+]]></definition>
+</function>
+
+<function name="test"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="IMMUTABLE"
+		security-type="SECURITY INVOKER"
+		execution-cost="1"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="void" length="1"/>
+	</return-type>
+	<parameter name="p_test">
+		<type name="text" length="0" dimension="1"/>
+	</parameter>
+	<definition><![CDATA[
+BEGIN
+  SELECT cuisines FROM unnest( cuisines ) AS cuisine;
+END;
+]]></definition>
+</function>
+
+<function name="unique_short_id"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="1"/>
+	</return-type>
+	<definition><![CDATA[
+
+ -- Declare the variables we'll be using.
+DECLARE
+  key TEXT;
+  qry TEXT;
+  found TEXT;
+BEGIN
+
+  -- generate the first part of a query as a string with safely
+  -- escaped table name, using || to concat the parts
+  qry := 'SELECT place_id FROM ' || quote_ident(TG_TABLE_NAME) || ' WHERE place_id=';
+
+  -- This loop will probably only run once per call until we've generated
+  -- millions of ids.
+  LOOP
+
+    -- Generate our string bytes and re-encode as a base64 string.
+    key := encode(gen_random_bytes(6), 'base64');
+
+    -- Base64 encoding contains 2 URL unsafe characters by default.
+    -- The URL-safe version has these replacements.
+    key := replace(key, '/', 'A'); -- url safe replacement
+    key := replace(key, '+', 'Z'); -- url safe replacement
+
+    -- Concat the generated key (safely quoted) with the generated query
+    -- and run it.
+    -- SELECT place_id FROM "test" WHERE place_id='blahblah' INTO found
+    -- Now "found" will be the duplicated place_id or NULL.
+    EXECUTE qry || quote_literal(key) INTO found;
+
+    -- Check to see if found is NULL.
+    -- If we checked to see if found = NULL it would always be FALSE
+    -- because (NULL = NULL) is always FALSE.
+    IF found IS NULL THEN
+
+      -- If we didn't find a collision then leave the LOOP.
+      EXIT;
+    END IF;
+
+    -- We haven't EXITed yet, so return to the top of the LOOP
+    -- and try again.
+  END LOOP;
+
+  -- NEW and OLD are available in TRIGGER PROCEDURES.
+  -- NEW is the mutated row that will actually be INSERTed.
+  -- We're replacing place_id, regardless of what it was before
+  -- with our key variable.
+  NEW.place_id = key;
+
+  -- The RECORD returned here is what will actually be INSERTed,
+  -- or what the next trigger will get if there is one.
+  RETURN NEW;
+END;
+]]></definition>
+</function>
+
+<function name="unique_short_user_handle"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="1"/>
+	</return-type>
+	<definition><![CDATA[
+
+ -- Declare the variables we'll be using.
+DECLARE
+  key TEXT;
+  qry TEXT;
+  found TEXT;
+BEGIN
+
+  -- generate the first part of a query as a string with safely
+  -- escaped table name, using || to concat the parts
+  qry := 'SELECT user_handle FROM ' || quote_ident(TG_TABLE_NAME) || ' WHERE user_handle=';
+
+  -- This loop will probably only run once per call until we've generated
+  -- millions of ids.
+  LOOP
+
+    -- Generate our string bytes and re-encode as a base64 string.
+    key := encode(gen_random_bytes(6), 'base64');
+
+    -- Base64 encoding contains 2 URL unsafe characters by default.
+    -- The URL-safe version has these replacements.
+    key := replace(key, '/', 'A'); -- url safe replacement
+    key := replace(key, '+', 'Z'); -- url safe replacement
+
+    -- Concat the generated key (safely quoted) with the generated query
+    -- and run it.
+    -- SELECT id FROM "test" WHERE id='blahblah' INTO found
+    -- Now "found" will be the duplicated id or NULL.
+    EXECUTE qry || quote_literal(key) INTO found;
+
+    -- Check to see if found is NULL.
+    -- If we checked to see if found = NULL it would always be FALSE
+    -- because (NULL = NULL) is always FALSE.
+    IF found IS NULL THEN
+
+      -- If we didn't find a collision then leave the LOOP.
+      EXIT;
+    END IF;
+
+    -- We haven't EXITed yet, so return to the top of the LOOP
+    -- and try again.
+  END LOOP;
+
+  -- NEW and OLD are available in TRIGGER PROCEDURES.
+  -- NEW is the mutated row that will actually be INSERTed.
+  -- We're replacing id, regardless of what it was before
+  -- with our key variable.
+  NEW.user_handle = key;
+
+  -- The RECORD returned here is what will actually be INSERTed,
+  -- or what the next trigger will get if there is one.
+  RETURN NEW;
+END;
+]]></definition>
+</function>
+
+<function name="update_location_geom_with_location"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="VOLATILE"
+		security-type="SECURITY INVOKER"
+		execution-cost="100"
+		row-amount="0">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<language name="plpgsql" sql-disabled="true"/>
+	<return-type>
+	<type name="trigger" length="1"/>
+	</return-type>
+	<definition><![CDATA[
+  begin
+    new.location_geom = ST_SetSRID(ST_MakePoint(new.location[1], new.location[0]), 4326);
+    return new;
+  end
+]]></definition>
+</function>
+
+<sequence name="hop_access_tokens_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<table name="she_access_tokens">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="60" y="60"/>
+	<column name="id" not-null="true" sequence="public.hop_access_tokens_id_seq">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="user_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="client_id">
+		<type name="character varying" length="500"/>
+	</column>
+	<column name="token">
+		<type name="character varying" length="1000"/>
+	</column>
+	<column name="scope">
+		<type name="character varying" length="500"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="hop_access_tokens_pkey" type="pk-constr" table="public.she_access_tokens">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="hop_admin_profiles_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<table name="she_admin_profiles">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="420" y="60"/>
+	<column name="id" not-null="true" sequence="public.hop_admin_profiles_id_seq">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="first_name">
+		<type name="character varying" length="200"/>
+	</column>
+	<column name="last_name">
+		<type name="character varying" length="200"/>
+	</column>
+	<column name="email" not-null="true">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="user">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="photo">
+		<type name="character varying" length="300"/>
+	</column>
+	<column name="phone">
+		<type name="character varying" length="100"/>
+	</column>
+	<constraint name="admin_email" type="uq-constr" table="public.she_admin_profiles">
+		<columns names="email" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="admin_user" type="uq-constr" table="public.she_admin_profiles">
+		<columns names="user" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="hop_admin_profiles_pkey" type="pk-constr" table="public.she_admin_profiles">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="hop_areas_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="hop_auth_codes_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<table name="she_auth_codes">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="840" y="60"/>
+	<column name="id" not-null="true" sequence="public.hop_auth_codes_id_seq">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="code">
+		<type name="character varying" length="500"/>
+	</column>
+	<column name="user_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="client_id">
+		<type name="character varying" length="500"/>
+	</column>
+	<column name="redirect_uri">
+		<type name="character varying" length="1000"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="hop_auth_codes_pkey" type="pk-constr" table="public.she_auth_codes">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="hop_beacon_pings_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="hop_beacons_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="hop_cities_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="hop_clients_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<table name="she_clients">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="60" y="360"/>
+	<column name="id" not-null="true" sequence="public.hop_clients_id_seq">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="name">
+		<type name="character varying" length="300"/>
+	</column>
+	<column name="redirect_uri">
+		<type name="character varying" length="500"/>
+	</column>
+	<column name="client_id">
+		<type name="character varying" length="500"/>
+	</column>
+	<column name="client_secret">
+		<type name="character varying" length="500"/>
+	</column>
+	<column name="trusted" default-value="false">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="hop_clients_pkey" type="pk-constr" table="public.she_clients">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="hop_photos_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<table name="she_photos">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="380" y="360"/>
+	<column name="id" not-null="true" sequence="public.hop_photos_id_seq">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="restaurant">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="dish">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="menu">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="photo" not-null="true">
+		<type name="character varying" length="400"/>
+	</column>
+	<column name="user" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="user_type" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="machine_tags">
+		<type name="character varying" length="500" dimension="1"/>
+	</column>
+	<column name="status" default-value="1">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="status_glossary">
+		<type name="text" length="0"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="restaurant_rating">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="menu_rating">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="type">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="hop_photos_pkey" type="pk-constr" table="public.she_photos">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="url" type="uq-constr" table="public.she_photos">
+		<columns names="photo" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="hop_refresh_tokens_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<table name="she_refresh_tokens">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="820" y="360"/>
+	<column name="id" not-null="true" sequence="public.hop_refresh_tokens_id_seq">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="user_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="client_id">
+		<type name="character varying" length="500"/>
+	</column>
+	<column name="token">
+		<type name="character varying" length="1000"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="hop_refresh_tokens_pkey" type="pk-constr" table="public.she_refresh_tokens">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="hop_request_city_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="hop_restaurant_user_visits_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="hop_search_analytics_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="hop_search_analytics_id_seq1"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="hop_states_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="hop_stats_dishes_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="hop_user_information_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="hop_user_profiles_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<table name="she_user_profiles">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1220" y="60"/>
+	<column name="id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="first_name" not-null="true">
+		<type name="character varying" length="200"/>
+	</column>
+	<column name="last_name">
+		<type name="character varying" length="200"/>
+	</column>
+	<column name="email" default-value="NULL">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="phone">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="bio">
+		<type name="text" length="0"/>
+	</column>
+	<column name="photo">
+		<type name="character varying" length="300"/>
+	</column>
+	<column name="account" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="country">
+		<type name="varchar" length="3"/>
+	</column>
+	<column name="state">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="city">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="address_line">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="zipcode">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="social_media_link">
+		<type name="jsonb" length="0" dimension="1"/>
+	</column>
+	<column name="education_qualification">
+		<type name="jsonb" length="0" dimension="1"/>
+	</column>
+	<column name="experience" default-value="0">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="sap_experience" default-value="0">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="current_employer">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="current_employer_role">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="domains_worked">
+		<type name="bigint" length="0" dimension="1"/>
+	</column>
+	<column name="clients_worked">
+		<type name="text" length="100" dimension="1"/>
+	</column>
+	<column name="hands_on_experience">
+		<type name="jsonb" length="0" dimension="1"/>
+	</column>
+	<column name="skills">
+		<type name="bigint" length="0" dimension="1"/>
+	</column>
+	<column name="programming_skills">
+		<type name="text" length="100" dimension="1"/>
+	</column>
+	<column name="other_skills">
+		<type name="text" length="0" dimension="1"/>
+	</column>
+	<column name="certification">
+		<type name="text" length="0" dimension="1"/>
+	</column>
+	<column name="job_type">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="job_role">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="preferred_location" default-value="0">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="availability" default-value="0">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="travel" default-value="0">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="work_authorization" default-value="0">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="willing_to_relocate" default-value="false">
+		<type name="bool" length="0"/>
+	</column>
+	<column name="remote_only" default-value="false">
+		<type name="bool" length="0"/>
+	</column>
+	<column name="end_to_end_implementation" default-value="0">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="latlng">
+		<type name="geometry" length="0"/>
+	</column>
+	<column name="latlng_text">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="doc_resume">
+		<type name="text" length="0" dimension="1"/>
+	</column>
+	<column name="status">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="status_glossary">
+		<type name="text" length="0"/>
+	</column>
+	<column name="privacy_protection">
+		<type name="json" length="0"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="email" type="uq-constr" table="public.she_user_profiles">
+		<columns names="email" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="hop_user_profiles_pkey" type="pk-constr" table="public.she_user_profiles">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="phone" type="uq-constr" table="public.she_user_profiles">
+		<columns names="phone" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="hop_users_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<table name="she_users">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="40" y="800"/>
+	<column name="id" not-null="true" sequence="public.hop_users_id_seq">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="username" not-null="true">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="password">
+		<type name="character varying" length="1000"/>
+	</column>
+	<column name="status" not-null="true" default-value="1">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="status_glossary">
+		<type name="text" length="0"/>
+	</column>
+	<column name="verified" default-value="false">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="types">
+		<type name="integer" length="0" dimension="1"/>
+	</column>
+	<column name="last_active">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="user_profile">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="admin_profile">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="employer_profile">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="tokens">
+		<type name="json" length="0"/>
+	</column>
+	<column name="last_checkin_via">
+		<type name="character varying" length="20"/>
+	</column>
+	<constraint name="account_admin_profile" type="uq-constr" table="public.she_users">
+		<columns names="admin_profile" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="account_username" type="uq-constr" table="public.she_users">
+		<columns names="username" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="account_vendor_profile" type="uq-constr" table="public.she_users">
+		<columns names="employer_profile" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="hop_users_pkey" type="pk-constr" table="public.she_users">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="user_account_profile" type="uq-constr" table="public.she_users">
+		<columns names="user_profile" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="hop_vendor_profiles_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<table name="she_employer_profiles">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="500" y="800"/>
+	<column name="first_name">
+		<type name="character varying" length="200"/>
+	</column>
+	<column name="last_name">
+		<type name="character varying" length="200"/>
+	</column>
+	<column name="email">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="photo">
+		<type name="character varying" length="300"/>
+	</column>
+	<column name="user">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="id" not-null="true" sequence="public.hop_vendor_profiles_id_seq">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="phone">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="job_title">
+		<type name="character varying" length="200"/>
+	</column>
+	<column name="company">
+		<type name="character varying" length="200"/>
+	</column>
+	<column name="city">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="country_code">
+		<type name="character varying" length="10" dimension="1"/>
+	</column>
+	<column name="department">
+		<type name="character varying" length="200"/>
+	</column>
+	<column name="address_line_1">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="address_line_2">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="state">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="zipcode">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="employer_email" type="uq-constr" table="public.she_employer_profiles">
+		<columns names="email" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="employer_phone" type="uq-constr" table="public.she_employer_profiles">
+		<columns names="phone" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="hop_vendor_profiles_pkey" type="pk-constr" table="public.she_employer_profiles">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="she_categories_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<table name="she_categories">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="860" y="840"/>
+	<column name="name">
+		<type name="character varying" length="300"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<column name="photo">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="type" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="status" default-value="1">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="id" not-null="true" sequence="public.she_categories_id_seq">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="parent">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="status_glossary">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="she_categories_pkey" type="pk-constr" table="public.she_categories">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="she_educational_degrees_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="she_educational_fields_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="she_educational_qualifications_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="she_industry_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<table name="she_industries">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="60" y="1220"/>
+	<column name="id" not-null="true" sequence="public.she_industry_id_seq">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="name">
+		<type name="character varying" length="1000"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<column name="photo">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="status">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="she_industry_pkey" type="pk-constr" table="public.she_industries">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="she_job_applications_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<table name="she_job_applications">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="420" y="1220"/>
+	<column name="id" not-null="true" sequence="public.she_job_applications_id_seq">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="job_posting" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="user" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="comments">
+		<type name="text" length="0"/>
+	</column>
+	<column name="status" default-value="1">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="status_glossary">
+		<type name="text" length="0"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="employer">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="short_listed" default-value="false">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="user_approach_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="user_interest">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="she_job_applications_pkey" type="pk-constr" table="public.she_job_applications">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="she_job_postings_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="she_skill_tags_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<table name="she_skill_tags">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="60" y="1500"/>
+	<column name="id" not-null="true" sequence="public.she_skill_tags_id_seq">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="tag">
+		<type name="character varying" length="200"/>
+	</column>
+	<column name="status" default-value="1">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="status_glossary">
+		<type name="text" length="0"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="she_skill_tags_pkey" type="pk-constr" table="public.she_skill_tags">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="tag" type="uq-constr" table="public.she_skill_tags">
+		<columns names="tag" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="she_subscription_plans_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<table name="she_subscription_plans">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="820" y="1320"/>
+	<column name="id" not-null="true" sequence="public.she_subscription_plans_id_seq">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="currency">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="interval">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="name">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="stripe_plan_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="status">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="status_glossary">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="amount">
+		<type name="numeric" length="0"/>
+	</column>
+	<column name="interval_count">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="interval_validity">
+		<type name="integer" length="0"/>
+	</column>
+	<constraint name="she_subscription_plans_pkey" type="pk-constr" table="public.she_subscription_plans">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="she_user_educations_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<sequence name="she_user_employments_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="public"/>
+	<role name="postgres"/>
+</sequence>
+
+<table name="she_user_employments">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1200" y="820"/>
+	<column name="id" not-null="true" sequence="public.she_user_employments_id_seq">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="title" not-null="true">
+		<type name="character varying" length="300"/>
+	</column>
+	<column name="type">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<column name="salary_type">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="salary_currency">
+		<type name="varchar" length="10"/>
+	</column>
+	<column name="salary">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="city">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="state">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="country">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="zipcode">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="availability">
+		<type name="smallint" length="100"/>
+	</column>
+	<column name="remote">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="experience">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="sap_experience">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="domain">
+		<type name="bigint" length="0" dimension="1"/>
+	</column>
+	<column name="skills">
+		<type name="bigint" length="0" dimension="1"/>
+	</column>
+	<column name="programming_skills">
+		<type name="text" length="0" dimension="1"/>
+	</column>
+	<column name="optinal_skills">
+		<type name="text" length="0" dimension="1"/>
+	</column>
+	<column name="certification">
+		<type name="text" length="0" dimension="1"/>
+	</column>
+	<column name="work_authorization">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="travel_opportunity">
+		<type name="smallint" length="100"/>
+	</column>
+	<column name="visa_sponsorship">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="end_to_end_implementation">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="company">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="status">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="status_glossary">
+		<type name="text" length="0"/>
+	</column>
+	<column name="must_match">
+		<type name="json" length="0"/>
+	</column>
+	<column name="number_of_positions">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="photo">
+		<type name="text" length="0"/>
+	</column>
+	<column name="extra_criteria">
+		<type name="jsonb" length="0" dimension="1"/>
+	</column>
+	<column name="hands_on_experience">
+		<type name="jsonb" length="0" dimension="1"/>
+	</column>
+	<column name="latlng">
+		<type name="geography" length="0"/>
+	</column>
+	<column name="contract_duration">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="she_user_employments_pkey" type="pk-constr" table="public.she_user_employments">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="she_user_subscriptions">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="480" y="1580"/>
+	<column name="id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="user">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="subscription_plan">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="stripe_subscription_id">
+		<type name="character varying" length="0"/>
+	</column>
+	<column name="expire_date">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="she_user_subscriptions_pkey" type="pk-constr" table="public.she_user_subscriptions">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="she_company_profile">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="1260" y="1500"/>
+	<column name="id" not-null="true">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="name">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="contact">
+		<type name="varchar" length="15" dimension="1"/>
+	</column>
+	<column name="email_id">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="address">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="city">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="state">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="country">
+		<type name="varchar" length="3"/>
+	</column>
+	<column name="zipcode">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="latlng">
+		<type name="geography" length="0"/>
+	</column>
+	<column name="latlng_text">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="description">
+		<type name="text" length="0"/>
+	</column>
+	<column name="website">
+		<type name="text" length="0"/>
+	</column>
+	<column name="social_media_link">
+		<type name="json" length="0" dimension="1"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="user_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="status">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="status_glossary">
+		<type name="varchar" length="1000"/>
+	</column>
+	<constraint name="company_id" type="pk-constr" table="public.she_company_profile">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="she_saved_profiles">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="900" y="1800"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="user_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="employee_id">
+		<type name="bigint" length="0"/>
+	</column>
+	<column name="created_at">
+		<type name="timestamp" length="0"/>
+	</column>
+	<column name="updated_at">
+		<type name="timestamp" length="0"/>
+	</column>
+	<constraint name="saved_profile_id" type="pk-constr" table="public.she_saved_profiles">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<constraint name="user" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_users" table="public.she_access_tokens">
+	<columns names="user_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="user" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_users" table="public.she_admin_profiles">
+	<columns names="user" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="user" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_users" table="public.she_refresh_tokens">
+	<columns names="user_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="account" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_users" table="public.she_user_profiles">
+	<columns names="account" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="admin_profile" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_admin_profiles" table="public.she_users">
+	<columns names="admin_profile" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="vendor_profile" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_employer_profiles" table="public.she_users">
+	<columns names="employer_profile" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="user" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_users" table="public.she_employer_profiles">
+	<columns names="user" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="employer" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_employer_profiles" table="public.she_job_applications">
+	<columns names="employer" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="user" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_user_profiles" table="public.she_job_applications">
+	<columns names="user" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="job_posting" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_user_employments" table="public.she_job_applications">
+	<columns names="job_posting" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="she_user_employement_relationship" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_employer_profiles" table="public.she_user_employments">
+	<columns names="company" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="she_user_subscriptions_fkey_subscription_plan" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_subscription_plans" table="public.she_user_subscriptions">
+	<columns names="subscription_plan" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="she_user_subscriptions_fkey_user" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_user_profiles" table="public.she_user_subscriptions">
+	<columns names="user" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="user_id_company" type="fk-constr" comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.she_users" table="public.she_company_profile">
+	<columns names="user_id" ref-type="src-columns"/>
+	<columns names="id" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="rel_she_access_tokens_she_users" type="relfk"
+	 src-table="public.she_access_tokens"
+	 dst-table="public.she_users" reference-fk="user"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_she_admin_profiles_she_users" type="relfk"
+	 src-table="public.she_admin_profiles"
+	 dst-table="public.she_users" reference-fk="user"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_she_refresh_tokens_she_users" type="relfk"
+	 src-table="public.she_refresh_tokens"
+	 dst-table="public.she_users" reference-fk="user"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_she_users_she_admin_profiles" type="relfk"
+	 src-table="public.she_users"
+	 dst-table="public.she_admin_profiles" reference-fk="admin_profile"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_she_users_she_employer_profiles" type="relfk"
+	 src-table="public.she_users"
+	 dst-table="public.she_employer_profiles" reference-fk="vendor_profile"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_she_employer_profiles_she_users" type="relfk"
+	 src-table="public.she_employer_profiles"
+	 dst-table="public.she_users" reference-fk="user"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_she_job_applications_she_employer_profiles" type="relfk"
+	 src-table="public.she_job_applications"
+	 dst-table="public.she_employer_profiles" reference-fk="employer"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_she_job_applications_she_user_profiles" type="relfk"
+	 src-table="public.she_job_applications"
+	 dst-table="public.she_user_profiles" reference-fk="user"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_she_job_applications_she_user_employments" type="relfk"
+	 src-table="public.she_job_applications"
+	 dst-table="public.she_user_employments" reference-fk="job_posting"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_she_user_employments_she_employer_profiles" type="relfk"
+	 src-table="public.she_user_employments"
+	 dst-table="public.she_employer_profiles" reference-fk="she_user_employement_relationship"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_she_user_subscriptions_she_subscription_plans" type="relfk"
+	 src-table="public.she_user_subscriptions"
+	 dst-table="public.she_subscription_plans" reference-fk="she_user_subscriptions_fkey_subscription_plan"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_she_user_subscriptions_she_user_profiles" type="relfk"
+	 src-table="public.she_user_subscriptions"
+	 dst-table="public.she_user_profiles" reference-fk="she_user_subscriptions_fkey_user"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_she_user_profiles_she_users" type="relfk"
+	 src-table="public.she_user_profiles"
+	 dst-table="public.she_users" reference-fk="account"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_company_profile_she_users" type="relfk"
+	 src-table="public.she_company_profile"
+	 dst-table="public.she_users" reference-fk="user_id_company"
+	 src-required="false" dst-required="false"/>
+
+</dbmodel>
