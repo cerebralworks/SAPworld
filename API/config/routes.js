@@ -68,7 +68,6 @@ module.exports.routes = {
     'POST /notification/count': { controller: 'notification', action: 'count' },
     'POST /notification/details': { controller: 'notification', action: 'details' },
 	
-	
 	/*language routes*/
     'GET /language/list': { controller: 'language', action: 'list' },
     'POST /language/find': { controller: 'language', action: 'find' },

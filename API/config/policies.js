@@ -168,6 +168,8 @@ module.exports.policies = {
     'subscription-plans/view': ['oauthBearer', 'isUserOrAdmin'],
 
     'users/subscriptions/create': ['oauthBearer', 'isAdmin'],
+	
     'notification/count': ['oauthBearer'],
     'notification/details': ['oauthBearer'],
+	
 };

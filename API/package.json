@@ -65,6 +65,8 @@
     "scripts": {
         "start": "node app.js",
         "PROD_start": "NODE_ENV=production node app.js",
+        "STAGE_start": "NODE_ENV=staging node app.js",
+        "QA_start": "NODE_ENV=qa node app.js",
         "test": "npm run lint && npm run custom-tests && echo 'Done.'",
         "lint": "eslint . --max-warnings=0 --report-unused-disable-directives && echo '✔  Your .js files look good.'",
         "custom-tests": "echo \"(No other custom tests yet.)\" && echo",
