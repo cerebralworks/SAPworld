@@ -23,7 +23,7 @@ module.exports = async function updatePhoto(request, response) {
                 await errorBuilder.build(err, function(error_obj) {
                     _response_object.errors = error_obj;
                     _response_object.count = error_obj.length;
-					console.log(_response_object );
+					console.log('26' );
                     return response.status(500).json(_response_object);
                 });
             } else {
@@ -44,7 +44,7 @@ module.exports = async function updatePhoto(request, response) {
                 await errorBuilder.build(err, function(error_obj) {
                     _response_object.errors = error_obj;
                     _response_object.count = error_obj.length;
-					console.log(_response_object );
+					console.log('47' );
                     return response.status(500).json(_response_object);
                 });
             } else {
@@ -74,7 +74,7 @@ module.exports = async function updatePhoto(request, response) {
                     await errorBuilder.build(err, function(error_obj) {
                         _response_object.errors = error_obj;
                         _response_object.count = error_obj.length;
-						console.log(_response_object );
+						console.log('77' );
                         return response.status(500).json(_response_object);
                     });
                 }
@@ -109,7 +109,7 @@ module.exports = async function updatePhoto(request, response) {
             await errorBuilder.build(err, function(error_obj) {
                 _response_object.errors = error_obj;
                 _response_object.count = error_obj.length;
-				console.log(_response_object );
+				console.log('112' );
                 return response.status(500).json(_response_object);
             });
         }
