@@ -19,7 +19,6 @@ module.exports = async function updatePhoto(request, response) {
         file_path = 'public/resumes/Documents';
         await fileUpload.S3file(doc_resume, file_path, filename, async function(err, done) {
             if (err) {
-				console.log(err);
                 err.field = 'doc_resume';
                 await errorBuilder.build(err, function(error_obj) {
                     _response_object.errors = error_obj;
