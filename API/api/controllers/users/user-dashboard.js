@@ -79,8 +79,10 @@ module.exports = async function UserDashboard(request, response) {
 				Query = `SELECT  job_posting.city,count(distinct(job_posting.id)) FROM user_employments "job_posting"
 				CROSS JOIN user_profiles "user_profile" 
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
+				LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
 				WHERE  ${filterStatus}   ${filterDate} AND
-				(user_account.status=1)  AND ( user_profile.hands_on_skills && job_posting.hands_on_skills OR ( job_posting.entry =true ))  AND job_posting.visa_sponsorship = true  
+				(user_account.status=1)  AND 
+				scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id   AND job_posting.visa_sponsorship = true  
 				AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by job_posting.city`
 			}
 			if(filtered_query_data.view =='applied'){
