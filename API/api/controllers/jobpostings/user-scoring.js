@@ -37,21 +37,7 @@ module.exports = async function Scoring(request, response) {
         return response.ok(_response_object);
     };
 	
-    if (filtered_query_data.skills) {
-        filtered_query_data.skills = filtered_query_data.skills.split(',');
-    }
-    if (filtered_query_data.type) {
-        filtered_query_data.type = filtered_query_data.type.split(',');
-    }
-    if (filtered_query_data.city) {
-        filtered_query_data.city = filtered_query_data.city.split(',');
-    }
-    if (filtered_query_data.country) {
-        filtered_query_data.country = filtered_query_data.country.split(',');
-    }
-    if (filtered_query_data.work_authorization) {
-        filtered_query_data.work_authorization = parseInt(filtered_query_data.work_authorization);
-    }
+  
     if (filtered_query_data.visa_sponsered =="true") {
         filtered_query_data.visa_sponsered = true;
     }
