@@ -32,6 +32,7 @@ module.exports = {
         website: { type: 'string' },
         social_media_link: { type: 'ref', columnType: 'json[]' },
         contact: { type: 'ref', columnType: 'varchar[]' },
+        invite_url: { type: 'string', allowNull: true },
         user_id: {
             model: 'users'
         }

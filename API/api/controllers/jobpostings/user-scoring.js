@@ -37,7 +37,6 @@ module.exports = async function Scoring(request, response) {
         return response.ok(_response_object);
     };
 	
-  
     if (filtered_query_data.visa_sponsered =="true") {
         filtered_query_data.visa_sponsered = true;
     }

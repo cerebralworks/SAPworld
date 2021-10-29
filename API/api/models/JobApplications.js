@@ -33,6 +33,7 @@ module.exports = {
         user_interest: { type: 'number', allowNull: true },
         user_resume: { type: 'string', allowNull: true },
         application_status: { type: 'ref', columnType: 'json[]' },
+        invite_url: { type: 'string', allowNull: true },
         others: { type: 'ref', columnType: 'json[]' },
     }
 };

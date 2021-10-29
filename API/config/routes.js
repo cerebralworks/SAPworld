@@ -55,7 +55,10 @@ module.exports.routes = {
      * not match any of those, it is matched against static assets.             *
      *                                                                          *
      ***************************************************************************/
-	/*Country routes*/
+	
+     'POST /invitestatus/create' : { controller: 'invitestatus', action: 'create' },
+    
+    /*Country routes*/
     'GET /country/list': { controller: 'country', action: 'list' },
 	'POST /country/create': { controller: 'country', action: 'create' },
     'POST /country/find': { controller: 'country', action: 'find' },

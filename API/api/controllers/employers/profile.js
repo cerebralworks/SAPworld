@@ -19,7 +19,7 @@ module.exports = async function list(request,response) {
     if(filtered_query_keys.includes('expand')){
         expand = filtered_query_data.expand.split(',');
     }
-
+	var profile = await CompanyProfile.findOne({ user_id: logged_in_user.id });
     //Find the EmployerProfiles based on general criteria.
     const getUser = (criteria, callback) => {
         //Initializing query
@@ -98,7 +98,7 @@ module.exports = async function list(request,response) {
         });
     };
     //Build and sending response
-    const sendResponse = (details) => {
+    const sendResponse = (details,profile) => {
         _response_object.message = 'Employer details retrieved successfully.';
         var meta = {};
         meta['photo'] = {
@@ -113,6 +113,7 @@ module.exports = async function list(request,response) {
         meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/user-209.png';
         _response_object['meta'] = meta;
         _response_object['details'] = _.cloneDeep(details);
+		 _response_object['details']['profile'] = profile;
         return response.ok(_response_object);
     };
     //Validating the request and pass on the appriopriate response.
@@ -124,10 +125,10 @@ module.exports = async function list(request,response) {
                 if(user.phone){
                     await phoneEncryptor.decrypt(user.phone, function(decrypted_text){
                         user.phone = decrypted_text;
-                        sendResponse(user);
+                        sendResponse(user,profile);
                     });
                 }else{
-                    sendResponse(user);
+                    sendResponse(user,profile);
                 }
             });
         }
