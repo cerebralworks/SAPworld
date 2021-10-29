@@ -2,8 +2,9 @@
 module.exports = async function create(request, response) {
 
     var _response_object = {};
-    var request_data = request.body;
-		console.log(request);
+    var request_data = request.body.payload;
+	request_data['name'] = request.body.event;
+		//console.log(request);
         InviteStatus.create(request_data).then(function(data) {
            _response_object.details = data;
            return response.status(201).json(_response_object);
