@@ -8,7 +8,17 @@ module.exports = async function create(request, response) {
 	if(dataCheck && dataCheck.length && dataCheck.length !=0){
 		request_data['job_applications'] = dataCheck[0]['answer'];
 	}
-		//console.log(request);
+	
+	JobApplications.findOne({where :{id : request_data['job_applications']}}).then(data=>{
+        if(data){
+            data['invite_status'] = false;
+            JobApplications.update(data.id,data).then(da=>{
+            
+			});
+
+        }
+    })
+	
         InviteStatus.create(request_data).then(function(data) {
            _response_object.details = data;
            return response.status(201).json(_response_object);
