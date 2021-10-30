@@ -33,6 +33,7 @@ module.exports = {
         social_media_link: { type: 'ref', columnType: 'json[]' },
         contact: { type: 'ref', columnType: 'varchar[]' },
         invite_url: { type: 'string', allowNull: true },
+        invite_status: { type: 'boolean', defaultsTo: false },
         user_id: {
             model: 'users'
         }

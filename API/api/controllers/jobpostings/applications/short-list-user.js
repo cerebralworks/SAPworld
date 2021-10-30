@@ -13,7 +13,7 @@ module.exports = async function update(request, response) {
     var _response_object = {};
     const logged_in_user = request.user;
     pick_input = [
-        'short_listed', 'user', 'job_posting', 'status','invite_url', 'application_status', 'view'
+        'short_listed', 'user', 'job_posting', 'status','invite_url', 'application_status', 'view', 'invite_status'
     ];
     var filtered_post_data = _.pick(_.merge(post_request_data, request_query), pick_input);
     const filtered_post_keys = Object.keys(filtered_post_data);
