@@ -16,7 +16,7 @@ module.exports = async function create(request, response) {
 				JobApplications.findOne({where :{id : data['job_applications']}}).then(datas=>{
 					if(datas){
 						datas['invite_status'] = false;
-						JobApplications.update(data.id,data).then(da=>{
+						JobApplications.update(datas.id,datas).then(da=>{
 							return response.status(200).json(da);
 						});
 
