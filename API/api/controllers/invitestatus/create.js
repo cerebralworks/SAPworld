@@ -18,9 +18,9 @@ module.exports = async function create(request, response) {
 					if(datas){
 						console.log(datas);
 						console.log(datas['invite_status']);
-						var _response_objects = {};
-						datas['invite_status'] = false;
-						JobApplications.update(datas.id,datas).then(da=>{
+						var _response_objects = {'invite_status': false};
+						//datas['invite_status'] = false;
+						JobApplications.update(datas.id,_response_objects).then(da=>{
 							 console.log(da);
 							return response.status(200).json(da);
 						});
