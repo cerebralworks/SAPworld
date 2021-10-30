@@ -13,10 +13,13 @@ module.exports = async function create(request, response) {
 	console.log(request_data);
         InviteStatus.create(request_data).then(function(data) {
            if(data['job_applications']){
+			   console.log(data);
 				JobApplications.findOne({where :{id : data['job_applications']}}).then(datas=>{
 					if(datas){
+						console.log(datas);
 						datas['invite_status'] = false;
 						JobApplications.update(datas.id,datas).then(da=>{
+							 console.log(da);
 							return response.status(200).json(da);
 						});
 
