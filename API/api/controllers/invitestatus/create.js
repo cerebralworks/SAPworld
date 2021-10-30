@@ -27,7 +27,7 @@ module.exports = async function create(request, response) {
 					
 				})
 			}
-           return response.status(201).json(_response_object);
+           
            }).catch(async function(err) {
                await errorBuilder.build(err, function(error_obj) {
                    _response_object.errors = error_obj;
