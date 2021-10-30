@@ -9,20 +9,21 @@ module.exports = async function create(request, response) {
 		request_data['job_applications'] = dataCheck[0]['answer'];
 	}
 	
-	if(request_data['job_applications']){
-		JobApplications.findOne({where :{id : request_data['job_applications']}}).then(data=>{
-			if(data){
-				data['invite_status'] = false;
-				JobApplications.update(data.id,data).then(da=>{
-				
-				});
-
-			}
-		})
-	}
+	
 	console.log(request_data);
         InviteStatus.create(request_data).then(function(data) {
-           _response_object.details = data;
+           if(data['job_applications']){
+				JobApplications.findOne({where :{id : data['job_applications']}}).then(datas=>{
+					if(datas){
+						datas['invite_status'] = false;
+						JobApplications.update(data.id,data).then(da=>{
+							return response.status(200).json(da);
+						});
+
+					}
+					
+				})
+			}
            return response.status(201).json(_response_object);
            }).catch(async function(err) {
                await errorBuilder.build(err, function(error_obj) {
