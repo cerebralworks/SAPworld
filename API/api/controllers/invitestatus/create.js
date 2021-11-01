@@ -10,7 +10,7 @@ module.exports = async function create(request, response) {
 	}
 	
 	
-	//console.log(request_data);
+	console.log(request_data);
         InviteStatus.create(request_data).then(function(data) {
            if(data['job_applications']){
 			  // console.log(data);
