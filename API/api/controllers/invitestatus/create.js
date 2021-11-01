@@ -8,9 +8,8 @@ module.exports = async function create(request, response) {
 	if(dataCheck && dataCheck.length && dataCheck.length !=0){
 		request_data['job_applications'] = dataCheck[0]['answer'];
 	}
-	
-	
-	//console.log(request_data);
+
+	console.log(request_data);
         InviteStatus.create(request_data).then(function(data) {
            if(data['job_applications']){
 			   console.log(data);
