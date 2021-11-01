@@ -3,6 +3,7 @@ module.exports = async function create(request, response) {
 
     var _response_object = {};
     var request_data = request.body.payload;
+	console.log(request_data);
 	request_data['name'] = request.body.event;
 	var dataCheck = request.body.payload['questions_and_answers'];
 	if(dataCheck && dataCheck.length && dataCheck.length !=0){
