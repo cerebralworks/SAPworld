@@ -11,32 +11,31 @@ module.exports = async function create(request, response) {
 	
 	
 	//console.log(request_data);
-        InviteStatus.create(request_data).then(function(data) {
-           if(data['job_applications']){
-			  // console.log(data);
-				JobApplications.findOne({where :{id : data['job_applications']}}).then(datas=>{
-					if(datas){
-						console.log(datas);
-						console.log(datas['invite_status']);
-						var _response_objects = {'invite_status': false};
-						//datas['invite_status'] = false;
-						JobApplications.update(datas.id,_response_objects).then(da=>{
-							 console.log(da);
-							return response.status(200).json(da);
-						});
+	await InviteStatus.create(request_data).then(async function(data) {
+	   if(data['job_applications']){
+		  // console.log(data);
+			await JobApplications.findOne(data['job_applications'], async function(err, datas) {
+				if(datas){
+					console.log(data);
+					console.log(datas['invite_status']);
+					var _response_objects = {'invite_status': false,'reschedule_url':data['reschedule_url'],'cancel_url':data['cancel_url'],'canceled':data['canceled'],'rescheduled':data['rescheduled']};
+					//datas['invite_status'] = false;
+					JobApplications.update(datas.id,_response_objects).then(da=>{
+						 console.log(da);
+						return response.status(200).json(da);
+					});
 
-					}
-					
-				})
-			}
-           
-           }).catch(async function(err) {
-               await errorBuilder.build(err, function(error_obj) {
-                   _response_object.errors = error_obj;
-                   _response_object.count = error_obj.length;
-                   return response.status(500).json(_response_object);
-               });
-               });
-       }
+				}
+				
+			})
+		}
+	   
+	   }).catch(async function(err) {
+		   await errorBuilder.build(err, function(error_obj) {
+			   _response_object.errors = error_obj;
+			   _response_object.count = error_obj.length;
+			   return response.status(500).json(_response_object);
+		   });
+		   });
+   }
        
- 

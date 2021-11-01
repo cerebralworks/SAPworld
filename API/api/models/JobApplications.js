@@ -36,5 +36,9 @@ module.exports = {
         others: { type: 'ref', columnType: 'json[]' },
         invite_url: { type: 'string', allowNull: true },
 		invite_status: { type: 'boolean', defaultsTo: false },
+        reschedule_url: { type: 'string', allowNull: true },
+        cancel_url: { type: 'string', allowNull: true },
+		canceled: { type: 'boolean', defaultsTo: false },
+		rescheduled: { type: 'boolean', defaultsTo: false },
     }
 };
