@@ -17,11 +17,11 @@ module.exports = async function create(request, response) {
 				JobApplications.findOne({where :{id : data['job_applications']}}).then(datas=>{
 					if(datas){
 						console.log(datas);
-						console.log(datas['invite_status']);
+						//console.log(datas['invite_status']);
 						var _response_objects = {'invite_status': false,'reschedule_url': datas['reschedule_url'],'cancel_url': datas['cancel_url'],'canceled': datas['canceled'],'rescheduled': datas['rescheduled']};
-						//datas['invite_status'] = false;
+						console.log(_response_objects);
 						JobApplications.update(datas.id,_response_objects).then(da=>{
-							 console.log(da);
+							// console.log(da);
 							return response.status(200).json(da);
 						});
 
