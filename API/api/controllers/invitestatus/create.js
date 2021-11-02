@@ -22,16 +22,17 @@ module.exports = async function create(request, response) {
 							if(data['canceled'] == true){
 								datas['application_status'][datas['application_status'].length-1]['canceled']= new Date();
 							}
-							if(data['rescheduled'] == true ){
-								datas['application_status'][datas['application_status'].length-1]['rescheduled']= new Date();
-							}
 							else {
 								datas['application_status'][datas['application_status'].length-1]['created']= new Date();
+							}
+							if(data['rescheduled'] == true ){
+								datas['application_status'][datas['application_status'].length-1]['rescheduled']= new Date();
 							}
 							
 						}
 						var _response_objects = {'invite_status': false,'application_status': datas['application_status'],'reschedule_url': data['reschedule_url'],'cancel_url': data['cancel_url'],'canceled': data['canceled'],'rescheduled': data['rescheduled']};
-						
+						console.log(_response_objects);
+						console.log(data);
 						JobApplications.update(datas.id,_response_objects).then(da=>{
 							
 							return response.status(200).json(da);
