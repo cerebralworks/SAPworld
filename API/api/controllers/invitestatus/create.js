@@ -19,13 +19,11 @@ module.exports = async function create(request, response) {
 				JobApplications.findOne({where :{id : data['job_applications']}}).then(datas=>{
 					if(datas){
 						if(datas['application_status'].length && datas['application_status'].length !=0){
-							if(data['canceled'] == true){
+							if(data['canceled'] == true && (data['rescheduled'] != true && data['rescheduled'] != 'true') ){
 								datas['application_status'][datas['application_status'].length-1]['canceled']= new Date();
-							}
-							else if(data['rescheduled'] != true && data['rescheduled'] != 'true' ){
+							}else if(data['rescheduled'] != true && data['rescheduled'] != 'true' && data['canceled'] == false ){
 								datas['application_status'][datas['application_status'].length-1]['created']= new Date();
-							}
-							if(data['rescheduled'] == true || data['rescheduled'] == 'true' ){
+							}else if(data['rescheduled'] == true || data['rescheduled'] == 'true' ){
 								datas['application_status'][datas['application_status'].length-1]['rescheduled']= new Date();
 							}
 							
