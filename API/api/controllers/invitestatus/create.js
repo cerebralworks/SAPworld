@@ -22,7 +22,7 @@ module.exports = async function create(request, response) {
 							if(data['canceled'] == true){
 								datas['application_status'][datas['application_status'].length-1]['canceled']= new Date();
 							}
-							else {
+							else if(data['rescheduled'] != true && data['rescheduled'] != 'true' ){
 								datas['application_status'][datas['application_status'].length-1]['created']= new Date();
 							}
 							if(data['rescheduled'] == true || data['rescheduled'] == 'true' ){
