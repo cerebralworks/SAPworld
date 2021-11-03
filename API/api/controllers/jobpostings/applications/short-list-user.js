@@ -13,7 +13,7 @@ module.exports = async function update(request, response) {
     var _response_object = {};
     const logged_in_user = request.user;
     pick_input = [
-        'short_listed', 'user', 'job_posting', 'status','invite_url', 'application_status', 'view', 'invite_status'
+        'short_listed', 'user', 'job_posting', 'status','invite_url', 'invite_send', 'application_status', 'view', 'invite_status'
     ];
     var filtered_post_data = _.pick(_.merge(post_request_data, request_query), pick_input);
     const filtered_post_keys = Object.keys(filtered_post_data);
@@ -22,7 +22,8 @@ module.exports = async function update(request, response) {
         { name: 'status', number: true, min: 1 },
         { name: 'job_posting', required: true, number: true, min: 1 },
         { name: 'short_listed', enum: true, values: [true, false], required: true },
-        { name: 'view', enum: false, values: [true, false] }
+        { name: 'view', enum: false, values: [true, false] },
+        { name: 'invite_send', enum: false, values: [true, false] }
     ];
     // Update the Job Application record to db.
     function CreateJobApplication(data, callback) {
@@ -85,6 +86,15 @@ module.exports = async function update(request, response) {
 			postDetails.message='Your application for the '+job.title+' was not successful ';
 			postDetails.title='Application Not fit for this job';
 		}
+		if(logged_in_user.invite_send == true){
+			var application_status = details.application_status.filter(function(a,b) { return parseInt(a.id) == parseInt(details.status )});
+			if(application_status.length!=0){
+				var statusCheck = application_status[0]['status'].toLowerCase();
+				var commentsCheck = application_status[0]['comments'].toLowerCase().trim();
+				postDetails.message='Your application for the '+job.title+' got a invite link for the  '+statusCheck +' status';
+				postDetails.title='New Invite Link ';
+			}
+		}
         _response_object['details'] = details;
 		
 		postDetails.account=profile.account;
@@ -116,6 +126,11 @@ module.exports = async function update(request, response) {
 					employer: _.get(logged_in_user, 'employer_profile.id')
 				}
 			});
+			if (filtered_post_keys.includes('invite_send')) {
+			logged_in_user['invite_send'] = filtered_post_data.invite_send;
+			}else{
+				logged_in_user['invite_send'] = false;
+			}
 			await JobPostings.findOne(filtered_post_data.job_posting, async function(err, job) {
 				await UserProfiles.findOne(filtered_post_data.user, async function(err, profile) {
 					filtered_post_data.employer = _.get(logged_in_user, 'employer_profile.id');

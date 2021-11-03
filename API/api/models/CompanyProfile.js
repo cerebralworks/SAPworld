@@ -32,11 +32,12 @@ module.exports = {
         website: { type: 'string' },
         social_media_link: { type: 'ref', columnType: 'json[]' },
         contact: { type: 'ref', columnType: 'varchar[]' },
-        invite_url: { type: 'string', allowNull: true },
-        invite_status: { type: 'boolean', defaultsTo: false },
         user_id: {
             model: 'users'
-        }
+        },
+        invite_url: { type: 'string', allowNull: true },
+        invite_status: { type: 'boolean', defaultsTo: false },
+        invite_urls: { type: 'ref', columnType: 'text[]' }
     },
 
 };
