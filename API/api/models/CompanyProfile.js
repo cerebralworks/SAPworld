@@ -37,7 +37,7 @@ module.exports = {
         },
         invite_url: { type: 'string', allowNull: true },
         invite_status: { type: 'boolean', defaultsTo: false },
-        invite_urls: { type: 'ref', columnType: 'text[]' }
+        invite_urls: { type: 'ref', columnType: 'json[]' }
     },
 
 };

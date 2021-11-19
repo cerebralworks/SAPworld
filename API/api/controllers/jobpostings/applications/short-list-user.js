@@ -136,27 +136,33 @@ module.exports = async function update(request, response) {
 					filtered_post_data.employer = _.get(logged_in_user, 'employer_profile.id');
 					if (job_application) {
 						var checkLastItem = filtered_post_data.application_status[filtered_post_data.application_status.length-1];
-						var checkLastItemServer = job_application.application_status[job_application.application_status.length-1];
+						var checkLastItemServer = job_application.application_status;
+						if(job_application.application_status){
+							checkLastItemServer = job_application.application_status[job_application.application_status.length-1].id;
+						}
+						var checkLastItemServer = job_application.application_status;
 						
-						if(checkLastItem.id === checkLastItemServer.id){
+						if(checkLastItem.id === checkLastItemServer){
 
 						}else{
 							var sliceCheck =job_application.application_status;
-							var filteredData =sliceCheck.map((val) => {
-							  return { 
-								id: val.id,
-								status: val.status,
-								date: val.date,
-								comments: val.comments,
-								invited: val.invited,
-								canceled: val.canceled,
-								rescheduled: val.rescheduled,
-								created: val.created,
-								invite_url: ''
-							  }
-							});
-							filteredData.push(checkLastItem);
-							filtered_post_data.application_status = filteredData;
+							if(sliceCheck){
+								var filteredData =sliceCheck.map((val) => {
+								  return { 
+									id: val.id,
+									status: val.status,
+									date: val.date,
+									comments: val.comments,
+									invited: val.invited,
+									canceled: val.canceled,
+									rescheduled: val.rescheduled,
+									created: val.created,
+									invite_url: ''
+								  }
+								});
+								filteredData.push(checkLastItem);
+								filtered_post_data.application_status = filteredData;
+							}
 						}
 						
 						updateJobApplication(filtered_post_data, async function(job_application) {
