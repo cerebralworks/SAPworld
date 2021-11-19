@@ -24,9 +24,10 @@ module.exports.policies = {
      ***************************************************************************/
 
     '*': 'oauthBearer',
-
+	
     'clients/*': ['oauthBearer', 'isAdmin'],
     'invitestatus/create' : ['noOauthBearer'],
+	'contact/create': ['noOauthBearer'],
     //'users/list': ['oauthBearer', 'isAdmin'],
     'users/view': ['oauthBearer'],
     'users/profile': ['oauthBearer', 'isUser'],
