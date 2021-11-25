@@ -45,7 +45,7 @@ const requests = require('request');
 							datas['events'].push(arrayVal);
 							
 						}else{
-							var arrayVal = datas['events'][0];
+							var arrayVal = datas['events'];
 							datas['events']=[arrayVal]
 						}
 						var _response_objects = {'events': datas['events'],'invite_status': false,'application_status': datas['application_status'],'reschedule_url': data['reschedule_url'],'cancel_url': data['cancel_url'],'canceled': data['canceled'],'rescheduled': data['rescheduled']};
