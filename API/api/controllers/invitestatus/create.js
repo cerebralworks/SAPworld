@@ -23,11 +23,9 @@ const requests = require('request');
 	  if (error) throw new Error(error);
 
 	  if(body){
-		  body = json.parse(body);
-		  console.log(body['resource']);
 		  request_data['events']=response['resource'];
-		  console.log(request_data);
-        InviteStatus.create(request_data).then(function(data) {
+		  
+        InviteStatus.create(request_data).then(async function(data) {
            if(data['job_applications']){
 			  
 				JobApplications.findOne({where :{id : data['job_applications']}}).then(datas=>{
@@ -42,6 +40,7 @@ const requests = require('request');
 							}
 							
 						}
+						console.log(request_data);
 						var _response_objects = {'invite_status': false,'application_status': datas['application_status'],'reschedule_url': data['reschedule_url'],'cancel_url': data['cancel_url'],'canceled': data['canceled'],'rescheduled': data['rescheduled']};
 						
 						JobApplications.update(datas.id,_response_objects).then(da=>{
