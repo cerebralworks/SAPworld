@@ -23,7 +23,7 @@ const requests = require('request');
 	  if (error) throw new Error(error);
 
 	  if(body){
-		  request_data['events']=body['resource'];
+		  request_data['events']=response['resource'];
 		  console.log(request_data);
         InviteStatus.create(request_data).then(function(data) {
            if(data['job_applications']){
