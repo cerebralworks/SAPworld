@@ -23,7 +23,7 @@ const requests = require('request');
 	  if (error) throw new Error(error);
 
 	  if(body){
-		  console.log(body);
+		  
 		  request_data['events']={'data':body};
         InviteStatus.create(request_data).then(async function(data) {
            if(data['job_applications']){
@@ -50,7 +50,11 @@ const requests = require('request');
 						}
 						
 						var _response_objects = {'events': datas['events'],'invite_status': false,'application_status': datas['application_status'],'reschedule_url': data['reschedule_url'],'cancel_url': data['cancel_url'],'canceled': data['canceled'],'rescheduled': data['rescheduled']};
-						
+						console.log(_response_objects);
+						if(_response_objects['events']){
+							var arrayVal = request_data['events'];
+							_response_objects['events']=[arrayVal];
+						}
 						JobApplications.update(datas.id,_response_objects).then(da=>{
 							console.log(da);
 							//return response.status(200).json(da);
