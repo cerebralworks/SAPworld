@@ -113,7 +113,7 @@ LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_applications.user
 
 (SELECT COUNT(DISTINCT job_applicationss.id) FROM  job_applications "job_applicationss" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationss.job_posting) 
-LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_applicationss.user) WHERE  job_posting.id = job_postings.id   ${filterUpdatedDate}  AND  (job_applicationss.short_listed = true) AND (job_applicationss.employer=${parseInt(filtered_query_data.id)} )) as shortlist,
+LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_applicationss.user) WHERE  job_posting.id = job_postings.id   ${filterUpdatedDate}  AND  (job_applicationss.short_listed = true AND job_applicationsss.status !=  2  ) AND (job_applicationss.employer=${parseInt(filtered_query_data.id)} )) as shortlist,
 
 (SELECT COUNT(DISTINCT job_applicationsss.id) FROM  job_applications "job_applicationsss" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationsss.job_posting) 
