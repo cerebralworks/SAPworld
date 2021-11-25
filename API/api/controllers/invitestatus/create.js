@@ -1,6 +1,6 @@
 /* global _, invite_status, sails */
 module.exports = async function create(request, response) {
-
+const requests = require('request');
     var _response_object = {};
     var request_data = request.body.payload;
 	request_data['name'] = request.body.event;
@@ -11,7 +11,20 @@ module.exports = async function create(request, response) {
 	if(request_data['name']=='invitee.canceled'){
 		request_data['canceled'] = true;
 	}
-	
+	const options = {
+	  method: 'GET',
+	  url: request_data['event'],
+	  headers: {
+		'Content-Type': 'application/json',
+		Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNjM3MzE5MTcxLCJqdGkiOiIxNjk5MGFiZi1kYzQxLTQ0MGQtOTJmNy1iZjcyOWE4ZjZmOWMiLCJ1c2VyX3V1aWQiOiIyMGMzYjIyMi03NzNkLTQ5MzctOGQwYi05MmM0YWI0MDViYWYifQ.tR-IOMTAoniqaJuTiHWdS2chcFSoch44YpF5xj9qobc'
+	  }
+	};
+	requests(options, function (error, response, body) {
+	  if (error) throw new Error(error);
+
+	  console.log(body);
+	  
+	});
 	console.log(request_data);
         InviteStatus.create(request_data).then(function(data) {
            if(data['job_applications']){
