@@ -40,7 +40,7 @@ const requests = require('request');
 							}
 							
 						}
-						if(datas['events'].length && datas['events'].length !=0){
+						if(datas['events'] && datas['events'].length && datas['events'].length !=0){
 							var arrayVal = datas['events'];
 							datas['events'].push(arrayVal);
 							
