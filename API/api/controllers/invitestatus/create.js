@@ -41,11 +41,13 @@ const requests = require('request');
 							
 						}
 						if(datas['events'] && datas['events'].length && datas['events'].length !=0){
-							var arrayVal = data['events'];
+							var arrayVal = request_data['events'];
+							arrayVal['status']=datas['status'];
 							datas['events'].push(arrayVal);
 							
 						}else{
 							var arrayVal = data['events'];
+							arrayVal['status']=datas['status'];
 							datas['events']=[arrayVal]
 						}
 						
