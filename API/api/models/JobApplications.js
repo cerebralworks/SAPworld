@@ -40,5 +40,6 @@ module.exports = {
         cancel_url: { type: 'string', allowNull: true },
 		canceled: { type: 'boolean', defaultsTo: false },
 		rescheduled: { type: 'boolean', defaultsTo: false },
+        events: { type: 'ref', columnType: 'json[]' },
     }
 };
