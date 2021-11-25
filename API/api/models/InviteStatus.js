@@ -25,7 +25,7 @@ module.exports = {
         job_applications: {
             model: 'jobapplications'
         },
-        events: { type: 'ref', columnType: 'text[]' },
+        events: { type: 'ref', columnType: 'json' },
     }
 };
 

@@ -24,7 +24,7 @@ const requests = require('request');
 
 	  if(body){
 		  
-		  request_data['events']=[{'data':body}];
+		  request_data['events']={'data':body};
         InviteStatus.create(request_data).then(async function(data) {
            if(data['job_applications']){
 			  
@@ -41,13 +41,14 @@ const requests = require('request');
 							
 						}
 						if(datas['events'] && datas['events'].length && datas['events'].length !=0){
-							var arrayVal = datas['events'];
+							var arrayVal = data['events'];
 							datas['events'].push(arrayVal);
 							
 						}else{
-							var arrayVal = datas['events'];
+							var arrayVal = data['events'];
 							datas['events']=[arrayVal]
 						}
+						
 						var _response_objects = {'events': datas['events'],'invite_status': false,'application_status': datas['application_status'],'reschedule_url': data['reschedule_url'],'cancel_url': data['cancel_url'],'canceled': data['canceled'],'rescheduled': data['rescheduled']};
 						console.log(_response_objects);
 						JobApplications.update(datas.id,_response_objects).then(da=>{
