@@ -23,8 +23,9 @@ const requests = require('request');
 	  if (error) throw new Error(error);
 
 	  if(body){
-		  request_data['events']=body;
-		  
+		  console.log(body);
+		  request_data['events']={'data':body};
+		  console.log(request_data['events']);
         InviteStatus.create(request_data).then(async function(data) {
            if(data['job_applications']){
 			  
