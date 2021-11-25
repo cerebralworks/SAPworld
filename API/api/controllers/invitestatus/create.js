@@ -23,8 +23,7 @@ const requests = require('request');
 	  if (error) throw new Error(error);
 
 	  if(body){
-		  console.log(response);
-		  console.log(body);
+		  body = json.parse(body);
 		  console.log(body['resource']);
 		  request_data['events']=response['resource'];
 		  console.log(request_data);
