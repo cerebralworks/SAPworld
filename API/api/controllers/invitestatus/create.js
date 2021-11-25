@@ -45,7 +45,7 @@ const requests = require('request');
 							datas['events'].push(arrayVal);
 							
 						}else{
-							var arrayVal = datas['events'];
+							var arrayVal = request_data['events'];
 							datas['events']=[arrayVal]
 						}
 						console.log(request_data['events']);
