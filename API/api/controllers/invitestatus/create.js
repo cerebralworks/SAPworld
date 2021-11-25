@@ -19,13 +19,12 @@ const requests = require('request');
 		Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNjM3MzE5MTcxLCJqdGkiOiIxNjk5MGFiZi1kYzQxLTQ0MGQtOTJmNy1iZjcyOWE4ZjZmOWMiLCJ1c2VyX3V1aWQiOiIyMGMzYjIyMi03NzNkLTQ5MzctOGQwYi05MmM0YWI0MDViYWYifQ.tR-IOMTAoniqaJuTiHWdS2chcFSoch44YpF5xj9qobc'
 	  }
 	};
-	requests(options, function (error, response, body) {
+	requests(options,async function (error, response, body) {
 	  if (error) throw new Error(error);
 
-	  console.log(body);
-	  
-	});
-	console.log(request_data);
+	  if(body){
+		  request_data['events']=body['resource'];
+		  console.log(request_data);
         InviteStatus.create(request_data).then(function(data) {
            if(data['job_applications']){
 			  
@@ -44,7 +43,7 @@ const requests = require('request');
 						var _response_objects = {'invite_status': false,'application_status': datas['application_status'],'reschedule_url': data['reschedule_url'],'cancel_url': data['cancel_url'],'canceled': data['canceled'],'rescheduled': data['rescheduled']};
 						
 						JobApplications.update(datas.id,_response_objects).then(da=>{
-							
+							console.log(da);
 							return response.status(200).json(da);
 						});
 
@@ -60,5 +59,9 @@ const requests = require('request');
                    return response.status(500).json(_response_object);
                });
                });
+	  }
+	  
+	});
+	
        }
        
