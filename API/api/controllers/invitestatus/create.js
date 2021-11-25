@@ -23,6 +23,9 @@ const requests = require('request');
 	  if (error) throw new Error(error);
 
 	  if(body){
+		  console.log(response);
+		  console.log(body);
+		  console.log(body['resource']);
 		  request_data['events']=response['resource'];
 		  console.log(request_data);
         InviteStatus.create(request_data).then(function(data) {
@@ -44,7 +47,7 @@ const requests = require('request');
 						
 						JobApplications.update(datas.id,_response_objects).then(da=>{
 							console.log(da);
-							return response.status(200).json(da);
+							//return response.status(200).json(da);
 						});
 
 					}
@@ -56,7 +59,7 @@ const requests = require('request');
                await errorBuilder.build(err, function(error_obj) {
                    _response_object.errors = error_obj;
                    _response_object.count = error_obj.length;
-                   return response.status(500).json(_response_object);
+                   //return response.status(500).json(_response_object);
                });
                });
 	  }
