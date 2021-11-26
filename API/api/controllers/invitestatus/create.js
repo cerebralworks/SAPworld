@@ -33,23 +33,57 @@ const requests = require('request');
 						if(datas['application_status'].length && datas['application_status'].length !=0){
 							if(data['canceled'] == true && (data['rescheduled'] != true && data['rescheduled'] != 'true') ){
 								datas['application_status'][datas['application_status'].length-1]['canceled']= new Date();
+								
+								if(datas['events'] && datas['events'].length && datas['events'].length !=0){
+									var arrayVal = request_data['events'];
+									arrayVal['status']=datas['status'];
+									arrayVal['canceled']= new Date();
+									datas['events'].push(arrayVal);
+									
+								}else{
+									var arrayVal = data['events'];
+									arrayVal['status']=datas['status'];
+									arrayVal['canceled']= new Date();									
+									datas['events']=[arrayVal]
+								}
+						
 							}else if(data['rescheduled'] != true && data['rescheduled'] != 'true' && data['canceled'] == false  && datas['rescheduled'] != true && datas['rescheduled'] != 'true'){
 								datas['application_status'][datas['application_status'].length-1]['created']= new Date();
+								
+								if(datas['events'] && datas['events'].length && datas['events'].length !=0){
+									var arrayVal = request_data['events'];
+									arrayVal['status']=datas['status'];
+									arrayVal['created']= new Date();
+									datas['events'].push(arrayVal);
+									
+								}else{
+									var arrayVal = data['events'];
+									arrayVal['status']=datas['status'];
+									arrayVal['created']= new Date();
+									datas['events']=[arrayVal]
+								}
+								
 							}else if(data['rescheduled'] == true || data['rescheduled'] == 'true' ){
 								datas['application_status'][datas['application_status'].length-1]['rescheduled']= new Date();
+								
+								
+								if(datas['events'] && datas['events'].length && datas['events'].length !=0){
+									var arrayVal = request_data['events'];
+									arrayVal['status']=datas['status'];
+									arrayVal['rescheduled']= new Date();
+									datas['events'].push(arrayVal);
+									
+								}else{
+									var arrayVal = data['events'];
+									arrayVal['status']=datas['status'];
+									arrayVal['rescheduled']= new Date();
+									datas['events']=[arrayVal]
+								}
+								
 							}
 							
 						}
-						if(datas['events'] && datas['events'].length && datas['events'].length !=0){
-							var arrayVal = request_data['events'];
-							arrayVal['status']=datas['status'];
-							datas['events'].push(arrayVal);
-							
-						}else{
-							var arrayVal = data['events'];
-							arrayVal['status']=datas['status'];
-							datas['events']=[arrayVal]
-						}
+						
 						
 						var _response_objects = {'events': datas['events'],'invite_status': false,'application_status': datas['application_status'],'reschedule_url': data['reschedule_url'],'cancel_url': data['cancel_url'],'canceled': data['canceled'],'rescheduled': data['rescheduled']};
 						console.log(_response_objects);

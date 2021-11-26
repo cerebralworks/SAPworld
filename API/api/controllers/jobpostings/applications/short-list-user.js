@@ -140,9 +140,9 @@ module.exports = async function update(request, response) {
 						if(job_application.application_status){
 							checkLastItemServer = job_application.application_status[job_application.application_status.length-1].id;
 						}
-						var checkLastItemServer = job_application.application_status;
 						
-						if(checkLastItem.id === checkLastItemServer){
+						
+						if(checkLastItem.id === checkLastItemServer || !job_application.application_status || job_application.application_status.length ==0 ){
 
 						}else{
 							var sliceCheck =job_application.application_status;
