@@ -57,6 +57,7 @@ module.exports.routes = {
      ***************************************************************************/
 	
      'POST /invitestatus/create' : { controller: 'invitestatus', action: 'create' },
+     'POST /invitestatus/cancel' : { controller: 'invitestatus', action: 'cancel' },
     
 	/*Contact form routes*/
 	'POST /contact/create': { controller: 'contact', action: 'create' },
