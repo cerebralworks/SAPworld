@@ -88,6 +88,7 @@ const requests = require('request');
 						
 						var _response_objects = {'events': datas['events'],'invite_status': false,'application_status': datas['application_status'],'reschedule_url': data['reschedule_url'],'cancel_url': data['cancel_url'],'canceled': data['canceled'],'rescheduled': data['rescheduled']};
 						console.log('1');
+						console.log(_response_objects);
 						JobApplications.update(datas.id,_response_objects).then(da=>{
 							return response.status(200).json(da);
 						});
