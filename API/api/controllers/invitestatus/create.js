@@ -19,6 +19,7 @@ const requests = require('request');
 		Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNjM3MzE5MTcxLCJqdGkiOiIxNjk5MGFiZi1kYzQxLTQ0MGQtOTJmNy1iZjcyOWE4ZjZmOWMiLCJ1c2VyX3V1aWQiOiIyMGMzYjIyMi03NzNkLTQ5MzctOGQwYi05MmM0YWI0MDViYWYifQ.tR-IOMTAoniqaJuTiHWdS2chcFSoch44YpF5xj9qobc'
 	  }
 	};
+	console.log(request_data['event']);
 	requests(options,async function (error, responses, body) {
 	  if (error) throw new Error(error);
 
@@ -86,7 +87,7 @@ const requests = require('request');
 						
 						
 						var _response_objects = {'events': datas['events'],'invite_status': false,'application_status': datas['application_status'],'reschedule_url': data['reschedule_url'],'cancel_url': data['cancel_url'],'canceled': data['canceled'],'rescheduled': data['rescheduled']};
-						console.log(_response_objects);
+						console.log('1');
 						JobApplications.update(datas.id,_response_objects).then(da=>{
 							return response.status(200).json(da);
 						});
