@@ -36,7 +36,7 @@ const requests = require('request');
 								datas['application_status'][datas['application_status'].length-1]['canceled']= new Date();
 								
 								if(datas['events'] && datas['events'].length && datas['events'].length !=0){
-									var arrayVal = request_data['events'];
+									var arrayVal = data['events'];
 									arrayVal['status']=datas['status'];
 									arrayVal['canceled']= new Date();
 									datas['events'].push(arrayVal);
@@ -52,7 +52,7 @@ const requests = require('request');
 								datas['application_status'][datas['application_status'].length-1]['created']= new Date();
 								
 								if(datas['events'] && datas['events'].length && datas['events'].length !=0){
-									var arrayVal = request_data['events'];
+									var arrayVal = data['events'];
 									arrayVal['status']=datas['status'];
 									arrayVal['created']= new Date();
 									datas['events'].push(arrayVal);
@@ -69,7 +69,7 @@ const requests = require('request');
 								
 								
 								if(datas['events'] && datas['events'].length && datas['events'].length !=0){
-									var arrayVal = request_data['events'];
+									var arrayVal = data['events'];
 									arrayVal['status']=datas['status'];
 									arrayVal['rescheduled']= new Date();
 									datas['events'].push(arrayVal);
