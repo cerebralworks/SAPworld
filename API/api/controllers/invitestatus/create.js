@@ -13,7 +13,6 @@ const requests = require('request');
 	}
 	
 	
-	request_data['events']={'data':body};
     InviteStatus.create(request_data).then(async function(data) {
 		const options = {
 		  method: 'GET',
@@ -26,8 +25,9 @@ const requests = require('request');
 	
 		requests(options,async function (error, responses, body) {
 			if (error) throw new Error(error);
-
+		
 			if(body){
+				request_data['events']={'data':body};
 				
 				if(data['job_applications']){
 				  
@@ -44,7 +44,7 @@ const requests = require('request');
 										datas['events'].push(arrayVal);
 										
 									}else{
-										var arrayVal = data['events'];
+										var arrayVal = [request_data['events']];
 										arrayVal['status']=datas['status'];
 										arrayVal['canceled']= new Date();									
 										datas['events']=[arrayVal]
@@ -60,7 +60,7 @@ const requests = require('request');
 										datas['events'].push(arrayVal);
 										
 									}else{
-										var arrayVal = data['events'];
+										var arrayVal = [request_data['events']];
 										arrayVal['status']=datas['status'];
 										arrayVal['created']= new Date();
 										datas['events']=[arrayVal]
@@ -77,7 +77,7 @@ const requests = require('request');
 										datas['events'].push(arrayVal);
 										
 									}else{
-										var arrayVal = data['events'];
+										var arrayVal = [request_data['events']];
 										arrayVal['status']=datas['status'];
 										arrayVal['rescheduled']= new Date();
 										datas['events']=[arrayVal]
