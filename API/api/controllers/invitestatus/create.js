@@ -50,12 +50,14 @@ module.exports = async function create(request, response) {
 										var arrayVal = data['events'];
 										arrayVal['status']=datas['status'];
 										arrayVal['canceled']= new Date();
+										arrayVal['canceledreason']= reason;
 										datas['events'].push(arrayVal);
 										
 									}else{
 										var arrayVal = data['events'];
 										arrayVal['status']=datas['status'];
-										arrayVal['canceled']= new Date();									
+										arrayVal['canceled']= new Date();
+										arrayVal['canceledreason']= reason;
 										datas['events']=[arrayVal]
 									}
 							
@@ -102,14 +104,12 @@ module.exports = async function create(request, response) {
 										var arrayVal = data['events'];
 										arrayVal['status']=datas['status'];
 										arrayVal['rescheduled']= new Date();
-										arrayVal['reason'] = reason;
 										datas['events'].push(arrayVal);
 										
 									}else{
 										var arrayVal = data['events'];
 										arrayVal['status']=datas['status'];
 										arrayVal['rescheduled']= new Date();
-										arrayVal['reason'] = reason;
 										datas['events']=[arrayVal]
 									}
 								}
