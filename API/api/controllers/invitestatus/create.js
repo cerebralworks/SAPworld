@@ -99,12 +99,14 @@ module.exports = async function create(request, response) {
 										var arrayVal = data['events'];
 										arrayVal['status']=datas['status'];
 										arrayVal['rescheduled']= new Date();
+										arrayVal['reason'] = request_data['cancellation']['reason'];
 										datas['events'].push(arrayVal);
 										
 									}else{
 										var arrayVal = data['events'];
 										arrayVal['status']=datas['status'];
 										arrayVal['rescheduled']= new Date();
+										arrayVal['reason'] = request_data['cancellation']['reason'];
 										datas['events']=[arrayVal]
 									}
 								}
