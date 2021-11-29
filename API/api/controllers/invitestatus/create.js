@@ -81,13 +81,13 @@ module.exports = async function create(request, response) {
 									if(datas['events'] && datas['events'].length && datas['events'].length !=0){
 										var arrayVal = data['events'];
 										arrayVal['status']=datas['status'];
-										arrayVal['rescheduled']= new Date();
+										arrayVal['rescheduled_canceled']= new Date();
 										datas['events'].push(arrayVal);
 										
 									}else{
 										var arrayVal = data['events'];
 										arrayVal['status']=datas['status'];
-										arrayVal['rescheduled']= new Date();
+										arrayVal['rescheduled_canceled']= new Date();
 										datas['events']=[arrayVal]
 									}
 									
@@ -97,13 +97,13 @@ module.exports = async function create(request, response) {
 									if(datas['events'] && datas['events'].length && datas['events'].length !=0){
 										var arrayVal = data['events'];
 										arrayVal['status']=datas['status'];
-										arrayVal['created']= new Date();
+										arrayVal['rescheduled']= new Date();
 										datas['events'].push(arrayVal);
 										
 									}else{
 										var arrayVal = data['events'];
 										arrayVal['status']=datas['status'];
-										arrayVal['created']= new Date();
+										arrayVal['rescheduled']= new Date();
 										datas['events']=[arrayVal]
 									}
 								}
