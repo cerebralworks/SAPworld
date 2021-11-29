@@ -19,7 +19,8 @@ module.exports = async function create(request, response) {
 		Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNjM3MzE5MTcxLCJqdGkiOiIxNjk5MGFiZi1kYzQxLTQ0MGQtOTJmNy1iZjcyOWE4ZjZmOWMiLCJ1c2VyX3V1aWQiOiIyMGMzYjIyMi03NzNkLTQ5MzctOGQwYi05MmM0YWI0MDViYWYifQ.tR-IOMTAoniqaJuTiHWdS2chcFSoch44YpF5xj9qobc'
 	  }
 	};
-	
+	console.log(request.body)
+	console.log(request_data)
 	console.log(request_data['event']);
 	
 	requests(options,async function (error, responses, body) {
