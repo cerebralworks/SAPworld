@@ -47,18 +47,19 @@ module.exports = async function create(request, response) {
 						
 						if(datas){
 							
-							var postDetailss = {};
+							
 							
 							/**
 							**	To validate the application events and push the values
 							**/
 							if(datas['application_status'] && datas['application_status'].length && datas['application_status'].length !=0){
 								
+								var postDetailss = {};
 								var arrId =datas['application_status']['length']-1;
 								var titleName = datas['application_status'][arrId]['status'];
 								
 								if(data['canceled'] == true && (data['rescheduled'] != true && data['rescheduled'] != 'true') ){
-									postDetailss.message= postDetails.name+' is Canceled ';
+									postDetailss.message= titleName +'Scheduled interview is Canceled ';
 									datas['application_status'][datas['application_status'].length-1]['canceled']= new Date();
 
 									if(datas['events'] && datas['events'].length && datas['events'].length !=0){
@@ -77,7 +78,7 @@ module.exports = async function create(request, response) {
 									}
 							
 								}else if(data['rescheduled'] != true && data['rescheduled'] != 'true' && data['canceled'] == false  && datas['rescheduled'] != true && datas['rescheduled'] != 'true'){
-									postDetailss.message= postDetails.name+' is Scheduled ';
+									postDetailss.message= titleName+' interview is Scheduled ';
 									datas['application_status'][datas['application_status'].length-1]['created']= new Date();
 									
 									if(datas['events'] && datas['events'].length && datas['events'].length !=0){
@@ -95,7 +96,7 @@ module.exports = async function create(request, response) {
 									
 								}else if(data['rescheduled'] == true || data['rescheduled'] == 'true' ){
 									datas['application_status'][datas['application_status'].length-1]['rescheduled']= new Date();
-									postDetailss.message= postDetails.name+' is Canceled ';
+									postDetailss.message= titleName+' Scheduled interview is Canceled ';
 									
 									if(datas['events'] && datas['events'].length && datas['events'].length !=0){
 										var arrayVal = data['events'];
@@ -113,7 +114,7 @@ module.exports = async function create(request, response) {
 									}
 									
 								}else{
-									postDetailss.message= postDetails.name+' is Rescheduled ';
+									postDetailss.message= postDetails.name+' interview is Rescheduled ';
 									
 									datas['application_status'][datas['application_status'].length-1]['created']= new Date();
 									
@@ -136,6 +137,10 @@ module.exports = async function create(request, response) {
 							
 							var _response_objects = {'events': datas['events'],'invite_status': false,'application_status': datas['application_status'],'reschedule_url': data['reschedule_url'],'cancel_url': data['cancel_url'],'canceled': data['canceled'],'rescheduled': data['rescheduled']};
 							
+							JobApplications.update(datas.id,_response_objects).then(da=>{
+								return response.status(200).json(da);
+							});
+							
 							postDetailss.name=titleName;
 							postDetailss.title=titleName;
 							postDetailss.account=datas['employer'];	
@@ -148,9 +153,6 @@ module.exports = async function create(request, response) {
 
 							});
 							
-							JobApplications.update(datas.id,_response_objects).then(da=>{
-								return response.status(200).json(da);
-							});
 						}
 						
 					})
