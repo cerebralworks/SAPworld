@@ -145,13 +145,15 @@ module.exports = async function create(request, response) {
 							postDetailss.employer=datas['employer'];		
 							postDetailss.view=0;	
 
-							Notification.create(postDetailss, function(err, job) {
-
+							Notification.create(postDetailss,async function(err, job) {
+								
+								JobApplications.update(datas.id,_response_objects).then(da=>{
+									return response.status(200).json(da);
+								});
+							 
 							});
 							
-							JobApplications.update(datas.id,_response_objects).then(da=>{
-								return response.status(200).json(da);
-							});
+							
 							
 							
 						}
