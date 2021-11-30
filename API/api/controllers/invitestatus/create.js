@@ -153,12 +153,14 @@ LEFT JOIN employer_profiles "employer_profile" ON (employer_profile.id = job_app
 LEFT JOIN user_employments "user_employment" ON (user_employment.id = job_applications.job_posting) where  job_applications.id = ${parseInt(datas.id)} `;
 
 								sails.sendNativeQuery(Query, async function(err, details) {
-									
+									console.log(details);
 									if(details && details.length && details.length !=0){
 										postDetailss.account=details[0]['user'];	
 										postDetailss.name=details[0]['title'];	
 										postDetailss.message=postDetailss.name +' '+postDetailss.message+ ' '+ details[0]['first_name'] +' '+details[0]['last_name'];	
+										console.log(postDetailss);
 										Notification.create(postDetailss,async function(err, job) {
+											console.log(job);
 											return response.status(200).json(job);
 										}); 
 									}
