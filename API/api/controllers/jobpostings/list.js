@@ -262,6 +262,21 @@ module.exports = async function list(request, response) {
                 where(`${JobApplications.tableAlias}.${JobApplications.schema.job_posting.columnName} = ${JobPostings.tableAlias}.${JobPostings.schema.id.columnName}`).
                 where(`${JobApplications.tableAlias}.${JobApplications.schema.user.columnName} = ${_.get(criteria, 'is_job_applied')}`);
                 query.field(`EXISTS(${sub_query})`, 'is_job_applied');
+				
+                // Adding additional columns to users list
+                    let build_job_application_table_columns = '';
+                    _.forEach(_.keys(JobApplications.schema), attribute => {
+                        if (!_.isEmpty(JobApplications.schema[attribute].columnName)) {
+                            build_job_application_table_columns += `'${JobApplications.schema[attribute].columnName}',${JobApplications.tableAlias}.${JobApplications.schema[attribute].columnName},`;
+                        }
+                    });
+                    build_job_application_table_columns = build_job_application_table_columns.slice(0, -1);
+                    let sub_querys = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).
+                    from(JobApplications.tableName, JobApplications.tableAlias).
+                    field(`json_build_object(${build_job_application_table_columns})`).
+					where(`${JobApplications.tableAlias}.${JobApplications.schema.job_posting.columnName} = ${JobPostings.tableAlias}.${JobPostings.schema.id.columnName}`).
+					where(`${JobApplications.tableAlias}.${JobApplications.schema.user.columnName} = ${_.get(criteria, 'is_job_applied')}`);                    query.field(`(${sub_querys.toString()})`, 'job_application');
+				
             }
 
             let get_populate_table_fields = [];
