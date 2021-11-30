@@ -137,10 +137,6 @@ module.exports = async function create(request, response) {
 							
 							var _response_objects = {'events': datas['events'],'invite_status': false,'application_status': datas['application_status'],'reschedule_url': data['reschedule_url'],'cancel_url': data['cancel_url'],'canceled': data['canceled'],'rescheduled': data['rescheduled']};
 							
-							JobApplications.update(datas.id,_response_objects).then(da=>{
-								return response.status(200).json(da);
-							});
-							
 							postDetailss.name=titleName;
 							postDetailss.title=titleName;
 							postDetailss.account=datas['employer'];	
@@ -152,6 +148,11 @@ module.exports = async function create(request, response) {
 							Notification.create(postDetailss, function(err, job) {
 
 							});
+							
+							JobApplications.update(datas.id,_response_objects).then(da=>{
+								return response.status(200).json(da);
+							});
+							
 							
 						}
 						
