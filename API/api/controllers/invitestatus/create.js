@@ -147,15 +147,14 @@ module.exports = async function create(request, response) {
 							postDetailss.view=0;	
 							JobApplications.update(datas.id,_response_objects).then(async function(da){
 								
-								var Query =`select employer_profile.user,user_profile.first_name,user_profile.last_name,user_employment.title from job_applications
+								var Query =`select user_profile.account,user_profile.first_name,user_profile.last_name,user_employment.title from job_applications
 LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_applications.user) 
-LEFT JOIN employer_profiles "employer_profile" ON (employer_profile.id = job_applications.employer) 
 LEFT JOIN user_employments "user_employment" ON (user_employment.id = job_applications.job_posting) where  job_applications.id = ${parseInt(datas.id)} `;
 
 								sails.sendNativeQuery(Query, async function(err, details) {
 									//console.log(details);
 									if(details && details['rows'] && details['rows'].length && details['rows'].length !=0){
-										postDetailss.account=details['rows'][0]['user'];	
+										postDetailss.account=details['rows'][0]['account'];	
 										postDetailss.name=details['rows'][0]['title'];	
 										postDetailss.message=postDetailss.name +' '+postDetailss.message+ ' from '+ details['rows'][0]['first_name'] +' '+details['rows'][0]['last_name'];	
 										//console.log(postDetailss);
