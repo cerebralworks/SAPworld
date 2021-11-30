@@ -48,13 +48,14 @@ module.exports = async function create(request, response) {
 						if(datas){
 							
 							var postDetailss = {};
-							var arrId =datas['application_status']['length']-1;
-							var titleName = datas['application_status'][arrId]['status'];
 							
 							/**
 							**	To validate the application events and push the values
 							**/
 							if(datas['application_status'].length && datas['application_status'].length !=0){
+								
+								var arrId =datas['application_status']['length']-1;
+								var titleName = datas['application_status'][arrId]['status'];
 								
 								if(data['canceled'] == true && (data['rescheduled'] != true && data['rescheduled'] != 'true') ){
 									postDetailss.message= postDetails.name+' is Canceled ';
