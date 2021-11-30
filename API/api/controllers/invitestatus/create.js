@@ -114,7 +114,7 @@ module.exports = async function create(request, response) {
 									}
 									
 								}else{
-									postDetailss.message= postDetails.name+' interview is Rescheduled ';
+									postDetailss.message= titleName+' interview is Rescheduled ';
 									
 									datas['application_status'][datas['application_status'].length-1]['created']= new Date();
 									
