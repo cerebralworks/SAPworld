@@ -49,7 +49,7 @@ module.exports = async function create(request, response) {
 							
 							var postDetailss = {};
 							var arrId =datas['application_status']['length']-1;
-							var titleName = datas['application_status'][]['status'];
+							var titleName = datas['application_status'][arrId]['status'];
 							
 							/**
 							**	To validate the application events and push the values
