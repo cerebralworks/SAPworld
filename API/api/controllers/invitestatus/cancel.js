@@ -3,7 +3,6 @@ module.exports = async function cancel(request, response) {
 const requests = require('request');
     var _response_object = {};
     var request_data = request.body.payload;
-	var reason = request.body.payload['cancellation'];
 	request_data['name'] = request.body.event;
 	var dataCheck = request.body.payload['questions_and_answers'];
 	if(dataCheck && dataCheck.length && dataCheck.length !=0){
@@ -73,14 +72,12 @@ const requests = require('request');
 									var arrayVal = request_data['events'];
 									arrayVal['status']=datas['status'];
 									arrayVal['rescheduled']= new Date();
-									arrayVal['reason'] = reason;
 									datas['events'].push(arrayVal);
 									
 								}else{
 									var arrayVal = data['events'];
 									arrayVal['status']=datas['status'];
 									arrayVal['rescheduled']= new Date();
-									arrayVal['reason'] = reason;
 									datas['events']=[arrayVal]
 								}
 								
