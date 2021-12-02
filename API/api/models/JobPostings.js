@@ -68,7 +68,7 @@ module.exports = {
         others: { type: 'ref', columnType: 'json[]' },
         programming_id: { type: 'ref', columnType: 'bigint[]' },
         entry: { type: 'boolean', defaultsTo: false },
-        negotiable: { type: 'boolean', defaultsTo: false , allowNull: true}
-
+        negotiable: { type: 'boolean', defaultsTo: false , allowNull: true},
+		account: { model: 'users' }
     }
 };

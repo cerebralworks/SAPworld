@@ -246,7 +246,7 @@ module.exports = async function update(request, response) {
 				}
 			});
 		}else{
-			console.log(value);
+			//console.log(value);
 			//Update the user profile details
 			UserProfiles.update(logged_in_user.user_profile.id, value, async function(err, profile) {
 				if (err) {
@@ -699,33 +699,48 @@ module.exports = async function update(request, response) {
 								post_data['user_id'] = arrayValue[i]['user_id'];
 								
 								post_data['job_id'] = arrayValue[i]['job_id'];
-								await Scoring.find(post_data).exec(async(err, user)=> {
+								var post_datas =arrayValue[i];
+								
+								// User Notification
+								var newMatch = {};
+								var newMatchCheck = {};
+								newMatch.name=updated_job['title'];
+								newMatch.title='New Job Matches';
+								newMatch.message='You have new job matches from'+' '+newMatch.name;
+								newMatch.account=checkDetails['account'];
+								newMatch.user_id=checkDetails['id'];
+								newMatch.job_id=updated_job['id'];
+								newMatch.employer=updated_job['company'];	
+								newMatchCheck.account=checkDetails['account'];
+								newMatchCheck.user_id=checkDetails['id'];
+								newMatchCheck.job_id=updated_job['id'];
+								newMatchCheck.employer=updated_job['company'];	
+								newMatch.view=0;
+								//console.log(newMatch);
+								await Notification.findOrCreate(newMatchCheck,newMatch);
+								//Employee Notification
+								var newMatch1 = {};
+								var newMatchCheck1 = {};
+								newMatch1.name=checkDetails['first_name'] +' '+checkDetails['last_name'];
+								newMatch1.title='New User Matches';
+								newMatch1.message='You have new user matched for the job '+updated_job['title'];
+								newMatch1.account=updated_job['account'];
+								newMatch1.user_id=checkDetails['id'];
+								newMatch1.job_id=updated_job['id'];
+								newMatch1.employer=updated_job['company'];
+								newMatchCheck1.account=updated_job['account'];
+								newMatchCheck1.user_id=checkDetails['id'];
+								newMatchCheck1.job_id=updated_job['id'];
+								newMatchCheck1.employer=updated_job['company'];		
+								newMatch1.view=0;
+								await Notification.findOrCreate(newMatchCheck1,newMatch1);
+								//find or create the scoring calculation
+								await Scoring.findOrCreate(post_data,post_datas,function(err, job) {
 									if (err) {
 										console.log(err);
 									} else {
-										if(user.length ==0){
-											var post_datas =arrayValue[i];
-											await Scoring.create(post_datas, function(err, job) {
-												if (err) {
-													console.log(err)
-												} else{
-													var created = true;
-													return created;
-												}
-											}); 
-
-										}else{
-											var post_datas =arrayValue[i];
-											post_data = user[0]['id'];
-											await Scoring.update(post_data, post_datas, function(err, job) {
-												if (err) {
-													console.log(err)
-												} else{
-													var created = true;
-													return created;
-												}
-											}); 
-										}
+										var created = true;						
+										return created;
 									}
 								});
 								
