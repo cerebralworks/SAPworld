@@ -28,6 +28,7 @@ module.exports = async function sendemail(request, response) {
             return await JobPostings.findOne(query).then(job => {
                 if (job) {
                     model = job;
+				    
                     return true;
                 }
                 return false;
@@ -58,6 +59,10 @@ module.exports = async function sendemail(request, response) {
                 return value.name;
             });
         });
+		/*await UserProfiles.find({id:value.id}).then(data=>{
+			var isTrue = data.privacy_protection;
+			console.log(isTrue)
+		})*/
 		if(model.availability=="0"){
 			model.availability = "Immediately"
 		}else{
@@ -87,13 +92,17 @@ module.exports = async function sendemail(request, response) {
 		}
        
         model.remote = model.remote == 1 ? 'Yes' : 'No';
-        const mail_data = {
+		const mail_data = {
             template: 'jobpostings/jd',
             data: model,
             to: value.email_id,
             subject: 'An employer is interested in your profile'
-        };
-        await mailService.sendMail(mail_data);
+           };
+		UserProfiles.find({id:value.id}).then(data=>{
+			if(data[0]['privacy_protection']['employer_mail_send']===true){
+		     mailService.sendMail(mail_data);
+			}
+		})
 		await Scoring.update({job_id:model.id,user_id:value.id}).set({mail:true});
 		var postDetailss = {};
 		postDetailss.name=model.title;
