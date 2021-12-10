@@ -18,7 +18,7 @@ module.exports = async function EmployersDashboard(request, response) {
 		if(filtered_query_data.view && filtered_query_data.id){
 			countryQuery =``;
 			if(filtered_query_data.city){
-				countryQuery = `AND job_posting.city = ANY('{ ${filtered_query_data.city} }')`;
+				countryQuery = `AND locations.city = ANY('{ ${filtered_query_data.city} }')`;
 			}
 			
 			
@@ -64,43 +64,49 @@ module.exports = async function EmployersDashboard(request, response) {
 			
 			if(filtered_query_data.view =='location'){
 				//To get the Matched city based Details
-				Query = `SELECT  job_posting.city,count(distinct(job_posting.id)) FROM user_employments "job_posting"
-						WHERE   ${filterStatus}  ${filterDate} AND job_posting.company = ${parseInt(filtered_query_data.id)} GROUP BY job_posting.city `
+				Query = `SELECT  locations.city,count(distinct(job_posting.id)) FROM user_employments "job_posting"
+						LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
+						WHERE   ${filterStatus}  ${filterDate} AND job_posting.company = ${parseInt(filtered_query_data.id)} GROUP BY locations.city `
 			}
 			if(filtered_query_data.view =='type'){
 				//To get the Matched Type based Details
 				Query = ` SELECT  job_posting.type,count(distinct(job_posting.id)) FROM user_employments "job_posting"
+						LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
 						WHERE   ${filterStatus}  ${filterDate} AND job_posting.type != '0' AND job_posting.company = ${parseInt(filtered_query_data.id)}  ${countryQuery} GROUP BY job_posting.type `
 			}
 			if(filtered_query_data.view =='matches'){
 				//To get the Matched  based Details
-				Query = `SELECT job_posting.id,job_posting.title,COUNT(distinct user_profile.id) FROM user_employments "job_posting"
+				Query = `SELECT locations.id,job_posting.id,job_posting.title,COUNT(distinct user_profile.id) FROM user_employments "job_posting"
 	LEFT JOIN employer_profiles "employer" ON (job_posting.company = employer.id) 
 	CROSS JOIN user_profiles "user_profile" 
 	LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
+	LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
 	LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 	WHERE   ${filterStatus}  ${filterDate} AND 
 	scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id AND (job_posting.company = ${parseInt(filtered_query_data.id)}) 
-	group by job_posting.id `
+	group by job_posting.id ,locations.id`
 			}
 			if(filtered_query_data.view =='applicant'){
 				//To get the Matched applicant based Details
-				Query =`SELECT COUNT(DISTINCT job_application.id),job_posting.id,job_posting.title,job_posting.id FROM  job_applications "job_application" 
+				Query =`SELECT locations.id,COUNT(DISTINCT job_application.id),job_posting.id,job_posting.title,job_posting.id FROM  job_applications "job_application" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 
+LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
 LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) WHERE   ${filterStatus}  ${filterDate} AND
 (job_application.status=1) AND (job_application.short_listed IS NULL or job_application.short_listed != true) AND (job_application.employer=${parseInt(filtered_query_data.id)}) Group BY job_posting.id`
 			}
 			if(filtered_query_data.view =='shortlisted'){
 				//To get the Matched shortlisted based Details
-				Query = `SELECT COUNT(DISTINCT job_application.id),job_posting.id,job_posting.title,job_posting.id FROM  job_applications "job_application" 
+				Query = `SELECT locations.id,COUNT(DISTINCT job_application.id),job_posting.id,job_posting.title,job_posting.id FROM  job_applications "job_application" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 
+LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
 LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) WHERE    ${filterStatus}  ${filterDate} AND
 job_application.short_listed = true AND (job_application.employer=${parseInt(filtered_query_data.id)}) Group BY job_posting.id`
 			}
 			if(filtered_query_data.view =='hired'){
 				//To get the Matched type based Details
-				Query = `SELECT COUNT(DISTINCT job_application.id),job_posting.id,job_posting.title,job_posting.id FROM  job_applications "job_application" 
+				Query = `SELECT locations.id,COUNT(DISTINCT job_application.id),job_posting.id,job_posting.title,job_posting.id FROM  job_applications "job_application" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 
+LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
 LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) WHERE    ${filterStatus}  ${filterDate} AND
 job_application.short_listed = true AND job_application.status =  2 AND (job_application.employer=${parseInt(filtered_query_data.id)}) Group BY job_posting.id`
 			}
@@ -109,14 +115,17 @@ job_application.short_listed = true AND job_application.status =  2 AND (job_app
 				Query =`SELECT 
 				(SELECT COUNT(DISTINCT job_applications.id) FROM  job_applications "job_applications" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applications.job_posting)  
+LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
 LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_applications.user) WHERE job_posting.id = job_postings.id  ${filterDate} AND (job_applications.status=1) AND (job_applications.short_listed IS NULL or job_applications.short_listed != true) AND (job_applications.employer=${parseInt(filtered_query_data.id)} ) ) as applicant,
 
 (SELECT COUNT(DISTINCT job_applicationss.id) FROM  job_applications "job_applicationss" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationss.job_posting) 
+LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
 LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_applicationss.user) WHERE  job_posting.id = job_postings.id   ${filterUpdatedDate}  AND  (job_applicationss.short_listed = true AND job_applicationss.status !=  2 ) AND (job_applicationss.employer=${parseInt(filtered_query_data.id)} )) as shortlist,
 
 (SELECT COUNT(DISTINCT job_applicationsss.id) FROM  job_applications "job_applicationsss" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationsss.job_posting) 
+LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
  WHERE job_posting.id = job_postings.id  ${filterUpdatedDate}  AND (job_applicationsss.short_listed = true AND job_applicationsss.status =  2 ) AND (job_applicationsss.employer=${parseInt(filtered_query_data.id)} ) ) as hired,
 
 job_postings.id,job_postings.title FROM  user_employments "job_postings" 

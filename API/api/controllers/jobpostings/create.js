@@ -39,15 +39,11 @@ module.exports = function create(request, response) {
         salary_type: yup.number().required().oneOf([0, 1, 2]),
         salary_currency: yup.string().required().min(3).max(10).lowercase().required(),
         salary: yup.number().required().positive(),
-        country: yup.string().required().lowercase(),
-        state: yup.string().required().lowercase(),
-        city: yup.string().required().lowercase(),
-        zipcode: yup.number().required().positive().moreThan(1000),
         availability: yup.number().required().oneOf([0, 15, 30, 45, 60]),
-        latlng: yup.object().shape({
+        /* latlng: yup.object().shape({
             lat: yup.number().min(-90).max(90),
             lng: yup.number().min(-180).max(180),
-        }).required(),
+        }).required(), */
         experience: yup.number().min(0).default(0).required(),
         sap_experience: yup.number().min(0).default(0).required(),
         domain: yup.array().of(yup.number().positive()),
@@ -56,6 +52,13 @@ module.exports = function create(request, response) {
             skill_name: yup.string().required().lowercase(),
             experience: yup.number().required().positive(),
             exp_type: yup.string().required().lowercase().oneOf(['years', 'months']),
+        })).required(),
+        job_locations: yup.array().of(yup.object().shape({
+            country: yup.string().required().lowercase(),
+			state: yup.string().required().lowercase(),
+			city: yup.string().required().lowercase(),
+			stateShort: yup.string().required().uppercase(),
+			countryShort: yup.string().required().uppercase(),
         })).required(),
         skills: yup.array().of(yup.number().positive()),
         programming_skills: yup.array().of(yup.string()).required(),
@@ -80,9 +83,9 @@ module.exports = function create(request, response) {
     schema.validate(post_request_data, { abortEarly: false }).then(async value => {
         value.company = logged_in_user.employer_profile.id;
 		value.account = logged_in_user.id;
-        var point = value.latlng['lng'] + ' ' + value.latlng['lat'];
+        /* var point = value.latlng['lng'] + ' ' + value.latlng['lat'];
         value.latlng_text = value.latlng.lat + ',' + value.latlng.lng;
-        value.latlng = 'SRID=4326;POINT(' + point + ')';
+        value.latlng = 'SRID=4326;POINT(' + point + ')'; */
 		
 		var arr2= value.hands_on_experience;
 		if ( arr2 && Array.isArray(arr2)) {
@@ -96,6 +99,7 @@ module.exports = function create(request, response) {
 		}
         value['programming_id'] = programming_id;
         value['programming_skills'] = programming_skills;
+        value['job_locations'] = value['job_locations'];
 		
         //Creating record
         JobPostings.create(value, async function(err, job) {
@@ -106,42 +110,62 @@ module.exports = function create(request, response) {
                     return response.status(500).json(_response_object);
                 });
             } else {
+				var tempSavedData = job['job_locations'];
+				tempSavedData = tempSavedData.map(function(a,b){ 
+					if(!a.zipcode){
+						a.zipcode ='';
+					}
+					return{	
+						'jobid':job.id,
+						'city':a.city,
+						'state':a.state,
+						'stateShort':a.stateShort,
+						'countryShort':a.countryShort,
+						'zipcode':a.zipcode,
+						'country':a.country
+					}
+				});
+				var  insertCountry = await JobLocation.createEach(tempSavedData);
                 _response_object.message = 'Job has been created successfully.';
                 _response_object.details = job;
 				var updated_job = job;
 				if(updated_job.entry ==true ){
 					if(updated_job.visa_sponsorship ==true ){
-					var Count_Users = `SELECT  user_profile.* as "job_id" FROM user_employments "job_posting"
+					var Count_Users = `SELECT  locations.country as "job_country",locations.id as "location_id",user_profile.* as "job_id" FROM user_employments "job_posting"
 		CROSS JOIN user_profiles "user_profile" 
-		LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
+		LEFT JOIN users "user_account" ON (user_account.id=user_profile.account)
+		LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
 		WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.id = ${parseInt(updated_job.id)}) AND
-		(user_account.status=1) AND (user_profile.work_authorization = 1 OR (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND (( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) OR user_profile.willing_to_relocate =true ) ) )
-		AND (COALESCE(user_profile.experience) >= job_posting.experience)  AND (COALESCE(user_profile.experience) <= 2 ) group by user_profile.id `
+		(user_account.status=1) AND (user_profile.work_authorization = 1 OR (( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND (( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[] ) OR user_profile.willing_to_relocate =true ) ) )
+		AND (COALESCE(user_profile.experience) >= job_posting.experience)  AND (COALESCE(user_profile.experience) <= 2 ) group by user_profile.id ,locations.id,locations.country`
 					}else{
-						var Count_Users = `SELECT  user_profile.* as "job_id" FROM user_employments "job_posting"
+						var Count_Users = `SELECT  locations.country as "job_country",locations.id as "location_id",user_profile.* as "job_id" FROM user_employments "job_posting"
 		CROSS JOIN user_profiles "user_profile" 
-		LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
+		LEFT JOIN users "user_account" ON (user_account.id=user_profile.account)
+		LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 		
 		WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.id = ${parseInt(updated_job.id)}) AND
-		(user_account.status=1) AND ( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] OR user_profile.willing_to_relocate =true ) 
-		AND (COALESCE(user_profile.experience) >= job_posting.experience)  AND (COALESCE(user_profile.experience) <= 2 ) group by user_profile.id `
+		(user_account.status=1) AND ( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND ( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[] OR user_profile.willing_to_relocate =true ) 
+		AND (COALESCE(user_profile.experience) >= job_posting.experience)  AND (COALESCE(user_profile.experience) <= 2 ) group by user_profile.id ,locations.id,locations.country`
 					}
 
 				}else{
 					
 					if(updated_job.visa_sponsorship ==true ){
-					var Count_Users = `SELECT  user_profile.* as "job_id" FROM user_employments "job_posting"
+					var Count_Users = `SELECT  locations.country as "job_country",locations.id as "location_id",user_profile.* as "job_id" FROM user_employments "job_posting"
 		CROSS JOIN user_profiles "user_profile" 
 		LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
+		LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
 		WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.id = ${parseInt(updated_job.id)}) AND
-		(user_account.status=1) AND (user_profile.work_authorization = 1 OR (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) OR user_profile.willing_to_relocate =true ) ) ) AND  (user_profile.hands_on_skills && job_posting.hands_on_skills ) 
-		AND (COALESCE(user_profile.experience) >= job_posting.experience) group by user_profile.id `
+		(user_account.status=1) AND (user_profile.work_authorization = 1 OR (( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND ( ( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[] ) OR user_profile.willing_to_relocate =true ) ) ) AND  (user_profile.hands_on_skills && job_posting.hands_on_skills ) 
+		AND (COALESCE(user_profile.experience) >= job_posting.experience) group by user_profile.id ,locations.id,locations.country`
 					}else{
-						var Count_Users = `SELECT  user_profile.* as "job_id" FROM user_employments "job_posting"
+						var Count_Users = `SELECT  locations.country as "job_country",locations.id as "location_id",user_profile.* as "job_id" FROM user_employments "job_posting"
 		CROSS JOIN user_profiles "user_profile" 
 		LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
+		LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
 		WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.id = ${parseInt(updated_job.id)}) AND
-		(user_account.status=1) AND (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] )OR user_profile.willing_to_relocate =true ) ) AND  ( user_profile.hands_on_skills && job_posting.hands_on_skills )
-		AND (COALESCE(user_profile.experience) >= job_posting.experience) group by user_profile.id `
+		(user_account.status=1) AND (( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND ( ( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[] )OR user_profile.willing_to_relocate =true ) ) AND  ( user_profile.hands_on_skills && job_posting.hands_on_skills )
+		AND (COALESCE(user_profile.experience) >= job_posting.experience) group by user_profile.id ,locations.id,locations.country`
 					}
 				}
 				sails.sendNativeQuery(Count_Users, async function(err, Count_Users_value) {
@@ -241,7 +265,7 @@ module.exports = function create(request, response) {
 									TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
 								}
 								if(updated_job.work_authorization ==0 ){
-									if(updated_job.country.toLocaleLowerCase() == checkDetails.nationality.toLocaleLowerCase()){
+									if(checkDetails.job_country.toLocaleLowerCase() == checkDetails.nationality.toLocaleLowerCase()){
 										arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_authorization'];
 										TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
 									}else{
@@ -250,11 +274,11 @@ module.exports = function create(request, response) {
 									}
 								}
 								if(updated_job.work_authorization ==1 ){
-									if(updated_job.country.toLocaleLowerCase() == checkDetails.nationality.toLocaleLowerCase()){
+									if(checkDetails.job_country.toLocaleLowerCase() == checkDetails.nationality.toLocaleLowerCase()){
 										arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_authorization'];
 										TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
 									}else if(checkDetails.authorized_country && checkDetails.authorized_country.length && checkDetails.authorized_country !=0){
-										if(checkDetails.authorized_country.filter(function(a,b){ return a.toLocaleLowerCase() == updated_job.country.toLocaleLowerCase() }).length !=0){
+										if(checkDetails.authorized_country.filter(function(a,b){ return a.toLocaleLowerCase() == checkDetails.job_country.toLocaleLowerCase() }).length !=0){
 											arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_authorization'];
 											TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
 										}else{
@@ -538,10 +562,12 @@ module.exports = function create(request, response) {
 							arrayValue[i]['score'] =arrayValue[i]['score']/(10*TotalCheckItems);
 							arrayValue[i]['job_id'] = updated_job['id'];
 							arrayValue[i]['user_id'] = checkDetails['id'];
+							arrayValue[i]['location_id'] = checkDetails['location_id'];
 							var post_data ={};
 							post_data['user_id'] = arrayValue[i]['user_id'];
 							
 							post_data['job_id'] = arrayValue[i]['job_id'];
+							post_data['location_id'] = arrayValue[i]['location_id'];
 							
 							
 							var post_datas =arrayValue[i];

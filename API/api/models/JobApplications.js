@@ -41,6 +41,9 @@ module.exports = {
 		canceled: { type: 'boolean', defaultsTo: false },
 		rescheduled: { type: 'boolean', defaultsTo: false },
         events: { type: 'ref', columnType: 'json[]' },
+        job_location: {
+            model: 'joblocation'
+        }
 		
     }
 };
