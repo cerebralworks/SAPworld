@@ -18,7 +18,7 @@ module.exports = async function list(request, response) {
     const filtered_query_data = _.pick(request_query, [
         'page','knowledge', 'sort','country','work_authorization', 'limit', 'status', 'expand', 'search', 'search_type', 'city','visa', 'job_types', 'skill_tags', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'job_posting', 'skill_tags_filter_type', 'additional_fields',
 		'domain','skills.','programming_skills','availability',
-		'optinal_skills','certification',
+		'optinal_skills','certification','location_id',
 		'facing_role','employer_role_type',
 		'training_experience','travel_opportunity','work_authorization',
 		'end_to_end_implementation','education',
@@ -37,6 +37,7 @@ module.exports = async function list(request, response) {
         { name: 'skill_tags_filter_type', enum: true, values: [0, 1] },
         { name: 'job_types', array: true, individual_rule: { number: true, min: _.min(job_type_values), max: _.max(job_type_values) } },
         { name: 'job_posting', number: true, min: 1 },
+        { name: 'location_id', number: true, min: 1 },
         { name: 'skill_tags', array: true, individual_rule: { number: true, min: 1 } },
         { name: 'min_salary', number: true, positive: true },
         { name: 'max_salary', number: true, positive: true },
@@ -154,6 +155,7 @@ module.exports = async function list(request, response) {
         }
 		query.where(` ${UserProfiles.tableAlias}.${UserProfiles.schema.id.columnName} = ${Scoring.tableAlias}.${Scoring.schema.user_id.columnName} `);
 		query.where(` ${Scoring.tableAlias}.${Scoring.schema.job_id.columnName} = ${filtered_query_data.job_posting}`);
+		query.where(` ${Scoring.tableAlias}.${Scoring.schema.location_id.columnName} = ${filtered_query_data.location_id}`);
 		
 		//Filter the Custom Data's
 		
@@ -318,6 +320,7 @@ module.exports = async function list(request, response) {
                     from(JobApplications.tableName, JobApplications.tableAlias).
                     field(`json_build_object(${build_job_application_table_columns})`).
                     where(`${JobApplications.tableAlias}.${JobApplications.schema.job_posting.columnName} = ${parseInt(filtered_query_data.job_posting)}`).
+                    where(`${JobApplications.tableAlias}.${JobApplications.schema.job_location.columnName} = ${parseInt(filtered_query_data.location_id)}`).
                     where(`${JobApplications.tableAlias}.${JobApplications.schema.user.columnName} = ${UserProfiles.tableAlias}.${UserProfiles.schema.id.columnName}`).
                     where(`${JobApplications.tableAlias}.${JobApplications.schema.status.columnName} !=${row_deleted_sign}`).
                     limit(1);

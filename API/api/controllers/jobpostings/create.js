@@ -57,8 +57,8 @@ module.exports = function create(request, response) {
             country: yup.string().required().lowercase(),
 			state: yup.string().required().lowercase(),
 			city: yup.string().required().lowercase(),
-			stateShort: yup.string().required().uppercase(),
-			countryShort: yup.string().required().uppercase(),
+			stateshort: yup.string().required().uppercase(),
+			countryshort: yup.string().required().uppercase(),
         })).required(),
         skills: yup.array().of(yup.number().positive()),
         programming_skills: yup.array().of(yup.string()).required(),
@@ -119,8 +119,8 @@ module.exports = function create(request, response) {
 						'jobid':job.id,
 						'city':a.city,
 						'state':a.state,
-						'stateShort':a.stateShort,
-						'countryShort':a.countryShort,
+						'stateshort':a.stateshort,
+						'countryshort':a.countryshort,
 						'zipcode':a.zipcode,
 						'country':a.country
 					}
@@ -135,7 +135,7 @@ module.exports = function create(request, response) {
 		CROSS JOIN user_profiles "user_profile" 
 		LEFT JOIN users "user_account" ON (user_account.id=user_profile.account)
 		LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
-		WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.id = ${parseInt(updated_job.id)}) AND
+		WHERE (locations.status = 1 OR locations.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.id = ${parseInt(updated_job.id)}) AND
 		(user_account.status=1) AND (user_profile.work_authorization = 1 OR (( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND (( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[] ) OR user_profile.willing_to_relocate =true ) ) )
 		AND (COALESCE(user_profile.experience) >= job_posting.experience)  AND (COALESCE(user_profile.experience) <= 2 ) group by user_profile.id ,locations.id,locations.country`
 					}else{
@@ -143,7 +143,7 @@ module.exports = function create(request, response) {
 		CROSS JOIN user_profiles "user_profile" 
 		LEFT JOIN users "user_account" ON (user_account.id=user_profile.account)
 		LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 		
-		WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.id = ${parseInt(updated_job.id)}) AND
+		WHERE (locations.status = 1 OR locations.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.id = ${parseInt(updated_job.id)}) AND
 		(user_account.status=1) AND ( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND ( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[] OR user_profile.willing_to_relocate =true ) 
 		AND (COALESCE(user_profile.experience) >= job_posting.experience)  AND (COALESCE(user_profile.experience) <= 2 ) group by user_profile.id ,locations.id,locations.country`
 					}
@@ -155,7 +155,7 @@ module.exports = function create(request, response) {
 		CROSS JOIN user_profiles "user_profile" 
 		LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 		LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
-		WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.id = ${parseInt(updated_job.id)}) AND
+		WHERE (locations.status = 1 OR locations.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.id = ${parseInt(updated_job.id)}) AND
 		(user_account.status=1) AND (user_profile.work_authorization = 1 OR (( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND ( ( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[] ) OR user_profile.willing_to_relocate =true ) ) ) AND  (user_profile.hands_on_skills && job_posting.hands_on_skills ) 
 		AND (COALESCE(user_profile.experience) >= job_posting.experience) group by user_profile.id ,locations.id,locations.country`
 					}else{
@@ -163,7 +163,7 @@ module.exports = function create(request, response) {
 		CROSS JOIN user_profiles "user_profile" 
 		LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 		LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
-		WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.id = ${parseInt(updated_job.id)}) AND
+		WHERE (locations.status = 1 OR locations.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.id = ${parseInt(updated_job.id)}) AND
 		(user_account.status=1) AND (( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND ( ( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[] )OR user_profile.willing_to_relocate =true ) ) AND  ( user_profile.hands_on_skills && job_posting.hands_on_skills )
 		AND (COALESCE(user_profile.experience) >= job_posting.experience) group by user_profile.id ,locations.id,locations.country`
 					}

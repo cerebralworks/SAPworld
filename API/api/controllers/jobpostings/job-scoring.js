@@ -11,7 +11,7 @@ module.exports = async function Scoring(request, response) {
         'page', 'sort','country','work_authorization', 'limit', 'status', 'expand', 'search', 'search_type', 'city','visa', 'job_types', 'skill_tags', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'job_posting', 'skill_tags_filter_type', 'additional_fields',
 		'domain','skills.','programming_skills','availability',
 		'optinal_skills','certification',
-		'facing_role','employer_role_type',
+		'facing_role','employer_role_type','location_id',
 		'training_experience','travel_opportunity','work_authorization',
 		'end_to_end_implementation','education',
 		'remote','willing_to_relocate','language','visa','filter_location'
@@ -96,6 +96,7 @@ module.exports = async function Scoring(request, response) {
 			list_query.left_join(`scorings "scoring" ON (scoring.user_id = user_profile.id) `);
 			
 			list_query.where("scoring.job_id =" +value.id );
+			list_query.where("scoring.location_id =" +post_request_data.location_id );
 			list_query.where("scoring.user_id  = user_profile.id" );
 		
             //list_query.where(`user_profile.hands_on_skills && ARRAY[${tempData}]::bigint[]`);
@@ -179,8 +180,9 @@ module.exports = async function Scoring(request, response) {
                     var QueryData =`SELECT job_posting.id,job_posting.title,job_posting.company FROM user_employments "job_posting"
 CROSS JOIN user_profiles "user_profile" 
 LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
-WHERE (job_posting.status = 1 OR job_posting.status = 98 ) AND scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id AND 
-(job_posting.company = ${model.company} ) AND (user_profile.id = ${profile.id} ) `
+LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
+WHERE (locations.status = 1 OR job_posting.status = 98 ) AND scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id AND 
+(job_posting.company = ${model.company} ) AND (user_profile.id = ${profile.id} ) AND (locations.id = ${post_request_data.location_id} ) `
 					var counts = sails.sendNativeQuery(QueryData, async function(err, user_matches) {
 						sendResponse(profile, job_postings['rows'][0]['count'], application,user_matches);
 					});

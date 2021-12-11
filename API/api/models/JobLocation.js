@@ -18,8 +18,8 @@
         jobid :{
             model: 'jobpostings'
         },
-        stateShort: { type: 'string'},
-        countryShort: { type: 'string'}
+        stateshort: { type: 'string'},
+        countryshort: { type: 'string'}
     }
 };
 
