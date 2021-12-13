@@ -50,10 +50,13 @@ module.exports = function create(request, response) {
         salary_type: yup.number().required().oneOf([0, 1, 2]),
         salary_currency: yup.string().required().min(3).max(10).lowercase().required(),
         salary: yup.number().required().positive(),
-        country: yup.string().required().lowercase(),
-        state: yup.string().required().lowercase(),
-        city: yup.string().required().lowercase(),
-        zipcode: yup.number().required().positive().moreThan(1000),
+		job_locations: yup.array().of(yup.object().shape({
+            country: yup.string().required().lowercase(),
+			state: yup.string().required().lowercase(),
+			city: yup.string().required().lowercase(),
+			stateshort: yup.string().required().uppercase(),
+			countryshort: yup.string().required().uppercase(),
+        })).required(),
         availability: yup.number().required().oneOf([0, 15, 30, 45, 60]),
         latlng: yup.object().shape({
             lat: yup.number().min(-90).max(90),
@@ -98,6 +101,37 @@ module.exports = function create(request, response) {
                     return response.status(500).json(_response_object);
                 });
             } else {
+				var loc = job[0]['job_locations'];
+				var jobid = job[0]['id'];
+				 JobLocation.find({jobid : jobid}).then(async function(data){
+					 var res2 = loc.filter((a) => !data.some(b => a.city === b.city ))
+					 var res1 = data.filter((a) => !loc.some(b => a.city === b.city ))
+					 if(res2.length!==0){
+					     res2 = res2.map(function(a,b){ 
+							if(!a.zipcode){
+								a.zipcode ='';
+							}
+							return{
+								'jobid':jobid,
+								'city':a.city,
+								'state':a.state,
+								'stateshort':a.stateshort,
+								'countryshort':a.countryshort,
+								'zipcode':a.zipcode,
+								'country':a.country
+							}
+				        })
+						var  insertCountry = await JobLocation.createEach(res2);
+					 }
+					 if(res1.length!==0){ 
+						 var del = res1.map(a=>{return a.id;})
+						 await JobApplications.update({job_location: { in: del }},{status : 0}).then()
+						 //console.log(del)
+						 await JobLocation.destroy({id: { in: del }}).then()
+						 
+					 }
+					
+				})
                 return callback(job[0]);
             }
         });
@@ -604,7 +638,7 @@ module.exports = function create(request, response) {
 							await Notification.findOrCreate(newMatchCheck1,newMatch1);	
 
 							//Score Calculation
-							await Scoring.findOrCreate(post_data,post_datas).exec(async(err, user)=> {
+							/*await Scoring.findOrCreate(post_data,post_datas).exec(async(err, user)=> {
 								if (err) {
 									console.log(err);
 								} else {
@@ -612,7 +646,7 @@ module.exports = function create(request, response) {
 									return created;
 								}
 								
-							});
+							});*/
 							
 						}
 						
