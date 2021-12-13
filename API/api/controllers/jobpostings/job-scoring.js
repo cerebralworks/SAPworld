@@ -94,6 +94,7 @@ module.exports = async function Scoring(request, response) {
             list_query.where("user_profile.status=1");
             list_query.where("user_profile.experience >=" + model.experience);
 			list_query.left_join(`scorings "scoring" ON (scoring.user_id = user_profile.id) `);
+			list_query.left_join(`job_location "job_locations" ON (job_locations.id = scoring.location_id)  `);
 			
 			list_query.where("scoring.job_id =" +value.id );
 			list_query.where("scoring.location_id =" +post_request_data.location_id );
@@ -113,7 +114,7 @@ module.exports = async function Scoring(request, response) {
 			if (value.user_id) {
 				list_query.where("user_profile.id =" + value.user_id);
 			}
-			var group_by = UserProfiles.tableAlias + "." + UserProfiles.schema.id.columnName +",scoring.id";
+			var group_by = UserProfiles.tableAlias + "." + UserProfiles.schema.id.columnName +",scoring.id,job_locations.id";
 		
 			value.page = value.page ? value.page : 1;
 			if (!value.user_id) {
@@ -143,6 +144,7 @@ module.exports = async function Scoring(request, response) {
             from(JobApplications.tableName, JobApplications.tableAlias).
             field(`json_build_object(${build_job_application_table_columns})`).
             where(`${JobApplications.tableAlias}.${JobApplications.schema.job_posting.columnName} = ${parseInt(value.id)}`).
+			where(`${JobApplications.tableAlias}.${JobApplications.schema.job_location.columnName} = ${JobLocation.tableAlias}.${JobLocation.schema.id.columnName}`).
             where(`${JobApplications.tableAlias}.${JobApplications.schema.user.columnName} = ${UserProfiles.tableAlias}.${UserProfiles.schema.id.columnName}`).
             limit(1);
             list_query.field(`(${sub_query.toString()})`, 'job_application');

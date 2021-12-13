@@ -11,15 +11,17 @@ module.exports = async function apply(request, response) {
     var _response_object = {};
     const logged_in_user = request.user;
     pick_input = [
-        'comments', 'job_posting', 'user_resume', 'status', 'others'
+        'comments', 'job_posting', 'location_id', 'user_resume', 'status', 'others'
     ];
     var filtered_post_data = _.pick(post_request_data, pick_input);
     const filtered_post_keys = Object.keys(filtered_post_data);
     var input_attributes = [
         { name: 'job_posting', number: true, required: true, min: 1 },
+        { name: 'location_id', number: true, required: true, min: 1 },
     ];
     //Add the JobApplication record to db.
     const addRecord = (post_data, callback) => {
+		
         JobApplications.create(post_data, async function(err, application) {
             if (err) {
                 await errorBuilder.build(err, function(error_obj) {
@@ -58,7 +60,7 @@ module.exports = async function apply(request, response) {
         }
         //Check a record already exist.
     const checkApplied = (post_data, callback) => {
-        let query = { job_posting: post_data.job_posting, user: post_data.user, status: { '!=': _.get(sails.config.custom.status_codes_application, 'closed') } };
+        let query = { job_location: post_data.Location_id,job_posting: post_data.job_posting, user: post_data.user, status: { '!=': _.get(sails.config.custom.status_codes_application, 'closed') } };
         console.log(query);
 
         JobApplications.findOne(query, async function(err, application) {
@@ -73,8 +75,8 @@ module.exports = async function apply(request, response) {
                 return callback(application, not_interested);
             } else {
 				if(post_data.status==8){
-					let query = { job_posting: post_data.job_posting, user: post_data.user, status: 8 ,user_interest : 1 };
-					JobApplications.update({ user: post_data.user, job_posting: post_data.job_posting }, query, async function(err, job_application) {
+					let query = { job_posting: post_data.job_posting, user: post_data.user, status: 8 ,user_interest : 1 ,job_location : post_data.location_id };
+					JobApplications.update({ user: post_data.user, job_posting: post_data.job_posting, job_location: post_data.location_id }, query, async function(err, job_application) {
 						if (err) {
 							await errorBuilder.build(err, function(error_obj) {
 								_response_object.errors = error_obj;
@@ -199,6 +201,7 @@ module.exports = async function apply(request, response) {
                 } else {
                     filtered_post_data.user = logged_in_user.user_profile.id;
                     filtered_post_data.employer = job.company;
+                    filtered_post_data.job_location = filtered_post_data.location_id;
                     //Check whether the user already applied for the job
                     await checkApplied(filtered_post_data, async function(applied_details, not_interested) {
                         // need to update the record instead of creating. if the application is exist with the not_interested status for user_interest
