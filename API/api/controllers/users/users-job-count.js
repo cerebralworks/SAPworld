@@ -27,7 +27,7 @@ module.exports = async function list(request, response) {
 			
 		if (filtered_query_keys.includes('company')) {
 			//To get the job count details
-			var Count_Users = `SELECT job_posting.id,job_posting.title,COUNT(user_profile.id) FROM user_employments "job_posting"
+			var Count_Users = `SELECT job_posting.id,job_posting.title,COUNT(distinct scoring.id) FROM user_employments "job_posting"
 	LEFT JOIN employer_profiles "employer" ON (job_posting.company = employer.id) 
 	CROSS JOIN user_profiles "user_profile" 
 	LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 

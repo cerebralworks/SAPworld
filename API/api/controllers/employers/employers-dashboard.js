@@ -76,7 +76,7 @@ module.exports = async function EmployersDashboard(request, response) {
 			}
 			if(filtered_query_data.view =='matches'){
 				//To get the Matched  based Details
-				Query = `SELECT job_posting.id,job_posting.title,COUNT(scoring.id) FROM user_employments "job_posting"
+				Query = `SELECT job_posting.id,job_posting.title,COUNT(distinct scoring.id) FROM user_employments "job_posting"
 	CROSS JOIN user_profiles "user_profile" 
 	LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
 	LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
