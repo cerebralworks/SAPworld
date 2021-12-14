@@ -246,8 +246,8 @@ module.exports = async function list(request, response) {
 		// Join the Scoring Table
 		if(filtered_query_data.user_list ==true){
 			query.left_join(Scoring.tableName, Scoring.tableAlias, Scoring.tableAlias + '.' + Scoring.schema.job_id.columnName + "=" + JobPostings.tableAlias + '.' + JobPostings.schema.id.columnName);
-			query.where(` ${JobPostings.tableAlias}.${JobPostings.schema.id.columnName} = ${Scoring.tableAlias}.${Scoring.schema.job_id.columnName} `);
-			query.where(` ${Scoring.tableAlias}.${Scoring.schema.user_id.columnName} = ${filtered_query_data.user_id}`);
+			query.where(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName} = ${Scoring.tableAlias}.${Scoring.schema.job_id.columnName} `);
+			query.where(`${Scoring.tableAlias}.${Scoring.schema.user_id.columnName} = ${filtered_query_data.user_id}`);
 		}
 		// Join the Scoring Table
 		if((status_Data|| (count && group)) && !filtered_query_data.user_list){

@@ -28,15 +28,13 @@ module.exports = async function list(request, response) {
 		if (filtered_query_keys.includes('company')) {
 			//To get the job count details
 			var Count_Users = `SELECT job_posting.id,job_posting.title,COUNT(distinct scoring.id) FROM user_employments "job_posting"
-	LEFT JOIN employer_profiles "employer" ON (job_posting.company = employer.id) 
-	CROSS JOIN user_profiles "user_profile" 
-	LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
+	LEFT JOIN scorings "scoring" ON (scoring.job_id = job_posting.id) 
 	LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
-	LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-	WHERE (locations.status = 1 OR  locations.status=98 ) AND scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (job_posting.company = ${parseInt(filtered_query_data.company)}) AND
-	(user_account.status=1) AND (( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND (( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[] )OR user_profile.willing_to_relocate =true ) OR ( job_posting.visa_sponsorship = true AND user_profile.work_authorization = 1 )) AND (user_profile.privacy_protection->>'available_for_opportunity')::text = 'true' AND ( user_profile.hands_on_skills && job_posting.hands_on_skills OR (user_profile.entry = true OR job_posting.entry =true ))
-	AND (COALESCE(user_profile.experience) >= job_posting.experience)
-			group by job_posting.id ORDER BY job_posting.id`
+	LEFT JOIN user_profiles "user_profile" ON (user_profile.id=scoring.user_id)
+	WHERE (locations.status = 1 OR  locations.status=98 )  
+	AND ((user_profile.privacy_protection->>'available_for_opportunity')::text = 'true')
+	AND (job_posting.company = ${parseInt(filtered_query_data.company)}) 
+	group by job_posting.id ORDER BY job_posting.id`
 			if(filtered_query_data.view =='applicants'){
 				//To get the applicant count details
 				Count_Users = `SELECT COUNT(DISTINCT job_application.id),job_posting.id FROM  job_applications "job_application" 
@@ -78,7 +76,7 @@ WHERE (locations.status = 1) AND scoring.user_id = user_profile.id AND scoring.j
 			}
 			if(filtered_query_data.view =='users_matches_details'){
 				//To get the job details Count
-				Count_Users = `SELECT locations.id as location_id,job_posting.*,scoring.score,scoring.mail FROM user_employments "job_posting"
+				Count_Users = `SELECT locations.id as location_id,locations.state,locations.city,locations.country,locations.zipcode,job_posting.*,scoring.score,scoring.mail FROM user_employments "job_posting"
 CROSS JOIN user_profiles "user_profile" 
 LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
 LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id)

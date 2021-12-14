@@ -146,6 +146,7 @@ module.exports = async function list(request, response) {
       
         query.left_join(Users.tableName, Users.tableAlias, Users.tableAlias + '.' + Users.schema.id.columnName + "=" + UserProfiles.tableAlias + '.' + UserProfiles.schema.account.columnName);
         query.left_join(Scoring.tableName, Scoring.tableAlias, Scoring.tableAlias + '.' + Scoring.schema.user_id.columnName + "=" + UserProfiles.tableAlias + '.' + UserProfiles.schema.id.columnName);
+        query.left_join(JobLocation.tableName, JobLocation.tableAlias, JobLocation.tableAlias + '.' + JobLocation.schema.id.columnName + "=" + Scoring.tableAlias + '.' + Scoring.schema.location_id.columnName);
         var group_by = UserProfiles.tableAlias + "." + UserProfiles.schema.id.columnName;
         group_by += "," + Users.tableAlias + "." + Users.schema.id.columnName;
         if (filtered_query_keys.includes('status')) {
@@ -155,8 +156,9 @@ module.exports = async function list(request, response) {
         }
 		query.where(` ${UserProfiles.tableAlias}.${UserProfiles.schema.id.columnName} = ${Scoring.tableAlias}.${Scoring.schema.user_id.columnName} `);
 		query.where(` ${Scoring.tableAlias}.${Scoring.schema.job_id.columnName} = ${filtered_query_data.job_posting}`);
-		query.where(` ${Scoring.tableAlias}.${Scoring.schema.location_id.columnName} = ${filtered_query_data.location_id}`);
-		
+		if (filtered_query_keys.includes('location_id')) {			
+			//query.where(` ${Scoring.tableAlias}.${Scoring.schema.location_id.columnName} = ${filtered_query_data.location_id}`);
+		}
 		//Filter the Custom Data's
 		
 		if (filtered_query_keys.includes('knowledge')) {
@@ -271,13 +273,13 @@ module.exports = async function list(request, response) {
             query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.skills.columnName} && (${sub_query.toString()})`);
         } */
         //Count Country query
-        var count_country_query = squel.select().field(UserProfiles.schema.country.columnName +' , COUNT( ' + UserProfiles.tableAlias + '.' + UserProfiles.schema.country.columnName + ')').toString();
+        var count_country_query = squel.select().field('user_profile.'+UserProfiles.schema.country.columnName +' , COUNT( ' + UserProfiles.tableAlias + '.' + UserProfiles.schema.country.columnName + ')').toString();
 		var querys = query;
 		querys.group(`${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName},${UserProfiles.tableAlias}.${UserProfiles.schema.id.columnName}`);
         query_split = querys.toString().split(/FROM(.+)/)[1];
         count_country_query = count_country_query + ' FROM ' + query_split.split(' ORDER')[0];
         //Count query
-        var count_query = squel.select().field('COUNT(distinct ' + UserProfiles.tableAlias + '.' + UserProfiles.schema.id.columnName + ')').toString();
+        var count_query = squel.select().field('COUNT(' + UserProfiles.tableAlias + '.' + UserProfiles.schema.id.columnName + ')').toString();
 		var queryss = query;
 		//queryss.group(`${UserProfiles.tableAlias}.${UserProfiles.schema.id.columnName}`);
         query_split = queryss.toString().split(/FROM(.+)/)[1].split(/GROUP(.+)/)[0];
@@ -320,8 +322,9 @@ module.exports = async function list(request, response) {
                     from(JobApplications.tableName, JobApplications.tableAlias).
                     field(`json_build_object(${build_job_application_table_columns})`).
                     where(`${JobApplications.tableAlias}.${JobApplications.schema.job_posting.columnName} = ${parseInt(filtered_query_data.job_posting)}`).
-                    where(`${JobApplications.tableAlias}.${JobApplications.schema.job_location.columnName} = ${parseInt(filtered_query_data.location_id)}`).
-                    where(`${JobApplications.tableAlias}.${JobApplications.schema.user.columnName} = ${UserProfiles.tableAlias}.${UserProfiles.schema.id.columnName}`).
+                   // where(`${JobApplications.tableAlias}.${JobApplications.schema.job_location.columnName} = ${JobLocation.tableAlias}.${JobLocation.schema.id.columnName}`).
+				    where(`${JobApplications.tableAlias}.${JobApplications.schema.job_location.columnName} = ${JobLocation.tableAlias}.${JobLocation.schema.id.columnName}`).
+					where(`${JobApplications.tableAlias}.${JobApplications.schema.user.columnName} = ${UserProfiles.tableAlias}.${UserProfiles.schema.id.columnName}`).
                     where(`${JobApplications.tableAlias}.${JobApplications.schema.status.columnName} !=${row_deleted_sign}`).
                     limit(1);
                     query.field(`(${sub_query.toString()})`, 'job_application');
@@ -392,9 +395,23 @@ module.exports = async function list(request, response) {
                 query.group(group_by);
 
                 //Executing query
-				query.group(`${Scoring.tableAlias}.${Scoring.schema.id.columnName}`);
+				query.group(`${Scoring.tableAlias}.${Scoring.schema.id.columnName},${JobLocation.tableAlias}.${JobLocation.schema.id.columnName}`);
 				query.order('scoring.score', false);
 				query.field('scoring.mail');
+				
+				//joblocation details
+			
+				let build_job_location_table_columns = '';
+				_.forEach(_.keys(JobLocation.schema), attribute => {
+					if (!_.isEmpty(JobLocation.schema[attribute].columnName)) {
+						build_job_location_table_columns += `'${JobLocation.schema[attribute].columnName}',${JobLocation.tableAlias}.${JobLocation.schema[attribute].columnName},`;
+					}
+				});
+				build_job_location_table_columns = build_job_location_table_columns.slice(0, -1);
+				
+				query.field(`json_build_object(${build_job_location_table_columns})`, 'job_location');
+
+
 				//query.order(`${Scoring.tableAlias}.${Scoring.schema.score.columnName} `);
                 var application_model = sails.sendNativeQuery(query.toString());
                 application_model.exec(async function(err, applications_result) {

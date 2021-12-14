@@ -50,6 +50,15 @@ module.exports = function create(request, response) {
         salary_type: yup.number().required().oneOf([0, 1, 2]),
         salary_currency: yup.string().required().min(3).max(10).lowercase().required(),
         salary: yup.number().required().positive(),
+        /* country: yup.string().required().lowercase(),
+        state: yup.string().required().lowercase(),
+        city: yup.string().required().lowercase(),
+        zipcode: yup.number().required().positive().moreThan(1000), */
+        availability: yup.number().required().oneOf([0, 15, 30, 45, 60]),
+        latlng: yup.object().shape({
+            lat: yup.number().min(-90).max(90),
+            lng: yup.number().min(-180).max(180),
+        }).required(),
 		job_locations: yup.array().of(yup.object().shape({
             country: yup.string().required().lowercase(),
 			state: yup.string().required().lowercase(),
@@ -57,11 +66,6 @@ module.exports = function create(request, response) {
 			stateshort: yup.string().required().uppercase(),
 			countryshort: yup.string().required().uppercase(),
         })).required(),
-        availability: yup.number().required().oneOf([0, 15, 30, 45, 60]),
-        latlng: yup.object().shape({
-            lat: yup.number().min(-90).max(90),
-            lng: yup.number().min(-180).max(180),
-        }).required(),
         experience: yup.number().min(0).default(0).required(),
         sap_experience: yup.number().min(0).default(0).required(),
         domain: yup.array().of(yup.number().positive()),
@@ -101,11 +105,12 @@ module.exports = function create(request, response) {
                     return response.status(500).json(_response_object);
                 });
             } else {
+                //return callback(job[0]);
 				var loc = job[0]['job_locations'];
 				var jobid = job[0]['id'];
-				 JobLocation.find({jobid : jobid}).then(async function(data){
-					 var res2 = loc.filter((a) => !data.some(b => a.city === b.city ))
-					 var res1 = data.filter((a) => !loc.some(b => a.city === b.city ))
+				JobLocation.find({jobid : jobid}).then(async function(data){
+					 var res2 = loc.filter((a) => !data.some(b => a.city === b.city && a.country === b.country ))
+					 var res1 = data.filter((a) => !loc.some(b => a.city === b.city && a.country === b.country ))
 					 if(res2.length!==0){
 					     res2 = res2.map(function(a,b){ 
 							if(!a.zipcode){
@@ -132,6 +137,10 @@ module.exports = function create(request, response) {
 					 }
 					
 				})
+				var checkDetailsLocation = await JobLocation.find({'jobid' : job[0]['id']});
+				var insertElement = {'job_locations':checkDetailsLocation};
+				var insertData = await JobPostings.update(job[0]['id'], insertElement);
+				//console.log(insertData);
                 return callback(job[0]);
             }
         });
@@ -618,7 +627,6 @@ module.exports = function create(request, response) {
 							newMatchCheck.employer=updated_job['company'];	
 							newMatch.view=0;
 							//console.log(newMatch);
-							await Notification.findOrCreate(newMatchCheck,newMatch);
 							
 							//Employee Notification
 							var newMatch1 = {};
@@ -635,10 +643,15 @@ module.exports = function create(request, response) {
 							newMatchCheck1.job_id=updated_job['id'];
 							newMatchCheck1.employer=updated_job['company'];		
 							newMatch1.view=0;
-							await Notification.findOrCreate(newMatchCheck1,newMatch1);	
+							await Scoring.findOne(newMatchCheck).exec(async(err1, results)=> {
+								if(results){
+									await Notification.findOrCreate(newMatchCheck,newMatch);
+									await Notification.findOrCreate(newMatchCheck1,newMatch1);	
+								}
+							});
 
 							//Score Calculation
-							/*await Scoring.findOrCreate(post_data,post_datas).exec(async(err, user)=> {
+							await Scoring.findOrCreate(post_data,post_datas).exec(async(err, user)=> {
 								if (err) {
 									console.log(err);
 								} else {
@@ -646,7 +659,7 @@ module.exports = function create(request, response) {
 									return created;
 								}
 								
-							});*/
+							});
 							
 						}
 						

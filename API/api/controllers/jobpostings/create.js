@@ -126,6 +126,10 @@ module.exports = function create(request, response) {
 					}
 				});
 				var  insertCountry = await JobLocation.createEach(tempSavedData);
+				var checkDetailsLocation = await JobLocation.find({'jobid' : job['id']});
+				var insertElement = {'job_locations':checkDetailsLocation};
+				var insertData = await JobPostings.update(job['id'], insertElement);
+				console.log(insertData);
                 _response_object.message = 'Job has been created successfully.';
                 _response_object.details = job;
 				var updated_job = job;
