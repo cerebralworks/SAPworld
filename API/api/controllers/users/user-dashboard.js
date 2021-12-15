@@ -46,13 +46,14 @@ module.exports = async function UserDashboard(request, response) {
 			}
 			if(filtered_query_data.view =='matches'){
 				//To get the Matched city based Details
-				Query = `SELECT  job_posting.city,count(distinct(job_posting.id)) FROM user_employments "job_posting"
+				Query = `SELECT  locations.city,count(distinct(job_posting.id)) FROM user_employments "job_posting"
 				CROSS JOIN user_profiles "user_profile" 
-				LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
+				LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id)
+				LEFT JOIN job_location "locations" ON (locations.jobid = job_posting.id) 
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 				WHERE ${filterStatus} ${filterDate} AND 
 				scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id
-				AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by job_posting.city `
+				AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by locations.city `
 			}
 			if(filtered_query_data.view =='availability'){
 				//To get the Matched availability based Details
@@ -87,11 +88,12 @@ module.exports = async function UserDashboard(request, response) {
 			}
 			if(filtered_query_data.view =='applied'){
 				//To get the Matched type based Details
-				Query = `SELECT  job_posting.city ,count(distinct(job_posting.id)) FROM job_applications "job_application"
+				Query = `SELECT  locations.city ,count(distinct(job_posting.id)) FROM job_applications "job_application"
 				LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 	
 				LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) 
+				LEFT JOIN job_location "locations" ON (locations.id = job_application.job_location)
 				WHERE  ${filterStatus}  ${filterDate} AND (user_profile.id=${parseInt(filtered_query_data.id)} )   ${countryQuery} 
-				 group by job_posting.city `
+				 group by locations.city `
 			}
 			
 			sails.sendNativeQuery(Query, async function(err, details) {

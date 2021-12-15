@@ -136,12 +136,14 @@
                                 <p style="font-size: 14px; font-weight: 600; color: #465666; margin: 0 0 5px 0;">
 
                                 </p>
+								<% for(var i=0; i < job_locations.length; i++) { %>
                                 <p style="font-size: 14px; font-weight: 600; color: #465666; margin: 0 ;text-transform: capitalize;">
-                                    <%= city %>,
-                                        <%= state %>,
-                                            <%= country %> –
-                                                <%= zipcode %>
+                                    <%= job_locations[i].city %>,
+                                        <%= job_locations[i].state %>,
+                                            <%= job_locations[i].country %> –
+                                                <%= job_locations[i].zipcode %>
                                 </p>
+								<% } %>
                             </div>
                         </td>
                     </tr>

@@ -161,6 +161,7 @@ module.exports = async function list(request, response) {
 		}if (filtered_query_keys.includes('location_filter')) {			
 			query.where(` user_profile.city !=any('{ ${filtered_query_data.location_filter} }') `);
 		}
+		
 		//Filter the Custom Data's
 		
 		if (filtered_query_keys.includes('knowledge')) {

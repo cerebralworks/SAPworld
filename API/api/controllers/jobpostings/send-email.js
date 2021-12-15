@@ -58,7 +58,7 @@ module.exports = async function sendemail(request, response) {
                 return value.name;
             });
         });
-        /* await JobLocation.find({ id: value.location_id }).then(locations => {
+       /* await JobLocation.find({ id: value.location_id }).then(locations => {
             model.locations = locations;
         });
 		if(model.locations.length !=0){
@@ -67,7 +67,7 @@ module.exports = async function sendemail(request, response) {
 			model.state = tempData['state'];
 			model.country = tempData['country'];
 			model.zipcode = tempData['zipcode'];
-		} */
+		}*/
 		if(model.availability=="0"){
 			model.availability = "Immediately"
 		}else{

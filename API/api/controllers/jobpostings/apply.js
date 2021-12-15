@@ -60,7 +60,7 @@ module.exports = async function apply(request, response) {
         }
         //Check a record already exist.
     const checkApplied = (post_data, callback) => {
-        let query = { job_location: post_data.Location_id,job_posting: post_data.job_posting, user: post_data.user, status: { '!=': _.get(sails.config.custom.status_codes_application, 'closed') } };
+        let query = { job_location: post_data.location_id,job_posting: post_data.job_posting, user: post_data.user, status: { '!=': _.get(sails.config.custom.status_codes_application, 'closed') } };
         console.log(query);
 
         JobApplications.findOne(query, async function(err, application) {
