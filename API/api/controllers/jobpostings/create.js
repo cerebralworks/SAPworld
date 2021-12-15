@@ -571,7 +571,7 @@ module.exports = function create(request, response) {
 							post_data['user_id'] = arrayValue[i]['user_id'];
 							
 							post_data['job_id'] = arrayValue[i]['job_id'];
-							post_data['location_id'] = arrayValue[i]['location_id'];
+							//post_data['location_id'] = arrayValue[i]['location_id'];
 							
 							
 							var post_datas =arrayValue[i];

@@ -18,7 +18,7 @@ module.exports = async function list(request, response) {
     const filtered_query_data = _.pick(request_query, [
         'page','knowledge', 'sort','country','work_authorization', 'limit', 'status', 'expand', 'search', 'search_type', 'city','visa', 'job_types', 'skill_tags', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'job_posting', 'skill_tags_filter_type', 'additional_fields',
 		'domain','skills.','programming_skills','availability',
-		'optinal_skills','certification','location_id',
+		'optinal_skills','certification','location_id','location_filter',
 		'facing_role','employer_role_type',
 		'training_experience','travel_opportunity','work_authorization',
 		'end_to_end_implementation','education',
@@ -158,6 +158,8 @@ module.exports = async function list(request, response) {
 		query.where(` ${Scoring.tableAlias}.${Scoring.schema.job_id.columnName} = ${filtered_query_data.job_posting}`);
 		if (filtered_query_keys.includes('location_id')) {			
 			//query.where(` ${Scoring.tableAlias}.${Scoring.schema.location_id.columnName} = ${filtered_query_data.location_id}`);
+		}if (filtered_query_keys.includes('location_filter')) {			
+			query.where(` user_profile.city !=any('{ ${filtered_query_data.location_filter} }') `);
 		}
 		//Filter the Custom Data's
 		
