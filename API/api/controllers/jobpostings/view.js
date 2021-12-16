@@ -12,8 +12,8 @@ module.exports = async function view(request, response) {
     const filtered_query_data = _.pick(request_query, ['id','location_id','is_users_view','user_id', 'expand', 'additional_fields', 'is_job_applied']);
     var _response_object = {};
     var input_attributes = [
-        { name: 'id', required: true, number: true, min: 1 },
-        { name: 'location_id', number: true, min: 1 }
+        { name: 'id', required: true, number: true, min: 1 }
+        //{ name: 'location_id', number: true, min: 1 }
     ];
     var expand = [];
     if (filtered_query_data.expand) {
@@ -78,14 +78,14 @@ module.exports = async function view(request, response) {
                     job_posting.no_of_shortlisted_applicants = await JobApplications.count({ job_posting: _.get(job_posting, 'id'), status: { '!=': _.get(sails.config.custom.status_codes, 'deleted') }, short_listed: true });
                 }
                 if (filtered_query_data.is_job_applied && filtered_query_data.user_id) {
-                    job_posting.is_job_applied = await JobApplications.count({ job_posting: _.get(job_posting, 'id'), user: filtered_query_data.user_id , job_location: filtered_query_data.location_id });
-                    job_posting.job_applied = await JobApplications.findOne({ job_posting: _.get(job_posting, 'id'), user: filtered_query_data.user_id, job_location: filtered_query_data.location_id });
+                    job_posting.is_job_applied = await JobApplications.count({ job_posting: _.get(job_posting, 'id'), user: filtered_query_data.user_id  });
+                    job_posting.job_applied = await JobApplications.findOne({ job_posting: _.get(job_posting, 'id'), user: filtered_query_data.user_id });
                 }
 				if (expand.includes('score')&& filtered_query_data.user_id) {
-					job_posting.score = await Scoring.findOne({ job_id: _.get(job_posting, 'id'), user_id: filtered_query_data.user_id , location_id: filtered_query_data.location_id });
+					job_posting.score = await Scoring.findOne({ job_id: _.get(job_posting, 'id'), user_id: filtered_query_data.user_id  });
 				}
 				if (filtered_query_data.location_id) {
-					job_posting.job_location = await JobLocation.findOne({ id: filtered_query_data.location_id });
+					//job_posting.job_location = await JobLocation.findOne({ id: filtered_query_data.location_id });
 				}
                 successCallBack(job_posting);
             }
