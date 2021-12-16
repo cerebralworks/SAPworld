@@ -256,22 +256,9 @@ module.exports = async function list(request, response) {
 		if(filtered_query_data.user_list ==true ){
 			query.left_join(JobLocation.tableName, JobLocation.tableAlias, JobLocation.tableAlias + '.' + JobLocation.schema.jobid.columnName + "=" + JobPostings.tableAlias + '.' + JobPostings.schema.id.columnName);
 			if(filtered_query_data.user_list ==true){
-				query.where(` ${JobLocation.tableAlias}.${JobLocation.schema.id.columnName} = ${Scoring.tableAlias}.${Scoring.schema.location_id.columnName} `);
+				//query.where(` ${JobLocation.tableAlias}.${JobLocation.schema.id.columnName} = ${Scoring.tableAlias}.${Scoring.schema.location_id.columnName} `);
 			}
 			
-			
-			//joblocation details
-			
-			let build_job_location_table_columns = '';
-			_.forEach(_.keys(JobLocation.schema), attribute => {
-				if (!_.isEmpty(JobLocation.schema[attribute].columnName)) {
-					build_job_location_table_columns += `'${JobLocation.schema[attribute].columnName}',${JobLocation.tableAlias}.${JobLocation.schema[attribute].columnName},`;
-				}
-			});
-			build_job_location_table_columns = build_job_location_table_columns.slice(0, -1);
-			
-			query.field(`json_build_object(${build_job_location_table_columns})`, 'job_location');
-
 		}
 		
         if (!count && !visa&& !status_Data) {
@@ -284,8 +271,8 @@ module.exports = async function list(request, response) {
                 let sub_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).
                 from(JobApplications.tableName, JobApplications.tableAlias).
                 where(`${JobApplications.tableAlias}.${JobApplications.schema.job_posting.columnName} = ${JobPostings.tableAlias}.${JobPostings.schema.id.columnName}`).
-                where(`${JobApplications.tableAlias}.${JobApplications.schema.user.columnName} = ${_.get(criteria, 'is_job_applied')}`).
-                where(`${JobApplications.tableAlias}.${JobApplications.schema.job_location.columnName} = ${JobLocation.tableAlias}.${JobLocation.schema.id.columnName}`);
+                where(`${JobApplications.tableAlias}.${JobApplications.schema.user.columnName} = ${_.get(criteria, 'is_job_applied')}`);
+                //where(`${JobApplications.tableAlias}.${JobApplications.schema.job_location.columnName} = ${JobLocation.tableAlias}.${JobLocation.schema.id.columnName}`);
                 query.field(`EXISTS(${sub_query})`, 'is_job_applied');
 				
                 // Adding additional columns to users list
@@ -300,7 +287,7 @@ module.exports = async function list(request, response) {
                     from(JobApplications.tableName, JobApplications.tableAlias).
                     field(`json_build_object(${build_job_application_table_columns})`).
 					where(`${JobApplications.tableAlias}.${JobApplications.schema.job_posting.columnName} = ${JobPostings.tableAlias}.${JobPostings.schema.id.columnName}`).
-					where(`${JobApplications.tableAlias}.${JobApplications.schema.job_location.columnName} = ${JobLocation.tableAlias}.${JobLocation.schema.id.columnName}`).
+					//where(`${JobApplications.tableAlias}.${JobApplications.schema.job_location.columnName} = ${JobLocation.tableAlias}.${JobLocation.schema.id.columnName}`).
 					where(`${JobApplications.tableAlias}.${JobApplications.schema.user.columnName} = ${_.get(criteria, 'is_job_applied')}`);                   
 					query.field(`(${sub_querys.toString()})`, 'job_application');
 				
@@ -340,7 +327,7 @@ module.exports = async function list(request, response) {
         }else if(visa){
             query.field("count(*)");
         }else if(status_Data){
-            query.field("job_locations.status,count(job_locations.status)");
+            query.field("job_posting.status,count(job_posting.status)");
         } else {
             query.field("COUNT(*)");
         }
@@ -349,20 +336,20 @@ module.exports = async function list(request, response) {
 		if(status_Data){
 			query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} != ${row_deleted_sign}`);
 			if( filtered_query_data.is_user_get == false){
-				query.where(`( ${JobLocation.tableAlias}.${JobLocation.schema.status.columnName} = 98 AND job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${filtered_query_data.user_id} )))`);
+				query.where(`( ${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} = 98 AND job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${filtered_query_data.user_id} )))`);
 				query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} != 0`);
 			 }else if(filtered_query_data.is_user_get == true ){
-				 query.where(`( ${JobLocation.tableAlias}.${JobLocation.schema.status.columnName} = 98 AND job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${filtered_query_data.user_id} )))`);
+				 query.where(`( ${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} = 98 AND job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${filtered_query_data.user_id} )))`);
 				 query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} != 0`);
 			 }
 		}else{
 			query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} != ${row_deleted_sign}`);
 			if(filtered_query_keys.includes('is_user_get')){
 			 if( filtered_query_data.is_user_get == true){
-				query.where(`( ${JobLocation.tableAlias}.${JobLocation.schema.status.columnName} = ${_.get(criteria, 'where.status')} AND job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${filtered_query_data.user_id} )))`);
+				query.where(`( ${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} = ${_.get(criteria, 'where.status')} AND job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${filtered_query_data.user_id} )))`);
 				query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} != 0`);
 			 }else{
-				query.where(`( ${JobLocation.tableAlias}.${JobLocation.schema.status.columnName} = ${_.get(criteria, 'where.status')} OR job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${filtered_query_data.user_id} )))`);
+				query.where(`( ${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} = ${_.get(criteria, 'where.status')} OR job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${filtered_query_data.user_id} )))`);
 				query.where(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName} != 0`);
 			 }
 			}else if (_.get(criteria, 'where.status') || filtered_query_keys.includes('status') ) {
@@ -451,26 +438,26 @@ module.exports = async function list(request, response) {
         }
 		if(filtered_query_data.user_list ==true){
 			if (count && !group) {
-				query.group(`${JobLocation.tableAlias}.${JobLocation.schema.id.columnName},${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${EmployerProfiles.tableAlias}.${EmployerProfiles.schema.id.columnName},${Scoring.tableAlias}.${Scoring.schema.id.columnName}`);
+				query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${EmployerProfiles.tableAlias}.${EmployerProfiles.schema.id.columnName},${Scoring.tableAlias}.${Scoring.schema.id.columnName}`);
 				query.order('scoring.score',  false );
 				return query.toString();
 			}else if (group) {
-				query.group(`${JobLocation.tableAlias}.${JobLocation.schema.id.columnName},${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${JobLocation.tableAlias}.${JobLocation.schema.country.columnName},${Scoring.tableAlias}.${Scoring.schema.id.columnName}`);
+				query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${JobLocation.tableAlias}.${JobLocation.schema.country.columnName},${Scoring.tableAlias}.${Scoring.schema.id.columnName}`);
 				query.order('scoring.score',  false );
 				return query.toString();
 			}else if (visa) {
-				query.group(`${JobLocation.tableAlias}.${JobLocation.schema.id.columnName},${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${Scoring.tableAlias}.${Scoring.schema.id.columnName}`);
+				query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${Scoring.tableAlias}.${Scoring.schema.id.columnName}`);
 				query.order('scoring.score',  false );
 				return query.toString();
 			}else if (status_Data) {
-				query.group(`${JobLocation.tableAlias}.${JobLocation.schema.id.columnName},${JobLocation.tableAlias}.${JobLocation.schema.status.columnName}`);
+				query.group(`${JobPostings.tableAlias}.${JobPostings.schema.status.columnName}`);
 				return query.toString();
 			}else {
 				query.order('scoring.score',  false );
 				if (_.get(criteria, 'page')) {
 					query.offset(_.get(criteria, 'page'));
 				}
-				query.group(`${JobLocation.tableAlias}.${JobLocation.schema.id.columnName},${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${EmployerProfiles.tableAlias}.${EmployerProfiles.schema.id.columnName},${Scoring.tableAlias}.${Scoring.schema.id.columnName}`);
+				query.group(`${JobPostings.tableAlias}.${JobPostings.schema.id.columnName},${EmployerProfiles.tableAlias}.${EmployerProfiles.schema.id.columnName},${Scoring.tableAlias}.${Scoring.schema.id.columnName}`);
 				return query.limit(_.get(criteria, 'limit')).toString();
 			}
 		}else{

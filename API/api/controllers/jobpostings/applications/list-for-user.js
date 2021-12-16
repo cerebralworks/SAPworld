@@ -88,9 +88,7 @@ module.exports = async function list(request,response) {
                 //Populating expand values
                 if(expand.includes('job_posting')){
                     query.left_join(JobPostings.tableName, JobPostings.tableAlias, JobPostings.tableAlias + '.' + JobPostings.schema.id.columnName + "=" + JobApplications.tableAlias + '.' + JobApplications.schema.job_posting.columnName);
-					query.left_join(JobLocation.tableName, JobLocation.tableAlias, JobLocation.tableAlias + '.' + JobLocation.schema.id.columnName + "=" + JobApplications.tableAlias + '.' + JobApplications.schema.job_location.columnName);
                     job_fields = _.without(Object.keys(JobPostings.schema), 'location_geom');
-                    job_loc = _.without(Object.keys(JobLocation.schema));
                     job = '';
                     job_fields.map(function(value){
                          if ((JobPostings.schema[value].columnName || typeof JobPostings.schema[value].columnName !== "undefined" )&&
@@ -99,17 +97,9 @@ module.exports = async function list(request,response) {
                             job += "'"+ value + "'," + JobPostings.tableAlias + "." + JobPostings.schema[value].columnName + ",";
                         }
                     });
-					loc='';
-					job_loc.map(function(value){
-                         if ((JobLocation.schema[value].columnName || typeof JobLocation.schema[value].columnName !== "undefined" )) {
-                            loc += "'"+ value + "'," + JobLocation.tableAlias + "." + JobLocation.schema[value].columnName + ",";
-                        }
-                    });
                     job = 'json_build_object(' + job.slice(0, -1) + ')';
-                    loc = 'json_build_object(' + loc.slice(0, -1) + ')';
-                    group_by += "," + JobPostings.tableAlias + "." + JobPostings.schema.id.columnName +"," + JobLocation.tableAlias + "." + JobLocation.schema.id.columnName;
+                    group_by += "," + JobPostings.tableAlias + "." + JobPostings.schema.id.columnName;
                     query.field(job,'job_posting');
-                    query.field(loc,'job_location');
                 }
                 if(expand.includes('user')){
                     query.left_join(UserProfiles.tableName, UserProfiles.tableAlias, UserProfiles.tableAlias + '.' + UserProfiles.schema.id.columnName + "=" + JobApplications.tableAlias + '.' + JobApplications.schema.user.columnName);

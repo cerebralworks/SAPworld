@@ -52,7 +52,7 @@ job_application.short_listed = true AND (job_application.employer=${parseInt(fil
 			}
 			if(filtered_query_data.view =='users'){
 				//To get the job details Count
-				Count_Users = `SELECT locations.id as location_id,COUNT(distinct job_posting.id) FROM user_employments "job_posting"
+				Count_Users = `SELECT COUNT(distinct job_posting.id) FROM user_employments "job_posting"
 LEFT JOIN employer_profiles "employer" ON (job_posting.company = employer.id) 
 CROSS JOIN user_profiles "user_profile" 
 LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
@@ -62,7 +62,7 @@ WHERE (( job_posting.status = 1 OR job_posting.id = (SELECT job_application.job_
  AND job_posting.status != 3 AND scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${parseInt(filtered_query_data.company)} ) AND
 (user_account.status=1) AND (( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND (( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[] )OR user_profile.willing_to_relocate =true )  OR ( job_posting.visa_sponsorship = true AND user_profile.work_authorization = 1 ) ) AND (user_profile.privacy_protection->>'available_for_opportunity')::text = 'true' AND ( user_profile.hands_on_skills && job_posting.hands_on_skills OR (user_profile.entry = true OR job_posting.entry =true ))
 AND (COALESCE(user_profile.experience) >= job_posting.experience) ${visa_sponsorshipData}
-group by job_posting.id,locations.id`
+group by job_posting.id`
 			}
 			if(filtered_query_data.view =='users_matches'){
 				//To get the job details Count
