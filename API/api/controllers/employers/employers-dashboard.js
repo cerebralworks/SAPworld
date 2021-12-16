@@ -18,7 +18,7 @@ module.exports = async function EmployersDashboard(request, response) {
 		if(filtered_query_data.view && filtered_query_data.id){
 			countryQuery =``;
 			if(filtered_query_data.city){
-				countryQuery = `AND locations.city = ANY('{ ${filtered_query_data.city} }')`;
+				countryQuery = `AND locations.country = ANY('{ ${filtered_query_data.city} }')`;
 			}
 			
 			
@@ -64,9 +64,9 @@ module.exports = async function EmployersDashboard(request, response) {
 			
 			if(filtered_query_data.view =='location'){
 				//To get the Matched city based Details
-				Query = `SELECT  locations.city,count(distinct(job_posting.id)) FROM user_employments "job_posting"
+				Query = `SELECT  locations.country as city,count(distinct(job_posting.id)) FROM user_employments "job_posting"
 						LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
-						WHERE   ${filterStatus}  ${filterDate} AND job_posting.company = ${parseInt(filtered_query_data.id)} GROUP BY locations.city `
+						WHERE   ${filterStatus}  ${filterDate} AND job_posting.company = ${parseInt(filtered_query_data.id)} GROUP BY locations.country `
 			}
 			if(filtered_query_data.view =='type'){
 				//To get the Matched Type based Details
