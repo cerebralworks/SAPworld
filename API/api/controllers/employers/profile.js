@@ -24,7 +24,7 @@ module.exports = async function list(request,response) {
     const getUser = (criteria, callback) => {
         //Initializing query
         var query = squel.select({tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"'}).from(EmployerProfiles.tableName, EmployerProfiles.tableAlias);
-        //query.left_join(Users.tableName, Users.tableAlias, Users.tableAlias + '.' + Users.schema.id.columnName + "=" + EmployerProfiles.tableAlias + '.' + EmployerProfiles.schema.account.columnName);
+        query.left_join(Users.tableName, Users.tableAlias, Users.tableAlias + '.' + Users.schema.id.columnName + "=" + EmployerProfiles.tableAlias + '.' + EmployerProfiles.schema.account.columnName);
         var group_by = EmployerProfiles.tableAlias + "." + EmployerProfiles.schema.id.columnName;
         query.where(EmployerProfiles.tableAlias + '.' + EmployerProfiles.schema.id.columnName + "=" + logged_in_user.employer_profile.id);
         //Selecting fields
