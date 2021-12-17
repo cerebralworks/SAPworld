@@ -568,7 +568,7 @@ module.exports = function create(request, response) {
 							arrayValue[i]['score'] =arrayValue[i]['score']/(10*TotalCheckItems);
 							arrayValue[i]['job_id'] = updated_job['id'];
 							arrayValue[i]['user_id'] = checkDetails['id'];
-							arrayValue[i]['location_id'] = checkDetails['location_id'];
+							//arrayValue[i]['location_id'] = 1;
 							var post_data ={};
 							post_data['user_id'] = arrayValue[i]['user_id'];
 							
