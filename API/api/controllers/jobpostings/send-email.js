@@ -58,6 +58,16 @@ module.exports = async function sendemail(request, response) {
                 return value.name;
             });
         });
+        /* await JobLocation.find({ id: value.location_id }).then(locations => {
+            model.locations = locations;
+        });
+		if(model.locations.length !=0){
+			var tempData = model.locations[0];
+			model.city = tempData['city'];
+			model.state = tempData['state'];
+			model.country = tempData['country'];
+			model.zipcode = tempData['zipcode'];
+		} */
 		if(model.availability=="0"){
 			model.availability = "Immediately"
 		}else{
@@ -85,7 +95,9 @@ module.exports = async function sendemail(request, response) {
 		}else{
 			 model.type = ['Full Time', 'Part Time', 'Freelance', 'Internship', 'Temporary', 'Remote', 'Contract', 'Day Job'];
 		}
-       
+       if(model.optinal_skills ==null || model.optinal_skills == undefined || !model.optinal_skills.length || model.optinal_skills.length ==0){
+		   model.optinal_skills =[];
+	   }
         model.remote = model.remote == 1 ? 'Yes' : 'No';
         const mail_data = {
             template: 'jobpostings/jd',
@@ -94,7 +106,7 @@ module.exports = async function sendemail(request, response) {
             subject: 'An employer is interested in your profile'
         };
         await mailService.sendMail(mail_data);
-		await Scoring.update({job_id:model.id,user_id:value.id}).set({mail:true});
+		await Scoring.update({job_id:model.id,user_id:value.id,location_id:value.location_id}).set({mail:true});
 		var postDetailss = {};
 		postDetailss.name=model.title;
 		postDetailss.title='Job Invitation';

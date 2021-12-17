@@ -32,7 +32,10 @@ module.exports = {
         travel: { type: 'number' },
         language: { type: 'number' },
         score: { type: 'number' },
-        mail: { type: 'boolean', defaultsTo: false , allowNull: true }
+        mail: { type: 'boolean', defaultsTo: false , allowNull: true },
+		location_id: {
+            model: 'joblocation'
+        }
 		
     }
 };

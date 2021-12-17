@@ -56,11 +56,13 @@ module.exports.routes = {
      *                                                                          *
      ***************************************************************************/
 	
-	
+     'POST /invitestatus/create' : { controller: 'invitestatus', action: 'create' },
+     'POST /invitestatus/cancel' : { controller: 'invitestatus', action: 'cancel' },
+    
 	/*Contact form routes*/
 	'POST /contact/create': { controller: 'contact', action: 'create' },
 	
-	/*Country routes*/
+    /*Country routes*/
     'GET /country/list': { controller: 'country', action: 'list' },
 	'POST /country/create': { controller: 'country', action: 'create' },
     'POST /country/find': { controller: 'country', action: 'find' },
@@ -72,6 +74,7 @@ module.exports.routes = {
 	
     'POST /notification/count': { controller: 'notification', action: 'count' },
     'POST /notification/details': { controller: 'notification', action: 'details' },
+	
 	
 	/*language routes*/
     'GET /language/list': { controller: 'language', action: 'list' },

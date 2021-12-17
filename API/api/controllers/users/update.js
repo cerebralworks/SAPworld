@@ -246,7 +246,7 @@ module.exports = async function update(request, response) {
 				}
 			});
 		}else{
-			console.log(value);
+			//console.log(value);
 			//Update the user profile details
 			UserProfiles.update(logged_in_user.user_profile.id, value, async function(err, profile) {
 				if (err) {
@@ -288,35 +288,41 @@ module.exports = async function update(request, response) {
 					}
 					if(checkDetails.entry == true){
 						if(checkDetails.work_authorization == 1){
-							var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
+							var Count_Users = `SELECT  locations.country as "job_country",locations.id as "location_id",job_posting.* FROM user_employments "job_posting"
 			CROSS JOIN user_profiles "user_profile" 
 			LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-			WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
-			(user_account.status=1) AND (job_posting.visa_sponsorship = true OR (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND (( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) OR user_profile.willing_to_relocate =true )) ) 
-			AND (COALESCE(user_profile.experience) >= job_posting.experience)  AND (COALESCE(job_posting.experience) <= 2 ) group by job_posting.id `
+		LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
+			WHERE (locations.status = 1 OR locations.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
+			(user_account.status=1) AND (job_posting.visa_sponsorship = true OR (( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND (( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[] ) OR user_profile.willing_to_relocate =true )) ) 
+			AND (COALESCE(user_profile.experience) >= job_posting.experience)  AND (COALESCE(job_posting.experience) <= 2 ) group by job_posting.id ,locations.id,locations.country`
 						}else{
-							var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
+							var Count_Users = `SELECT  locations.country as "job_country",locations.id as "location_id",job_posting.* FROM user_employments "job_posting"
 			CROSS JOIN user_profiles "user_profile" 
 			LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-			WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
-			(user_account.status=1) AND ((( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND (( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) OR user_profile.willing_to_relocate =true ) ) )
-			AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (COALESCE(job_posting.experience) <= 2 )  group by job_posting.id `
+		LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
+			WHERE (locations.status = 1 OR locations.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
+			(user_account.status=1) AND ((( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND (( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[] ) OR user_profile.willing_to_relocate =true ) ) )
+			AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (COALESCE(job_posting.experience) <= 2 )  group by job_posting.id ,locations.id,locations.country`
 						}
 					}else{
 						if(checkDetails.work_authorization == 1){
-							var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
+							var Count_Users = `SELECT  locations.country as "job_country",locations.id as "location_id",job_posting.* FROM user_employments "job_posting"
 			CROSS JOIN user_profiles "user_profile" 
 			LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-			WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
-			(user_account.status=1) AND (job_posting.visa_sponsorship = true OR (( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND (( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) OR user_profile.willing_to_relocate =true ) ) ) AND ( user_profile.hands_on_skills && job_posting.hands_on_skills )
-			AND (COALESCE(user_profile.experience) >= job_posting.experience) group by job_posting.id `
+			LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
+			WHERE (locations.status = 1 OR locations.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
+			(user_account.status=1) AND (job_posting.visa_sponsorship = true OR (( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND (( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[] ) OR user_profile.willing_to_relocate =true ) ) ) AND 
+			(( user_profile.hands_on_skills && job_posting.hands_on_skills ) OR ((COALESCE(job_posting.experience) <= 2 ) AND job_posting.entry = true))
+			AND (COALESCE(user_profile.experience) >= job_posting.experience) group by job_posting.id ,locations.id,locations.country`
 						}else{
-							var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
+							var Count_Users = `SELECT  locations.country as "job_country",locations.id as "location_id",job_posting.* FROM user_employments "job_posting"
 			CROSS JOIN user_profiles "user_profile" 
 			LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-			WHERE (job_posting.status = 1 OR job_posting.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
-			(user_account.status=1) AND ((( user_profile.country like job_posting.country OR  user_profile.other_countries && ARRAY[job_posting.country]::TEXT[] ) AND ( ( user_profile.city like job_posting.city OR  user_profile.other_cities && ARRAY[job_posting.city]::TEXT[] ) OR user_profile.willing_to_relocate =true ) ) ) AND ( user_profile.hands_on_skills && job_posting.hands_on_skills )
-			AND (COALESCE(user_profile.experience) >= job_posting.experience) group by job_posting.id `
+			LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
+			WHERE (locations.status = 1 OR locations.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
+			(user_account.status=1) AND ((( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND ( ( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[] ) OR user_profile.willing_to_relocate =true ) ) ) AND 
+			(( user_profile.hands_on_skills && job_posting.hands_on_skills ) OR ((COALESCE(job_posting.experience) <= 2 ) AND job_posting.entry = true))
+			AND (COALESCE(user_profile.experience) >= job_posting.experience) group by job_posting.id ,locations.id,locations.country`
 						}
 					}
 					var del = await Scoring.destroy({ user_id: checkDetails.id});
@@ -398,7 +404,7 @@ module.exports = async function update(request, response) {
 										TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
 									}
 									if(updated_job.work_authorization ==0 ){
-										if(updated_job.country.toLocaleLowerCase() == checkDetails.nationality.toLocaleLowerCase()){
+										if(updated_job.job_country.toLocaleLowerCase() == checkDetails.nationality.toLocaleLowerCase()){
 											arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_authorization'];
 											TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
 										}else{
@@ -407,11 +413,11 @@ module.exports = async function update(request, response) {
 										}
 									}
 									if(updated_job.work_authorization ==1 ){
-										if(updated_job.country.toLocaleLowerCase() == checkDetails.nationality.toLocaleLowerCase()){
+										if(updated_job.job_country.toLocaleLowerCase() == checkDetails.nationality.toLocaleLowerCase()){
 											arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_authorization'];
 											TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
 										}else if(checkDetails.authorized_country && checkDetails.authorized_country.length && checkDetails.authorized_country !=0){
-											if(checkDetails.authorized_country.filter(function(a,b){ return a.toLocaleLowerCase() == updated_job.country.toLocaleLowerCase() }).length !=0){
+											if(checkDetails.authorized_country.filter(function(a,b){ return a.toLocaleLowerCase() == updated_job.job_country.toLocaleLowerCase() }).length !=0){
 												arrayValue[i]['work_auth'] = 100 * ScoreMasters['work_authorization'];
 												TotalCheckItems = TotalCheckItems +ScoreMasters['work_authorization'];
 											}else{
@@ -699,33 +705,48 @@ module.exports = async function update(request, response) {
 								post_data['user_id'] = arrayValue[i]['user_id'];
 								
 								post_data['job_id'] = arrayValue[i]['job_id'];
-								await Scoring.find(post_data).exec(async(err, user)=> {
+								var post_datas =arrayValue[i];
+								
+								// User Notification
+								var newMatch = {};
+								var newMatchCheck = {};
+								newMatch.name=updated_job['title'];
+								newMatch.title='New Job Matches';
+								newMatch.message='You have new job matches from'+' '+newMatch.name;
+								newMatch.account=checkDetails['account'];
+								newMatch.user_id=checkDetails['id'];
+								newMatch.job_id=updated_job['id'];
+								newMatch.employer=updated_job['company'];	
+								newMatchCheck.account=checkDetails['account'];
+								newMatchCheck.user_id=checkDetails['id'];
+								newMatchCheck.job_id=updated_job['id'];
+								newMatchCheck.employer=updated_job['company'];	
+								newMatch.view=0;
+								//console.log(newMatch);
+								await Notification.findOrCreate(newMatchCheck,newMatch);
+								//Employee Notification
+								var newMatch1 = {};
+								var newMatchCheck1 = {};
+								newMatch1.name=checkDetails['first_name'] +' '+checkDetails['last_name'];
+								newMatch1.title='New User Matches';
+								newMatch1.message='You have new user matched for the job '+updated_job['title'];
+								newMatch1.account=updated_job['account'];
+								newMatch1.user_id=checkDetails['id'];
+								newMatch1.job_id=updated_job['id'];
+								newMatch1.employer=updated_job['company'];
+								newMatchCheck1.account=updated_job['account'];
+								newMatchCheck1.user_id=checkDetails['id'];
+								newMatchCheck1.job_id=updated_job['id'];
+								newMatchCheck1.employer=updated_job['company'];		
+								newMatch1.view=0;
+								await Notification.findOrCreate(newMatchCheck1,newMatch1);
+								//find or create the scoring calculation
+								await Scoring.findOrCreate(post_data,post_datas,function(err, job) {
 									if (err) {
 										console.log(err);
 									} else {
-										if(user.length ==0){
-											var post_datas =arrayValue[i];
-											await Scoring.create(post_datas, function(err, job) {
-												if (err) {
-													console.log(err)
-												} else{
-													var created = true;
-													return created;
-												}
-											}); 
-
-										}else{
-											var post_datas =arrayValue[i];
-											post_data = user[0]['id'];
-											await Scoring.update(post_data, post_datas, function(err, job) {
-												if (err) {
-													console.log(err)
-												} else{
-													var created = true;
-													return created;
-												}
-											}); 
-										}
+										var created = true;						
+										return created;
 									}
 								});
 								

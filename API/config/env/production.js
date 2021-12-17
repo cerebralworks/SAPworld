@@ -109,7 +109,7 @@
 
     },
 
-    port: process.env.PROD_service_port, 
+    port: process.env.PROD_service_port,
 
     models: {
 

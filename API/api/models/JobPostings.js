@@ -21,10 +21,10 @@ module.exports = {
         salary_type: { type: 'number', defaultsTo: 0 },
         salary_currency: { type: 'string', allowNull: true },
         salary: { type: 'number' },
-        city: { type: 'string' },
+        /* city: { type: 'string' },
         state: { type: 'string' },
         country: { type: 'string' },
-        zipcode: { type: 'number' },
+        zipcode: { type: 'number' }, */
         availability: { type: 'string', defaultsTo: 'no' },
         remote: { type: 'boolean', defaultsTo: false },
         experience: { type: 'number', defaultsTo: 1 },
@@ -43,8 +43,8 @@ module.exports = {
         company: { model: 'employerprofiles' },
         status: { type: 'number', defaultsTo: 1 },
         //status_glossary: { type: 'string', allowNull: true },
-        latlng: { type: 'string' },
-        latlng_text: { type: 'string' },
+        //latlng: { type: 'string' },
+        //latlng_text: { type: 'string' },
         must_match: { type: 'ref', columnType: 'json' },
         match_select: { type: 'ref', columnType: 'json' },
         number_of_positions: { type: 'number', defaultsTo: 1 },
@@ -68,7 +68,10 @@ module.exports = {
         others: { type: 'ref', columnType: 'json[]' },
         programming_id: { type: 'ref', columnType: 'bigint[]' },
         entry: { type: 'boolean', defaultsTo: false },
-        negotiable: { type: 'boolean', defaultsTo: false , allowNull: true}
-
+        negotiable: { type: 'boolean', defaultsTo: false , allowNull: true},
+		account: { model: 'users' },
+		min: { type: 'string' , allowNull: true},
+		max: { type: 'string' , allowNull: true},
+        job_locations: { type: 'ref', columnType: 'json[]' }
     }
 };

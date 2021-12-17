@@ -37,7 +37,6 @@ module.exports = async function Scoring(request, response) {
         return response.ok(_response_object);
     };
 	
-  
     if (filtered_query_data.visa_sponsered =="true") {
         filtered_query_data.visa_sponsered = true;
     }
@@ -65,6 +64,7 @@ module.exports = async function Scoring(request, response) {
 			
 			list_query.left_join(`scorings "scoring" ON (scoring.job_id = job_posting.id) `);
 			list_query.left_join(`employer_profiles "employer" ON (job_posting.company = employer.id)  `);
+			//list_query.left_join(`job_location "job_locations" ON (job_locations.id = scoring.location_id)  `);
 			
 			//if (filtered_query_data.expand =="company") {
                 list_query.field(`employer.company AS "company_name" `);
@@ -72,12 +72,14 @@ module.exports = async function Scoring(request, response) {
 			let sub_query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).
                 from(JobApplications.tableName, JobApplications.tableAlias).
                 where(`${JobApplications.tableAlias}.${JobApplications.schema.job_posting.columnName} = ${JobPostings.tableAlias}.${JobPostings.schema.id.columnName}`).
+                //where(`${JobApplications.tableAlias}.${JobApplications.schema.job_location.columnName} = ${JobLocation.tableAlias}.${JobLocation.schema.id.columnName}`).
                 where(`${JobApplications.tableAlias}.${JobApplications.schema.user.columnName} = ${filtered_query_data.id}`);
                 list_query.field(`EXISTS(${sub_query})`, 'is_job_applied');
 				
 			list_query.where("scoring.job_id =job_posting.id" );
 			list_query.where("scoring.user_id  = "+filtered_query_data.id );
 			
+
 			if (filtered_query_data.id) {
 				let build_job_application_table_columns = '';
 				_.forEach(_.keys(JobApplications.schema), attribute => {
@@ -90,6 +92,7 @@ module.exports = async function Scoring(request, response) {
 				from(JobApplications.tableName, JobApplications.tableAlias).
 				field(`json_build_object(${build_job_application_table_columns})`).
 				where(`${JobApplications.tableAlias}.${JobApplications.schema.user.columnName} = ${parseInt(filtered_query_data.id)}`).
+				//where(`${JobApplications.tableAlias}.${JobApplications.schema.job_location.columnName} = ${JobLocation.tableAlias}.${JobLocation.schema.id.columnName}`).
 				where(`${JobApplications.tableAlias}.${JobApplications.schema.job_posting.columnName} = ${JobPostings.tableAlias}.${JobPostings.schema.id.columnName}`).
 				limit(1);
 				list_query.field(`(${sub_querys.toString()})`, 'job_application');
@@ -138,10 +141,10 @@ module.exports = async function Scoring(request, response) {
                // var count_query = list_query.toString().replace("LIMIT 1", " ").replace("*", "COUNT(*)").replace(`OFFSET ${value.page-1}`, " ");
                 var count_query = `SELECT COUNT(*)
 FROM user_employments "job_posting" 
-LEFT JOIN scorings "scoring" ON (scoring.job_id = job_posting.id)  
+LEFT JOIN scorings "scoring" ON (scoring.job_id = job_posting.id) 
 LEFT JOIN employer_profiles "employer" ON (job_posting.company = employer.id)   
 WHERE (( job_posting.status =1 OR job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${filtered_query_data.id} ))  )) 
-AND (job_posting.status !=0) AND (job_posting.status !=3) AND 
+AND (job_posting.status !=0) AND (job_posting.status !=3)  AND 
 (scoring.job_id =job_posting.id) AND (scoring.user_id  =  ${filtered_query_data.id} )   `;
                 var count = sails.sendNativeQuery(count_query, async function(err, job_postings) {
                     sendResponse(profile, job_postings['rows'][0]['count']);

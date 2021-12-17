@@ -47,7 +47,7 @@ module.exports = async function view(request,response) {
             job = '';
             job_fields.map(function(value){
                 if ((JobPostings.schema[value].columnName || typeof JobPostings.schema[value].columnName !== "undefined" )&&
-						JobPostings.schema[value].columnName !== 'created_at' && JobPostings.schema[value].columnName !=='updated_at' ) {
+						JobPostings.schema[value].columnName !== 'created_at' && JobPostings.schema[value].columnName !=='account' && JobPostings.schema[value].columnName !=='updated_at' ) {
                             job += "'"+ value + "'," + JobPostings.tableAlias + "." + JobPostings.schema[value].columnName + ",";
                 }
             });

@@ -14,11 +14,12 @@ module.exports = async function update(request, response) {
     const logged_in_user = request.user;
     var input_attributes = [
         {name: 'id', required:true, number: true, min:1},
+        {name: 'location_id', required:true, number: true, min:1},
         {name: 'status', enum: true, values: _.values(_.pick(sails.config.custom.status_codes,['inactive', 'active', 'paused'] )), required: true},
         {name: 'status_glossary', required: true}
     ];
     pick_input = [
-        'id', 'status', 'status_glossary'
+        'id','location_id', 'status', 'status_glossary'
     ];
     if(!(_.indexOf(_.get(logged_in_user, 'types'), _.get(sails, 'config.custom.access_role.employer')) > -1)){
         input_attributes.push({name: 'employer', required: true, number: true, min: 1});
@@ -29,7 +30,7 @@ module.exports = async function update(request, response) {
 	filtered_post_data.logged_in_user=logged_in_user;
     // Update the Job Posting record to db.
     function updateJobPosting(id, data, callback){
-        JobPostings.update(id, data, async function(err, job_posting){
+        JobLocation.update(id, data, async function(err, job_posting){
             if(err){
                 await errorBuilder.build(err, function (error_obj) {
                     _response_object.errors = error_obj;
@@ -37,17 +38,22 @@ module.exports = async function update(request, response) {
                     return response.status(500).json(_response_object);
                 });
             }else{
-                return callback(job_posting[0]);
+				var tempDetails = {
+					'id':job_posting[0]['jobid']
+				};
+				var details = await JobPostings.find(tempDetails);
+				details =details[0];
+				details['status']=job_posting[0]['status'];
+                return callback(details);
             }
         });
     };
 
     // Check whether the job posting id is exits in db.
     function isJobPostingExist(id, attributes={}, successCallBack){
-        JobPostings.findOne(_.merge({
+        JobLocation.findOne(_.merge({
             id: id,
-            status : { '!=' : _.get(sails.config.custom.status_codes, 'deleted') } ,
-            company: _.get(logged_in_user, 'employer_profile.id')
+            status : { '!=' : _.get(sails.config.custom.status_codes, 'deleted') } 
             }, attributes),
             function(err, job_posting){
                 if(!job_posting){
@@ -98,8 +104,9 @@ module.exports = async function update(request, response) {
                 filtered_post_data.status = parseInt(filtered_post_data.status);
             }
             let id = _.get(filtered_post_data, 'id');
-            isJobPostingExist(id,_.pick(filtered_post_data, ['employer']),async function(){
-                updateJobPosting(id, _.omit(filtered_post_data, ['id', 'employer']),async function (job_posting) {
+            let location_id = _.get(filtered_post_data, 'location_id');
+            isJobPostingExist(location_id,_.pick(filtered_post_data, ['employer']),async function(){
+                updateJobPosting(location_id, _.omit(filtered_post_data, ['id', 'employer']),async function (job_posting) {
                     sendResponse(job_posting,filtered_post_data);
                 });
             });

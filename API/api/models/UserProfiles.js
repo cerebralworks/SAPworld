@@ -77,7 +77,8 @@ module.exports = {
         education_degree: { type: 'ref', columnType: 'text[]' },
         language_id: { type: 'ref', columnType: 'bigint[]' },
         programming_id: { type: 'ref', columnType: 'bigint[]' },
-        entry: { type: 'boolean', defaultsTo: false }
+        entry: { type: 'boolean', defaultsTo: false },
+        calender_urls: { type: 'ref', columnType: 'json[]' }
 		
 		
         
