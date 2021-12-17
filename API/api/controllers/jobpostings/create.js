@@ -568,7 +568,7 @@ module.exports = function create(request, response) {
 							arrayValue[i]['score'] =arrayValue[i]['score']/(10*TotalCheckItems);
 							arrayValue[i]['job_id'] = updated_job['id'];
 							arrayValue[i]['user_id'] = checkDetails['id'];
-							//arrayValue[i]['location_id'] = 1;
+							arrayValue[i]['location_id'] = checkDetails['location_id'];
 							var post_data ={};
 							post_data['user_id'] = arrayValue[i]['user_id'];
 							
@@ -614,7 +614,7 @@ module.exports = function create(request, response) {
 							await Notification.findOrCreate(newMatchCheck1,newMatch1);	
 
 							//Score Calculation
-							await Scoring.findOrCreate(post_data,post_datas).exec(async(err, user)=> {
+							await Scoring.findOrCreate(post_data,post_datas).exec((err, user)=> {
 								
 								if (err) {
 									console.log(err);
