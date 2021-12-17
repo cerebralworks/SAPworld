@@ -200,7 +200,7 @@ module.exports = function create(request, response) {
 		(( user_profile.hands_on_skills && job_posting.hands_on_skills ) OR ((COALESCE(job_posting.experience) <= 2 ) AND job_posting.entry = true))
 		AND (COALESCE(user_profile.experience) >= job_posting.experience) group by user_profile.id `
 					}else{
-						var Count_Users = `SELECT  locations.country as "job_country",locations.id as "location_id",user_profile.* as "job_id" FROM user_employments "job_posting"
+						var Count_Users = `SELECT  user_profile.* as "job_id" FROM user_employments "job_posting"
 		CROSS JOIN user_profiles "user_profile" 
 		LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 		LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
