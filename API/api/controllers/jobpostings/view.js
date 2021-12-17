@@ -82,7 +82,7 @@ module.exports = async function view(request, response) {
                     job_posting.job_applied = await JobApplications.findOne({ job_posting: _.get(job_posting, 'id'), user: filtered_query_data.user_id });
                 }
 				if (expand.includes('score')&& filtered_query_data.user_id) {
-					job_posting.score = await Scoring.findOne({ job_id: _.get(job_posting, 'id'), user_id: filtered_query_data.user_id });
+					job_posting.score = await Scoring.findOne({ job_id: _.get(job_posting, 'id'), user_id: filtered_query_data.user_id  });
 				}
 				if (filtered_query_data.location_id) {
 					//job_posting.job_location = await JobLocation.findOne({ id: filtered_query_data.location_id });
