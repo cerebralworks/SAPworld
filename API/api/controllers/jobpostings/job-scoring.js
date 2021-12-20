@@ -148,7 +148,7 @@ module.exports = async function Scoring(request, response) {
             from(JobApplications.tableName, JobApplications.tableAlias).
             field(`json_build_object(${build_job_application_table_columns})`).
             where(`${JobApplications.tableAlias}.${JobApplications.schema.job_posting.columnName} = ${parseInt(value.id)}`).
-			where(`${JobApplications.tableAlias}.${JobApplications.schema.job_location.columnName} = ${JobLocation.tableAlias}.${JobLocation.schema.id.columnName}`).
+			//where(`${JobApplications.tableAlias}.${JobApplications.schema.job_location.columnName} = ${JobLocation.tableAlias}.${JobLocation.schema.id.columnName}`).
             where(`${JobApplications.tableAlias}.${JobApplications.schema.user.columnName} = ${UserProfiles.tableAlias}.${UserProfiles.schema.id.columnName}`).
             limit(1);
             list_query.field(`(${sub_query.toString()})`, 'job_application');
@@ -200,7 +200,7 @@ module.exports = async function Scoring(request, response) {
 CROSS JOIN user_profiles "user_profile" 
 LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
 LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
-WHERE (locations.status = 1 OR job_posting.status = 98 ) AND scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id AND 
+WHERE (job_posting.status = 1 OR job_posting.status = 98 ) AND scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id AND 
 (job_posting.company = ${model.company} ) AND (user_profile.id = ${profile.id} ) `
 					var counts = sails.sendNativeQuery(QueryData, async function(err, user_matches) {
 						sendResponse(profile, job_postings['rows'][0]['count'], application,user_matches);

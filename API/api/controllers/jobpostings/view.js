@@ -9,7 +9,7 @@
 module.exports = async function view(request, response) {
 
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['id','location_id','is_users_view','user_id', 'expand', 'additional_fields', 'is_job_applied']);
+    const filtered_query_data = _.pick(request_query, ['id','is_users_view','user_id', 'expand', 'additional_fields', 'is_job_applied']);
     var _response_object = {};
     var input_attributes = [
         { name: 'id', required: true, number: true, min: 1 }
@@ -84,9 +84,9 @@ module.exports = async function view(request, response) {
 				if (expand.includes('score')&& filtered_query_data.user_id) {
 					job_posting.score = await Scoring.findOne({ job_id: _.get(job_posting, 'id'), user_id: filtered_query_data.user_id  });
 				}
-				if (filtered_query_data.location_id) {
+				//if (filtered_query_data.location_id) {
 					//job_posting.job_location = await JobLocation.findOne({ id: filtered_query_data.location_id });
-				}
+				//}
                 successCallBack(job_posting);
             }
         });
