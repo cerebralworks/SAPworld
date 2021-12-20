@@ -26,8 +26,7 @@ module.exports = async function EmployeeList(request, response) {
 			 
 			userCountsTotal = `SELECT count(*) FROM employer_profiles `
 				 
-			EmployerCounts =`SELECT locations.country,count(locations.country) FROM user_employments 
-LEFT JOIN job_location "locations" ON (locations.jobid= user_employments.id) group by locations.country`	
+			EmployerCounts =`SELECT job_location.country,count(distinct job_location.jobid) FROM job_location group by job_location.country`	
 			sails.sendNativeQuery(userCounts, async function(err, Count_Users_value) {
 				if (err) {
 					var error = {
