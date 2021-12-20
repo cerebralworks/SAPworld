@@ -64,8 +64,7 @@ module.exports = async function list(request, response) {
 		if (expand.includes('job')) {
 			jobs = `(SELECT count(*)
 			FROM user_employments "job_posting" 
-			LEFT JOIN employer_profiles "employer" ON (job_posting.company = employer.id)
-			where job_posting.status != 3)`;
+			where job_posting.status != 3 AND job_posting.company = employer.id )`;
 			query.field(jobs, 'jobs');
 		}
         if (expand.includes('city')) {
