@@ -69,15 +69,15 @@ group by job_posting.id`
 				Count_Users = `SELECT job_posting.id,job_posting.title,job_posting.company FROM user_employments "job_posting"
 CROSS JOIN user_profiles "user_profile" 
 LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
-WHERE (job_posting.status = 1)  AND 
-(job_posting.company = ${filtered_query_data.company} ) AND (user_profile.id = ${filtered_query_data.id} ) `
+WHERE (job_posting.status = 1) AND scoring.user_id = ${filtered_query_data.id} AND scoring.job_id = job_posting.id AND 
+(job_posting.company = ${filtered_query_data.company} ) AND (user_profile.id = ${filtered_query_data.id} ) group by job_posting.id `
 			}
 			if(filtered_query_data.view =='users_matches_details'){
 				//To get the job details Count
 				Count_Users = `SELECT job_posting.*,scoring.score,scoring.mail FROM user_employments "job_posting"
 CROSS JOIN user_profiles "user_profile" 
 LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
-WHERE (job_posting.status = 1) AND 
+WHERE (job_posting.status = 1) AND scoring.user_id = ${filtered_query_data.id} AND scoring.job_id = job_posting.id AND 
 (job_posting.company = ${filtered_query_data.company} ) AND (user_profile.id = ${filtered_query_data.id} ) order by scoring.score desc`
 			}
 			if(filtered_query_data.view =='screening_process'){
