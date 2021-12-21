@@ -646,8 +646,8 @@ module.exports = function create(request, response) {
 							newMatchCheck1.job_id=updated_job['id'];
 							newMatchCheck1.employer=updated_job['company'];		
 							newMatch1.view=0;
-							await Notification.findOne(newMatchCheck).exec(async(err1, results)=> {
-								if(results){
+							await Notification.find(newMatchCheck).exec(async(err1, results)=> {
+								if(results && results.length ==0 ){
 									await Notification.findOrCreate(newMatchCheck,newMatch);
 									await Notification.findOrCreate(newMatchCheck1,newMatch1);	
 								}
