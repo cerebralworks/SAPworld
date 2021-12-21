@@ -60,14 +60,14 @@ module.exports = async function sendemail(request, response) {
         });
         /* await JobLocation.find({ id: value.location_id }).then(locations => {
             model.locations = locations;
-        });
-		if(model.locations.length !=0){
-			var tempData = model.locations[0];
+        });*/
+		if(model.job_locations.length !=0){
+			var tempData = model.job_locations[0];
 			model.city = tempData['city'];
 			model.state = tempData['state'];
 			model.country = tempData['country'];
 			model.zipcode = tempData['zipcode'];
-		} */
+		} 
 		if(model.availability=="0"){
 			model.availability = "Immediately"
 		}else{
@@ -110,7 +110,7 @@ module.exports = async function sendemail(request, response) {
 		var postDetailss = {};
 		postDetailss.name=model.title;
 		postDetailss.title='Job Invitation';
-		postDetailss.message=value.logged_in_user.employer_profile.first_name +' '+value.logged_in_user.employer_profile.last_name +' employer invited you to apply for '+model.title+' - ' +model.city;
+		postDetailss.message=value.logged_in_user.employer_profile.first_name +' '+value.logged_in_user.employer_profile.last_name +' employer invited you to apply for '+model.title+' - ' +model.country;
 		postDetailss.account=value.account;
 		postDetailss.user_id=value.id;
 		postDetailss.job_id=model.id;

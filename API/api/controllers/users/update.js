@@ -725,7 +725,7 @@ module.exports = async function update(request, response) {
 								newMatchCheck.employer=updated_job['company'];	
 								newMatch.view=0;
 								//console.log(newMatch);
-								await Notification.findOrCreate(newMatchCheck,newMatch);
+								//await Notification.findOrCreate(newMatchCheck,newMatch);
 								//Employee Notification
 								var newMatch1 = {};
 								var newMatchCheck1 = {};
@@ -741,7 +741,13 @@ module.exports = async function update(request, response) {
 								newMatchCheck1.job_id=updated_job['id'];
 								newMatchCheck1.employer=updated_job['company'];		
 								newMatch1.view=0;
-								await Notification.findOrCreate(newMatchCheck1,newMatch1);
+								//await Notification.findOrCreate(newMatchCheck1,newMatch1);
+								await Notification.findOne(newMatchCheck).exec(async(err1, results)=> {
+									if(results){
+										await Notification.findOrCreate(newMatchCheck,newMatch);
+										await Notification.findOrCreate(newMatchCheck1,newMatch1);	
+									}
+								});
 								//find or create the scoring calculation
 								await Scoring.findOrCreate(post_data,post_datas,function(err, job) {
 									if (err) {
