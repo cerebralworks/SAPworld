@@ -106,7 +106,7 @@ module.exports = async function sendemail(request, response) {
             subject: 'An employer is interested in your profile'
         };
         await mailService.sendMail(mail_data);
-		await Scoring.update({job_id:model.id,user_id:value.id,location_id:value.location_id}).set({mail:true});
+		await Scoring.update({job_id:model.id,user_id:value.id}).set({mail:true});
 		var postDetailss = {};
 		postDetailss.name=model.title;
 		postDetailss.title='Job Invitation';
