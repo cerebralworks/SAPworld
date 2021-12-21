@@ -69,7 +69,7 @@ group by job_posting.id`
 				Count_Users = `SELECT job_posting.id,job_posting.title,job_posting.company FROM user_employments "job_posting"
 CROSS JOIN user_profiles "user_profile" 
 LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
-WHERE (job_posting.status = 1)  AND 
+WHERE (job_posting.status = 1) AND 
 (job_posting.company = ${filtered_query_data.company} ) AND (user_profile.id = ${filtered_query_data.id} ) `
 			}
 			if(filtered_query_data.view =='users_matches_details'){
