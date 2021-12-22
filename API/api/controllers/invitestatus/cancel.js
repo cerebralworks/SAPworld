@@ -22,7 +22,6 @@ module.exports = async function cancel(request, response) {
 		Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNjQwMTY0NjE1LCJqdGkiOiIxN2E4OTBhMC1jYWY0LTRiZmEtODljYy0xYjE2NTcyODcwODAiLCJ1c2VyX3V1aWQiOiJjYzhlMTVmZS00YjlmLTQ1NTMtYTI0NC1jMWNlZTNhMTljYWYifQ.m9JFSIUyLxnn_F2eKZ2uY71WVyURAvW56KeUui7zh1g'
 	  }
 	};
-	console.log(request_data);
 	/**
 	**	To get the scheduled events
 	**/
@@ -31,24 +30,19 @@ module.exports = async function cancel(request, response) {
 		if (error) throw new Error(error);
 
 		if(body){
-		    console.log(body);
 			request_data['events']={'data':body};
 			
 			/**
 			**	To create a InviteStatus 
 			**/
-			console.log(request_data)
 			InviteStatus.create(request_data).then(async function(data) {
-				console.log(data);
 				if(data['job_applications']){
-					console.log(data['job_applications']);
 					/**
 					**	To get the job application
 					**/
 					JobApplications.findOne({where :{id : data['job_applications']}}).then(datas=>{
 						
 						if(datas){
-							console.log(datas);
 							/**
 							**	To validate the application events and push the values
 							**/
@@ -147,9 +141,8 @@ module.exports = async function cancel(request, response) {
 							postDetailss.job_id=datas['job_posting'];
 							postDetailss.employer=datas['employer'];		
 							postDetailss.view=0;
-								console.log(_response_objects);
+								
 							JobApplications.update(datas.id,_response_objects).then(async function(da){
-								console.log(da);
 								var Query =`select user_profile.account,user_profile.first_name,user_profile.last_name,user_employment.title from job_applications
 LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_applications.user) 
 LEFT JOIN user_employments "user_employment" ON (user_employment.id = job_applications.job_posting) where  job_applications.id = ${parseInt(datas.id)} `;
