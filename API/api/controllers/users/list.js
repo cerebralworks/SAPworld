@@ -208,7 +208,11 @@ module.exports = async function list(request, response) {
         }
 		query.where(`(user_profile.privacy_protection->>'available_for_opportunity')::text = 'true'`);
         if (filtered_query_data.visa == true ) {
-			query.where(`((${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1) OR ((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) =any( '{${criteria.city.toLowerCase()}}')) or ${UserProfiles.tableAlias}.${UserProfiles.schema.other_cities.columnName} && ARRAY['${filtered_query_data.city}']::text[] OR user_profile.willing_to_relocate =true   ) AND (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) =any( '{${criteria.country.toLowerCase()}}')) or ${UserProfiles.tableAlias}.${UserProfiles.schema.other_countries.columnName} && ARRAY['${filtered_query_data.country}']::text[] )`);
+			if(filtered_query_data.city && filtered_query_data.country){
+				query.where(`((${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1) OR ((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) =any( '{${criteria.city.toLowerCase()}}')) or ${UserProfiles.tableAlias}.${UserProfiles.schema.other_cities.columnName} && ARRAY['${filtered_query_data.city}']::text[] OR user_profile.willing_to_relocate =true   ) AND (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) =any( '{${criteria.country.toLowerCase()}}')) or ${UserProfiles.tableAlias}.${UserProfiles.schema.other_countries.columnName} && ARRAY['${filtered_query_data.country}']::text[] )`);
+			}else if(filtered_query_data.city){
+				
+			}
            // query.where(`((${UserProfiles.tableAlias}.${UserProfiles.schema.work_authorization.columnName} = 1) or ( ((LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.country.columnName}) =any( '{${criteria.country.toLowerCase()}}')) or (coun->>'country') = ANY( '{${filtered_query_data.country.toString()}}')) AND ( (LOWER(${UserProfiles.tableAlias}.${UserProfiles.schema.city.columnName}) =any( '{${criteria.city.toLowerCase()}}')) or  (citys->>'city') = ANY( '{${filtered_query_data.city.toString()}}') )))`);
         }
 		
