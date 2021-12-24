@@ -93,6 +93,15 @@ module.exports = async function update(request, response) {
 				var commentsCheck = application_status[0]['comments'].toLowerCase().trim();
 				postDetails.message='Your application for the '+job.title+' got a invite link for the  '+statusCheck +' status';
 				postDetails.title='New Invite Link ';
+			//To send mail
+                   job['applicationId'] = details.id;			
+				const mail_data = {
+					template: 'jobpostings/invite',
+					data:job ,
+					to: profile.email,
+					subject: 'An employer send an invite link to schedule interview'
+				};
+				mailService.sendMail(mail_data);
 			}
 		}
         _response_object['details'] = details;
@@ -101,7 +110,7 @@ module.exports = async function update(request, response) {
 		postDetails.user_id=profile.id;
 		postDetails.job_id=job.id;
 		postDetails.employer=logged_in_user.employer_profile.id;		
-		postDetails.view=0;		
+		postDetails.view=0;	
 		Notification.create(postDetails, function(err, job) {
 			
 		}); 
