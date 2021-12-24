@@ -13,7 +13,7 @@ module.exports = async function update(request, response) {
     var _response_object = {};
     const logged_in_user = request.user;
     pick_input = [
-        'short_listed', 'user', 'job_posting', 'status','invite_url', 'invite_send', 'application_status', 'view', 'invite_status'
+        'short_listed','meeting', 'events', 'user', 'job_posting', 'status','invite_url', 'invite_send', 'application_status', 'view', 'invite_status'
     ];
     var filtered_post_data = _.pick(_.merge(post_request_data, request_query), pick_input);
     const filtered_post_keys = Object.keys(filtered_post_data);
@@ -57,7 +57,7 @@ module.exports = async function update(request, response) {
     };
 
     // Build and send response.
-    function sendResponse(details,job,profile,logged_in_user) {
+    function sendResponse(details,job,profile,logged_in_user,filtered_post_data) {
 		
 		
 		var postDetails = {};
@@ -77,6 +77,20 @@ module.exports = async function update(request, response) {
 						postDetails.message='Your application for the '+job.title+' status is changed to '+statusCheck;
 					}
 					postDetails.title= statusCheck;
+					
+					if(logged_in_user.meeting){
+						postDetails.message='Your application for the '+job.title+' got a meeting link for the  '+statusCheck +' status';
+						postDetails.title='New Meeting Link ';	
+						//To send mail
+						job['applicationId'] = details.id;			
+						const mail_data = {
+							template: 'jobpostings/invite',
+							data:job ,
+							to: profile.email,
+							subject: 'An employer send an meeting link for the '+statusCheck
+						};
+						mailService.sendMail(mail_data);
+					}
 				}
 
 			}
@@ -93,16 +107,24 @@ module.exports = async function update(request, response) {
 				var commentsCheck = application_status[0]['comments'].toLowerCase().trim();
 				postDetails.message='Your application for the '+job.title+' got a invite link for the  '+statusCheck +' status';
 				postDetails.title='New Invite Link ';
-			//To send mail
-                   job['applicationId'] = details.id;			
+				var meetTitle = 'An employer send an invite link to schedule interview';
+				if(logged_in_user.meeting){
+					postDetails.message='Your application for the '+job.title+' got a meeting link for the  '+statusCheck +' status';
+					postDetails.title='New Meeting Link ';	
+					meetTitle = 'An employer send an meeting link for the ' +statusCheck;
+				}
+				//To send mail
+                job['applicationId'] = details.id;			
 				const mail_data = {
 					template: 'jobpostings/invite',
 					data:job ,
 					to: profile.email,
-					subject: 'An employer send an invite link to schedule interview'
+					subject: meetTitle
 				};
 				mailService.sendMail(mail_data);
+				
 			}
+			
 		}
         _response_object['details'] = details;
 		
@@ -110,7 +132,7 @@ module.exports = async function update(request, response) {
 		postDetails.user_id=profile.id;
 		postDetails.job_id=job.id;
 		postDetails.employer=logged_in_user.employer_profile.id;		
-		postDetails.view=0;	
+		postDetails.view=0;		
 		Notification.create(postDetails, function(err, job) {
 			
 		}); 
@@ -125,6 +147,12 @@ module.exports = async function update(request, response) {
 			}
 			if (filtered_post_keys.includes('status')) {
 				filtered_post_data.status = parseInt(filtered_post_data.status);
+			}
+			if(filtered_post_keys.includes('events')){
+				filtered_post_data.events = filtered_post_data.events;
+			}
+			if(filtered_post_keys.includes('meeting')){
+				logged_in_user['meeting'] = true;
 			}
 			let id = _.get(filtered_post_data, 'id');
 			var job_application = await JobApplications.findOne({
@@ -157,10 +185,14 @@ module.exports = async function update(request, response) {
 							var sliceCheck =job_application.application_status;
 							if(sliceCheck){
 								var filteredData =sliceCheck.map((val) => {
+									if(!val.views){
+										val.views = false;
+									}
 								  return { 
 									id: val.id,
 									status: val.status,
 									date: val.date,
+									views: val.views,
 									comments: val.comments,
 									invited: val.invited,
 									canceled: val.canceled,
@@ -175,11 +207,11 @@ module.exports = async function update(request, response) {
 						}
 						
 						updateJobApplication(filtered_post_data, async function(job_application) {
-							sendResponse(job_application,job,profile,logged_in_user);
+							sendResponse(job_application,job,profile,logged_in_user,filtered_post_data);
 						});
 					} else {
 						CreateJobApplication(filtered_post_data, async function(job_application) {
-							sendResponse(job_application,job,profile,logged_in_user);
+							sendResponse(job_application,job,profile,logged_in_user,filtered_post_data);
 						});
 					}
 				});
