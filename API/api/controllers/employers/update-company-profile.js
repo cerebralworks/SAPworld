@@ -29,8 +29,10 @@ module.exports = async function updateCompanyProfile(request, response) {
         website: yup.string().url().required().lowercase(),
     });
     //Build and sending response
-    const sendResponse = (details) => {
-        _response_object.message = 'Company profile updated successfully.';
+    const sendResponse = (details,dta) => {
+		if(!dta['page']){
+			_response_object.message = 'Company profile updated successfully.';
+		}
         var meta = {};
         meta['photo'] = {
             path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
@@ -85,7 +87,7 @@ module.exports = async function updateCompanyProfile(request, response) {
                         return response.status(500).json(_response_object);
                     });
                 } else {
-                    sendResponse(profile);
+                    sendResponse(profile,value);
                 }
             });
         } else {
@@ -109,7 +111,7 @@ module.exports = async function updateCompanyProfile(request, response) {
 								return response.status(500).json(_response_object);
 							});
 						} else {
-							sendResponse(profile);
+							sendResponse(profile,value);
 						}
 					});
                 }
