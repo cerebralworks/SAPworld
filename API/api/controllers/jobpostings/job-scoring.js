@@ -98,7 +98,7 @@ module.exports = async function Scoring(request, response) {
             list_query.where("user_profile.status=1");
             list_query.where("user_profile.experience >=" + model.experience);
 			list_query.left_join(`scorings "scoring" ON (scoring.user_id = user_profile.id) `);
-			list_query.left_join(`job_location "job_locations" ON (job_locations.id = scoring.location_id)  `);
+			//list_query.left_join(`job_location "job_locations" ON (job_locations.id = scoring.location_id)  `);
 			
 			list_query.where("scoring.job_id =" +value.id );
 			//list_query.where("scoring.location_id =" +post_request_data.location_id );
@@ -118,7 +118,7 @@ module.exports = async function Scoring(request, response) {
 			if (value.user_id) {
 				list_query.where("user_profile.id =" + value.user_id);
 			}
-			var group_by = UserProfiles.tableAlias + "." + UserProfiles.schema.id.columnName +",scoring.id,job_locations.id";
+			var group_by = UserProfiles.tableAlias + "." + UserProfiles.schema.id.columnName +",scoring.id";
 		
 			value.page = value.page ? value.page : 1;
 			if (!value.user_id) {
@@ -157,7 +157,7 @@ module.exports = async function Scoring(request, response) {
 		
 		//joblocation details
 	
-		let build_job_location_table_columns = '';
+		/* let build_job_location_table_columns = '';
 		_.forEach(_.keys(JobLocation.schema), attribute => {
 			if (!_.isEmpty(JobLocation.schema[attribute].columnName)) {
 				build_job_location_table_columns += `'${JobLocation.schema[attribute].columnName}',${JobLocation.tableAlias}.${JobLocation.schema[attribute].columnName},`;
@@ -165,7 +165,7 @@ module.exports = async function Scoring(request, response) {
 		});
 		build_job_location_table_columns = build_job_location_table_columns.slice(0, -1);
 		
-		list_query.field(`json_build_object(${build_job_location_table_columns})`, 'job_location');
+		list_query.field(`json_build_object(${build_job_location_table_columns})`, 'job_location'); */
 
         sails.sendNativeQuery(list_query.toString(), async function(err, job_postings) {
             if (err) {
@@ -199,7 +199,6 @@ module.exports = async function Scoring(request, response) {
                     var QueryData =`SELECT job_posting.id,job_posting.title,job_posting.company FROM user_employments "job_posting"
 CROSS JOIN user_profiles "user_profile" 
 LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
-LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
 WHERE (job_posting.status = 1 OR job_posting.status = 98 ) AND scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id AND 
 (job_posting.company = ${model.company} ) AND (user_profile.id = ${profile.id} ) `
 					var counts = sails.sendNativeQuery(QueryData, async function(err, user_matches) {

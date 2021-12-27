@@ -29,8 +29,10 @@ module.exports = async function updateCompanyProfile(request, response) {
         website: yup.string().url().required().lowercase(),
     });
     //Build and sending response
-    const sendResponse = (details) => {
-        _response_object.message = 'Company profile updated successfully.';
+    const sendResponse = (details,dta) => {
+		if(!dta){
+			_response_object.message = 'Company profile updated successfully.';
+		}
         var meta = {};
         meta['photo'] = {
             path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
@@ -65,8 +67,7 @@ module.exports = async function updateCompanyProfile(request, response) {
         value.user_id = logged_in_user.id;
         console.log(value)
         var company_profile = await CompanyProfile.findOne({ user_id: value.user_id });
-        console.log("fgdfgdgfg");
-        console.log(company_profile);
+        
 		if(value.contact){
 			
 		}else{
@@ -75,6 +76,7 @@ module.exports = async function updateCompanyProfile(request, response) {
 		var company ={
 			company:value.name
 		};
+		var page = value['page'];
         if (!company_profile) {
             CompanyProfile.create(value, async function(err, profile) {
                 console.log(err);
@@ -85,7 +87,7 @@ module.exports = async function updateCompanyProfile(request, response) {
                         return response.status(500).json(_response_object);
                     });
                 } else {
-                    sendResponse(profile);
+                    sendResponse(profile,page);
                 }
             });
         } else {
@@ -109,7 +111,7 @@ module.exports = async function updateCompanyProfile(request, response) {
 								return response.status(500).json(_response_object);
 							});
 						} else {
-							sendResponse(profile);
+							sendResponse(profile,page);
 						}
 					});
                 }
