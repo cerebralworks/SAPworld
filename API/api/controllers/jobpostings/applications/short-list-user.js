@@ -76,11 +76,13 @@ module.exports = async function update(request, response) {
 					}else{
 						postDetails.message='Your application for the '+job.title+' status is changed to '+statusCheck;
 					}
+					
 					postDetails.title= statusCheck;
 					
 					if(logged_in_user.meeting){
 						postDetails.message='Your application for the '+job.title+' got a meeting link for the  '+statusCheck +' status';
 						postDetails.title='New Meeting Link ';	
+						_response_object.message = 'successfully send the meeting link to user ';
 						//To send mail
 						job['applicationId'] = details.id;			
 						const mail_data = {
@@ -108,10 +110,12 @@ module.exports = async function update(request, response) {
 				postDetails.message='Your application for the '+job.title+' got a invite link for the  '+statusCheck +' status';
 				postDetails.title='New Invite Link ';
 				var meetTitle = 'An employer send an invite link to schedule interview';
+				_response_object.message = 'successfully send the invite link to user ';
 				if(logged_in_user.meeting){
 					postDetails.message='Your application for the '+job.title+' got a meeting link for the  '+statusCheck +' status';
 					postDetails.title='New Meeting Link ';	
 					meetTitle = 'An employer send an meeting link for the ' +statusCheck;
+				_response_object.message = 'successfully send the meeting link to user ';
 				}
 				//To send mail
                 job['applicationId'] = details.id;			
