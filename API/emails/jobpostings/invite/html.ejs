@@ -124,13 +124,62 @@
             </td>
         </tr>
         <!-- // LOGO -->
+		 <tr>
+			<td bgcolor="#ffffff" align="center" style="padding: 30px 30px 10px 30px; font-size: 14px; font-family: 'Lato', Helvetica, Arial, sans-serif;">
+				<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 700px;">
+					<tr>
+						<td style="color: #777; font-weight: 500; padding: 0px 0 15px;">
+							<h3>Hi <%= username %> ,</h3>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td bgcolor="#ffffff" align="center" style="padding: 0px 30px 20px 30px; font-size: 14px; font-family: 'Lato', Helvetica, Arial, sans-serif;">
+		<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 700px;">
+			<tr>
+				<td width="40%" style="color: #777; font-weight: 500; padding: 0px 0 15px;">Job Name</td>
+				<td width="60%" style="color: #333; font-weight: 600; padding: 0px 0 15px;">
+					<%= title %></td>
+			</tr>
+			<tr>
+				<td width="40%" style="color: #777; font-weight: 500; padding: 0px 0 15px;">Application Status</td>
+				<td width="60%" style="color: #333; font-weight: 600; padding: 0px 0 15px;">
+					<%= job_status %></td>
+			</tr>
+			</table>
+			</td>
+		</tr>
+		<% if(meeting_link !== null){ %>
 		<tr>
 			<td bgcolor="#ffffff" align="left">
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					
 					<tr>
-						<td bgcolor="#ffffff" align="center" style="padding: 20px 30px 45px 30px;">
+						<td bgcolor="#ffffff" align="center" style="padding: 0px 30px 45px 30px;">
 							<table border="0" cellspacing="0" cellpadding="0">
 								<tr>
+									
+									<td align="center" style="border-radius: 10px;" bgcolor="#1253ee"><a href="<%= meeting_link %>" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 10px; border: 1px solid #1253ee; display: inline-block;">Click here to attend the meeting
+									</a></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<% } else { %>
+		<tr>
+			<td bgcolor="#ffffff" align="left">
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					
+					<tr>
+						<td bgcolor="#ffffff" align="center" style="padding: 10px 30px 45px 30px;">
+							<table border="0" cellspacing="0" cellpadding="0">
+								<tr>
+									
 									<td align="center" style="border-radius: 10px;" bgcolor="#1253ee"><a href="<%= sails.config.conf.webapp %>/#/user/dashboard?activeTab=applied&appid=<%= applicationId %>" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 10px; border: 1px solid #1253ee; display: inline-block;">Click here to schedule the interview
 									</a></td>
 								</tr>
@@ -140,6 +189,7 @@
 				</table>
 			</td>
 		</tr> 
+		<% } %>
         <tr>
             <td bgcolor="#f4f4f4" align="center" style="padding: 0px 10px 0px 10px;">
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 700px;">
