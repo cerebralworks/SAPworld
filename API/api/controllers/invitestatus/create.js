@@ -3,6 +3,7 @@ module.exports = async function create(request, response) {
 	
 	const requests = require('request');
     var _response_object = {};
+	console.log(request.body)
     var request_data = request.body.payload;
 	var reason = request.body.payload['cancellation'];
 	request_data['name'] = request.body.event;
