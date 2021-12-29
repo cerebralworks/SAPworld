@@ -14,6 +14,7 @@ module.exports = async function create(request, response) {
 	if(request_data['name']=='invitee.canceled'){
 		request_data['canceled'] = true;
 	}
+	console.log(request_data);
 	const options = {
 	  method: 'GET',
 	  url: request_data['event'],
@@ -29,7 +30,7 @@ module.exports = async function create(request, response) {
 	requests(options,async function (error, responses, body) {
 		
 		if (error) throw new Error(error);
-
+		console.log(body)
 		if(body){
 		  
 			request_data['events']={'data':body};
@@ -37,8 +38,9 @@ module.exports = async function create(request, response) {
 			/**
 			**	To create a InviteStatus 
 			**/
+			console.log(request_data)
 			InviteStatus.create(request_data).then(async function(data) {
-				
+				console.log(data)
 				if(data['job_applications']){
 					
 					/**
