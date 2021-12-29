@@ -84,7 +84,10 @@ module.exports = async function update(request, response) {
 						postDetails.title='New Meeting Link ';	
 						_response_object.message = 'successfully send the meeting link to user ';
 						//To send mail
-						job['applicationId'] = details.id;			
+						job['applicationId'] = details.id;
+						job['username'] = profile.first_name+' '+profile.last_name;
+						job['job_status'] = statusCheck;
+						job['meeting_link'] = post_request_data.meeting_link;
 						const mail_data = {
 							template: 'jobpostings/invite',
 							data:job ,
@@ -118,7 +121,10 @@ module.exports = async function update(request, response) {
 				_response_object.message = 'successfully send the meeting link to user ';
 				}
 				//To send mail
-                job['applicationId'] = details.id;			
+                job['applicationId'] = details.id;
+				job['username'] = profile.first_name+' '+profile.last_name;
+				job['meeting_link'] = null;
+				job['job_status'] = statusCheck;
 				const mail_data = {
 					template: 'jobpostings/invite',
 					data:job ,
