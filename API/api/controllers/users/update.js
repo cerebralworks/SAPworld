@@ -449,7 +449,7 @@ module.exports = async function update(request, response) {
 									updated_job.skills = updated_job.skills.filter(function(item, pos) {
 										return !updated_job.hands_on_skills.includes(item) ;
 									})
-									if(!updated_job.skills || updated_job.skills.length ==0){
+									if(!updated_job.skills || updated_job.skills.length ==0 || updated_job.skills === ''){
 										//arrayValue[i]['knowledge'] =100 * ScoreMasters['knowledge'];
 										arrayValue[i]['knowledge'] = 0;
 									}else{
