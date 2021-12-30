@@ -184,6 +184,11 @@ module.exports = async function update(request, response) {
         value['programming_id'] = programming_id;
         value['programming_skills'] = programming_skills;
 		var arr1= value.skills;
+		if(value.skills === ''){
+			value.skills = null;
+		}else{
+			value.skills =value.skills;
+		}
 		var arr2= value.hands_on_experience;
 		if ( arr2 && Array.isArray(arr2)) {
 			arr2 = arr2.filter(function(a,b){ return a.skill_id!=null && a.skill_id!='' });
