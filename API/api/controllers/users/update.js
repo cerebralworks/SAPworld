@@ -32,6 +32,7 @@ module.exports = async function update(request, response) {
 		}
 	}
 		//console.log(programming_id);
+		post_request_data.skills.filter(function(a,b){ a !='' && a!=null && a!=undefined && a!=' ' })
     let schema = yup.object().shape({
         id: yup.number().test('user_profile', 'Cant find record', async(value) => {
             return await UserProfiles.find().where({ account: value }).limit(1).then(result => {
