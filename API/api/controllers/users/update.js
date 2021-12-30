@@ -100,6 +100,7 @@ module.exports = async function update(request, response) {
     });
 	if(post_request_data.entry==true){
 		post_request_data.hands_on_experience={};
+		post_request_data.skills.filter(function(a,b){ a !='' && a!=null && a!=undefined && a!=' ' });
 		//console.log(programming_id);
     schema = yup.object().shape({
         id: yup.number().test('user_profile', 'Cant find record', async(value) => {
