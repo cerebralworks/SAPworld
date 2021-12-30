@@ -137,9 +137,9 @@ module.exports = function create(request, response) {
 					 }
 					
 				})
-				var checkDetailsLocation = await JobLocation.find({'jobid' : job[0]['id']});
-				var insertElement = {'job_locations':checkDetailsLocation};
-				var insertData = await JobPostings.update(job[0]['id'], insertElement);
+				//var checkDetailsLocation = await JobLocation.find({'jobid' : job[0]['id']});
+				//var insertElement = {'job_locations':checkDetailsLocation};
+				//var insertData = await JobPostings.update(job[0]['id'], insertElement);
 				//console.log(insertData);
                 return callback(job[0]);
             }
