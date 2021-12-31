@@ -17,7 +17,7 @@ module.exports = async function apply(request, response) {
     const filtered_post_keys = Object.keys(filtered_post_data);
     var input_attributes = [
         { name: 'job_posting', number: true, required: true, min: 1 },
-        { name: 'location_id', number: true, required: true, min: 1 },
+        { name: 'location_id', number: true, min: 1 },
     ];
     //Add the JobApplication record to db.
     const addRecord = (post_data, callback) => {
