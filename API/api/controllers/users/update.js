@@ -32,6 +32,7 @@ module.exports = async function update(request, response) {
 		}
 	}
 		//console.log(programming_id);
+		post_request_data.skills.filter(function(a,b){ a !='' && a!=null && a!=undefined && a!=' ' });
     let schema = yup.object().shape({
         id: yup.number().test('user_profile', 'Cant find record', async(value) => {
             return await UserProfiles.find().where({ account: value }).limit(1).then(result => {
@@ -100,7 +101,6 @@ module.exports = async function update(request, response) {
     });
 	if(post_request_data.entry==true){
 		post_request_data.hands_on_experience={};
-		post_request_data.skills.filter(function(a,b){ a !='' && a!=null && a!=undefined && a!=' ' });
 		//console.log(programming_id);
     schema = yup.object().shape({
         id: yup.number().test('user_profile', 'Cant find record', async(value) => {
@@ -185,11 +185,6 @@ module.exports = async function update(request, response) {
         value['programming_id'] = programming_id;
         value['programming_skills'] = programming_skills;
 		var arr1= value.skills;
-		if(value.skills === ''){
-			value.skills = null;
-		}else{
-			value.skills =value.skills;
-		}
 		var arr2= value.hands_on_experience;
 		if ( arr2 && Array.isArray(arr2)) {
 			arr2 = arr2.filter(function(a,b){ return a.skill_id!=null && a.skill_id!='' });
@@ -455,7 +450,7 @@ module.exports = async function update(request, response) {
 									updated_job.skills = updated_job.skills.filter(function(item, pos) {
 										return !updated_job.hands_on_skills.includes(item) ;
 									})
-									if(!updated_job.skills || updated_job.skills.length ==0 || updated_job.skills === ''){
+									if(!updated_job.skills || updated_job.skills.length ==0){
 										//arrayValue[i]['knowledge'] =100 * ScoreMasters['knowledge'];
 										arrayValue[i]['knowledge'] = 0;
 									}else{
