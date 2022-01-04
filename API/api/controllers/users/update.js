@@ -32,7 +32,7 @@ module.exports = async function update(request, response) {
 		}
 	}
 		//console.log(programming_id);
-		post_request_data.skills.filter(function(a,b){ a !='' && a!=null && a!=undefined && a!=' ' });
+		post_request_data.skills.filter(function(a,b){ a !='' && a!=null && a!=undefined && a!=' ' })
     let schema = yup.object().shape({
         id: yup.number().test('user_profile', 'Cant find record', async(value) => {
             return await UserProfiles.find().where({ account: value }).limit(1).then(result => {
@@ -101,6 +101,7 @@ module.exports = async function update(request, response) {
     });
 	if(post_request_data.entry==true){
 		post_request_data.hands_on_experience={};
+		
 		//console.log(programming_id);
     schema = yup.object().shape({
         id: yup.number().test('user_profile', 'Cant find record', async(value) => {
@@ -184,6 +185,7 @@ module.exports = async function update(request, response) {
         value.status = 1;
         value['programming_id'] = programming_id;
         value['programming_skills'] = programming_skills;
+		
 		var arr1= value.skills;
 		/*if(value.skills === ''){
 			value.skills = null;
@@ -720,7 +722,7 @@ module.exports = async function update(request, response) {
 								var newMatchCheck = {};
 								newMatch.name=updated_job['title'];
 								newMatch.title='New Job Matches';
-								newMatch.message='You have new job matches from'+' '+newMatch.name;
+								newMatch.message='You have new job matches from /'+newMatch.name;
 								newMatch.account=checkDetails['account'];
 								newMatch.user_id=checkDetails['id'];
 								newMatch.job_id=updated_job['id'];
@@ -737,7 +739,7 @@ module.exports = async function update(request, response) {
 								var newMatchCheck1 = {};
 								newMatch1.name=checkDetails['first_name'] +' '+checkDetails['last_name'];
 								newMatch1.title='New User Matches';
-								newMatch1.message='You have new user matched for the job '+updated_job['title'];
+								newMatch1.message=newMatch1.name+'/ have matched for the job /'+updated_job['title'];
 								newMatch1.account=updated_job['account'];
 								newMatch1.user_id=checkDetails['id'];
 								newMatch1.job_id=updated_job['id'];
