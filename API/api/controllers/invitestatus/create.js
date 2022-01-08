@@ -19,7 +19,7 @@ module.exports = async function create(request, response) {
 	  url: request_data['event'],
 	  headers: {
 		'Content-Type': 'application/json',
-		Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNjQwMTU3OTExLCJqdGkiOiIzNDlmZjc3YS05MzdlLTQyZjMtYmNkYi1kNDc3NWU2Y2U1NjIiLCJ1c2VyX3V1aWQiOiIzODM1ODE3MS03MWQ2LTQ3MWMtOTFlMi02Y2RiOTIzZThhODkifQ.ZiX0YGDdlKTQYusqpXFF3TKNn5vcOG6wOCkRgXyFT7U'
+		Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNjM5NzEzMDAzLCJqdGkiOiIwNDJjYWUzYi1hMjA5LTQ0MmQtOGI0Yy01MzBhNDM1NmQxNjEiLCJ1c2VyX3V1aWQiOiJlYTIwNjE4YS0zMzM0LTQ4OWQtOWRmMy01YWE2Nzc2Y2ZkMzcifQ.HGRHJtDWRzCvT5j25i3anUcBRHlLmxCX2wM3IDp6WGs'
 	  }
 	};
 	
@@ -58,7 +58,7 @@ module.exports = async function create(request, response) {
 								var titleName = datas['application_status'][arrId]['status'];
 								
 								if(data['canceled'] == true && (data['rescheduled'] != true && data['rescheduled'] != 'true') ){
-									postDetailss.message= titleName +'Scheduled interview is Canceled ';
+									postDetailss.message= 'You have Canceled the '+titleName+' interview';
 									postDetailss.title=titleName +'  is Canceled ';
 									datas['application_status'][datas['application_status'].length-1]['canceled']= new Date();
 
@@ -78,7 +78,7 @@ module.exports = async function create(request, response) {
 									}
 							
 								}else if(data['rescheduled'] != true && data['rescheduled'] != 'true' && data['canceled'] == false  && datas['rescheduled'] != true && datas['rescheduled'] != 'true'){
-									postDetailss.message= titleName+' interview is Scheduled ';
+									postDetailss.message= 'You have Scheduled the '+titleName+' interview';
 									postDetailss.title=titleName +'  is Scheduled ';
 									datas['application_status'][datas['application_status'].length-1]['created']= new Date();
 									
@@ -98,7 +98,7 @@ module.exports = async function create(request, response) {
 								}else if(data['rescheduled'] == true || data['rescheduled'] == 'true' ){
 									datas['application_status'][datas['application_status'].length-1]['rescheduled']= new Date();
 									postDetailss.title=titleName +'  is Canceled ';
-									postDetailss.message= titleName+' Scheduled interview is Canceled ';
+									postDetailss.message=  'You have Canceled the '+titleName+' interview';
 									
 									if(datas['events'] && datas['events'].length && datas['events'].length !=0){
 										var arrayVal = data['events'];
@@ -116,7 +116,7 @@ module.exports = async function create(request, response) {
 									}
 									
 								}else{
-									postDetailss.message= titleName+' interview is Rescheduled ';
+									postDetailss.message=  'You have Rescheduled the '+titleName+' interview';
 									postDetailss.title=titleName +'  is Rescheduled ';
 									datas['application_status'][datas['application_status'].length-1]['created']= new Date();
 									
@@ -140,14 +140,14 @@ module.exports = async function create(request, response) {
 							var _response_objects = {'events': datas['events'],'invite_status': false,'application_status': datas['application_status'],'reschedule_url': data['reschedule_url'],'cancel_url': data['cancel_url'],'canceled': data['canceled'],'rescheduled': data['rescheduled']};
 							
 							postDetailss.name=titleName;
-							postDetailss.title=titleName;
+							postDetailss.title="Event scheduled";
 							postDetailss.account=datas['employer'];	
 							postDetailss.user_id=datas['user'];
 							postDetailss.job_id=datas['job_posting'];
 							postDetailss.employer=datas['employer'];		
-							postDetailss.view=0;	
+							postDetailss.view=0;
+							
 							JobApplications.update(datas.id,_response_objects).then(async function(da){
-								
 								var Query =`select user_profile.account,user_profile.first_name,user_profile.last_name,user_employment.title from job_applications
 LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_applications.user) 
 LEFT JOIN user_employments "user_employment" ON (user_employment.id = job_applications.job_posting) where  job_applications.id = ${parseInt(datas.id)} `;
@@ -155,9 +155,9 @@ LEFT JOIN user_employments "user_employment" ON (user_employment.id = job_applic
 								sails.sendNativeQuery(Query, async function(err, details) {
 									//console.log(details);
 									if(details && details['rows'] && details['rows'].length && details['rows'].length !=0){
-										postDetailss.account=details['rows'][0]['account'];	
-										postDetailss.name=details['rows'][0]['title'];	
-										postDetailss.message='Your application for the '+postDetailss.name +' status is '+postDetailss.message+ ' from '+ details['rows'][0]['first_name'] +' '+details['rows'][0]['last_name'];	
+										postDetailss.account=datas['user'];	
+										postDetailss.name=details['rows'][0]['title'];
+										postDetailss.message=postDetailss.message+' for the job /'+postDetailss.name;
 										//console.log(postDetailss);
 										Notification.create(postDetailss,async function(err, job) {
 											//console.log(job);
