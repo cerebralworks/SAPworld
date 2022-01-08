@@ -156,7 +156,7 @@ LEFT JOIN user_employments "user_employment" ON (user_employment.id = job_applic
 									if(details && details['rows'] && details['rows'].length && details['rows'].length !=0){
 										postDetailss.account=datas['user'];	
 										postDetailss.name=details['rows'][0]['title'];
-										postDetailss.message=details['rows'][0]['first_name'] +' '+details['rows'][0]['last_name']+postDetailss.message+' for the job /'+postDetailss.name;
+										postDetailss.message=postDetailss.message+' for the job /'+postDetailss.name;
 										//console.log(postDetailss);
 										Notification.create(postDetailss,async function(err, job) {
 											//console.log(job);
