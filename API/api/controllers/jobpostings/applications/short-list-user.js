@@ -81,7 +81,7 @@ module.exports = async function update(request, response) {
 					
 					if(logged_in_user.meeting){
 						postDetails.message='Your application for the /'+job.title+'/ got a meeting link for the  '+statusCheck +' status';
-						postDetails.title='New Meeting Link ';	
+						postDetails.title='New Meeting Link';	
 						_response_object.message = 'successfully send the meeting link to user ';
 						//To send mail
 						job['applicationId'] = details.id;
