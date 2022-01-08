@@ -147,7 +147,9 @@ module.exports = async function create(request, response) {
 							postDetailss.employer=datas['employer'];		
 							postDetailss.view=0;	
 							JobApplications.update(datas.id,_response_objects).then(async function(da){
-								
+								await EmployerProfiles.find({id : datas['employer']}).then(dat=>{
+									var accountId = dat['user'];
+								})
 								var Query =`select user_profile.account,user_profile.first_name,user_profile.last_name,user_employment.title from job_applications
 LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_applications.user) 
 LEFT JOIN user_employments "user_employment" ON (user_employment.id = job_applications.job_posting) where  job_applications.id = ${parseInt(datas.id)} `;
@@ -155,7 +157,7 @@ LEFT JOIN user_employments "user_employment" ON (user_employment.id = job_applic
 								sails.sendNativeQuery(Query, async function(err, details) {
 									//console.log(details);
 									if(details && details['rows'] && details['rows'].length && details['rows'].length !=0){
-										postDetailss.account=datas['employer'];	
+										postDetailss.account=accountId;	
 										postDetailss.name=details['rows'][0]['title'];
 										postDetailss.message=details['rows'][0]['first_name'] +' '+details['rows'][0]['last_name']+postDetailss.message+' for the job /'+postDetailss.name;
 										//console.log(postDetailss);
