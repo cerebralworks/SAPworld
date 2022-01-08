@@ -58,7 +58,7 @@ module.exports = async function create(request, response) {
 								var titleName = datas['application_status'][arrId]['status'];
 								
 								if(data['canceled'] == true && (data['rescheduled'] != true && data['rescheduled'] != 'true') ){
-									postDetailss.message= '/ has Canceled the '+titleName+' interview';
+									postDetailss.message= 'You have Canceled the '+titleName+' interview';
 									postDetailss.title=titleName +'  is Canceled ';
 									datas['application_status'][datas['application_status'].length-1]['canceled']= new Date();
 
@@ -78,7 +78,7 @@ module.exports = async function create(request, response) {
 									}
 							
 								}else if(data['rescheduled'] != true && data['rescheduled'] != 'true' && data['canceled'] == false  && datas['rescheduled'] != true && datas['rescheduled'] != 'true'){
-									postDetailss.message= '/ has Scheduled the '+titleName+' interview';
+									postDetailss.message= 'You have Scheduled the '+titleName+' interview';
 									postDetailss.title=titleName +'  is Scheduled ';
 									datas['application_status'][datas['application_status'].length-1]['created']= new Date();
 									
@@ -98,7 +98,7 @@ module.exports = async function create(request, response) {
 								}else if(data['rescheduled'] == true || data['rescheduled'] == 'true' ){
 									datas['application_status'][datas['application_status'].length-1]['rescheduled']= new Date();
 									postDetailss.title=titleName +'  is Canceled ';
-									postDetailss.message=  '/ has Canceled the '+titleName+' interview';
+									postDetailss.message=  'You have Canceled the '+titleName+' interview';
 									
 									if(datas['events'] && datas['events'].length && datas['events'].length !=0){
 										var arrayVal = data['events'];
@@ -116,7 +116,7 @@ module.exports = async function create(request, response) {
 									}
 									
 								}else{
-									postDetailss.message=  '/ has Rescheduled the '+titleName+' interview';
+									postDetailss.message=  'You have Rescheduled the '+titleName+' interview';
 									postDetailss.title=titleName +'  is Rescheduled ';
 									datas['application_status'][datas['application_status'].length-1]['created']= new Date();
 									
@@ -147,9 +147,6 @@ module.exports = async function create(request, response) {
 							postDetailss.employer=datas['employer'];		
 							postDetailss.view=0;	
 							JobApplications.update(datas.id,_response_objects).then(async function(da){
-								await EmployerProfiles.find({id : datas['employer']}).then(dat=>{
-									var accountId = dat['user'];
-								})
 								var Query =`select user_profile.account,user_profile.first_name,user_profile.last_name,user_employment.title from job_applications
 LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_applications.user) 
 LEFT JOIN user_employments "user_employment" ON (user_employment.id = job_applications.job_posting) where  job_applications.id = ${parseInt(datas.id)} `;
@@ -157,7 +154,7 @@ LEFT JOIN user_employments "user_employment" ON (user_employment.id = job_applic
 								sails.sendNativeQuery(Query, async function(err, details) {
 									//console.log(details);
 									if(details && details['rows'] && details['rows'].length && details['rows'].length !=0){
-										postDetailss.account=accountId;	
+										postDetailss.account=datas['user'];	
 										postDetailss.name=details['rows'][0]['title'];
 										postDetailss.message=details['rows'][0]['first_name'] +' '+details['rows'][0]['last_name']+postDetailss.message+' for the job /'+postDetailss.name;
 										//console.log(postDetailss);
