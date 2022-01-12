@@ -407,7 +407,7 @@ module.exports = async function list(request, response) {
 			 query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = true OR ((${JobLocation.tableAlias}.${JobLocation.schema.city.columnName}  = ANY('${_.get(criteria, 'where.city')}') ${relocate}) AND (${JobLocation.tableAlias}.${JobLocation.schema.country.columnName}  = ANY('${_.get(criteria, 'where.country')}'))))`);
 		}
 		if( filtered_query_data.visa_sponsered == true && _.get(criteria, 'where.country') && !filtered_query_data.city ){
-			 query.where(`(${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = true OR ((${JobLocation.tableAlias}.${JobLocation.schema.country.columnName}  = ANY('${_.get(criteria, 'where.country')}'))))`);
+			 query.where(`((${JobLocation.tableAlias}.${JobLocation.schema.country.columnName}  = ANY('${_.get(criteria, 'where.country')}')))`);
 		}
         if ( filtered_query_data.visa_sponsered == false && !filtered_query_data.visa) {
             query.where(`${JobPostings.tableAlias}.${JobPostings.schema.visa_sponsorship.columnName} = ${filtered_query_data.visa_sponsered} `);
