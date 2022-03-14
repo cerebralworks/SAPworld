@@ -29,7 +29,7 @@ module.exports = {
         latlng: { type: 'string' },
         latlng_text: { type: 'string' },
         description: { type: 'string' },
-        website: { type: 'string' },
+        website: { type: 'string',allowNull: true },
         social_media_link: { type: 'ref', columnType: 'json[]' },
         contact: { type: 'ref', columnType: 'varchar[]' },
         user_id: {
