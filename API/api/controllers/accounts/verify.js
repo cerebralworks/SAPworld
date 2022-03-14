@@ -46,7 +46,7 @@ module.exports = function verify(request, response) {
                                 return response.status(500).json(_response_object);
                             });
                         }else{
-                            _response_object.message = 'Your account have verified successfully.';
+                            _response_object.message = 'Verifying, Please hold.';
                             return response.status(200).json(_response_object);
                         }
                     });

@@ -26,11 +26,11 @@ module.exports = async function updateCompanyProfile(request, response) {
             lat: yup.number().min(-90).max(90),
             lng: yup.number().min(-180).max(180),
         }), */
-        website: yup.string().url().required().lowercase(),
+        website: yup.string().url().lowercase(),
     });
     //Build and sending response
     const sendResponse = (details,dta) => {
-		if(!dta){
+		if(dta == true){
 			_response_object.message = 'Company profile updated successfully.';
 		}
         var meta = {};
@@ -73,6 +73,11 @@ module.exports = async function updateCompanyProfile(request, response) {
 		}else{
 			value.contact=null;
 		}
+		if(value.website){
+			
+		}else{
+			value.website=null;
+		}
 		var company ={
 			company:value.name
 		};
@@ -87,7 +92,7 @@ module.exports = async function updateCompanyProfile(request, response) {
                         return response.status(500).json(_response_object);
                     });
                 } else {
-                    sendResponse(profile,page);
+                    sendResponse(profile,true);
                 }
             });
         } else {
@@ -111,7 +116,7 @@ module.exports = async function updateCompanyProfile(request, response) {
 								return response.status(500).json(_response_object);
 							});
 						} else {
-							sendResponse(profile,page);
+							sendResponse(profile,false);
 						}
 					});
                 }
