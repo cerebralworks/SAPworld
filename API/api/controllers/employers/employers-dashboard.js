@@ -76,13 +76,14 @@ module.exports = async function EmployersDashboard(request, response) {
 			}
 			if(filtered_query_data.view =='matches'){
 				//To get the Matched  based Details
-				Query = `SELECT job_posting.id,job_posting.title,COUNT(distinct user_profile.id) FROM user_employments "job_posting"
+				Query = `SELECT job_posting.id,job_posting.title,locations.countryshort,COUNT(distinct user_profile.id) FROM user_employments "job_posting"
 	LEFT JOIN scorings "scoring" ON (scoring.job_id = job_posting.id) 
 	LEFT JOIN user_profiles "user_profile" ON (user_profile.id=scoring.user_id)
+	LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id)
 	WHERE   ${filterStatus}  ${filterDate}  
 	AND (job_posting.company = ${parseInt(filtered_query_data.id)}) 
 	AND ((user_profile.privacy_protection->>'available_for_opportunity')::text = 'true')
-	group by job_posting.id`
+	group by job_posting.id ,locations.countryshort`
 			}
 			if(filtered_query_data.view =='applicant'){
 				//To get the Matched applicant based Details
