@@ -302,7 +302,7 @@ module.exports = async function update(request, response) {
 		LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
 			WHERE (locations.status = 1 OR locations.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
 			(user_account.status=1) AND (job_posting.visa_sponsorship = true OR (( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND (( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[] ) OR user_profile.willing_to_relocate =true )) ) 
-			AND (COALESCE(user_profile.experience) >= job_posting.experience)  AND (COALESCE(job_posting.experience) <= 2 ) group by job_posting.id `
+			AND (COALESCE(user_profile.experience) >= job_posting.experience)  AND (COALESCE(job_posting.experience) = 0 ) group by job_posting.id `
 						}else{
 							var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
 			CROSS JOIN user_profiles "user_profile" 
@@ -310,7 +310,7 @@ module.exports = async function update(request, response) {
 		LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
 			WHERE (locations.status = 1 OR locations.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
 			(user_account.status=1) AND ( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND ((( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[]) OR ( user_profile.country like locations.country AND  user_profile.other_cities = '{}') AND user_profile.willing_to_relocate =true ) OR (user_profile.willing_to_relocate =false AND user_profile.city like locations.city ))
-			AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (COALESCE(job_posting.experience) <= 2 )  group by job_posting.id `
+			AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (COALESCE(job_posting.experience) =0 )  group by job_posting.id `
 						}
 					}else{
 						if(checkDetails.work_authorization == 1){
@@ -320,7 +320,7 @@ module.exports = async function update(request, response) {
 			LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
 			WHERE (locations.status = 1 OR locations.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
 			(user_account.status=1) AND (job_posting.visa_sponsorship = true OR (( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND (( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[] ) OR user_profile.willing_to_relocate =true ) ) ) AND 
-			(( user_profile.hands_on_skills && job_posting.hands_on_skills ) OR ((COALESCE(job_posting.experience) <= 2 ) AND job_posting.entry = true))
+			(( user_profile.hands_on_skills && job_posting.hands_on_skills ))
 			AND (COALESCE(user_profile.experience) >= job_posting.experience) group by job_posting.id `
 						}else{
 							var Count_Users = `SELECT  job_posting.* FROM user_employments "job_posting"
@@ -329,7 +329,7 @@ module.exports = async function update(request, response) {
 			LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
 			WHERE (locations.status = 1 OR locations.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
 			(user_account.status=1) AND ( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND ( (( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[]) OR ( user_profile.country like locations.country AND  user_profile.other_cities = '{}') AND user_profile.willing_to_relocate =true ) OR (user_profile.willing_to_relocate =false AND user_profile.city like locations.city )) AND 
-			(( user_profile.hands_on_skills && job_posting.hands_on_skills ) OR ((COALESCE(job_posting.experience) <= 2 ) AND job_posting.entry = true))
+			(( user_profile.hands_on_skills && job_posting.hands_on_skills ))
 			AND (COALESCE(user_profile.experience) >= job_posting.experience AND job_posting.entry = false) group by job_posting.id `
 						}
 					}

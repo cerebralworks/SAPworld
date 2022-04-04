@@ -72,7 +72,7 @@ module.exports = async function update(request, response) {
 					var statusCheck = application_status[0]['status'].toLowerCase();
 					var commentsCheck = application_status[0]['comments'].toLowerCase().trim();
 					if(commentsCheck.length !=0){
-						postDetails.message='Your application for the /'+job.title+'/ status is '+statusCheck + '  and got a new meesage';
+						postDetails.message='Your application for the /'+job.title+'/ status is '+statusCheck + '  and got a new message';
 					}else{
 						postDetails.message='Your application for the /'+job.title+'/ status is changed to '+statusCheck;
 					}
@@ -137,16 +137,31 @@ module.exports = async function update(request, response) {
 			
 		}
         _response_object['details'] = details;
+		var check = {};
+		check.account=profile.account;
+		check.user_id=profile.id;
+		check.job_id=job.id;
+		check.employer=logged_in_user.employer_profile.id;
+		check.message = postDetails.message;
 		
 		postDetails.account=profile.account;
 		postDetails.user_id=profile.id;
 		postDetails.job_id=job.id;
 		postDetails.employer=logged_in_user.employer_profile.id;		
-		postDetails.view=0;		
-		Notification.create(postDetails, function(err, job) {
-			
-		}); 
-		
+		postDetails.view=0;	
+		 Notification.find(check).then(async(results) => {
+			if(results[0]){
+				data= {
+					created_at:new Date(),
+					status:1,
+					view:0
+				}
+				await Notification.update({where:{id:results[0].id}},data).then();
+			}else{
+				await Notification.create(postDetails, function(err, job) {
+					}); 
+			}
+		});
         return response.ok(_response_object);
     };
 	//Validating the request and pass on the appriopriate response.
