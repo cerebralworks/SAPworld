@@ -73,6 +73,11 @@ module.exports = async function updateCompanyProfile(request, response) {
 		}else{
 			value.contact=null;
 		}
+		if(value.description){
+			
+		}else{
+			value.description=null;
+		}
 		if(value.website){
 			
 		}else{
