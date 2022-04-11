@@ -165,7 +165,9 @@ module.exports = function create(request, response) {
 			}
 			value['programming_id'] = programming_id;
         value['programming_skills'] = programming_skills;
-		
+		    if(value.remote_option == null){
+				value.remote_option=null;
+			}
             updateRecord(value, async function(updated_job) {
                 _response_object.message = 'Job has been update successfully.';
                 _response_object.details = updated_job;
