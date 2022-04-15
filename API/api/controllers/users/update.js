@@ -90,7 +90,7 @@ module.exports = async function update(request, response) {
        // work_authorization: yup.boolean(),
         willing_to_relocate: yup.boolean().required(),
         remote_only: yup.boolean().required(),
-        end_to_end_implementation: yup.number().min(0),
+        end_to_end_implementation: yup.number().nullable(true),
         privacy_protection: yup.object().shape({
             photo: yup.boolean().default(true),
             phone: yup.boolean().default(true),
@@ -152,7 +152,7 @@ module.exports = async function update(request, response) {
         //work_authorization: yup.boolean(),
         willing_to_relocate: yup.boolean().required(),
         remote_only: yup.boolean().required(),
-        end_to_end_implementation: yup.number().min(0),
+        end_to_end_implementation: yup.number().nullable(true),
         privacy_protection: yup.object().shape({
             photo: yup.boolean().default(true),
             phone: yup.boolean().default(true),
@@ -181,6 +181,10 @@ module.exports = async function update(request, response) {
 			});
 		}else{
 			value.phone =null;
+		}
+		if(value.end_to_end_implementation ===undefined){
+			
+			value.end_to_end_implementation =null;
 		}
         value.status = 1;
         value['programming_id'] = programming_id;
