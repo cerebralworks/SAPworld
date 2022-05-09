@@ -51,7 +51,8 @@ module.exports = async function updatePhoto(request, response) {
     //Check whether photo exists in the request
     if (request._fileparser && request._fileparser.upstreams && request._fileparser.upstreams.length > 0) {
         try {
-			var fn = 'user'+logged_in_user.user_profile.id+new Date().getTime().toString()+'.png';
+			var ext = request.body.extension;
+			var fn = 'user'+logged_in_user.user_profile.id+new Date().getTime().toString()+'.'+ext;
             request.file('photo').upload({ maxBytes: 50000000 ,dirname: '../../public/images/user',saveAs:fn}, async function(err, uploaded_files) {
                 if (err) {
                     err.field = 'photo';

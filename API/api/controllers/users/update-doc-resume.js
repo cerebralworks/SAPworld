@@ -13,7 +13,7 @@ module.exports = async function updatePhoto(request, response) {
     var filtered_post_data = _.pick(post_request_data, ['doc_resume', 'title']);
     var fs = require('fs');
     //Process file
-    const uploadFile = async(doc_resume, callback) => {
+    /*const uploadFile = async(doc_resume, callback) => {
         path = require('path');
         filename = 'doc-resume-' + Number(new Date()) + '-' + Math.floor((Math.random() * 9999999999) + 1) + path.extname(doc_resume.filename);
         file_path = 'public/resumes/Documents';
@@ -31,7 +31,7 @@ module.exports = async function updatePhoto(request, response) {
                 }
             }
         });
-    };
+    };*/
 
     //Add the filename to user's profile.
     const updateUser = (filename, callback) => {
@@ -54,19 +54,21 @@ module.exports = async function updatePhoto(request, response) {
     const sendResponse = (details) => {
         _response_object.message = 'Document has been updated successfully.';
         _response_object.details = details;
-        var meta = {};
+        /*var meta = {};
         meta['doc_resume'] = {
             path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
             folder: 'public/resumes/Documents'
         };
         meta['doc_resume'].example = meta['doc_resume'].path + '/' + meta['doc_resume'].folder + '/doc-resume-55.png';
-        _response_object['meta'] = meta;
+        _response_object['meta'] = meta;*/
         return response.status(200).json(_response_object);
     };
     //Check whether doc_resume exists in the request
     if (request._fileparser && request._fileparser.upstreams && request._fileparser.upstreams.length > 0) {
         try {
-            request.file('doc_resume').upload({ maxBytes: 50000000 }, async function(err, uploaded_files) {
+			var ext = request.body.extension;
+			var fn = 'resume'+logged_in_user.user_profile.id+new Date().getTime().toString()+'.'+ext;
+            request.file('doc_resume').upload({ maxBytes: 50000000 ,dirname: '../../public/upload/resume',saveAs:fn}, async function(err, uploaded_files) {
                 if (err) {
                     err.field = 'doc_resume';
                     await errorBuilder.build(err, function(error_obj) {
@@ -87,12 +89,12 @@ module.exports = async function updatePhoto(request, response) {
                     } else {
 
                         //Uploading doc_resume
-                        await uploadFile(uploaded_files[0], async function(filename) {
+                        //await uploadFile(uploaded_files[0], async function(filename) {
                             //Update user
-                            await updateUser(filename, function(details) {
+                            await updateUser(fn, function(details) {
                                 sendResponse(details);
                             });
-                        });
+                        //});
 
                     }
                 } else {
