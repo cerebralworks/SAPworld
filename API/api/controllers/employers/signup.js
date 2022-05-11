@@ -6,7 +6,7 @@
 
 /* global _, EmployerProfiles, UserInformation, Users, sails */
 
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcryptjs');
 var SALT_WORK_FACTOR = 10;
 var crypto = require('crypto');
 

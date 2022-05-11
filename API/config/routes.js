@@ -19,7 +19,7 @@
 var oauth2orize = require('oauth2orize'),
     passport = require('passport'),
     login = require('connect-ensure-login'),
-    bcrypt = require('bcrypt'),
+    bcrypt = require('bcryptjs'),
     trustedClientPolicy = require('../api/policies/isTrustedClient.js'),
     loginSocialService = require('../api/services/loginSocialService.js'),
     oauth2_server = require('./oauth2.js').server;

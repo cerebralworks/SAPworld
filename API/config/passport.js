@@ -1,4 +1,4 @@
-var bcrypt = require('bcrypt'),
+var bcrypt = require('bcryptjs'),
 moment = require('moment'),
 passport = require('passport'),
 BearerStrategy = require('passport-http-bearer').Strategy,
