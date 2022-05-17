@@ -63,6 +63,12 @@ module.exports = async function updatePhoto(request, response) {
                     });
                 }
                 if (uploaded_files.length > 0) {
+					
+					let filename = fn;
+					  let uploadLocation =require('path').resolve(process.cwd(),'assets/images/user/' + filename);
+					  let tempLocation = require('path').resolve(process.cwd(),'.tmp/public/images/user/' + filename);
+					  fs.createReadStream(uploadLocation).pipe(fs.createWriteStream(tempLocation));
+					  
                     /*Photo uploaded*/
                     var allowed_file_types = ['image/jpeg', 'image/png'];
                     if (allowed_file_types.indexOf(uploaded_files[0].type) === -1) {

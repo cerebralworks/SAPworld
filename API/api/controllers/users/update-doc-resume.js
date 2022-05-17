@@ -68,7 +68,7 @@ module.exports = async function updatePhoto(request, response) {
         try {
 			var ext = request.body.extension;
 			var fn = 'resume'+logged_in_user.user_profile.id+new Date().getTime().toString()+'.'+ext;
-            request.file('doc_resume').upload({ maxBytes: 50000000 ,dirname: '../../assets/documents/resume',saveAs:fn}, async function(err, uploaded_files) {
+            request.file('doc_resume').upload({ maxBytes: 50000000 ,dirname: '../../assets/images/',saveAs:fn}, async function(err, uploaded_files) {
                 if (err) {
                     err.field = 'doc_resume';
                     await errorBuilder.build(err, function(error_obj) {
@@ -78,6 +78,13 @@ module.exports = async function updatePhoto(request, response) {
                     });
                 }
                 if (uploaded_files.length > 0) {
+					
+					let filename = fn;
+					  let uploadLocation =require('path').resolve(process.cwd(),'assets/images/' + filename);
+					  let tempLocation = require('path').resolve(process.cwd(),'.tmp/public/images/' + filename);
+					  fs.createReadStream(uploadLocation).pipe(fs.createWriteStream(tempLocation));
+					  
+					  
                     /*Photo uploaded*/
                     var allowed_file_types = ['doc', 'docx', 'odt', 'pdf'];
                     let file_name_arr = uploaded_files[0].filename.split('.');
