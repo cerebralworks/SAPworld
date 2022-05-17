@@ -66,7 +66,7 @@ module.exports = async function updatePhoto(request, response) {
         try {
 			var ext = request.body.extension;
 			var fn = 'cover'+logged_in_user.user_profile.id+new Date().getTime().toString()+'.'+ext;
-            request.file('doc_cover').upload({ maxBytes: 50000000 ,dirname: '../../public/upload/cover',saveAs:fn}, async function(err, uploaded_files) {
+            request.file('doc_cover').upload({ maxBytes: 50000000 ,dirname: '../../assets/documents/cover',saveAs:fn}, async function(err, uploaded_files) {
                 if (err) {
                     err.field = 'doc_cover';
                     await errorBuilder.build(err, function(error_obj) {
