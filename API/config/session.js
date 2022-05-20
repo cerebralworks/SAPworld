@@ -39,7 +39,7 @@ module.exports.session = {
    isSessionDisabled: function (req){
   //   return !!req.path.match(req._sails.LOOKS_LIKE_ASSET_RX);
        if(req.path.match(req._sails.LOOKS_LIKE_ASSET_RX)){
-		 //  return false;
+		   return false;
 	   }
    },
 
