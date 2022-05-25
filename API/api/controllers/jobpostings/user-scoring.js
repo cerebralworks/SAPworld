@@ -12,7 +12,7 @@ module.exports = async function Scoring(request, response) {
     //Build and sending response
     const sendResponse = (items, count) => {
         _response_object.message = 'Job items retrieved successfully.';
-        _response_object.score = score;
+        _response_object.score = parseFloat(score);
         var meta = {};
         meta['count'] = count;
         meta['page'] = post_request_data.page ? post_request_data.page : 1;
