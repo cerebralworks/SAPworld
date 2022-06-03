@@ -22,9 +22,7 @@ module.exports.policies = {
      * (`true` allows public access)                                            *
      *                                                                          *
      ***************************************************************************/
-
     '*': 'oauthBearer',
-
     'invitestatus/create' : ['noOauthBearer'],
     'invitestatus/cancel' : ['noOauthBearer'],
 	'contact/create': ['noOauthBearer'],
@@ -35,6 +33,7 @@ module.exports.policies = {
     'users/view': ['oauthBearer'],
     'users/profile': ['oauthBearer', 'isUser'],
     'users/signup': ['noOauthBearer'],
+    'users/delete-account': ['noOauthBearer'],
     'users/update': ['oauthBearer', 'isUserOrAdmin'],
     'users/update-photo': ['oauthBearer', 'isUser'],
     'users/update-doc-resume': ['oauthBearer', 'isUser'],

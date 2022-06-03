@@ -24,7 +24,7 @@ var oauth2orize = require('oauth2orize'),
     loginSocialService = require('../api/services/loginSocialService.js'),
     oauth2_server = require('./oauth2.js').server;
 
-
+//var serveStatic = require('serve-static')
 module.exports.routes = {
 
 
@@ -40,7 +40,17 @@ module.exports.routes = {
      * `assets` directory)                                                      *
      *                                                                          *
      ***************************************************************************/
-
+	/*//'GET /assets/*': require('express').static(process.cwd() + '/assets'),
+	'GET /assets/*': {
+     fn: function(app) {
+       //require('express').static(process.cwd() + '/assets/');
+       app.use('/', require('express').static(process.cwd() + '/assets/'));
+     },
+     skipAssets: false
+  },*/
+	/*'/images/*': function(request, response) {
+        response.status(200).json({ message: 'Welcome to Shejobs API.' });
+    },*/
     '/': function(request, response) {
         response.status(200).json({ message: 'Welcome to Shejobs API.' });
     },
@@ -97,6 +107,7 @@ module.exports.routes = {
     'GET /users/list': { controller: 'users', action: 'list' },
     'GET /users/signup': nonGetHandler,
     'POST /users/signup': { controller: 'users', action: 'signup' },
+	'POST /users/delete-account': { controller: 'users', action: 'delete-account' },
     'GET /users/view/:id': { controller: 'users', action: 'view' },
     'GET /users/profile': { controller: 'users', action: 'profile' },
     'GET /users/update': nonGetHandler,
