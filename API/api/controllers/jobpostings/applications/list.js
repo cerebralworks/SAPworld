@@ -193,6 +193,8 @@ module.exports = async function list(request, response) {
                         user_tags = 'CASE WHEN ' + UserProfiles.tableAlias + "." + UserProfiles.schema.skill_tags.columnName + ' IS NULL THEN NULL ELSE array_agg(json_build_object(' + user_tags.slice(0, -1) + ')) END';
                         user += "'" + UserProfiles.schema.skill_tags.columnName + "',(" + sub_query.field(user_tags).toString() + "),";
                     }
+					query.left_join(Users.tableName, Users.tableAlias, Users.tableAlias + '.' + Users.schema.user_profile.columnName + "=" + UserProfiles.tableAlias + '.' + UserProfiles.schema.id.columnName);
+					query.where(Users.tableAlias + '.' + Users.schema.status.columnName + "=" + parseInt('1'));
                     user = 'json_build_object(' + user.slice(0, -1) + ')';
                     query.field(user, 'user');
                 }
