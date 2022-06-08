@@ -46,7 +46,7 @@ module.exports = function create(request, response) {
         }),
         title: yup.string().required().lowercase().min(3),
         type: yup.string().required(),
-        description: yup.string().min(100),
+        description: yup.string(),
         salary_type: yup.number().required().oneOf([0, 1, 2]),
         salary_currency: yup.string().required().min(3).max(10).lowercase().required(),
         salary: yup.number().required().positive(),
@@ -638,7 +638,7 @@ module.exports = function create(request, response) {
 							var newMatchCheck1 = {};
 							newMatch1.name=checkDetails['first_name'] +' '+checkDetails['last_name'];
 							newMatch1.title='New User Matches';
-							newMatch1.message=newMatch1.name+'/ have matched for the job /'+updated_job['title'];
+							newMatch1.message=updated_job['title']+'/ has a new match';
 							newMatch1.account=logged_in_user.id;
 							newMatch1.user_id=checkDetails['id'];
 							newMatch1.job_id=updated_job['id'];
