@@ -155,7 +155,7 @@ module.exports.policies = {
 
     'skill-tags/list': ['noOauthBearer'],
     'skill-tags/create': ['oauthBearer', 'isEmployerOrAdmin'],
-    'skill-tags/creates': ['oauthBearer', 'isEmployerOrAdmin'],
+    'skill-tags/creates': ['oauthBearer'],
     'skill-tags/update': ['oauthBearer', 'isAdmin'],
     'skill-tags/find': ['oauthBearer', 'isAdmin'],
     'skill-tags/findone': ['oauthBearer', 'isAdmin'],
