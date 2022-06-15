@@ -80,6 +80,7 @@ module.exports.routes = {
     'GET /country/findone/:id': { controller: 'country', action: 'findone' },
     'PUT /country/update/:id': { controller: 'country', action: 'update' },
     'POST /country/delete' : { controller: 'country', action: 'delete' },
+    'POST /country/upload' : { controller: 'country', action: 'upload' },
 	
 	/* Notification routes */
 	
@@ -93,6 +94,7 @@ module.exports.routes = {
     'GET /language/findone/:id': { controller: 'language', action: 'findone' },
     'PUT /language/update/:id': { controller: 'language', action: 'update' },
     'POST /language/delete' : { controller: 'language', action: 'delete' },
+    'POST /language/upload' : { controller: 'language', action: 'upload' },
 	
     /*Client routes*/
     'GET /clients/create': nonGetHandler,
@@ -294,7 +296,7 @@ module.exports.routes = {
     'GET /industries/view/:id': { controller: 'industries', action: 'view' },
     'POST /industries/update-photo/:id': { controller: 'industries', action: 'update-photo' },
     'POST /industries/create': { controller: 'industries', action: 'create' },
-	
+	'POST /industries/upload': { controller: 'industries', action: 'upload' },
     'POST /industries/update/:id': { controller: 'industries', action: 'update' },
     'GET /industries/find': { controller: 'industries', action: 'find' },
     'GET /industries/findone/:id': { controller: 'industries', action: 'findone' },
@@ -310,6 +312,7 @@ module.exports.routes = {
     'GET /skill-tags/find': { controller: 'skill-tags', action: 'find' },
     'GET /skill-tags/findone/:id': { controller: 'skill-tags', action: 'findone' },
     'POST /skill-tags/delete/:id': { controller: 'skill-tags', action: 'delete' },
+	'POST /skill-tags/upload': { controller: 'skill-tags', action: 'upload' },
 	
 	
     /*Program routes*/
@@ -319,6 +322,7 @@ module.exports.routes = {
      'POST /program/delete/:id' : { controller : 'program' , action : 'delete'},
     'GET /program/update/:id': nonGetHandler,
      'POST /program/update/:id': { controller: 'program', action: 'update' },
+	 'POST /program/upload': { controller: 'program', action: 'upload' },
 
      /*workauthorization routes */
      'GET /workauthorization/list': { controller: 'workauthorization', action: 'list' },
