@@ -27,7 +27,7 @@ module.exports.policies = {
     'invitestatus/cancel' : ['noOauthBearer'],
 	'contact/create': ['noOauthBearer'],
 	'country/upload': ['noOauthBearer'],
-	
+	'scoremaster/upload':['noOauthBearer'],
     'clients/*': ['oauthBearer', 'isAdmin'],
 
     //'users/list': ['oauthBearer', 'isAdmin'],

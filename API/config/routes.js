@@ -65,6 +65,7 @@ module.exports.routes = {
      * not match any of those, it is matched against static assets.             *
      *                                                                          *
      ***************************************************************************/
+	'POST /scoremaster/upload' : { controller: 'scoremaster', action: 'upload' },
 	
 	/*Contact form routes*/
 	'POST /contact/create': { controller: 'contact', action: 'create' },
