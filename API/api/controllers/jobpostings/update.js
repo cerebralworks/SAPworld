@@ -16,6 +16,8 @@ module.exports = function create(request, response) {
 	var programming_id = [];
 	var programming_ids = '';
 	var programming_skills = [];
+	
+	post_request_data.salary = post_request_data['salary'].replace(/,/g, "");
 	for(let i=0;i<post_request_data.programming_skills.length;i++){
 		if(post_request_data.programming_skills[i] !=null &&post_request_data.programming_skills[i] !=undefined){
 			post_request_data.programming_skills[i] = post_request_data.programming_skills[i].replace(/\b\w/g, l => l.toUpperCase());
@@ -32,7 +34,6 @@ module.exports = function create(request, response) {
 			});
 		}
 	}
-	
     let schema = yup.object().shape({
         id: yup.number().positive().test('id', 'cant find any record', async(value) => {
             let query = { id: value, company: logged_in_user.employer_profile.id };
@@ -46,7 +47,7 @@ module.exports = function create(request, response) {
         }),
         title: yup.string().required().lowercase().min(3),
         type: yup.string().required(),
-        description: yup.string().min(100),
+        description: yup.string(),
         salary_type: yup.number().required().oneOf([0, 1, 2]),
         salary_currency: yup.string().required().min(3).max(10).lowercase().required(),
         salary: yup.number().required().positive(),
@@ -165,7 +166,9 @@ module.exports = function create(request, response) {
 			}
 			value['programming_id'] = programming_id;
         value['programming_skills'] = programming_skills;
-		
+		    if(value.remote_option == null){
+				value.remote_option=null;
+			}
             updateRecord(value, async function(updated_job) {
                 _response_object.message = 'Job has been update successfully.';
                 _response_object.details = updated_job;
@@ -619,7 +622,7 @@ module.exports = function create(request, response) {
 							var newMatchCheck = {};
 							newMatch.name=updated_job['title'];
 							newMatch.title='New Job Matches';
-							newMatch.message='You have new job matches from /'+newMatch.name;
+							newMatch.message='You’ve got a new match /'+newMatch.name;
 							newMatch.account=checkDetails['account'];
 							newMatch.user_id=checkDetails['id'];
 							newMatch.job_id=updated_job['id'];
@@ -636,20 +639,42 @@ module.exports = function create(request, response) {
 							var newMatchCheck1 = {};
 							newMatch1.name=checkDetails['first_name'] +' '+checkDetails['last_name'];
 							newMatch1.title='New User Matches';
-							newMatch1.message=newMatch1.name+'/ have matched for the job /'+updated_job['title'];
+							newMatch1.message=updated_job['title']+'/ has a new match';
 							newMatch1.account=logged_in_user.id;
 							newMatch1.user_id=checkDetails['id'];
 							newMatch1.job_id=updated_job['id'];
 							newMatch1.employer=updated_job['company'];
+							
+							var newMatch2 = {};
+							newMatch2.name=checkDetails['first_name'] +' '+checkDetails['last_name'];
+							newMatch2.title='Multiple User Matches';
+							newMatch2.message=responseMatch.length+' candidates /are matching for the /'+updated_job['title'];
+							newMatch2.account=logged_in_user.id;
+							newMatch2.user_id=checkDetails['id'];
+							newMatch2.job_id=updated_job['id'];
+							newMatch2.employer=updated_job['company'];
+							newMatch2.view=0;
+							
 							newMatchCheck1.account=logged_in_user.id;
 							newMatchCheck1.user_id=checkDetails['id'];
 							newMatchCheck1.job_id=updated_job['id'];
 							newMatchCheck1.employer=updated_job['company'];		
 							newMatch1.view=0;
+							
 							await Notification.find(newMatchCheck).exec(async(err1, results)=> {
 								if(results && results.length ==0 ){
 									await Notification.findOrCreate(newMatchCheck,newMatch);
-									await Notification.findOrCreate(newMatchCheck1,newMatch1);	
+									//await Notification.findOrCreate(newMatchCheck1,newMatch1);	
+								}
+							});
+							await Notification.find(newMatchCheck1).exec(async(err1, results)=> {
+								if(results && results.length ==0 ){
+									if(responseMatch.length > 1 && i==0){
+										await Notification.findOrCreate(newMatchCheck1,newMatch2);	
+									}
+									else if(responseMatch.length == 1){
+									await Notification.findOrCreate(newMatchCheck1,newMatch1);
+									}
 								}
 							});
 

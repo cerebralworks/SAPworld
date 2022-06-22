@@ -35,7 +35,7 @@ module.exports = function create(request, response) {
     let schema = yup.object().shape({
         title: yup.string().required().lowercase().min(3),
         type: yup.string().required(),
-        description: yup.string().min(100),
+        description: yup.string(),
         salary_type: yup.number().required().oneOf([0, 1, 2]),
         salary_currency: yup.string().required().min(3).max(10).lowercase().required(),
         salary: yup.number().required().positive(),
@@ -585,7 +585,7 @@ module.exports = function create(request, response) {
 							var newMatchCheck = {};
 							newMatch.name=updated_job['title'];
 							newMatch.title='New Job Matches';
-							newMatch.message='You have new job matches from /'+newMatch.name;
+							newMatch.message='You’ve got a new match /'+newMatch.name;
 							newMatch.account=checkDetails['account'];
 							newMatch.user_id=checkDetails['id'];
 							newMatch.job_id=updated_job['id'];
@@ -603,7 +603,7 @@ module.exports = function create(request, response) {
 							var newMatchCheck1 = {};
 							newMatch1.name=checkDetails['first_name'] +' '+checkDetails['last_name'];
 							newMatch1.title='New User Matches';
-							newMatch1.message=newMatch1.name+'/ have matched for the job /'+updated_job['title'];
+							newMatch1.message=updated_job['title']+'/ has a new match';
 							newMatch1.account=logged_in_user.id;
 							newMatch1.user_id=checkDetails['id'];
 							newMatch1.job_id=updated_job['id'];
@@ -613,7 +613,28 @@ module.exports = function create(request, response) {
 							newMatchCheck1.job_id=updated_job['id'];
 							newMatchCheck1.employer=updated_job['company'];		
 							newMatch1.view=0;
-							await Notification.findOrCreate(newMatchCheck1,newMatch1);	
+							
+							var newMatch2 = {};
+							newMatch2.name=checkDetails['first_name'] +' '+checkDetails['last_name'];
+							newMatch2.title='Multiple User Matches';
+							newMatch2.message=responseMatch.length+' candidates /are matching for the /'+updated_job['title'];
+							newMatch2.account=logged_in_user.id;
+							newMatch2.user_id=checkDetails['id'];
+							newMatch2.job_id=updated_job['id'];
+							newMatch2.employer=updated_job['company'];
+							newMatch2.view=0;
+							
+							//await Notification.findOrCreate(newMatchCheck1,newMatch1);	
+							await Notification.find(newMatchCheck1).exec(async(err1, results)=> {
+								if(results && results.length ==0 ){
+									if(responseMatch.length > 1 && i==0){
+										await Notification.findOrCreate(newMatchCheck1,newMatch2);	
+									}
+									else if(responseMatch.length == 1){
+									await Notification.findOrCreate(newMatchCheck1,newMatch1);
+									}
+								}
+							});
 
 							//Score Calculation
 							await Scoring.findOrCreate(post_data,post_datas).exec(async(err, user)=> {

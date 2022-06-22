@@ -7,7 +7,7 @@ module.exports = async function updatePhoto(request, response) {
     var filtered_post_data = _.pick(post_request_data, ['doc_cover', 'title']);
     var fs = require('fs');
     //Process file
-    const uploadFile = async(doc_cover, callback) => {
+    /*const uploadFile = async(doc_cover, callback) => {
         path = require('path');
         filename = 'doc-cover-' + Number(new Date()) + '-' + Math.floor((Math.random() * 9999999999) + 1) + path.extname(doc_cover.filename);
         file_path = 'public/resumes/Documents';
@@ -25,7 +25,7 @@ module.exports = async function updatePhoto(request, response) {
                 }
             }
         });
-    };
+    };*/
 
     //Add the filename to user's profile.
     const updateUser = (filename, callback) => {
@@ -52,19 +52,21 @@ module.exports = async function updatePhoto(request, response) {
     const sendResponse = (details) => {
         _response_object.message = 'Document has been updated successfully.';
         _response_object.details = details;
-        var meta = {};
+        /*var meta = {};
         meta['doc_resume'] = {
             path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
             folder: 'public/resumes/Documents'
         };
         meta['doc_resume'].example = meta['doc_resume'].path + '/' + meta['doc_resume'].folder + '/doc-cover-55.png';
-        _response_object['meta'] = meta;
+        _response_object['meta'] = meta;*/
         return response.status(200).json(_response_object);
     };
     //Check whether doc_cover exists in the request
     if (request._fileparser && request._fileparser.upstreams && request._fileparser.upstreams.length > 0) {
         try {
-            request.file('doc_cover').upload({ maxBytes: 50000000 }, async function(err, uploaded_files) {
+			var ext = request.body.extension;
+			var fn = 'cover'+logged_in_user.user_profile.id+new Date().getTime().toString()+'.'+ext;
+            request.file('doc_cover').upload({ maxBytes: 50000000 ,dirname: '../../uploads/documents/cover',saveAs:fn}, async function(err, uploaded_files) {
                 if (err) {
                     err.field = 'doc_cover';
                     await errorBuilder.build(err, function(error_obj) {
@@ -74,6 +76,13 @@ module.exports = async function updatePhoto(request, response) {
                     });
                 }
                 if (uploaded_files.length > 0) {
+					
+					let filename = fn;
+					  let uploadLocation =require('path').resolve(process.cwd(),'uploads/documents/cover/' + filename);
+					  let tempLocation = require('path').resolve(process.cwd(),'.tmp/public/documents/cover/' + filename);
+					  fs.createReadStream(uploadLocation).pipe(fs.createWriteStream(tempLocation));
+					  
+					  
                     /*Photo uploaded*/
                     var allowed_file_types = ['doc', 'docx', 'odt', 'pdf'];
                     let file_name_arr = uploaded_files[0].filename.split('.');
@@ -85,12 +94,12 @@ module.exports = async function updatePhoto(request, response) {
                     } else {
 
                         //Uploading doc_cover
-                        await uploadFile(uploaded_files[0], async function(filename) {
+                        //await uploadFile(uploaded_files[0], async function(filename) {
                             //Update user
-                            await updateUser(filename, function(details) {
+                            await updateUser(fn, function(details) {
                                 sendResponse(details);
                             });
-                        });
+                        //});
 
                     }
                 } else {
@@ -101,7 +110,7 @@ module.exports = async function updatePhoto(request, response) {
             });
         } catch (err) {
             err.field = 'doc_cover';
-            await errorBuilder.build(err, function(error_obj) {
+             errorBuilder.build(err, function(error_obj) {
                 _response_object.errors = error_obj;
                 _response_object.count = error_obj.length;
                 return response.status(500).json(_response_object);

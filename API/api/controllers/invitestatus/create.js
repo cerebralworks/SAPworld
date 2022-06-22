@@ -19,7 +19,7 @@ module.exports = async function create(request, response) {
 	  url: request_data['event'],
 	  headers: {
 		'Content-Type': 'application/json',
-		Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNjQzMjczNjA3LCJqdGkiOiI4MGI5MDg0NS0xNGFmLTQ1NDctYTRiMC1hZDZiNjZlM2M2ZmQiLCJ1c2VyX3V1aWQiOiJiZDRkYTA1Ny1iNDI1LTRlOTAtODEyMy1kZjk0ODZkZTgyNWIifQ.ZpsyRz8ENZ6E__IYst3hamrkYDLpS0Y_aCKFFXfk2J4'
+		Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNjUzNTU0ODIyLCJqdGkiOiJiOGJhN2QwNS03YmM2LTQyOTMtYjVmNS00MjY5NzJjNzc2YzgiLCJ1c2VyX3V1aWQiOiJBRERIVFlRMkxWQzNJS0RDIn0.ksDpazSm7zvCwgLh4-bTp_2se_eQlMbUOoVNiQDZltM'
 	  }
 	};
 	

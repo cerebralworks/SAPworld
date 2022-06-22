@@ -90,7 +90,8 @@ module.exports = async function EmployersDashboard(request, response) {
 				Query =`SELECT COUNT(DISTINCT job_application.id),job_posting.id,job_posting.title,job_posting.id FROM  job_applications "job_application" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 
 LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
-LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) WHERE   ${filterStatus}  ${filterDate} AND
+LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user)
+ WHERE   ${filterStatus}  ${filterDate} AND
 (job_application.status=1)  AND job_application.job_location = locations.id	 AND (job_application.short_listed IS NULL or job_application.short_listed != true) AND (job_application.employer=${parseInt(filtered_query_data.id)}) Group BY job_posting.id`
 			}
 			if(filtered_query_data.view =='shortlisted'){
@@ -98,7 +99,8 @@ LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user)
 				Query = `SELECT COUNT(DISTINCT job_application.id),job_posting.id,job_posting.title,job_posting.id FROM  job_applications "job_application" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 
 LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
-LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) WHERE    ${filterStatus}  ${filterDate} AND
+LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user)
+ WHERE    ${filterStatus}  ${filterDate} AND
 job_application.short_listed = true  AND job_application.job_location = locations.id	 AND (job_application.employer=${parseInt(filtered_query_data.id)}) Group BY job_posting.id`
 			}
 			if(filtered_query_data.view =='hired'){
@@ -113,21 +115,73 @@ job_application.short_listed = true  AND job_application.job_location = location
 			if(filtered_query_data.view =='hiringtrend'){
 				Query =`SELECT 
 				(SELECT COUNT(DISTINCT job_applications.id) FROM  job_applications "job_applications" 
-LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applications.job_posting)  
-LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_applications.user) WHERE 
-job_posting.id = job_postings.id   ${filterDate}  AND (job_applications.status=1) AND (job_applications.short_listed IS NULL or job_applications.short_listed != true) AND (job_applications.employer=${parseInt(filtered_query_data.id)} ) ) as applicant,
+LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applications.job_posting)
+lEFT JOIN users "users" ON (users.user_profile =job_applications.user ) 
+WHERE job_posting.id = job_postings.id   ${filterDate}  AND (job_applications.status=1) AND (job_applications.short_listed IS NULL or job_applications.short_listed != true) AND (job_applications.employer=${parseInt(filtered_query_data.id)} ) AND (users.status =1) ) as applicant,
 
 (SELECT COUNT(DISTINCT job_applicationss.id) FROM  job_applications "job_applicationss" 
-LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationss.job_posting) 
-LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_applicationss.user)
- WHERE  job_posting.id = job_postings.id ${filterUpdatedDate}   AND  (job_applicationss.short_listed = true AND job_applicationss.status !=  2 ) AND (job_applicationss.employer=${parseInt(filtered_query_data.id)} )) as shortlist,
+LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationss.job_posting)
+lEFT JOIN users "userss" ON (userss.user_profile =job_applicationss.user ) 
+WHERE  job_posting.id = job_postings.id ${filterUpdatedDate}   AND (job_applicationss.short_listed = true AND (job_applicationss.status !=  2 AND job_applicationss.status !=  4)) AND (job_applicationss.employer=${parseInt(filtered_query_data.id)} ) AND (userss.status =1)) as shortlist,
 
 (SELECT COUNT(DISTINCT job_applicationsss.id) FROM  job_applications "job_applicationsss" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationsss.job_posting) 
  WHERE job_posting.id = job_postings.id  ${filterUpdatedDate}  AND (job_applicationsss.short_listed = true AND job_applicationsss.status =  2 )   AND (job_applicationsss.employer=${parseInt(filtered_query_data.id)} ) ) as hired,
+ 
+ (SELECT COUNT(DISTINCT job_applicationsss.id) FROM  job_applications "job_applicationsss" 
+LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationsss.job_posting) 
+ WHERE job_posting.id = job_postings.id  ${filterUpdatedDate}  AND (job_applicationsss.short_listed = true AND job_applicationsss.status =  4 )   AND (job_applicationsss.employer=${parseInt(filtered_query_data.id)} ) ) as rejected,
+ 
+ (SELECT COUNT(DISTINCT job_applicationsss.id) FROM  job_applications "job_applicationsss" 
+LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationsss.job_posting) 
+ WHERE job_posting.id = job_postings.id  ${filterUpdatedDate}  AND (job_applicationsss.short_listed = true AND job_applicationsss.status =  5 )   AND (job_applicationsss.employer=${parseInt(filtered_query_data.id)} ) ) as holdon,
 
 job_postings.id,job_postings.title FROM  user_employments "job_postings" 
 where ${filterStatuss}  ${filterDates} AND job_postings.company = ${parseInt(filtered_query_data.id)}  `
+				
+			}
+			if(filtered_query_data.view =='chartDetails'){
+				const yyr = new Date(). getFullYear();
+				Query =`SELECT 
+				(SELECT COUNT(DISTINCT job_applications.id) FROM  job_applications "job_applications" 
+LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applications.job_posting)  
+WHERE job_posting.id = job_postings.id AND (job_applications.created_at BETWEEN '${yyr}-01-01 00:00:00'::timestamp AND '${yyr}-01-31 23:59:59'::timestamp)  AND (job_applications.employer=${parseInt(filtered_query_data.id)} ) ) as JAN,
+(SELECT COUNT(DISTINCT job_applications.id) FROM  job_applications "job_applications" 
+LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applications.job_posting)  
+WHERE job_posting.id = job_postings.id AND (job_applications.created_at BETWEEN '${yyr}-01-02 00:00:00'::timestamp AND '${yyr}-02-28 23:59:59'::timestamp)  AND (job_applications.employer=${parseInt(filtered_query_data.id)} ) ) as FEB,
+(SELECT COUNT(DISTINCT job_applications.id) FROM  job_applications "job_applications" 
+LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applications.job_posting) 
+WHERE job_posting.id = job_postings.id AND (job_applications.created_at BETWEEN '${yyr}-03-01 00:00:00'::timestamp AND '${yyr}-03-31 23:59:59'::timestamp)  AND (job_applications.employer=${parseInt(filtered_query_data.id)} ) ) as MAR,
+(SELECT COUNT(DISTINCT job_applications.id) FROM  job_applications "job_applications" 
+LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applications.job_posting)  
+WHERE job_posting.id = job_postings.id AND (job_applications.created_at BETWEEN '${yyr}-04-01 00:00:00'::timestamp AND '${yyr}-04-30 23:59:59'::timestamp)  AND (job_applications.employer=${parseInt(filtered_query_data.id)} ) ) as APR,
+(SELECT COUNT(DISTINCT job_applications.id) FROM  job_applications "job_applications" 
+LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applications.job_posting)  
+WHERE job_posting.id = job_postings.id AND (job_applications.created_at BETWEEN '${yyr}-05-01 00:00:00'::timestamp AND '${yyr}-05-31 23:59:59'::timestamp)  AND (job_applications.employer=${parseInt(filtered_query_data.id)} ) ) as MAY,
+(SELECT COUNT(DISTINCT job_applications.id) FROM  job_applications "job_applications" 
+LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applications.job_posting)  
+WHERE job_posting.id = job_postings.id AND (job_applications.created_at BETWEEN '${yyr}-06-01 00:00:00'::timestamp AND '${yyr}-06-30 23:59:59'::timestamp)  AND (job_applications.employer=${parseInt(filtered_query_data.id)} ) ) as JUN,
+(SELECT COUNT(DISTINCT job_applications.id) FROM  job_applications "job_applications" 
+LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applications.job_posting)  
+WHERE job_posting.id = job_postings.id AND (job_applications.created_at BETWEEN '${yyr}-07-01 00:00:00'::timestamp AND '${yyr}-07-31 23:59:59'::timestamp)  AND (job_applications.employer=${parseInt(filtered_query_data.id)} ) ) as JUL,
+(SELECT COUNT(DISTINCT job_applications.id) FROM  job_applications "job_applications" 
+LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applications.job_posting)  
+WHERE job_posting.id = job_postings.id AND (job_applications.created_at BETWEEN '${yyr}-08-01 00:00:00'::timestamp AND '${yyr}-08-31 23:59:59'::timestamp)  AND (job_applications.employer=${parseInt(filtered_query_data.id)} ) ) as AUG,
+(SELECT COUNT(DISTINCT job_applications.id) FROM  job_applications "job_applications" 
+LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applications.job_posting)  
+WHERE job_posting.id = job_postings.id AND (job_applications.created_at BETWEEN '${yyr}-09-01 00:00:00'::timestamp AND '${yyr}-09-30 23:59:59'::timestamp)  AND (job_applications.employer=${parseInt(filtered_query_data.id)} ) ) as SEP,
+(SELECT COUNT(DISTINCT job_applications.id) FROM  job_applications "job_applications" 
+LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applications.job_posting)  
+WHERE job_posting.id = job_postings.id AND (job_applications.created_at BETWEEN '${yyr}-10-01 00:00:00'::timestamp AND '${yyr}-10-31 23:59:59'::timestamp)  AND (job_applications.employer=${parseInt(filtered_query_data.id)} ) ) as OCT,
+(SELECT COUNT(DISTINCT job_applications.id) FROM  job_applications "job_applications" 
+LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applications.job_posting)  
+WHERE job_posting.id = job_postings.id AND (job_applications.created_at BETWEEN '${yyr}-11-01 00:00:00'::timestamp AND '${yyr}-11-30 23:59:59'::timestamp)  AND (job_applications.employer=${parseInt(filtered_query_data.id)} ) ) as NOV,
+(SELECT COUNT(DISTINCT job_applications.id) FROM  job_applications "job_applications" 
+LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applications.job_posting)  
+WHERE job_posting.id = job_postings.id AND (job_applications.created_at BETWEEN '${yyr}-12-01 00:00:00'::timestamp AND '${yyr}-12-31 23:59:59'::timestamp)  AND (job_applications.employer=${parseInt(filtered_query_data.id)} ) ) as DEC,
+job_postings.id ,job_postings.title FROM  user_employments "job_postings" 
+where ${filterStatuss}  ${filterDates} AND job_postings.company = ${parseInt(filtered_query_data.id)}  `
+				
 				
 			}
 			

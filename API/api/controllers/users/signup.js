@@ -6,7 +6,7 @@
 
 /* global _, UserProfiles, UserInformation, Users, sails */
 
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcryptjs');
 var SALT_WORK_FACTOR = 10;
 var crypto = require('crypto');
 
@@ -57,6 +57,7 @@ module.exports = function signup(request, response) {
             password: post_data.password
         };
         Users.create(user_input, async function(err, user) {
+			console.log(err);
             if (err) {
                 return await errorBuilder.build(err, function(error_obj) {
                     _response_object.errors = error_obj;
@@ -85,7 +86,7 @@ module.exports = function signup(request, response) {
 				mailService.sendMail(mail_data);
 		
                 UserProfiles.create(post_data, async function(err, profile) {
-					
+					console.log(profile);
                     if (err) {
 						console.log(err);
                         await errorBuilder.build(err, function(error_obj) {
@@ -106,6 +107,7 @@ module.exports = function signup(request, response) {
 	//Validating the request and pass on the appriopriate response.
     schema.validate(post_request_data, { abortEarly: false }).then(async function(value) {
         await loginService.findExistingConnection(0, value.email, value.phone, async function(err, user) {
+			console.log(user);
             if (err) {
                 await errorBuilder.build(err, function(error_obj) {
                     _response_object.errors = error_obj;

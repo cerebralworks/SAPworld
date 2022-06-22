@@ -2,7 +2,7 @@
 /* global _, UserProfiles, Users, sails */
 
 var squel = require("squel");
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcryptjs');
 var SALT_WORK_FACTOR = 10;
 var crypto = require('crypto');
 

@@ -72,6 +72,7 @@ module.exports = {
 		account: { model: 'users' },
 		min: { type: 'string' , allowNull: true},
 		max: { type: 'string' , allowNull: true},
-        job_locations: { type: 'ref', columnType: 'json[]' }
+        job_locations: { type: 'ref', columnType: 'json[]' },
+		remote_option: { type: 'number', allowNull: true}
     }
 };

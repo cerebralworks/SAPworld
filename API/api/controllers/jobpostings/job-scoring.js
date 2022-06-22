@@ -20,7 +20,7 @@ module.exports = async function Scoring(request, response) {
     //Build and sending response
     const sendResponse = (items, count, application,matches) => {
         _response_object.message = 'Job items retrieved successfully.';
-        _response_object.score = score;
+        _response_object.score = parseFloat(score);
         var meta = {};
         meta['count'] = count;
         meta['matches'] = matches['rowCount'];

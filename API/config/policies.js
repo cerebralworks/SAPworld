@@ -22,17 +22,19 @@ module.exports.policies = {
      * (`true` allows public access)                                            *
      *                                                                          *
      ***************************************************************************/
-
     '*': 'oauthBearer',
-	
-    'clients/*': ['oauthBearer', 'isAdmin'],
     'invitestatus/create' : ['noOauthBearer'],
     'invitestatus/cancel' : ['noOauthBearer'],
 	'contact/create': ['noOauthBearer'],
+	'country/upload': ['noOauthBearer'],
+	'scoremaster/upload':['noOauthBearer'],
+    'clients/*': ['oauthBearer', 'isAdmin'],
+
     //'users/list': ['oauthBearer', 'isAdmin'],
     'users/view': ['oauthBearer'],
     'users/profile': ['oauthBearer', 'isUser'],
     'users/signup': ['noOauthBearer'],
+    'users/delete-account': ['noOauthBearer'],
     'users/update': ['oauthBearer', 'isUserOrAdmin'],
     'users/update-photo': ['oauthBearer', 'isUser'],
     'users/update-doc-resume': ['oauthBearer', 'isUser'],
@@ -151,17 +153,20 @@ module.exports.policies = {
     'industries/find': ['oauthBearer', 'isAdmin'],
     'industries/findone': ['oauthBearer', 'isAdmin'],
     'industries/delete': ['oauthBearer', 'isAdmin'],
-
+	'industries/upload' : ['noOauthBearer'],
+	
     'skill-tags/list': ['noOauthBearer'],
     'skill-tags/create': ['oauthBearer', 'isEmployerOrAdmin'],
-    'skill-tags/creates': ['oauthBearer', 'isEmployerOrAdmin'],
+    'skill-tags/creates': ['oauthBearer'],
     'skill-tags/update': ['oauthBearer', 'isAdmin'],
     'skill-tags/find': ['oauthBearer', 'isAdmin'],
     'skill-tags/findone': ['oauthBearer', 'isAdmin'],
+	'skill-tags/upload':['noOauthBearer'],
 	
     'program/list': ['noOauthBearer'],
     'program/create': ['noOauthBearer', 'isAdmin'],
-
+	'program/upload':['noOauthBearer'],
+	
     'subscription-plans/create': ['oauthBearer', 'isAdmin'],
     'subscription-plans/update': ['oauthBearer', 'isAdmin'],
     'subscription-plans/change-status': ['oauthBearer', 'isAdmin'],
@@ -170,6 +175,9 @@ module.exports.policies = {
     'subscription-plans/view': ['oauthBearer', 'isUserOrAdmin'],
 
     'users/subscriptions/create': ['oauthBearer', 'isAdmin'],
+	
     'notification/count': ['oauthBearer'],
     'notification/details': ['oauthBearer'],
+	'language/upload' : ['noOauthBearer'],
+	
 };

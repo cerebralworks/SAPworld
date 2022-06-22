@@ -19,7 +19,6 @@ module.exports = {
         status: { type: 'number', defaultsTo: 1 },
         short_listed: { type: 'boolean', allowNull: true },
         view: { type: 'boolean', defaultsTo: false },
-        views: { type: 'boolean', defaultsTo: false },
         status_glossary: { type: 'string', allowNull: true },
         user: {
             model: 'userprofiles'

@@ -21,7 +21,7 @@ module.exports = async function apply(request, response) {
     ];
     //Add the JobApplication record to db.
     const addRecord = (post_data, callback) => {
-		
+		//console.log(post_data);
         JobApplications.create(post_data, async function(err, application) {
             if (err) {
                 await errorBuilder.build(err, function(error_obj) {
@@ -167,7 +167,7 @@ module.exports = async function apply(request, response) {
 		var postDetails = {};
 		postDetails.name=logged_in_user.user_profile.first_name+' '+logged_in_user.user_profile.last_name;
 		postDetails.title='New Application Request';
-		postDetails.message=postDetails.name+'/ have applied for the post /'+job.title +' / - ' + job.job_locations[0].country;
+		postDetails.message='Job /'+job.title+'/ has a new applicant' 
 		postDetails.account=employee.account;
 		postDetails.user_id=logged_in_user.user_profile.id;
 		postDetails.job_id=job.id;
@@ -179,7 +179,7 @@ module.exports = async function apply(request, response) {
 		var postDetailss = {};
 		postDetailss.name=job.title;
 		postDetailss.title='Application Under Review';
-		postDetailss.message='Your application is under review for the job /'+job.title;
+		postDetailss.message='You have applied to the job /'+job.title;
 		postDetailss.account=logged_in_user.id;
 		postDetailss.user_id=logged_in_user.user_profile.id;
 		postDetailss.job_id=job.id;

@@ -8,6 +8,7 @@
  * For more information on configuration, check out:
  * https://sailsjs.com/config/http
  */
+var express = require('express');
 
 module.exports.http = {
 
@@ -27,7 +28,7 @@ module.exports.http = {
 //    },
   middleware: {
       flash    : require('connect-flash')(),
-
+	 
     /***************************************************************************
     *                                                                          *
     * The order in which middleware should be run for HTTP requests.           *
@@ -74,6 +75,7 @@ module.exports.http = {
         'router',
         'www',
         'favicon',
+		
     ],
 
 
@@ -92,6 +94,7 @@ module.exports.http = {
     // })(),
 
   },
+  
 
   setTimeZone: function (app) {
       app.set('tz', 'GMT+0530');

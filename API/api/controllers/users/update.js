@@ -90,7 +90,7 @@ module.exports = async function update(request, response) {
        // work_authorization: yup.boolean(),
         willing_to_relocate: yup.boolean().required(),
         remote_only: yup.boolean().required(),
-        end_to_end_implementation: yup.number().min(0),
+        end_to_end_implementation: yup.number().nullable(true),
         privacy_protection: yup.object().shape({
             photo: yup.boolean().default(true),
             phone: yup.boolean().default(true),
@@ -152,7 +152,7 @@ module.exports = async function update(request, response) {
         //work_authorization: yup.boolean(),
         willing_to_relocate: yup.boolean().required(),
         remote_only: yup.boolean().required(),
-        end_to_end_implementation: yup.number().min(0),
+        end_to_end_implementation: yup.number().nullable(true),
         privacy_protection: yup.object().shape({
             photo: yup.boolean().default(true),
             phone: yup.boolean().default(true),
@@ -181,6 +181,10 @@ module.exports = async function update(request, response) {
 			});
 		}else{
 			value.phone =null;
+		}
+		if(value.end_to_end_implementation ===undefined){
+			
+			value.end_to_end_implementation =null;
 		}
         value.status = 1;
         value['programming_id'] = programming_id;
@@ -300,7 +304,7 @@ module.exports = async function update(request, response) {
 			CROSS JOIN user_profiles "user_profile" 
 			LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 		LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
-			WHERE (locations.status = 1 OR locations.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
+			WHERE (locations.status = 1 OR locations.status = 98 ) AND job_posting.status=1 AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
 			(user_account.status=1) AND (job_posting.visa_sponsorship = true OR (( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND (( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[] ) OR user_profile.willing_to_relocate =true )) ) 
 			AND (COALESCE(user_profile.experience) >= job_posting.experience)  AND (COALESCE(job_posting.experience) = 0 ) group by job_posting.id `
 						}else{
@@ -308,7 +312,7 @@ module.exports = async function update(request, response) {
 			CROSS JOIN user_profiles "user_profile" 
 			LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 		LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
-			WHERE (locations.status = 1 OR locations.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
+			WHERE (locations.status = 1 OR locations.status = 98 ) AND job_posting.status=1 AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
 			(user_account.status=1) AND ( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND ((( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[]) OR ( user_profile.country like locations.country AND  user_profile.other_cities = '{}') AND user_profile.willing_to_relocate =true ) OR (user_profile.willing_to_relocate =false AND user_profile.city like locations.city ))
 			AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (COALESCE(job_posting.experience) =0 )  group by job_posting.id `
 						}
@@ -318,7 +322,7 @@ module.exports = async function update(request, response) {
 			CROSS JOIN user_profiles "user_profile" 
 			LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 			LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
-			WHERE (locations.status = 1 OR locations.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
+			WHERE (locations.status = 1 OR locations.status = 98 ) AND job_posting.status=1 AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
 			(user_account.status=1) AND (job_posting.visa_sponsorship = true OR (( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND (( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[] ) OR user_profile.willing_to_relocate =true ) ) ) AND 
 			(( user_profile.hands_on_skills && job_posting.hands_on_skills ))
 			AND (COALESCE(user_profile.experience) >= job_posting.experience) group by job_posting.id `
@@ -327,7 +331,7 @@ module.exports = async function update(request, response) {
 			CROSS JOIN user_profiles "user_profile" 
 			LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 			LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id) 
-			WHERE (locations.status = 1 OR locations.status = 98 )  AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
+			WHERE (locations.status = 1 OR locations.status = 98 ) AND job_posting.status=1 AND user_profile.job_type && ARRAY[job_posting.type]::TEXT[] AND (user_profile.id = ${checkDetails.id}) AND
 			(user_account.status=1) AND ( user_profile.country like locations.country OR  user_profile.other_countries && ARRAY[locations.country]::TEXT[] ) AND ( (( user_profile.city like locations.city OR  user_profile.other_cities && ARRAY[locations.city]::TEXT[]) OR ( user_profile.country like locations.country AND  user_profile.other_cities = '{}') AND user_profile.willing_to_relocate =true ) OR (user_profile.willing_to_relocate =false AND user_profile.city like locations.city )) AND 
 			(( user_profile.hands_on_skills && job_posting.hands_on_skills ))
 			AND (COALESCE(user_profile.experience) >= job_posting.experience AND job_posting.entry = false) group by job_posting.id `
@@ -719,14 +723,24 @@ module.exports = async function update(request, response) {
 								
 								// User Notification
 								var newMatch = {};
+								var newMatch2 = {};
 								var newMatchCheck = {};
 								newMatch.name=updated_job['title'];
 								newMatch.title='New Job Matches';
-								newMatch.message='You have new job matches from /'+newMatch.name;
+								newMatch.message='You’ve got a new match /'+newMatch.name;
 								newMatch.account=checkDetails['account'];
 								newMatch.user_id=checkDetails['id'];
 								newMatch.job_id=updated_job['id'];
-								newMatch.employer=updated_job['company'];	
+								newMatch.employer=updated_job['company'];
+								
+								newMatch2.name=updated_job['title'];
+								newMatch2.title='Multiple Job Matches';
+								newMatch2.message='You’ve got /'+responseMatch.length+' new matches';
+								newMatch2.account=checkDetails['account'];
+								newMatch2.user_id=checkDetails['id'];
+								newMatch2.job_id=updated_job['id'];
+								newMatch2.employer=updated_job['company'];
+								
 								newMatchCheck.account=checkDetails['account'];
 								newMatchCheck.user_id=checkDetails['id'];
 								newMatchCheck.job_id=updated_job['id'];
@@ -739,23 +753,37 @@ module.exports = async function update(request, response) {
 								var newMatchCheck1 = {};
 								newMatch1.name=checkDetails['first_name'] +' '+checkDetails['last_name'];
 								newMatch1.title='New User Matches';
-								newMatch1.message=newMatch1.name+'/ have matched for the job /'+updated_job['title'];
+								newMatch1.message=updated_job['title']+'/ has a new match';
 								newMatch1.account=updated_job['account'];
 								newMatch1.user_id=checkDetails['id'];
 								newMatch1.job_id=updated_job['id'];
 								newMatch1.employer=updated_job['company'];
 								newMatchCheck1.account=updated_job['account'];
 								newMatchCheck1.user_id=checkDetails['id'];
-								newMatchCheck1.job_id=updated_job['id'];
+							    newMatchCheck1.job_id=updated_job['id'];
 								newMatchCheck1.employer=updated_job['company'];		
 								newMatch1.view=0;
+								
+
 								//await Notification.findOrCreate(newMatchCheck1,newMatch1);
-								await Notification.find(newMatchCheck).exec(async(err1, results)=> {
+								await Notification.find(newMatchCheck1).exec(async(err1, results)=> {
 									if(results && results.length ==0 ){
-										await Notification.findOrCreate(newMatchCheck,newMatch);
+										//await Notification.findOrCreate(newMatchCheck,newMatch);
 										await Notification.findOrCreate(newMatchCheck1,newMatch1);	
 									}
 								});
+								await Notification.find(newMatchCheck).exec(async(err1, results)=> {
+								if(results && results.length ==0 ){
+									if(responseMatch.length > 1 && i==0){
+										await Notification.findOrCreate(newMatchCheck,newMatch2);	
+									}
+									else if(responseMatch.length == 1){
+									await Notification.findOrCreate(newMatchCheck,newMatch);
+									}
+								}
+							});
+								
+								
 								//find or create the scoring calculation
 								await Scoring.findOrCreate(post_data,post_datas,function(err, job) {
 									if (err) {
