@@ -10,13 +10,12 @@ module.exports = function updateEmail(request, response) {
     const post_request_data = request.body;
     const logged_in_user = request.user;
     var _response_object = {};
-    var filtered_post_data = _.pick(post_request_data,['current_password', 'email']);
+    var filtered_post_data = _.pick(post_request_data,['current_password', 'email','password']);
     const filtered_post_keys = Object.keys(filtered_post_data);
     var input_attributes = [
         {name: 'current_password', required: true, min: 6},
         {name: 'email', email: true, required: true}
     ];
-	
 	/**	
 	**	To validate the request send for reset user data
 	**/	
@@ -45,7 +44,7 @@ module.exports = function updateEmail(request, response) {
                         }else{
 							
 							//Update the password
-                            filtered_post_data.password = await bcrypt.hash(filtered_post_data.current_password, SALT_WORK_FACTOR);
+                            filtered_post_data.password = await bcrypt.hash(filtered_post_data.password, SALT_WORK_FACTOR);
                             Users.update({id: logged_in_user.id}, {password: filtered_post_data.password}, async function(err, user){
                                 if(err){
                                     await errorBuilder.build(err, function (error_obj) {
