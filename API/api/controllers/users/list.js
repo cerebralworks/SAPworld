@@ -158,9 +158,10 @@ module.exports = async function list(request, response) {
 		query.where(` ${Scoring.tableAlias}.${Scoring.schema.job_id.columnName} = ${filtered_query_data.job_posting}`);
 		if (filtered_query_keys.includes('location_id')) {			
 			//query.where(` ${Scoring.tableAlias}.${Scoring.schema.location_id.columnName} = ${filtered_query_data.location_id}`);
-		}if (filtered_query_keys.includes('location_filter')) {			
-			query.where(` user_profile.city =any('{ ${filtered_query_data.location_filter} }') or (${UserProfiles.tableAlias}.${UserProfiles.schema.other_cities.columnName} && ARRAY['${filtered_query_data.location_filter}']::text[])`);
-			//query.where(`${UserProfiles.tableAlias}.${UserProfiles.schema.other_cities.columnName} && ARRAY['${filtered_query_data.location_filter}']::text[]`);
+		}if (filtered_query_keys.includes('location_filter')) {		
+			
+			//query.where(` user_profile.city =any('{ ${filtered_query_data.location_filter} }') or (${UserProfiles.tableAlias}.${UserProfiles.schema.other_cities.columnName} && ARRAY['${filtered_query_data.location_filter}']::text[])`);
+			query.where(`user_profile.city =any('{ ${filtered_query_data.location_filter} }') or (${UserProfiles.tableAlias}.${UserProfiles.schema.other_cities.columnName} && ARRAY['${filtered_query_data.location_filter}']::text[] or ${UserProfiles.tableAlias}.${UserProfiles.schema.other_cities.columnName} IS NULL)`);
 		}
 		//Filter the Custom Data's
 		
