@@ -32,7 +32,7 @@ module.exports = async function list(request, response) {
             } else if (total < 1) {
                 return callback([], {}, total);
             } else {
-                var country_model = Language.find(criteria).meta({ makeLikeModifierCaseInsensitive: true });;
+                var country_model = Language.find(criteria).meta({ makeLikeModifierCaseInsensitive: true }).sort('id ASC');
                 country_model.exec(async function(err, Language) {
                     if (err) {
                         var error = {
