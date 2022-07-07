@@ -148,6 +148,18 @@
 				<td width="60%" style="color: #333; font-weight: 600; padding: 0px 0 15px;">
 					<%= job_status %></td>
 			</tr>
+			<% if(interview_date !== null){ %>
+			<tr>
+				<td width="40%" style="color: #777; font-weight: 500; padding: 0px 0 15px;">Interview Date</td>
+				<td width="60%" style="color: #333; font-weight: 600; padding: 0px 0 15px;">
+					<%= interview_date %></td>
+			</tr>
+			<tr>
+				<td width="40%" style="color: #777; font-weight: 500; padding: 0px 0 15px;">Interview Time</td>
+				<td width="60%" style="color: #333; font-weight: 600; padding: 0px 0 15px;">
+					<%= interview_time %></td>
+			</tr>
+			<% } %>
 			</table>
 			</td>
 		</tr>
