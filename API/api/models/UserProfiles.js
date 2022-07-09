@@ -25,7 +25,7 @@ module.exports = {
         state: { type: 'string', allowNull: true },
         city: { type: 'string', allowNull: true },
         address_line: { type: 'string', allowNull: true },
-        zipcode: { type: 'number', allowNull: true },
+        zipcode: { type: 'string', allowNull: true },
         social_media_link: { type: 'ref', columnType: 'json[]' },
         education_qualification: { type: 'ref', columnType: 'json[]' },
         experience: { type: 'number' },
