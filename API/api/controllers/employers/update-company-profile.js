@@ -112,7 +112,7 @@ module.exports = async function updateCompanyProfile(request, response) {
                 } else {
                    // sendResponse(profile);
 				   
-					EmployerProfiles.update(value.user_id, company, async function(errs, profiles) {
+					EmployerProfiles.update({where: {account : value.user_id}}, company, async function(errs, profiles) {
 						console.log(errs);
 						if (errs) {
 							await errorBuilder.build(errs, function(error_obj) {
