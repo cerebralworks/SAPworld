@@ -77,7 +77,7 @@ module.exports = async function view(request, response) {
                 if (additional_fields.includes('no_of_shortlisted_applicants')) {
                     job_posting.no_of_shortlisted_applicants = await JobApplications.count({ job_posting: _.get(job_posting, 'id'), status: { '!=': _.get(sails.config.custom.status_codes, 'deleted') }, short_listed: true });
                 }
-                if (filtered_query_data.is_job_applied && filtered_query_data.user_id) {
+                if (filtered_query_data.user_id) {
                     job_posting.is_job_applied = await JobApplications.count({ job_posting: _.get(job_posting, 'id'), user: filtered_query_data.user_id  });
                     job_posting.job_applied = await JobApplications.findOne({ job_posting: _.get(job_posting, 'id'), user: filtered_query_data.user_id });
                 }
