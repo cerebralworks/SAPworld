@@ -35,6 +35,18 @@ module.exports = function resetPassword(request, response) {
                         return response.status(500).json(_response_object);
                     });
                 }else{
+					await UserProfiles.find({email:email}).then(async function(data){
+						if(data.length !=0){
+							found_user.first_name = data[0].first_name;
+							found_user.last_name = data[0].last_name;
+						}
+					});
+					await EmployerProfiles.find({email:email}).then(async function(data){
+						if(data.length !=0){
+							found_user.first_name = data[0].first_name;
+							found_user.last_name = data[0].last_name;
+						}
+					});
                     var tokens = {};
                     if(found_user.tokens){
                         tokens = found_user.tokens;
@@ -50,6 +62,7 @@ module.exports = function resetPassword(request, response) {
                         }else{
                             found_user.token = tokens.reset;
                             found_user.email = email;
+							
                             sendMail(found_user);
                             _response_object.message = 'Great. We shot you an email with a link for resetting your account password. Check your inbox.';
                             return response.status(200).json(_response_object);
