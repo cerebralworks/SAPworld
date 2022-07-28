@@ -56,7 +56,7 @@ module.exports = async function updatePhoto(request, response) {
         try{
 			var ext = request.body.extension;
 			var fn = 'employer'+logged_in_user.employer_profile.id+new Date().getTime().toString()+'.'+ext;
-            request.file('photo').upload({maxBytes: 50000000 ,dirname: '../../uploads/images/employer',saveAs:fn}, async function (err, uploaded_files) {
+            request.file('photo').upload({maxBytes: 50000000 ,dirname: '../../assets/images/employer',saveAs:fn}, async function (err, uploaded_files) {
                 if (err) {
                     err.field = 'photo';
                     await errorBuilder.build(err, function (error_obj) {
@@ -68,9 +68,9 @@ module.exports = async function updatePhoto(request, response) {
                 if (uploaded_files.length > 0) {
 					
 					let filename = fn;
-					  let uploadLocation =require('path').resolve(process.cwd(),'uploads/images/employer/' + filename);
+					 /* let uploadLocation =require('path').resolve(process.cwd(),'uploads/images/employer/' + filename);
 					  let tempLocation = require('path').resolve(process.cwd(),'.tmp/public/images/employer/' + filename);
-					  fs.createReadStream(uploadLocation).pipe(fs.createWriteStream(tempLocation));
+					  fs.createReadStream(uploadLocation).pipe(fs.createWriteStream(tempLocation));*/
                     /*Photo uploaded*/
                     var allowed_file_types = ['image/jpeg', 'image/png'];
                     if (allowed_file_types.indexOf(uploaded_files[0].type) === -1) {
