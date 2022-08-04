@@ -13,7 +13,7 @@ module.exports = async function update(request, response) {
     var _response_object = {};
     const logged_in_user = request.user;
     pick_input = [
-        'short_listed','meeting', 'events', 'user', 'job_posting', 'status','invite_url', 'invite_send', 'application_status', 'view', 'invite_status'
+        'short_listed','meeting', 'events', 'user', 'job_posting', 'status','invite_url', 'invite_send', 'application_status', 'view', 'invite_status','apps','meeting_send'
     ];
     var filtered_post_data = _.pick(_.merge(post_request_data, request_query), pick_input);
     const filtered_post_keys = Object.keys(filtered_post_data);
@@ -63,11 +63,14 @@ module.exports = async function update(request, response) {
 		var postDetails = {};
 		postDetails.name=job.title;
          if (_.get(details, 'short_listed')) {
+			 if(!post_request_data.apps){
 			_response_object.message = 'Job application have been added to the short list successfully.';
+			 }
 			postDetails.message='Your profile is shortlisted for the position - /'+postDetails.name;
 			postDetails.title='Application Shortlisted';
 			if(details['status'] !=1){
 				var application_status = details.application_status.filter(function(a,b) { return parseInt(a.id) == parseInt(details.status )});
+				
 				if(application_status.length!=0){
 					if(details['status'] === 3){
 						postDetails.message='Your interview is scheduled for the /'+job.title+'/ position';
@@ -82,7 +85,7 @@ module.exports = async function update(request, response) {
 					}
 					postDetails.title= "New schedule status";
 					
-					if(logged_in_user.meeting){
+					/*if(logged_in_user.meeting){
 						postDetails.message='Your application for the /'+job.title+'/ got a meeting link for the  '+statusCheck +' status';
 						postDetails.title='New Meeting Link';	
 						_response_object.message = 'successfully send the meeting link to user ';
@@ -91,6 +94,29 @@ module.exports = async function update(request, response) {
 						job['username'] = profile.first_name+' '+profile.last_name;
 						job['job_status'] = statusCheck;
 						job['meeting_link'] = post_request_data.meeting_link;
+						const mail_data = {
+							template: 'jobpostings/invite',
+							data:job ,
+							to: profile.email,
+							subject: 'An employer send an meeting link for the '+statusCheck
+						};
+						mailService.sendMail(mail_data);
+					}*/
+					if(post_request_data.meeting_send){
+						
+						postDetails.message='Your application for the /'+job.title+'/ got a meeting link for the  '+statusCheck +' status';
+						postDetails.title='New Meeting Link';	
+						_response_object.message = 'successfully send the meeting link to user ';
+						var idate = new Date(application_status[0]['interviewdate']).toDateString();
+						var a = idate+' '+application_status[0]['interviewtime'];
+						var itime = new Date(a).toLocaleTimeString([], {timeStyle: 'short'});
+						//To send mail
+						job['applicationId'] = details.id;
+						job['username'] = profile.first_name+' '+profile.last_name;
+						job['job_status'] = statusCheck;
+						job['meeting_link'] = application_status[0]['link'];
+						job['interview_date'] = idate;
+						job['interview_time'] = itime;
 						const mail_data = {
 							template: 'jobpostings/invite',
 							data:job ,
@@ -226,7 +252,12 @@ module.exports = async function update(request, response) {
 									canceled: val.canceled,
 									rescheduled: val.rescheduled,
 									created: val.created,
-									invite_url: ''
+									invite_url: '',
+									name: val.name,
+									link: val.link,
+									interviewdate :val.interviewdate,
+									interviewtime : val.interviewtime,
+									zone :val.zone
 								  }
 								});
 								filteredData.push(checkLastItem);

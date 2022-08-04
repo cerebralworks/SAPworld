@@ -11,7 +11,6 @@ module.exports = async function update(request, response) {
     post_request_data.id = logged_in_user.id;
     var _response_object = {};
     let yup = sails.yup;
-	
 	var programming_id = [];
 	var programming_ids = '';
 	var programming_skills = [];
@@ -45,7 +44,7 @@ module.exports = async function update(request, response) {
         country: yup.string().required().lowercase(),
         state: yup.string().required().lowercase(),
         city: yup.string().required().lowercase(),
-        zipcode: yup.number().required().positive().moreThan(1000),
+        zipcode: yup.string().required(),
         phone: yup.string().matches(/^([0|\+[0-9]{1,5})?([0-9]{10})$/, 'Mobile number must be like +919999999999'),
         /* latlng: yup.object().shape({
             lat: yup.number().min(-90).max(90),
@@ -115,7 +114,7 @@ module.exports = async function update(request, response) {
         country: yup.string().required().lowercase(),
         state: yup.string().required().lowercase(),
         city: yup.string().required().lowercase(),
-        zipcode: yup.number().required().positive().moreThan(1000),
+        zipcode: yup.string().required(),
         phone: yup.string().matches(/^([0|\+[0-9]{1,5})?([0-9]{10})$/, 'Mobile number must be like +919999999999'),
         /* latlng: yup.object().shape({
             lat: yup.number().min(-90).max(90),
@@ -163,7 +162,6 @@ module.exports = async function update(request, response) {
     });
 	}
 	
-	
    await schema.validate(post_request_data, { abortEarly: false }).then(async value => {
 		if(value.latlng['lng'] && value.latlng['lng'] !=undefined && value.latlng['lng'] !="undefined" &&
 		value.latlng['lat'] && value.latlng['lat'] !=undefined && value.latlng['lat'] !="undefined"){
@@ -186,6 +184,15 @@ module.exports = async function update(request, response) {
 			
 			value.end_to_end_implementation =null;
 		}
+		if(value.current_employer ===undefined){
+			
+			value.current_employer =null;
+		}
+		if(value.current_employer_role ===undefined){
+			
+			value.current_employer_role =null;
+		}
+		
         value.status = 1;
         value['programming_id'] = programming_id;
         value['programming_skills'] = programming_skills;
@@ -258,7 +265,7 @@ module.exports = async function update(request, response) {
 				}
 			});
 		}else{
-			//console.log(value);
+			console.log(value);
 			//Update the user profile details
 			UserProfiles.update(logged_in_user.user_profile.id, value, async function(err, profile) {
 				if (err) {

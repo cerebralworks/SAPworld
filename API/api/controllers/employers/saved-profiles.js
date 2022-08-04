@@ -41,6 +41,8 @@ module.exports = async function list(request, response) {
         var query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(SavedProfile.tableName, SavedProfile.tableAlias);
         query.where('employee_id =' + logged_in_user.employer_profile.id);
         query.left_join(UserProfiles.tableName, UserProfiles.tableAlias, UserProfiles.tableAlias + '.' + UserProfiles.schema.id.columnName + "=" + SavedProfile.tableAlias + '.' + SavedProfile.schema.user_id.columnName);
+		query.left_join(Users.tableName, Users.tableAlias, Users.tableAlias + '.' + Users.schema.user_profile.columnName + "=" + UserProfiles.tableAlias + '.' + UserProfiles.schema.id.columnName);
+					query.where(Users.tableAlias + '.' + Users.schema.status.columnName + "=" + parseInt('1'));
         var group_by = SavedProfile.tableAlias + "." + SavedProfile.schema.id.columnName;
         group_by += "," + UserProfiles.tableAlias + "." + UserProfiles.schema.id.columnName;
 

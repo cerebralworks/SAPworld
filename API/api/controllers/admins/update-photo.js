@@ -11,9 +11,10 @@ module.exports = async function updatePhoto(request, response) {
     const logged_in_user = request.user;
     var _response_object = {};
     var filtered_post_data = _.pick(post_request_data,['photo']);
-    var fs = require('fs');
+     var fs = require('fs');
+	var path = require('path');
     //Process Photos
-    const uploadPhotos = async (photo, callback) => {
+   /* const uploadPhotos = async (photo, callback) => {
         path = require('path');
         filename = 'photo-' + logged_in_user.admin_profile.id + path.extname(photo.filename);
         file_path = 'public/images/Admins';
@@ -31,7 +32,7 @@ module.exports = async function updatePhoto(request, response) {
                 }
             }
         });
-    };
+    };*/
     //Add the filename to employer's profile.
     const updateUser = (filename, callback) => {
         AdminProfiles.update({id: logged_in_user.admin_profile.id}, {photo: filename}, async function(err, employer){
@@ -50,7 +51,9 @@ module.exports = async function updatePhoto(request, response) {
     //Check whether photo exists in the request
     if (request._fileparser && request._fileparser.upstreams && request._fileparser.upstreams.length > 0) {
         try{
-            request.file('photo').upload({maxBytes: 50000000}, async function (err, uploaded_files) {
+           var ext = request.body.extension;
+			var fn = 'admin'+logged_in_user.admin_profile.id+new Date().getTime().toString()+'.'+ext;
+            request.file('photo').upload({ maxBytes: 50000000 ,dirname: '/var/www/production/sapworld-UI/middleware/uploads/images/admin',saveAs:fn}, async function(err, uploaded_files) {
                 if (err) {
                     err.field = 'photo';
                     await errorBuilder.build(err, function (error_obj) {
@@ -60,6 +63,10 @@ module.exports = async function updatePhoto(request, response) {
                     });
                 }
                 if (uploaded_files.length > 0) {
+					/*let filename = fn;
+					  let uploadLocation =require('path').resolve(process.cwd(),'uploads/images/admin/' + filename);
+					  let tempLocation = require('path').resolve(process.cwd(),'.tmp/public/images/admin/' + filename);
+					  fs.createReadStream(uploadLocation).pipe(fs.createWriteStream(tempLocation));*/
                     /*Photo uploaded*/
                     var allowed_file_types = ['image/jpeg', 'image/png'];
                     if (allowed_file_types.indexOf(uploaded_files[0].type) === -1) {
@@ -69,12 +76,12 @@ module.exports = async function updatePhoto(request, response) {
                         return response.status(400).json(_response_object);
                     }else{
                         //Uploading photo
-                        await uploadPhotos(uploaded_files[0], async function (filename) {
+                       //await uploadPhotos(uploaded_files[0], async function (filename) {
                             //Update employer
-                            await updateUser(filename, function (details) {
+                            await updateUser(fn, function (details) {
                                 _response_object.message = 'Photo has been updated successfully.';
                                 _response_object.details = details;
-                                var meta = {};
+                                /*var meta = {};
                                 meta['photo'] = {
                                   path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
                                   folder: 'public/images/Admins',
@@ -84,10 +91,10 @@ module.exports = async function updatePhoto(request, response) {
                                   }
                                 };
                                 meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/photo-55.png';
-                                _response_object['meta'] = meta;
+                                _response_object['meta'] = meta;*/
                                 return response.status(200).json(_response_object);
                             });
-                        });
+                       // });
                     }
                 }else{
                     _response_object.errors = [{field: 'photo', rules: [{rule: 'required', message: 'photo cannot be empty.'}]}];

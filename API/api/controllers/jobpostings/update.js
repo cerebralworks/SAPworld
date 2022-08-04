@@ -16,8 +16,6 @@ module.exports = function create(request, response) {
 	var programming_id = [];
 	var programming_ids = '';
 	var programming_skills = [];
-	
-	post_request_data.salary = post_request_data['salary'].replace(/,/g, "");
 	for(let i=0;i<post_request_data.programming_skills.length;i++){
 		if(post_request_data.programming_skills[i] !=null &&post_request_data.programming_skills[i] !=undefined){
 			post_request_data.programming_skills[i] = post_request_data.programming_skills[i].replace(/\b\w/g, l => l.toUpperCase());
@@ -34,6 +32,7 @@ module.exports = function create(request, response) {
 			});
 		}
 	}
+	
     let schema = yup.object().shape({
         id: yup.number().positive().test('id', 'cant find any record', async(value) => {
             let query = { id: value, company: logged_in_user.employer_profile.id };

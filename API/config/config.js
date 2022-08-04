@@ -36,6 +36,7 @@ module.exports.conf = {
         app_id: process.env.onesignal_app_id
     },
     webapp: process.env.webapp,
+    appurl: process.env.appurl,
     stripe: {
         platform_secret_key: process.env.stripe_platform_secret_key
     },

@@ -19,7 +19,7 @@ module.exports = async function create(request, response) {
 	  url: request_data['event'],
 	  headers: {
 		'Content-Type': 'application/json',
-		Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNjUzNTU0ODIyLCJqdGkiOiJiOGJhN2QwNS03YmM2LTQyOTMtYjVmNS00MjY5NzJjNzc2YzgiLCJ1c2VyX3V1aWQiOiJBRERIVFlRMkxWQzNJS0RDIn0.ksDpazSm7zvCwgLh4-bTp_2se_eQlMbUOoVNiQDZltM'
+		Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNjU2Mzk4MTc5LCJqdGkiOiJmZjQ4OWZhZC1hNzY3LTRhOTctODljNS00Mjg5NjQyMmMxNjgiLCJ1c2VyX3V1aWQiOiJBRERIVFlRMkxWQzNJS0RDIn0.sZq6rOqFmoy6almKyGQnknWELPls5Z4dPInwuk6P3-M'
 	  }
 	};
 	
@@ -145,8 +145,7 @@ module.exports = async function create(request, response) {
 							postDetailss.user_id=datas['user'];
 							postDetailss.job_id=datas['job_posting'];
 							postDetailss.employer=datas['employer'];		
-							postDetailss.view=0;
-							
+							postDetailss.view=0;	
 							JobApplications.update(datas.id,_response_objects).then(async function(da){
 								var Query =`select user_profile.account,user_profile.first_name,user_profile.last_name,user_employment.title from job_applications
 LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_applications.user) 

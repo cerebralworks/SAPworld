@@ -128,10 +128,10 @@
                         <td bgcolor="#ffffff" align="left" style="padding: 20px; font-family: 'Lato', Helvetica, Arial, sans-serif;">
                             <div style=" border: 1px solid #ccc;  padding: 15px;  border-radius: 11px;">
                                 <h1 style="font-size: 20px; font-weight: 600; color:#536ab2; margin: 0 0 10px 0;text-transform: capitalize;">
-                                   HI,  
+                                  Hi <%= first_name %>&nbsp;<%= last_name %>, 
                                 </h1>
                                 <p style="font-size: 14px; font-weight: 600; color: #465666; margin: 0 0 5px 0;">
-									<%= email %> 
+									
 								</p>
                                 <p style="font-size: 14px; font-weight: 600; color: #465666; margin: 0 ;text-transform: capitalize;">
                                     
@@ -149,7 +149,7 @@
 									</td>
                                 </tr><tr>
                                     <td style="color: #777; font-weight: 500; padding: 0px 0 15px;">
-										Click the Change Password button to rest the password
+										Click the Change Password button to reset the password
 									</td>
                                 </tr>
                             </table>
@@ -163,7 +163,7 @@
                                     <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                         <table border="0" cellspacing="0" cellpadding="0">
                                             <tr>
-                                                <td align="center" style="border-radius: 10px;" bgcolor="#71b11e"><a href="<%= sails.config.conf.webapp %>/#/reset-password?id=<%= id %>&token=<%= token %>" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 10px; border: 1px solid #71b11e; display: inline-block;">Change Password</a></td>
+                                                <td align="center" style="border-radius: 10px;" bgcolor="#71b11e"><a href="<%= sails.config.conf.appurl %>/#/reset-password?id=<%= id %>&token=<%= token %>" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 10px; border: 1px solid #71b11e; display: inline-block;">Change Password</a></td>
                                             </tr>
                                         </table>
                                     </td>
@@ -192,7 +192,7 @@
                         <td bgcolor="#71b11e" align="center" style="padding: 30px 30px 30px 30px; border-radius: 0px 0px 10px 10px; color: #444; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 25px;">
                             <h2 style="font-size: 14px; font-weight: 400; color: #111111; margin: 0;color: #fff">Need more help?</h2>
                             <p style="margin: 0;"><a href="#" target="_blank" style="color: #fff;">We&rsquo;re here to help you out</a></p>
-                            <p style="margin: 0;"><a href="#" target="_blank" style="color: #fff;">www.sapworld.com</a></p>
+                            <p style="margin: 0;"><a href="#" target="_blank" style="color: #fff;">www.sapworld.io</a></p>
                         </td>
                     </tr>
                 </table>
