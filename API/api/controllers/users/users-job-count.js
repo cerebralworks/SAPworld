@@ -80,7 +80,7 @@ WHERE (job_posting.status = 1) AND scoring.user_id = ${filtered_query_data.id} A
 			}
 			if(filtered_query_data.view =='users_matches_details'){
 				//To get the job details Count
-				Count_Users = `SELECT job_posting.*,scoring.score,scoring.mail,job_app.status as jobstatus FROM user_employments "job_posting"
+				Count_Users = `SELECT job_posting.*,scoring.score,scoring.mail,job_app.status as jobstatus,job_app.others as otherss FROM user_employments "job_posting"
 CROSS JOIN user_profiles "user_profile" 
 LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id)
 LEFT JOIN job_applications "job_app" ON (job_app.job_posting = job_posting.id AND scoring.user_id = job_app.user)
