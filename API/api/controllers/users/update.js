@@ -70,12 +70,12 @@ module.exports = async function update(request, response) {
         current_employer_role: yup.string().required().lowercase(),
         domains_worked: yup.array().of(yup.number().positive()).required(),
         clients_worked: yup.array().of(yup.string()),
-        hands_on_experience: yup.array().of(yup.object().shape({
+        /*hands_on_experience: yup.array().of(yup.object().shape({
             skill_id: yup.number().required().positive(),
             skill_name: yup.string().required().lowercase(),
             experience: yup.number().required().positive(),
             exp_type: yup.string().required().lowercase().oneOf(['years', 'months']),
-        })).required(),
+        })).required(),*/
         skills: yup.array().of(yup.number().positive()),
         programming_skills: yup.array().of(yup.string()).required(),
         programming_id: yup.array().of(yup.string()),
@@ -163,6 +163,7 @@ module.exports = async function update(request, response) {
 	}
 	
    await schema.validate(post_request_data, { abortEarly: false }).then(async value => {
+	    
 		if(value.latlng['lng'] && value.latlng['lng'] !=undefined && value.latlng['lng'] !="undefined" &&
 		value.latlng['lat'] && value.latlng['lat'] !=undefined && value.latlng['lat'] !="undefined"){
 		var point = value.latlng['lng'] + ' ' + value.latlng['lat'];
@@ -183,6 +184,10 @@ module.exports = async function update(request, response) {
 		if(value.end_to_end_implementation ===undefined){
 			
 			value.end_to_end_implementation =null;
+		}
+		if(value.work_authorization ===undefined){
+			
+			value.work_authorization =null;
 		}
 		if(value.current_employer ===undefined){
 			
