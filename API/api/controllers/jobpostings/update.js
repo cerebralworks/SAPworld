@@ -386,6 +386,29 @@ module.exports = function create(request, response) {
 								arrayValue[i]['hands_on_experience'] =lengthDatas  * ScoreMasters['hands_on_experience'];
 								TotalCheckItems = TotalCheckItems +ScoreMasters['hands_on_experience'];
 							}
+							
+							if(updated_job['entry']==true){
+									if(updated_job['hands_on_experience'].length !=0){
+									if(!checkDetails.hands_on_skills || !checkDetails.hands_on_skills.length){
+										checkDetails.hands_on_skills=[];
+									}
+									var hands_on_Length = updated_job.hands_on_skills.filter(function(item, pos) {
+										return checkDetails.hands_on_skills.includes(item);
+									})
+									checkDetails.skills = checkDetails.skills.filter(function(item, pos) {
+										return !checkDetails.hands_on_skills.includes(item);
+									})
+									
+									var lengthDatas = (hands_on_Length.length/updated_job.hands_on_skills.length*100 );
+									arrayValue[i]['hands_on_experience'] =lengthDatas  * ScoreMasters['hands_on_experience'];
+									TotalCheckItems = TotalCheckItems +ScoreMasters['hands_on_experience'];
+										
+									}else{
+										arrayValue[i]['hands_on_experience'] =0;
+										
+									}	
+								}
+								
 							//END TO END IMPLEMENTATION CHECKING
 							if(!checkDetails['end_to_end_implementation']){
 								arrayValue[i]['end_to_end_implemention'] = 0;
@@ -601,7 +624,7 @@ module.exports = function create(request, response) {
 								}
 							}
 							if(updated_job['entry']==true){
-								arrayValue[i]['hands_on_experience'] =0;
+								//arrayValue[i]['hands_on_experience'] =0;
 								arrayValue[i]['sap_experience'] =0;
 							}
 							arrayValue[i]['score'] = Object.keys(arrayValue[i]).reduce((sum,key)=>sum+parseFloat(arrayValue[i][key]||0),0);
