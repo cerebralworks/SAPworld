@@ -98,8 +98,9 @@ module.exports = async function Scoring(request, response) {
             list_query.where("user_profile.status=1");
             list_query.where("user_profile.experience >=" + model.experience);
 			list_query.left_join(`scorings "scoring" ON (scoring.user_id = user_profile.id) `);
+			list_query.left_join(`users "users" ON (users.user_profile =user_profile.id )`);
 			//list_query.left_join(`job_location "job_locations" ON (job_locations.id = scoring.location_id)  `);
-			
+			list_query.where("users.status =1");
 			list_query.where("scoring.job_id =" +value.id );
 			//list_query.where("scoring.location_id =" +post_request_data.location_id );
 			list_query.where("scoring.user_id  = user_profile.id" );

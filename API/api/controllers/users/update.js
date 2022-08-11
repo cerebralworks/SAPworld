@@ -70,12 +70,12 @@ module.exports = async function update(request, response) {
         current_employer_role: yup.string().required().lowercase(),
         domains_worked: yup.array().of(yup.number().positive()).required(),
         clients_worked: yup.array().of(yup.string()),
-        hands_on_experience: yup.array().of(yup.object().shape({
+        /*hands_on_experience: yup.array().of(yup.object().shape({
             skill_id: yup.number().required().positive(),
             skill_name: yup.string().required().lowercase(),
             experience: yup.number().required().positive(),
             exp_type: yup.string().required().lowercase().oneOf(['years', 'months']),
-        })).required(),
+        })).required(),*/
         skills: yup.array().of(yup.number().positive()),
         programming_skills: yup.array().of(yup.string()).required(),
         programming_id: yup.array().of(yup.string()),
@@ -99,7 +99,9 @@ module.exports = async function update(request, response) {
         }),
     });
 	if(post_request_data.entry==true){
-		post_request_data.hands_on_experience={};
+		/*if(post_request_data.hands_on_experience.length==0){
+		    post_request_data.hands_on_experience={};
+		}*/
 		
 		//console.log(programming_id);
     schema = yup.object().shape({
@@ -163,6 +165,7 @@ module.exports = async function update(request, response) {
 	}
 	
    await schema.validate(post_request_data, { abortEarly: false }).then(async value => {
+	    
 		if(value.latlng['lng'] && value.latlng['lng'] !=undefined && value.latlng['lng'] !="undefined" &&
 		value.latlng['lat'] && value.latlng['lat'] !=undefined && value.latlng['lat'] !="undefined"){
 		var point = value.latlng['lng'] + ' ' + value.latlng['lat'];
@@ -183,6 +186,10 @@ module.exports = async function update(request, response) {
 		if(value.end_to_end_implementation ===undefined){
 			
 			value.end_to_end_implementation =null;
+		}
+		if(value.work_authorization ===undefined){
+			
+			value.work_authorization =null;
 		}
 		if(value.current_employer ===undefined){
 			
@@ -480,6 +487,7 @@ module.exports = async function update(request, response) {
 										TotalCheckItems = TotalCheckItems +ScoreMasters['skills'];
 									}
 								}
+								//console.log(updated_job);
 								//HANDS ON EXPERIENCE CHECKING
 								if(updated_job['entry']!=true){
 									if(!checkDetails.hands_on_skills || !checkDetails.hands_on_skills.length){
@@ -498,6 +506,28 @@ module.exports = async function update(request, response) {
 													(hands_on_Length_skills.length/updated_job.hands_on_skills.length*25 ))
 									arrayValue[i]['hands_on_experience'] =lengthDatas  * ScoreMasters['hands_on_experience'];
 									TotalCheckItems = TotalCheckItems +ScoreMasters['hands_on_experience'];
+								}
+								if(updated_job['entry']==true){
+									if(updated_job['hands_on_experience'].length !=0){
+									if(!checkDetails.hands_on_skills || !checkDetails.hands_on_skills.length){
+										checkDetails.hands_on_skills=[];
+									}
+									var hands_on_Length = updated_job.hands_on_skills.filter(function(item, pos) {
+										return checkDetails.hands_on_skills.includes(item);
+									})
+									checkDetails.skills = checkDetails.skills.filter(function(item, pos) {
+										return !checkDetails.hands_on_skills.includes(item);
+									})
+									var lengthDatas = (hands_on_Length.length/updated_job.hands_on_skills.length*100 );
+									arrayValue[i]['hands_on_experience'] =lengthDatas  * ScoreMasters['hands_on_experience'];
+									TotalCheckItems = TotalCheckItems +ScoreMasters['hands_on_experience'];
+										
+									}else{
+										arrayValue[i]['hands_on_experience'] =0;
+										
+									}
+									
+									
 								}
 								//END TO END IMPLEMENTATION CHECKING
 								if(!checkDetails['end_to_end_implementation']){
@@ -714,7 +744,7 @@ module.exports = async function update(request, response) {
 									}
 								}
 								if(updated_job['entry']==true){
-									arrayValue[i]['hands_on_experience'] =0;
+									//arrayValue[i]['hands_on_experience'] =0;
 									arrayValue[i]['sap_experience'] =0;
 								}
 								arrayValue[i]['score'] = Object.keys(arrayValue[i]).reduce((sum,key)=>sum+parseFloat(arrayValue[i][key]||0),0);
