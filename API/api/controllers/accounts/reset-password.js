@@ -48,7 +48,9 @@ module.exports = function updatePassword(request, response) {
                                 return response.status(500).json(_response_object);
                             });
                         }else{
+							
                             _response_object.message = 'Password has been resetted successfully.';
+							_response_object.user= user[0].types[0];
                             return response.status(200).json(_response_object);
                         }
                     });
