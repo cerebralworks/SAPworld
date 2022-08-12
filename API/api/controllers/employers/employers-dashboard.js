@@ -122,19 +122,23 @@ WHERE job_posting.id = job_postings.id   ${filterDate}  AND (job_applications.st
 (SELECT COUNT(DISTINCT job_applicationss.id) FROM  job_applications "job_applicationss" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationss.job_posting)
 lEFT JOIN users "userss" ON (userss.user_profile =job_applicationss.user ) 
-WHERE  job_posting.id = job_postings.id ${filterUpdatedDate}   AND (job_applicationss.short_listed = true AND (job_applicationss.status !=  2 AND job_applicationss.status !=  4)) AND (job_applicationss.employer=${parseInt(filtered_query_data.id)} ) AND (userss.status =1)) as shortlist,
+WHERE  job_posting.id = job_postings.id ${filterUpdatedDate}   AND (job_applicationss.short_listed = true) AND (job_applicationss.employer=${parseInt(filtered_query_data.id)} ) AND (userss.status =1)) as shortlist,
 
 (SELECT COUNT(DISTINCT job_applicationsss.id) FROM  job_applications "job_applicationsss" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationsss.job_posting) 
- WHERE job_posting.id = job_postings.id  ${filterUpdatedDate}  AND (job_applicationsss.short_listed = true AND job_applicationsss.status =  2 )   AND (job_applicationsss.employer=${parseInt(filtered_query_data.id)} ) ) as hired,
+ WHERE job_posting.id = job_postings.id  ${filterUpdatedDate}  AND (job_applicationsss.short_listed = true AND job_applicationsss.status =  10 )   AND (job_applicationsss.employer=${parseInt(filtered_query_data.id)} ) ) as hired,
  
  (SELECT COUNT(DISTINCT job_applicationsss.id) FROM  job_applications "job_applicationsss" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationsss.job_posting) 
- WHERE job_posting.id = job_postings.id  ${filterUpdatedDate}  AND (job_applicationsss.short_listed = true AND job_applicationsss.status =  4 )   AND (job_applicationsss.employer=${parseInt(filtered_query_data.id)} ) ) as rejected,
+ WHERE job_posting.id = job_postings.id  ${filterUpdatedDate}  AND (job_applicationsss.short_listed = true AND job_applicationsss.status =  9 )   AND (job_applicationsss.employer=${parseInt(filtered_query_data.id)} ) ) as accepted,
  
  (SELECT COUNT(DISTINCT job_applicationsss.id) FROM  job_applications "job_applicationsss" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationsss.job_posting) 
- WHERE job_posting.id = job_postings.id  ${filterUpdatedDate}  AND (job_applicationsss.short_listed = true AND job_applicationsss.status =  5 )   AND (job_applicationsss.employer=${parseInt(filtered_query_data.id)} ) ) as holdon,
+ WHERE job_posting.id = job_postings.id  ${filterUpdatedDate}  AND (job_applicationsss.short_listed = true AND job_applicationsss.status =  8 )   AND (job_applicationsss.employer=${parseInt(filtered_query_data.id)} ) ) as rejected,
+ 
+ (SELECT COUNT(DISTINCT job_applicationsss.id) FROM  job_applications "job_applicationsss" 
+LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationsss.job_posting) 
+ WHERE job_posting.id = job_postings.id  ${filterUpdatedDate}  AND (job_applicationsss.short_listed = true AND job_applicationsss.status =  7 )   AND (job_applicationsss.employer=${parseInt(filtered_query_data.id)} ) ) as holdon,
  
  (SELECT COUNT(DISTINCT job_applicationsss.id) FROM  job_applications "job_applicationsss" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationsss.job_posting) 
