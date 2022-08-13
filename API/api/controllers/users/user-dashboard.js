@@ -19,11 +19,11 @@ module.exports = async function UserDashboard(request, response) {
 			if(filtered_query_data.city){
 				countryQuery = `AND locations.country = ANY('{ ${filtered_query_data.city} }')`;
 			}
-			filterDate = ``;
+			/*filterDate = ``;
 			if(filtered_query_data.startDate && filtered_query_data.endDate){
 				filterDate =`AND (job_posting.updated_at between  '${filtered_query_data.startDate.toString()}' AND '${filtered_query_data.endDate.toString()}' )`;
 			}
-			statusFilter =[];
+			
 			
 			if(filtered_query_data.isActive ==true ||filtered_query_data.isActive =='true' ){
 				statusFilter.push(1);
@@ -37,13 +37,14 @@ module.exports = async function UserDashboard(request, response) {
 			if(filtered_query_data.isPaused ==true ||filtered_query_data.isPaused =='true' ){
 				statusFilter.push(98);
 			}
-			
+			statusFilter =[];
 			filterStatus = ``;
 			if(statusFilter.length !=0){
 				filterStatus = `(job_posting.status = ANY('{${statusFilter}}') ) `
 			}else{
-				filterStatus = `(job_posting.status = ANY('{1,98}') ) `
-			}
+				
+			}*/
+			filterStatus = `(job_posting.status = ANY('{1,98}') ) `
 			if(filtered_query_data.view =='matches'){
 				//To get the Matched city based Details
 				Query = `SELECT  locations.country as city,count(distinct(job_posting.id)) FROM user_employments "job_posting"
@@ -51,7 +52,7 @@ module.exports = async function UserDashboard(request, response) {
 				LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
 				LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id)
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
-				WHERE ${filterStatus} ${filterDate} AND 
+				WHERE ${filterStatus} AND 
 				scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id
 				AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by locations.country `
 			}
@@ -84,7 +85,7 @@ module.exports = async function UserDashboard(request, response) {
 				LEFT JOIN users "user_account" ON (user_account.id=user_profile.account) 
 				LEFT JOIN scorings "scoring" ON (scoring.user_id = user_profile.id) 
 				LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id)
-				WHERE  ${filterStatus}   ${filterDate} AND
+				WHERE  ${filterStatus} AND
 				(user_account.status=1)  AND 
 				scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id   AND job_posting.visa_sponsorship = true  
 				AND (COALESCE(user_profile.experience) >= job_posting.experience) AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by locations.country`
@@ -95,7 +96,7 @@ module.exports = async function UserDashboard(request, response) {
 				LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 	
 				LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) 
 				LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id)
-				WHERE  ${filterStatus}  ${filterDate} AND (user_profile.id=${parseInt(filtered_query_data.id)} )   ${countryQuery} 
+				WHERE job_posting.status = ANY('{0,1,3,98}') AND (user_profile.id=${parseInt(filtered_query_data.id)} )   ${countryQuery} 
 				 group by locations.country `
 			}
 			if(filtered_query_data.view == 'interview'){
@@ -104,7 +105,7 @@ module.exports = async function UserDashboard(request, response) {
 				LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 	
 				LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) 
 				LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id)
-				WHERE  ${filterStatus}  ${filterDate} AND
+				WHERE  ${filterStatus} AND
 				(job_application.short_listed = true AND (job_application.status =  2 OR job_application.status =  4 OR job_application.status =  6 )) AND
 				(user_profile.id=${parseInt(filtered_query_data.id)} )   ${countryQuery} 
 				 group by locations.country `
@@ -115,7 +116,7 @@ module.exports = async function UserDashboard(request, response) {
 				LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 	
 				LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) 
 				LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id)
-				WHERE  ${filterStatus}  ${filterDate} AND
+				WHERE  ${filterStatus} AND
 				(job_application.short_listed = true) AND
 				(user_profile.id=${parseInt(filtered_query_data.id)} )   ${countryQuery} 
 				 group by locations.country `				
