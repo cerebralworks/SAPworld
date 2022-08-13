@@ -55,7 +55,7 @@ module.exports = async function UserDashboard(request, response) {
 				scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id
 				AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by locations.country `
 			}
-			if(filtered_query_data.view =='availability'){
+			/*if(filtered_query_data.view =='availability'){
 				//To get the Matched availability based Details
 				Query = `SELECT  job_posting.availability,count(distinct(job_posting.id)) FROM user_employments "job_posting"
 				CROSS JOIN user_profiles "user_profile" 
@@ -76,7 +76,7 @@ module.exports = async function UserDashboard(request, response) {
 				WHERE  ${filterStatus}  ${filterDate}   ${countryQuery}  AND 
 				scoring.user_id = user_profile.id AND scoring.job_id = job_posting.id
 				AND (user_profile.id=${parseInt(filtered_query_data.id)}) group by job_posting.type `
-			}
+			}*/
 			if(filtered_query_data.view =='visa'){
 				//To get the Matched type based Details
 				Query = `SELECT  locations.country as city,count(distinct(job_posting.id)) FROM user_employments "job_posting"
@@ -97,6 +97,28 @@ module.exports = async function UserDashboard(request, response) {
 				LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id)
 				WHERE  ${filterStatus}  ${filterDate} AND (user_profile.id=${parseInt(filtered_query_data.id)} )   ${countryQuery} 
 				 group by locations.country `
+			}
+			if(filtered_query_data.view == 'interview'){
+				//To get the User INterview status 
+				Query=`SELECT  locations.country as city,count(distinct(job_posting.id)) FROM job_applications "job_application"
+				LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 	
+				LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) 
+				LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id)
+				WHERE  ${filterStatus}  ${filterDate} AND
+				(job_application.short_listed = true AND (job_application.status =  2 OR job_application.status =  4 OR job_application.status =  6 )) AND
+				(user_profile.id=${parseInt(filtered_query_data.id)} )   ${countryQuery} 
+				 group by locations.country `
+			}
+			if(filtered_query_data.view == 'shortlisted'){
+				//To get the User shortlisted status 
+					Query=`SELECT  locations.country as city,count(distinct(job_posting.id)) FROM job_applications "job_application"
+				LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 	
+				LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) 
+				LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id)
+				WHERE  ${filterStatus}  ${filterDate} AND
+				(job_application.short_listed = true) AND
+				(user_profile.id=${parseInt(filtered_query_data.id)} )   ${countryQuery} 
+				 group by locations.country `				
 			}
 			
 			sails.sendNativeQuery(Query, async function(err, details) {
