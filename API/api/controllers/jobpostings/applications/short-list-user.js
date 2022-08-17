@@ -76,11 +76,14 @@ module.exports = async function update(request, response) {
 						postDetails.message='Your interview is scheduled for the /'+job.title+'/ position';
 					}else{
 					var statusCheck = application_status[0]['status'].toLowerCase();
-					var commentsCheck = application_status[0]['comments'].toLowerCase().trim();
-					if(commentsCheck.length !=0){
+					//var commentsCheck = application_status[0]['comments'].toLowerCase().trim();
+					var commentsCheck = application_status[0]['comments'];
+					if(commentsCheck.length !=0 && commentsCheck !=' '){
 						postDetails.message='Your application for the /'+job.title+'/ status is '+statusCheck + '  and got a new message';
+						_response_object.message = 'Message sent successfully.';
 					}else{
 						postDetails.message='Your application for the /'+job.title+'/ status is changed to '+statusCheck;
+						_response_object.message = 'Job application status changed successfully.';
 					}
 					}
 					postDetails.title= "New schedule status";
@@ -142,12 +145,12 @@ module.exports = async function update(request, response) {
 				postDetails.message='Your application for the /'+job.title+'/ got a invite link for the  '+statusCheck +' status';
 				postDetails.title='New Invite Link';
 				var meetTitle = 'An employer send an invite link to schedule interview';
-				_response_object.message = 'successfully send the invite link to user ';
+				_response_object.message = 'Successfully send the invite link to user ';
 				if(logged_in_user.meeting){
 					postDetails.message='Your application for the /'+job.title+'/ got a meeting link for the  '+statusCheck +' status';
 					postDetails.title='New Meeting Link';	
 					meetTitle = 'An employer send an meeting link for the ' +statusCheck;
-				_response_object.message = 'successfully send the meeting link to user ';
+				_response_object.message = 'Successfully send the meeting link to user ';
 				}
 				//To send mail
                 job['applicationId'] = details.id;
