@@ -142,7 +142,7 @@ LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationsss.j
  
  (SELECT COUNT(DISTINCT job_applicationsss.id) FROM  job_applications "job_applicationsss" 
 LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_applicationsss.job_posting) 
- WHERE job_posting.id = job_postings.id  ${filterUpdatedDate}  AND (job_applicationsss.short_listed = true AND (job_applicationsss.status =  2 OR job_applicationsss.status =  4 OR job_applicationsss.status =  6 ))   AND (job_applicationsss.employer=${parseInt(filtered_query_data.id)} ) ) as interviewed,
+ WHERE job_posting.id = job_postings.id  ${filterUpdatedDate}  AND (job_applicationsss.short_listed = true AND (job_applicationsss.status =  3  ))   AND (job_applicationsss.employer=${parseInt(filtered_query_data.id)} ) ) as interviewed,
 
 job_postings.id,job_postings.title FROM  user_employments "job_postings" 
 where ${filterStatuss}  ${filterDates} AND job_postings.company = ${parseInt(filtered_query_data.id)}  `
