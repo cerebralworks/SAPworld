@@ -96,7 +96,7 @@ module.exports = async function UserDashboard(request, response) {
 				LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 	
 				LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) 
 				LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id)
-				WHERE job_posting.status = ANY('{0,1,3,98}') AND (user_profile.id=${parseInt(filtered_query_data.id)} )   ${countryQuery} 
+				WHERE  ${filterStatus}  AND (user_profile.id=${parseInt(filtered_query_data.id)} )   ${countryQuery} 
 				 group by locations.country `
 			}
 			if(filtered_query_data.view == 'interview'){
@@ -105,8 +105,8 @@ module.exports = async function UserDashboard(request, response) {
 				LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 	
 				LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) 
 				LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id)
-				WHERE  ${filterStatus} AND
-				(job_application.short_listed = true AND (job_application.status =  2 OR job_application.status =  4 OR job_application.status =  6 )) AND
+				WHERE job_posting.status = ANY('{0,1,98}') AND
+				(job_application.short_listed = true AND (job_application.status =  2 )) AND
 				(user_profile.id=${parseInt(filtered_query_data.id)} )   ${countryQuery} 
 				 group by locations.country `
 			}
@@ -116,8 +116,8 @@ module.exports = async function UserDashboard(request, response) {
 				LEFT JOIN user_employments "job_posting" ON (job_posting.id=job_application.job_posting) 	
 				LEFT JOIN user_profiles "user_profile" ON (user_profile.id=job_application.user) 
 				LEFT JOIN job_location "locations" ON (locations.jobid= job_posting.id)
-				WHERE  ${filterStatus} AND
-				(job_application.short_listed = true) AND
+				WHERE job_posting.status = ANY('{0,1,98}') AND
+				(job_application.short_listed = true AND (job_application.status =  3 )) AND
 				(user_profile.id=${parseInt(filtered_query_data.id)} )   ${countryQuery} 
 				 group by locations.country `				
 			}
