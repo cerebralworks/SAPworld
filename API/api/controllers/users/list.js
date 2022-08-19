@@ -333,7 +333,7 @@ module.exports = async function list(request, response) {
                    // where(`${JobApplications.tableAlias}.${JobApplications.schema.job_location.columnName} = ${JobLocation.tableAlias}.${JobLocation.schema.id.columnName}`).
 				    //where(`${JobApplications.tableAlias}.${JobApplications.schema.job_location.columnName} = ${JobLocation.tableAlias}.${JobLocation.schema.id.columnName}`).
 					where(`${JobApplications.tableAlias}.${JobApplications.schema.user.columnName} = ${UserProfiles.tableAlias}.${UserProfiles.schema.id.columnName}`).
-                    where(`${JobApplications.tableAlias}.${JobApplications.schema.status.columnName} !=${row_deleted_sign}`).
+                    //where(`${JobApplications.tableAlias}.${JobApplications.schema.status.columnName} !=${row_deleted_sign}`).
                     limit(1);
                     query.field(`(${sub_query.toString()})`, 'job_application');
                 }

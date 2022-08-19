@@ -63,7 +63,7 @@ module.exports = async function update(request, response) {
 		var postDetails = {};
 		postDetails.name=job.title;
          if (_.get(details, 'short_listed')) {
-			 if(!post_request_data.apps && details['status'] !=1){
+			 if(!post_request_data.apps && details['status'] ==1){
 			_response_object.message = 'Job application have been added to the short list successfully.';
 			 }
 			postDetails.message='Your profile is shortlisted for the position - /'+postDetails.name;
