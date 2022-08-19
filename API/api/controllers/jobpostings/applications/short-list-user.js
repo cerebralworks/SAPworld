@@ -63,7 +63,7 @@ module.exports = async function update(request, response) {
 		var postDetails = {};
 		postDetails.name=job.title;
          if (_.get(details, 'short_listed')) {
-			 if(!post_request_data.apps){
+			 if(!post_request_data.apps && details['status'] ==1){
 			_response_object.message = 'Job application have been added to the short list successfully.';
 			 }
 			postDetails.message='Your profile is shortlisted for the position - /'+postDetails.name;
@@ -74,6 +74,14 @@ module.exports = async function update(request, response) {
 				if(application_status.length!=0){
 					if(details['status'] === 3){
 						postDetails.message='Your interview is scheduled for the /'+job.title+'/ position';
+						var commentsCheck1 = application_status[0]['comments'];
+					if(commentsCheck1.length !=0 && commentsCheck1 !=' '){
+						
+						_response_object.message = 'Message sent successfully.';
+					}else{
+						
+						_response_object.message = 'Job application status changed successfully.';
+					}
 					}else{
 					var statusCheck = application_status[0]['status'].toLowerCase();
 					//var commentsCheck = application_status[0]['comments'].toLowerCase().trim();
