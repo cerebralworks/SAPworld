@@ -105,10 +105,15 @@ module.exports = async function apply(request, response) {
 			{id: 1003, text: 'Freelance'},
 			{id: 1004, text: 'Internship'},
 		  ];
-		var exprience_map = user.hands_on_experience.map(function(value) {
-            return value.skill_name.split('-')[0];
-        });
-        job.hands_on_experience = exprience_map;
+		  if(user.data['hands_on_skills'].length ===0){
+			  job.hands_on_experience = [];
+			  
+		  }else{
+				var exprience_map = user.hands_on_experience.map(function(value) {
+					return value.skill_name.split('-')[0];
+				});
+              job.hands_on_experience = exprience_map;
+		  }
         await SkillTags.find({ id: user.skills }).then(skill => {
             user.skills = skill.map(function(value) {
                 return value.tag.split('-')[0];
