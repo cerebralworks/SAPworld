@@ -117,7 +117,7 @@
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 700px;">
                     <tr>
                         <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 10px 10px 0px 0px;">
-							 <!-- LOGO IMAGE--> <img src="<%= sails.config.conf.appurl %>/assets/images/logo.png"  width="180" style="display: block; border: 0px;" />							
+							 <!-- LOGO IMAGE--> <img src="<%= sails.config.conf.webapp %>/assets/images/logo.png"  width="180" style="display: block; border: 0px;" />							
                         </td>
                     </tr>
                 </table>
@@ -161,44 +161,56 @@
                                         <%= sap_experience %> Years</td>
                                 </tr>
                                 <tr>
+								<% if(domain.length != 0) { %>
                                     <td width="40%" style="color: #777; font-weight: 500; padding: 0px 0 15px;">Domain Experience in</td>
                                     <td width="60%" style="color: #333; font-weight: 600; padding: 0px 0 15px;text-transform: capitalize;">
                                         <%= domain.join(',') %>
                                     </td>
+								<% } %>
                                 </tr>
                                 <tr>
+								<% if(hands_on_experience.length != 0) { %>
                                     <td width="40%" style="color: #777; font-weight: 500; padding: 0px 0 15px;">Hands on Experience</td>
                                     <td width="60%" style="color: #333; font-weight: 600; padding: 0px 0 15px;text-transform: capitalize;">
                                         <%= hands_on_experience %>
                                     </td>
+								<% } %>
                                 </tr>
                                 <tr style="padding:0; border-bottom: 1px solid #ddd;">
                                     <td colspan="2"></td>
                                 </tr>
 
                                 <tr>
+								<% if(skills.length != 0) { %>
                                     <td width="40%" style="color: #777; font-weight: 500; padding: 15px 0 15px;">Knowledge on</td>
                                     <td width="60%" style="color: #333; font-weight: 600; padding: 15px 0 15px;">
                                         <%= skills.join(',') %>
                                     </td>
+									<% } %>
                                 </tr>
                                 <tr>
+								<% if(programming_skills.length != 0) { %>
                                     <td width="40%" style="color: #777; font-weight: 500; padding: 0px 0 15px;">Programming Skills</td>
                                     <td width="60%" style="color: #333; font-weight: 600; padding: 0px 0 15px;">
                                         <%= programming_skills.join(',') %>
                                     </td>
+									<% } %>
                                 </tr>
                                 <tr>
+								<% if(optinal_skills.length != 0) { %>
                                     <td width="40%" style="color: #777; font-weight: 500; padding: 0px 0 15px;">Nice to have</td>
                                     <td width="60%" style="color: #333; font-weight: 600; padding: 0px 0 15px;">
                                         <%= optinal_skills.join(',') %>
                                     </td>
+									<% } %>
                                 </tr>
                                 <tr>
+								<% if(certification.length != 0) { %>
                                     <td width="40%" style="color: #777; font-weight: 500; padding: 0px 0 15px;">Certification</td>
                                     <td width="60%" style="color: #333; font-weight: 600; padding: 0px 0 15px;">
                                         <%= certification.join(',') %>
                                     </td>
+									<% } %>
                                 </tr>
                                 <tr style="padding:0; border-bottom: 1px solid #ddd;">
                                     <td colspan="2"></td>
@@ -259,7 +271,7 @@
                                     <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                         <table border="0" cellspacing="0" cellpadding="0">
                                             <tr>
-                                                <td align="center" style="border-radius: 10px;" bgcolor="#71b11e"><a href="<%= sails.config.conf.appurl %>/#/user/candidate-job-view/details?id=<%= id %>&show=apply " target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 10px; border: 1px solid #71b11e; display: inline-block;">Click here to view</a></td>
+                                                <td align="center" style="border-radius: 10px;" bgcolor="#71b11e"><a href="<%= sails.config.conf.webapp %>/#/user/candidate-job-view/details?id=<%= id %>&show=apply " target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 10px; border: 1px solid #71b11e; display: inline-block;">Click here to view</a></td>
                                             </tr>
                                         </table>
                                     </td>
@@ -288,7 +300,7 @@
                         <td bgcolor="#71b11e" align="center" style="padding: 30px 30px 30px 30px; border-radius: 0px 0px 10px 10px; color: #444; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 25px;">
                             <h2 style="font-size: 14px; font-weight: 400; color: #111111; margin: 0;color: #fff">Need more help?</h2>
                             <p style="margin: 0;"><a href="#" target="_blank" style="color: #fff;">We&rsquo;re here to help you out</a></p>
-                            <p style="margin: 0;"><a href="<%= sails.config.conf.appurl %>" target="_blank" style="color: #fff;">www.sapworld.com</a></p>
+                            <p style="margin: 0;"><a href="#" target="_blank" style="color: #fff;">www.sapworld.com</a></p>
                         </td>
                     </tr>
                 </table>
