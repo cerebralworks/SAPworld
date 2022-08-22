@@ -119,12 +119,16 @@ module.exports = async function apply(request, response) {
                 return value.tag.split('-')[0];
             });
         });
+		if( job.hands_on_experience.length === 0){
+			job.skills = user.skills.filter(function(a,b){ return a.toLocaleUpperCase() });
+		}else{
 		for(let i=0;i<job.hands_on_experience.length;i++){
 			var hands_on_experience_data = job.hands_on_experience[i].toLocaleUpperCase();
 			var CheckData = user.skills.filter(function(a,b){ return a.toLocaleUpperCase() == hands_on_experience_data.toLocaleUpperCase()});
 			if(CheckData.length !=0){
 				job.skills = user.skills.filter(function(a,b){ return a.toLocaleUpperCase() != hands_on_experience_data.toLocaleUpperCase()});
 			}
+		}
 		}
         await Industries.find({ id: user.domains_worked }).then(domain => {
             job.domain = domain.map(function(value) {
