@@ -45,7 +45,7 @@ module.exports = async function update(request, response) {
         state: yup.string().required().lowercase(),
         city: yup.string().required().lowercase(),
         zipcode: yup.string().required(),
-        phone: yup.string().matches(/^([0|\+[0-9]{1,5})?([0-9]{10})$/, 'Mobile number must be like +919999999999'),
+        phone: yup.string().matches(new RegExp('[0-9]')),
         /* latlng: yup.object().shape({
             lat: yup.number().min(-90).max(90),
             lng: yup.number().min(-180).max(180),
@@ -117,7 +117,7 @@ module.exports = async function update(request, response) {
         state: yup.string().required().lowercase(),
         city: yup.string().required().lowercase(),
         zipcode: yup.string().required(),
-        phone: yup.string().matches(/^([0|\+[0-9]{1,5})?([0-9]{10})$/, 'Mobile number must be like +919999999999'),
+        phone: yup.string().matches(new RegExp('[0-9]')),
         /* latlng: yup.object().shape({
             lat: yup.number().min(-90).max(90),
             lng: yup.number().min(-180).max(180),
