@@ -119,22 +119,21 @@ module.exports = async function update(request, response) {
 						postDetails.message='Your application for the /'+job.title+'/ got a meeting link for the  '+statusCheck +' status';
 						postDetails.title='New Meeting Link';	
 						_response_object.message = 'successfully send the meeting link to user ';
-						var idate= new Date();
-						 idate = new Date(application_status[0]['interviewdate']).toDateString();
-						var idate2=application_status[0]['interviewdate'];
+						 var idate = new Date(application_status[0]['interviewdate']).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"});
 						var a = idate+' '+application_status[0]['interviewtime'];
 						var itime1 = new Date(a).toLocaleTimeString([], {timeStyle: 'short'});
 						var b = idate+' '+application_status[0]['interviewendtime'];
 						var itime2 = new Date(b).toLocaleTimeString([], {timeStyle: 'short'});
+						var zone=application_status[0]['zone'];
 						//To send mail
 						job['applicationId'] = details.id;
 						job['username'] = profile.first_name+' '+profile.last_name;
 						job['job_status'] = statusCheck;
 						job['meeting_link'] = application_status[0]['link'];
 						job['interview_date'] = idate;
-						job['interview_date_default'] = idate2;
 						job['interview_time'] = itime1;
 						job['interviewendtime'] = itime2;
+						job['zone'] = zone;
 						const mail_data = {
 							template: 'jobpostings/invite',
 							data:job ,
