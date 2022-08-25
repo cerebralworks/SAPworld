@@ -120,6 +120,8 @@ module.exports = async function update(request, response) {
 						postDetails.title='New Meeting Link';	
 						_response_object.message = 'successfully send the meeting link to user ';
 						var idate = new Date(application_status[0]['interviewdate']).toDateString();
+						console.log('idate',idate);
+						console.log('idate2',application_status[0]['interviewdate']);
 						var a = idate+' '+application_status[0]['interviewtime'];
 						var itime1 = new Date(a).toLocaleTimeString([], {timeStyle: 'short'});
 						var b = idate+' '+application_status[0]['interviewendtime'];
