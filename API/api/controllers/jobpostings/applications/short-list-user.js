@@ -75,6 +75,7 @@ module.exports = async function update(request, response) {
 					if(details['status'] === 3){
 						postDetails.message='Your interview is scheduled for the /'+job.title+'/ position';
 						var commentsCheck1 = application_status[0]['comments'];
+						var statusCheck = application_status[0]['status'].toLowerCase();
 					if(commentsCheck1.length !=0 && commentsCheck1 !=' '){
 						
 						_response_object.message = 'Message sent successfully.';
