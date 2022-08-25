@@ -119,9 +119,8 @@ module.exports = async function update(request, response) {
 						postDetails.message='Your application for the /'+job.title+'/ got a meeting link for the  '+statusCheck +' status';
 						postDetails.title='New Meeting Link';	
 						_response_object.message = 'successfully send the meeting link to user ';
-						var idate = new Date(application_status[0]['interviewdate']).toDateString();
-						console.log('idate',idate);
-						console.log('idate2',application_status[0]['interviewdate']);
+						var idate= new Date();
+						 idate = new Date(application_status[0]['interviewdate']).toDateString();
 						var a = idate+' '+application_status[0]['interviewtime'];
 						var itime1 = new Date(a).toLocaleTimeString([], {timeStyle: 'short'});
 						var b = idate+' '+application_status[0]['interviewendtime'];
