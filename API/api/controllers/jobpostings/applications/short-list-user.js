@@ -120,14 +120,17 @@ module.exports = async function update(request, response) {
 						_response_object.message = 'successfully send the meeting link to user ';
 						var idate = new Date(application_status[0]['interviewdate']).toDateString();
 						var a = idate+' '+application_status[0]['interviewtime'];
-						var itime = new Date(a).toLocaleTimeString([], {timeStyle: 'short'});
+						var itime1 = new Date(a).toLocaleTimeString([], {timeStyle: 'short'});
+						var b = idate+' '+application_status[0]['interviewendtime'];
+						var itime2 = new Date(b).toLocaleTimeString([], {timeStyle: 'short'});
 						//To send mail
 						job['applicationId'] = details.id;
 						job['username'] = profile.first_name+' '+profile.last_name;
 						job['job_status'] = statusCheck;
 						job['meeting_link'] = application_status[0]['link'];
 						job['interview_date'] = idate;
-						job['interview_time'] = itime;
+						job['interview_time'] = itime1;
+						job['interviewendtime'] = itime2;
 						const mail_data = {
 							template: 'jobpostings/invite',
 							data:job ,
@@ -268,6 +271,7 @@ module.exports = async function update(request, response) {
 									link: val.link,
 									interviewdate :val.interviewdate,
 									interviewtime : val.interviewtime,
+									interviewendtime : val.interviewendtime,
 									zone :val.zone
 								  }
 								});
