@@ -60,7 +60,7 @@ module.exports = async function update(request, response) {
         preferred_locations: yup.array().of(
             yup.object().shape({
                 city: yup.string().lowercase(),
-                state: yup.string().lowercase(),
+                state: yup.string().lowercase().nullable(true),
                 country: yup.string().lowercase()
             })
         ).default([]),
@@ -132,7 +132,7 @@ module.exports = async function update(request, response) {
         preferred_locations: yup.array().of(
             yup.object().shape({
                 city: yup.string().lowercase(),
-                state: yup.string().lowercase(),
+                state: yup.string().lowercase().nullable(true),
                 country: yup.string().lowercase()
             })
         ).default([]),
