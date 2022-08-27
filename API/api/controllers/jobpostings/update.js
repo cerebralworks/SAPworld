@@ -61,7 +61,7 @@ module.exports = function create(request, response) {
         }).required(),
 		job_locations: yup.array().of(yup.object().shape({
             country: yup.string().required().lowercase(),
-			state: yup.string().required().lowercase(),
+			state: yup.string().lowercase().nullable(true),
 			city: yup.string().required().lowercase(),
 			stateshort: yup.string().required().uppercase(),
 			countryshort: yup.string().required().uppercase(),
@@ -135,13 +135,13 @@ module.exports = function create(request, response) {
 						 await JobLocation.destroy({id: { in: del }}).then()
 						 
 					 }
-					
+					return callback(job[0]);
 				})
 				//var checkDetailsLocation = await JobLocation.find({'jobid' : job[0]['id']});
 				//var insertElement = {'job_locations':checkDetailsLocation};
 				//var insertData = await JobPostings.update(job[0]['id'], insertElement);
 				//console.log(insertData);
-                return callback(job[0]);
+               // return callback(job[0]);
             }
         });
     };
@@ -214,6 +214,7 @@ module.exports = function create(request, response) {
 				}
 				var del = await Scoring.destroy({ job_id: updated_job.id });
 				sails.sendNativeQuery(Count_Users, async function(err, Count_Users_value) {
+					//console.log(Count_Users_value);
 				if (err) {
 					var error = {
 						'field': 'items',
