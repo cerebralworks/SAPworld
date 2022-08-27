@@ -119,18 +119,19 @@ module.exports = async function update(request, response) {
 						postDetails.message='Your application for the /'+job.title+'/ got a meeting link for the  '+statusCheck +' status';
 						postDetails.title='New Meeting Link';	
 						_response_object.message = 'successfully send the meeting link to user ';
-						 var idate = new Date(application_status[0]['interviewdate']).toDateString();
-						 var idate1 = application_status[0]['interviewdate'].split("-").reverse().join("-");
-						var a = idate+' '+application_status[0]['interviewtime'];
+						var meeting_form_array=application_status[0]['meeting_form'][ application_status[0]['meeting_form'].length-1 ];
+						 var idate = new Date(meeting_form_array['interviewdate']).toDateString();
+						 var idate1 = meeting_form_array['interviewdate'].split("-").reverse().join("-");
+						var a = idate+' '+meeting_form_array['interviewtime'];
 						var itime1 = new Date(a).toLocaleTimeString([], {timeStyle: 'short'});
-						var b = idate+' '+application_status[0]['interviewendtime'];
+						var b = idate+' '+meeting_form_array['interviewendtime'];
 						var itime2 = new Date(b).toLocaleTimeString([], {timeStyle: 'short'});
-						var zone=application_status[0]['zone'];
+						var zone=meeting_form_array['zone'];
 						//To send mail
 						job['applicationId'] = details.id;
 						job['username'] = profile.first_name+' '+profile.last_name;
 						job['job_status'] = statusCheck;
-						job['meeting_link'] = application_status[0]['link'];
+						job['meeting_link'] = meeting_form_array['link'];
 						job['interview_date'] = idate1;
 						job['interview_time'] = itime1;
 						job['interviewendtime'] = itime2;
@@ -271,12 +272,13 @@ module.exports = async function update(request, response) {
 									rescheduled: val.rescheduled,
 									created: val.created,
 									invite_url: '',
-									name: val.name,
+									/*name: val.name,
 									link: val.link,
 									interviewdate :val.interviewdate,
 									interviewtime : val.interviewtime,
 									interviewendtime : val.interviewendtime,
-									zone :val.zone
+									zone :val.zone*/
+									meeting_form:val.meeting_form
 								  }
 								});
 								filteredData.push(checkLastItem);
