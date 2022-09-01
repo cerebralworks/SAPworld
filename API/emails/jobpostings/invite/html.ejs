@@ -117,7 +117,7 @@
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 700px;">
                     <tr>
                         <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 10px 10px 0px 0px;">
-							 <!-- LOGO IMAGE--> <img src="<%= sails.config.conf.webapp %>/assets/images/logo.png"  width="180" style="display: block; border: 0px;" />							
+							 <!-- LOGO IMAGE--> <img src="<%= sails.config.conf.appurl %>/assets/images/logo.png"  width="180" style="display: block; border: 0px;" />							
                         </td>
                     </tr>
                 </table>
@@ -155,10 +155,15 @@
 					<%= interview_date %></td>
 			</tr>
 			<tr>
-				<td width="40%" style="color: #777; font-weight: 500; padding: 0px 0 15px;">Interview Time</td>
+				<td width="40%" style="color: #777; font-weight: 500; padding: 0px 0 15px;">Interview  Time</td>
 				<td width="60%" style="color: #333; font-weight: 600; padding: 0px 0 15px;">
-					<%= interview_time %></td>
+					<%= interview_time %> - <%= interviewendtime %>  (<%= zone %>) </td>
 			</tr>
+			<!--<tr>
+				<td width="40%" style="color: #777; font-weight: 500; padding: 0px 0 15px;">Interview End Time</td>
+				<td width="60%" style="color: #333; font-weight: 600; padding: 0px 0 15px;">
+					<%= interviewendtime %></td>
+			</tr>-->
 			<% } %>
 			</table>
 			</td>
@@ -209,7 +214,7 @@
                         <td bgcolor="#71b11e" align="center" style="padding: 30px 30px 30px 30px; border-radius: 0px 0px 10px 10px; color: #444; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 25px;">
                             <h2 style="font-size: 14px; font-weight: 400; color: #111111; margin: 0;color: #fff">Need more help?</h2>
                             <p style="margin: 0;"><a href="#" target="_blank" style="color: #fff;">We&rsquo;re here to help you out</a></p>
-                            <p style="margin: 0;"><a href="#" target="_blank" style="color: #fff;">www.sapworld.com</a></p>
+                            <p style="margin: 0;"><a href="<%= sails.config.conf.appurl %>" target="_blank" style="color: #fff;">www.sapworld.com</a></p>
                         </td>
                     </tr>
                 </table>

@@ -61,7 +61,7 @@ module.exports = function create(request, response) {
         }).required(),
 		job_locations: yup.array().of(yup.object().shape({
             country: yup.string().required().lowercase(),
-			state: yup.string().required().lowercase(),
+			state: yup.string().lowercase().nullable(true),
 			city: yup.string().required().lowercase(),
 			stateshort: yup.string().required().uppercase(),
 			countryshort: yup.string().required().uppercase(),
@@ -135,13 +135,13 @@ module.exports = function create(request, response) {
 						 await JobLocation.destroy({id: { in: del }}).then()
 						 
 					 }
-					
+					return callback(job[0]);
 				})
 				//var checkDetailsLocation = await JobLocation.find({'jobid' : job[0]['id']});
 				//var insertElement = {'job_locations':checkDetailsLocation};
 				//var insertData = await JobPostings.update(job[0]['id'], insertElement);
 				//console.log(insertData);
-                return callback(job[0]);
+               // return callback(job[0]);
             }
         });
     };
@@ -214,6 +214,7 @@ module.exports = function create(request, response) {
 				}
 				var del = await Scoring.destroy({ job_id: updated_job.id });
 				sails.sendNativeQuery(Count_Users, async function(err, Count_Users_value) {
+					//console.log(Count_Users_value);
 				if (err) {
 					var error = {
 						'field': 'items',
@@ -644,7 +645,7 @@ module.exports = function create(request, response) {
 							var newMatchCheck = {};
 							newMatch.name=updated_job['title'];
 							newMatch.title='New Job Matches';
-							newMatch.message='You’ve got a new match /'+newMatch.name;
+							newMatch.message='You’ve got a new match //'+newMatch.name;
 							newMatch.account=checkDetails['account'];
 							newMatch.user_id=checkDetails['id'];
 							newMatch.job_id=updated_job['id'];
@@ -661,7 +662,7 @@ module.exports = function create(request, response) {
 							var newMatchCheck1 = {};
 							newMatch1.name=checkDetails['first_name'] +' '+checkDetails['last_name'];
 							newMatch1.title='New User Matches';
-							newMatch1.message=updated_job['title']+'/ has a new match';
+							newMatch1.message=updated_job['title']+'// has a new match';
 							newMatch1.account=logged_in_user.id;
 							newMatch1.user_id=checkDetails['id'];
 							newMatch1.job_id=updated_job['id'];
@@ -670,7 +671,7 @@ module.exports = function create(request, response) {
 							var newMatch2 = {};
 							newMatch2.name=checkDetails['first_name'] +' '+checkDetails['last_name'];
 							newMatch2.title='Multiple User Matches';
-							newMatch2.message=responseMatch.length+' candidates /are matching for the /'+updated_job['title'];
+							newMatch2.message=responseMatch.length+' candidates //are matching for the //'+updated_job['title'];
 							newMatch2.account=logged_in_user.id;
 							newMatch2.user_id=checkDetails['id'];
 							newMatch2.job_id=updated_job['id'];

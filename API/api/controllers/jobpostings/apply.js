@@ -105,21 +105,30 @@ module.exports = async function apply(request, response) {
 			{id: 1003, text: 'Freelance'},
 			{id: 1004, text: 'Internship'},
 		  ];
-		var exprience_map = user.hands_on_experience.map(function(value) {
-            return value.skill_name.split('-')[0];
-        });
-        job.hands_on_experience = exprience_map;
+		  if(user.data['hands_on_skills'].length ===0){
+			  job.hands_on_experience = [];
+			  
+		  }else{
+				var exprience_map = user.hands_on_experience.map(function(value) {
+					return value.skill_name.split('-')[0];
+				});
+              job.hands_on_experience = exprience_map;
+		  }
         await SkillTags.find({ id: user.skills }).then(skill => {
             user.skills = skill.map(function(value) {
                 return value.tag.split('-')[0];
             });
         });
-		for(let i=0;i<job.hands_on_experience.length;i++){
+		if( job.hands_on_experience.length != 0){
+				for(let i=0;i<job.hands_on_experience.length;i++){
 			var hands_on_experience_data = job.hands_on_experience[i].toLocaleUpperCase();
 			var CheckData = user.skills.filter(function(a,b){ return a.toLocaleUpperCase() == hands_on_experience_data.toLocaleUpperCase()});
 			if(CheckData.length !=0){
 				job.skills = user.skills.filter(function(a,b){ return a.toLocaleUpperCase() != hands_on_experience_data.toLocaleUpperCase()});
 			}
+		}
+		}else{
+			job.skills = user.skills;
 		}
         await Industries.find({ id: user.domains_worked }).then(domain => {
             job.domain = domain.map(function(value) {
@@ -167,7 +176,7 @@ module.exports = async function apply(request, response) {
 		var postDetails = {};
 		postDetails.name=logged_in_user.user_profile.first_name+' '+logged_in_user.user_profile.last_name;
 		postDetails.title='New Application Request';
-		postDetails.message='Job /'+job.title+'/ has a new applicant' 
+		postDetails.message='Job //'+job.title+'// has a new applicant' 
 		postDetails.account=employee.account;
 		postDetails.user_id=logged_in_user.user_profile.id;
 		postDetails.job_id=job.id;
@@ -179,7 +188,7 @@ module.exports = async function apply(request, response) {
 		var postDetailss = {};
 		postDetailss.name=job.title;
 		postDetailss.title='Application Under Review';
-		postDetailss.message='You have applied to the job /'+job.title;
+		postDetailss.message='You have applied to the job //'+job.title;
 		postDetailss.account=logged_in_user.id;
 		postDetailss.user_id=logged_in_user.user_profile.id;
 		postDetailss.job_id=job.id;
