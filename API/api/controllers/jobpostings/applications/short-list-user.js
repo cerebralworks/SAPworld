@@ -66,14 +66,14 @@ module.exports = async function update(request, response) {
 			 if(!post_request_data.apps && details['status'] ==1){
 			_response_object.message = 'Job application have been added to the short list successfully.';
 			 }
-			postDetails.message='Your profile is shortlisted for the position - /'+postDetails.name;
+			postDetails.message='Your profile is shortlisted for the position - //'+postDetails.name;
 			postDetails.title='Application Shortlisted';
 			if(details['status'] !=1){
 				var application_status = details.application_status.filter(function(a,b) { return parseInt(a.id) == parseInt(details.status )});
 				
 				if(application_status.length!=0){
 					if(details['status'] === 3){
-						postDetails.message='Your interview is scheduled for the /'+job.title+'/ position';
+						postDetails.message='Your interview is scheduled for the //'+job.title+'// position';
 						var commentsCheck1 = application_status[0]['comments'];
 						var statusCheck = application_status[0]['status'].toLowerCase();
 					if(commentsCheck1.length !=0 && commentsCheck1 !=' '){
@@ -88,10 +88,10 @@ module.exports = async function update(request, response) {
 					//var commentsCheck = application_status[0]['comments'].toLowerCase().trim();
 					var commentsCheck = application_status[0]['comments'];
 					if(commentsCheck.length !=0 && commentsCheck !=' '){
-						postDetails.message='Your application for the /'+job.title+'/ status is '+statusCheck + '  and got a new message';
+						postDetails.message='Your application for the //'+job.title+'// status is '+statusCheck + '  and got a new message';
 						_response_object.message = 'Message sent successfully.';
 					}else{
-						postDetails.message='Your application for the /'+job.title+'/ status is changed to '+statusCheck;
+						postDetails.message='Your application for the //'+job.title+'// status is changed to '+statusCheck;
 						_response_object.message = 'Job application status changed successfully.';
 					}
 					}
@@ -116,7 +116,7 @@ module.exports = async function update(request, response) {
 					}*/
 					if(post_request_data.meeting_send){
 						
-						postDetails.message='Your application for the /'+job.title+'/ got a meeting link for the  '+statusCheck +' status';
+						postDetails.message='Your application for the //'+job.title+'// got a meeting link for the  '+statusCheck +' status';
 						postDetails.title='New Meeting Link';	
 						_response_object.message = 'successfully send the meeting link to user ';
 						var meeting_form_array=application_status[0]['meeting_form'][ application_status[0]['meeting_form'].length-1 ];
@@ -158,12 +158,12 @@ module.exports = async function update(request, response) {
 			if(application_status.length!=0){
 				var statusCheck = application_status[0]['status'].toLowerCase();
 				var commentsCheck = application_status[0]['comments'].toLowerCase().trim();
-				postDetails.message='Your application for the /'+job.title+'/ got a invite link for the  '+statusCheck +' status';
+				postDetails.message='Your application for the //'+job.title+'// got a invite link for the  '+statusCheck +' status';
 				postDetails.title='New Invite Link';
 				var meetTitle = 'An employer send an invite link to schedule interview';
 				_response_object.message = 'Successfully send the invite link to user ';
 				if(logged_in_user.meeting){
-					postDetails.message='Your application for the /'+job.title+'/ got a meeting link for the  '+statusCheck +' status';
+					postDetails.message='Your application for the //'+job.title+'// got a meeting link for the  '+statusCheck +' status';
 					postDetails.title='New Meeting Link';	
 					meetTitle = 'An employer send an meeting link for the ' +statusCheck;
 				_response_object.message = 'Successfully send the meeting link to user ';
