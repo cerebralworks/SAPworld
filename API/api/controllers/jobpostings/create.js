@@ -55,7 +55,7 @@ module.exports = function create(request, response) {
         })).required(),
         job_locations: yup.array().of(yup.object().shape({
             country: yup.string().required().lowercase(),
-			state: yup.string().required().lowercase(),
+			state: yup.string().lowercase().nullable(true),
 			city: yup.string().required().lowercase(),
 			stateshort: yup.string().required().uppercase(),
 			countryshort: yup.string().required().uppercase(),
@@ -114,6 +114,9 @@ module.exports = function create(request, response) {
 				tempSavedData = tempSavedData.map(function(a,b){ 
 					if(!a.zipcode){
 						a.zipcode ='';
+					}
+					if(!a.state){
+						a.state ='';
 					}
 					return{	
 						'jobid':job.id,

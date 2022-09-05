@@ -116,6 +116,9 @@ module.exports = function create(request, response) {
 							if(!a.zipcode){
 								a.zipcode ='';
 							}
+							if(!a.state){
+								a.state ='';
+							}
 							return{
 								'jobid':jobid,
 								'city':a.city,
