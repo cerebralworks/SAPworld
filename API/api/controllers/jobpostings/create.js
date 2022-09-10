@@ -663,6 +663,7 @@ module.exports = function create(request, response) {
 							});
 
 							//Score Calculation
+							if(post_datas.score >=5){
 							await Scoring.findOrCreate(post_data,post_datas).exec(async(err, user)=> {
 								
 								if (err) {
@@ -673,7 +674,7 @@ module.exports = function create(request, response) {
 								}
 								
 							});
-							
+							}
 						}
 						
 					}

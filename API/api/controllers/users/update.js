@@ -254,7 +254,7 @@ module.exports = async function update(request, response) {
 					_response_object.message = 'Profile has been updated successfully.';
 					_response_object.details = profile;
 					var idVal = profile[0]['id']
-					if(profile[0]['privacy_protection']['available_for_opportunity'] == true ){
+					if(profile[0]['privacy_protection']['available_for_opportunity'] == true && post_request_data.checkopportunity===true){
 						await SavedProfile.find({user_id:idVal},async function(err,data){
 							
 							if(data && data.length !=0){
@@ -819,9 +819,9 @@ module.exports = async function update(request, response) {
 									}
 								}
 							});
-								
-								
 								//find or create the scoring calculation
+								if(post_datas.score >=5){
+									console.log(post_datas.score)
 								await Scoring.findOrCreate(post_data,post_datas,function(err, job) {
 									if (err) {
 										console.log(err);
@@ -830,7 +830,7 @@ module.exports = async function update(request, response) {
 										return created;
 									}
 								});
-								
+								}
 							}
 							
 						}

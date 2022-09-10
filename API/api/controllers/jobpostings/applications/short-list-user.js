@@ -68,16 +68,16 @@ module.exports = async function update(request, response) {
 			 }
 			postDetails.message='Your profile is shortlisted for the position - //'+postDetails.name;
 			postDetails.title='Application Shortlisted';
-			if(details['status'] !=1){
+		//	if(details['status'] !=1){
 				var application_status = details.application_status.filter(function(a,b) { return parseInt(a.id) == parseInt(details.status )});
-				
-				if(application_status.length!=0){
+				console.log(post_request_data.apps)
+				if(application_status.length!=0 && post_request_data.apps){
 					if(details['status'] === 3){
 						postDetails.message='Your interview is scheduled for the //'+job.title+'// position';
 						var commentsCheck1 = application_status[0]['comments'];
 						var statusCheck = application_status[0]['status'].toLowerCase();
 					if(commentsCheck1.length !=0 && commentsCheck1 !=' '){
-						
+						postDetails.message='Your application for the //'+job.title+'// status is '+statusCheck + '  and got a new message';
 						_response_object.message = 'Message sent successfully.';
 					}else{
 						
@@ -146,7 +146,7 @@ module.exports = async function update(request, response) {
 					}
 				}
 
-			}
+			//}
 			
 		} else if(_.get(details, 'short_listed')==false) {
             _response_object.message = 'Job application is Not fit for this job.';

@@ -123,7 +123,7 @@ module.exports = async function Scoring(request, response) {
 		
 			value.page = value.page ? value.page : 1;
 			if (!value.user_id) {
-				list_query.limit(1).offset(value.page - 1);
+				list_query.offset(value.page - 1);
 			}
          
         var count_query = list_query.clone();
