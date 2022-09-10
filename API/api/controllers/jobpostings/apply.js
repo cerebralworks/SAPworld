@@ -110,13 +110,13 @@ module.exports = async function apply(request, response) {
 			  
 		  }else{
 				var exprience_map = user.hands_on_experience.map(function(value) {
-					return value.skill_name.split('-')[0];
+					return value.skill_name;
 				});
               job.hands_on_experience = exprience_map;
 		  }
         await SkillTags.find({ id: user.skills }).then(skill => {
             user.skills = skill.map(function(value) {
-                return value.tag.split('-')[0];
+                return value.tag;
             });
         });
 		if( job.hands_on_experience.length != 0){
@@ -159,6 +159,7 @@ module.exports = async function apply(request, response) {
 		}
        
         job.remote = user.remote == 1 ? 'Yes' : 'No';
+		
 		
         const mail_data = {
             template: 'jobpostings/apply',
