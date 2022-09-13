@@ -65,6 +65,11 @@ module.exports = function signup(request, response) {
                     return response.status(500).json(_response_object);
                 });
             } else {
+				if(post_request_data.share_id){
+					user.share=post_request_data.share_id;	
+				}else{
+					user.share=null;	
+				}
                 post_data.account = user.id;
 				post_data.id = user.id;
                 // await phoneEncryptor.encrypt(post_data.phone, function(encrypted_text) {
@@ -72,11 +77,12 @@ module.exports = function signup(request, response) {
                 // });
                 post_data.latlng = 'SRID=4326;POINT(0 0)';
                 // post_data.latlng_text = latlng_o['lat'] + ',' + latlng_o['lng'];
-				console.log(post_data);
+				//console.log(post_data);
 				//Sending email
 				user.token = user.tokens.verification;
                 user.name = post_data.first_name;
                 user.account = user.id;
+				console.log(user);
 				const mail_data = {
 					template: 'users/signup',
 					data: user,
