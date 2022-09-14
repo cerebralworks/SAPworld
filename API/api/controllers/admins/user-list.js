@@ -16,8 +16,7 @@ module.exports = async function UserList(request, response) {
 
     //Find the getUserListData based on general criteria.
     const getUserListData = async( callback) => {
-			userCounts = `SELECT user_profiles.first_name,user_profiles.last_name,user_profiles.job_role,user_profiles.city,
-			user_profiles.state,user_profiles.country,user_profiles.created_at FROM user_profiles  ORDER BY ${filtered_query_data.column} ${filtered_query_data.sort}
+			userCounts = `SELECT user_profiles.id,user_profiles.first_name,user_profiles.last_name,user_profiles.job_role,user_profiles.city,	user_profiles.state,user_profiles.country,user_profiles.created_at,user_profiles.zipcode FROM user_profiles  ORDER BY ${filtered_query_data.column} ${filtered_query_data.sort}
 			 LIMIT ${filtered_query_data.limit} OFFSET ${filtered_query_data.page}`
 				
 				userCountsTotal = `SELECT count(*) FROM user_profiles `

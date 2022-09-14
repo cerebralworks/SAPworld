@@ -113,6 +113,7 @@ module.exports.policies = {
 	'admins/employee-list': ['oauthBearer', 'isAdmin'],
 	'admins/user-list': ['oauthBearer', 'isAdmin'],
     'admins/update-photo': ['oauthBearer', 'isAdmin'],
+    'admins/profile-complete-invite': ['oauthBearer', 'isAdmin'],
 
     'locations/states': ['noOauthBearer'],
     'locations/countries': ['noOauthBearer'],
