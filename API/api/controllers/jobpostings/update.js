@@ -32,7 +32,6 @@ module.exports = function create(request, response) {
 			});
 		}
 	}
-	
     let schema = yup.object().shape({
         id: yup.number().positive().test('id', 'cant find any record', async(value) => {
             let query = { id: value, company: logged_in_user.employer_profile.id };
@@ -47,9 +46,9 @@ module.exports = function create(request, response) {
         title: yup.string().required().lowercase().min(3),
         type: yup.string().required(),
         description: yup.string(),
-        salary_type: yup.number().required().oneOf([0, 1, 2]),
-        salary_currency: yup.string().required().min(3).max(10).lowercase().required(),
-        salary: yup.number().required().positive(),
+        salary_type: yup.number().oneOf([0, 1, 2]).nullable(true),
+        salary_currency: yup.string().min(3).max(10).lowercase().nullable(true),
+        salary: yup.number().positive().nullable(true),
         /* country: yup.string().required().lowercase(),
         state: yup.string().required().lowercase(),
         city: yup.string().required().lowercase(),
@@ -170,6 +169,9 @@ module.exports = function create(request, response) {
         value['programming_skills'] = programming_skills;
 		    if(value.remote_option == null){
 				value.remote_option=null;
+			}
+			if(value.salary==undefined){
+				value.salary=0;
 			}
             updateRecord(value, async function(updated_job) {
                 _response_object.message = 'Job has been update successfully.';
