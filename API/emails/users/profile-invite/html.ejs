@@ -148,7 +148,11 @@
                                     <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                         <table border="0" cellspacing="0" cellpadding="0">
                                             <tr>
-                                                <td align="center" style="border-radius: 10px;" bgcolor="#71b11e"><a  <a href="<%= sails.config.conf.appurl %>/#/user/create-candidate"target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 10px; border: 1px solid #71b11e; display: inline-block;">Click here</a></td>
+											  <%if(verified === true){%>
+                                                <td align="center" style="border-radius: 10px;" bgcolor="#1253ee"><a  <a href="<%= sails.config.conf.appurl %>/#/user/create-candidate"target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 10px; border: 1px solid #1253ee; display: inline-block;">Click here to complete profile</a></td>
+												<%}else{%>
+												<td align="center" style="border-radius: 10px;" bgcolor="#1253ee"><a href="<%= sails.config.conf.appurl %>/#/verify?id=<%= account %>&token=<%= token %>&role=0" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 10px; border: 1px solid #1253ee; display: inline-block;">Click here to verify account</a></td>
+												<% }%>
                                             </tr>
                                         </table>
                                     </td>
@@ -163,7 +167,7 @@
                     </tr>
                     <tr>
                         <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 40px 30px; border-radius: 0px 0px 4px 4px; color: #444; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 500; line-height: 25px; text-align: center;">
-                            <p style="margin: 0;">Thanks,<br><span style="color: #00b4ff;">SAP World</span> <span style="color: #1253ee;">Team</span> </p>
+                            <p style="margin: 0;">Thanks,<br><span style="color: #00b4ff;">SAP World Team</span> </p>
                         </td>
                     </tr>
                 </table>
