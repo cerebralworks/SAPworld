@@ -115,7 +115,7 @@
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                     <tr>
                         <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 10px 10px 0px 0px;">
-							 <!-- LOGO IMAGE--> <img src="<%= sails.config.conf.webapp %>/assets/images/logo.png" width="150"  style="display: block; border: 0px;"/>							
+							 <!-- LOGO IMAGE--> <img src="<%= sails.config.conf.appurl %>/assets/images/logo.png" width="150"  style="display: block; border: 0px;"/>							
                         </td>
                     </tr>
                 </table>
@@ -126,28 +126,32 @@
             <td bgcolor="#f4f4f4" align="center" style="padding: 0px 10px 0px 10px;">
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                     <tr>
-                        <td bgcolor="#ffffff" align="left" style="padding: 20px; font-family: 'Lato', Helvetica, Arial, sans-serif;">
-							<h1 style="font-size: 28px; font-weight: 500; color:#000; margin: 0 0 10px 0; text-align: center;">Thank you for signing up</h1>
+						<td bgcolor="#ffffff" align="center" style="padding: 30px 30px 10px 30px; font-size: 14px; font-family: 'Lato', Helvetica, Arial, sans-serif;">
+							<table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 700px;">
+								<tr>
+									<td style="color: #777; font-weight: 500; padding: 0px 0 15px;">
+										<h3>Hi <%= first_name %>&nbsp;<%= last_name %>,</h3>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr style="line-break:anywhere;">
+                        <td bgcolor="#ffffff" align="left" style="padding: 0px 20px 20px 20px;font-size: 16px;font-family: 'Lato', Helvetica, Arial, sans-serif;color: #333;line-height: 24px;">
+                            <p style="margin: 0;"><%= message %> </p>
                         </td>
                     </tr>
-					
-                    <tr>
-                        <td bgcolor="#ffffff" align="left" style="padding: 0px 20px 20px 20px;font-size: 16px;font-family: 'Lato', Helvetica, Arial, sans-serif;color: #333;line-height: 24px; text-align: center;">
-							<p><small style="margin: 0px;display: contents !important;font-family: 'lato' , 'helvetica' , 'arial' , sans-serif;color: #333;line-height: 24px;font-size: 16px;text-transform: capitalize;"><%= name %></small>, We are excited to have you join us. <br> Please confirm your registration to continue.</p>
-                        </td>
-                    </tr>
-					
-                    <tr>
+					<tr>
                         <td bgcolor="#ffffff" align="left">
                             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                 <tr>
-                                    <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 45px 30px;">
+                                    <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                         <table border="0" cellspacing="0" cellpadding="0">
                                             <tr>
-											   <% if(share !=null){ %>
-                                                <td align="center" style="border-radius: 10px;" bgcolor="#1253ee"><a href="<%= sails.config.conf.appurl %>/#/verify?id=<%= account %>&token=<%= token %>&role=0&share=<%= share %>" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 10px; border: 1px solid #1253ee; display: inline-block;">Confirm</a></td>
-												<% }else{ %>
-												<td align="center" style="border-radius: 10px;" bgcolor="#1253ee"><a href="<%= sails.config.conf.appurl %>/#/verify?id=<%= account %>&token=<%= token %>&role=0" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 10px; border: 1px solid #1253ee; display: inline-block;">Confirm</a></td>
+											  <%if(verified === true){%>
+                                                <td align="center" style="border-radius: 10px;" bgcolor="#1253ee"><a  <a href="<%= sails.config.conf.appurl %>/#/user/create-candidate"target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 10px; border: 1px solid #1253ee; display: inline-block;">Click here to complete your profile</a></td>
+												<%}else{%>
+												<td align="center" style="border-radius: 10px;" bgcolor="#1253ee"><a href="<%= sails.config.conf.appurl %>/#/verify?id=<%= account %>&token=<%= token %>&role=0" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 10px; border: 1px solid #1253ee; display: inline-block;">Verify and complete your profile</a></td>
 												<% }%>
                                             </tr>
                                         </table>
@@ -155,8 +159,7 @@
                                 </tr>
                             </table>
                         </td>
-                    </tr> 
-					
+                    </tr>
                     <tr>
                         <td bgcolor="#ffffff" align="left" style="padding: 0px 20px 20px 20px;font-size: 16px;font-family: 'Lato', Helvetica, Arial, sans-serif;color: #333;line-height: 24px; text-align: center;">
                             <p style="margin: 0;">If you have any questions, Please mail support@sapworld.io</p>
@@ -164,7 +167,7 @@
                     </tr>
                     <tr>
                         <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 40px 30px; border-radius: 0px 0px 4px 4px; color: #444; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 500; line-height: 25px; text-align: center;">
-                            <p style="margin: 0;">Thanks,<br><span style="color: #00b4ff;">SAP World</span> <span style="color: #1253ee;">Team</span> </p>
+                            <p style="margin: 0;">Thanks,<br><span style="color: #00b4ff;">SAP World Team</span> </p>
                         </td>
                     </tr>
                 </table>
@@ -175,7 +178,7 @@
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                     <tr>
                         <td bgcolor="#1253ee" align="center" style="padding: 30px 30px 30px 30px; border-radius: 0px 0px 10px 10px; color: #444; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 25px;">
-                            <p style="margin: 0;"><a href="#" target="_blank" style="color: #fff; text-decoration: none;">© 2020 &nbsp;www.sapworld.io &nbsp;All Rights Reserved.</a></p>
+                            <p style="margin: 0;"><a href="#" target="_blank" style="color: #fff; text-decoration: none;">© 2022 &nbsp;www.sapworld.io &nbsp;All Rights Reserved.</a></p>
                         </td>
                     </tr>
                 </table>

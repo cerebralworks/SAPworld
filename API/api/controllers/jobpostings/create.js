@@ -36,9 +36,9 @@ module.exports = function create(request, response) {
         title: yup.string().required().lowercase().min(3),
         type: yup.string().required(),
         description: yup.string(),
-        salary_type: yup.number().required().oneOf([0, 1, 2]),
-        salary_currency: yup.string().required().min(3).max(10).lowercase().required(),
-        salary: yup.number().required().positive(),
+        salary_type: yup.number().oneOf([0, 1, 2]).nullable(true),
+        salary_currency: yup.string().min(3).max(10).lowercase().nullable(true),
+        salary: yup.number().positive().nullable(true),
         availability: yup.number().required().oneOf([0, 15, 30, 45, 60]),
         /* latlng: yup.object().shape({
             lat: yup.number().min(-90).max(90),

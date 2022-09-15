@@ -236,6 +236,7 @@ module.exports.routes = {
     'GET /admins/list': { controller: 'admins', action: 'list' },
     'GET /admins/update-photo': nonGetHandler,
     'POST /admins/update-photo': { controller: 'admins', action: 'update-photo' },
+    'POST /admins/profile-complete-invite': { controller: 'admins', action: 'profile-complete-invite' },
 
     /*Location routes*/
     'GET /locations/states': { controller: 'locations', action: 'states' },

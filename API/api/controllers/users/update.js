@@ -191,6 +191,10 @@ module.exports = async function update(request, response) {
 			
 			value.work_authorization =null;
 		}
+		if(value.visa_type ==undefined){
+			
+				value.visa_type =null;	
+		}
 		if(value.current_employer ===undefined){
 			
 			value.current_employer =null;
