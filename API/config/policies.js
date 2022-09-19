@@ -73,7 +73,7 @@ module.exports.policies = {
     'employers/employers-dashboard': ['oauthBearer', 'isEmployer'],
 
 
-    'jobpostings/create': ['oauthBearer', 'isEmployer'],
+    'jobpostings/create': ['oauthBearer', 'isEmployerOrAdmin'],
     'jobpostings/update': ['oauthBearer', 'isEmployer'],
     'jobpostings/update-photo': ['oauthBearer', 'isEmployer'],
     'jobpostings/list': ['noOauthBearer'],

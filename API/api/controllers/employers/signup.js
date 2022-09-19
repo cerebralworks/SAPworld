@@ -21,7 +21,7 @@ module.exports = function signup(request, response) {
         { name: 'email', email: true, required: true },
         { name: 'company', required: true },
         { name: 'password', min: 8, required: true },
-        { name: 'phone', phone: true, },
+        { name: 'phone' },
         { name: 'location', geopoint: true },
         { name: 'job_title' },
         { name: 'city', number: true }
@@ -82,6 +82,7 @@ module.exports = function signup(request, response) {
                 if (post_data.phone) {
                     profile_input.phone = post_data.encrypted_phone;
                 }
+				
                 if (filtered_post_keys.includes('last_name')) {
                     profile_input.last_name = post_data.last_name;
                 }
