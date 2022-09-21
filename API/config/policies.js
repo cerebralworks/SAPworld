@@ -104,6 +104,8 @@ module.exports.policies = {
     'accounts/request-reset-password': ['noOauthBearer'],
     'accounts/reset-password': ['noOauthBearer'],
     'accounts/verify': ['noOauthBearer'],
+    'accounts/verify-otp': ['noOauthBearer'],
+    'accounts/send-otp': ['noOauthBearer'],
     'accounts/update-password': ['oauthBearer'],
 
     'admins/profile': ['oauthBearer', 'isAdmin'],
@@ -115,6 +117,7 @@ module.exports.policies = {
     'admins/update-photo': ['oauthBearer', 'isAdmin'],
     'admins/profile-complete-invite': ['oauthBearer', 'isAdmin'],
     'admins/employer-complete-invite': ['oauthBearer', 'isAdmin'],
+    'admins/create-employer': ['oauthBearer', 'isAdmin'],
 
     'locations/states': ['noOauthBearer'],
     'locations/countries': ['noOauthBearer'],

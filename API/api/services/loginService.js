@@ -40,7 +40,7 @@ exports.findUser = async function(username, callback, properties = {}) {
         query.left_join(AdminProfiles.tableName, AdminProfiles.tableAlias, AdminProfiles.tableAlias + '.' + AdminProfiles.schema.account.columnName + "=" + Users.tableAlias + '.' + Users.schema.id.columnName);
         var username_query = squel.expr();
         username_query.or(Users.tableAlias + "." + Users.schema.username.columnName + "='" + username + "'");
-		username_query.and(Users.tableAlias + "." + Users.schema.status.columnName + "=" + 1);
+		username_query.and(Users.tableAlias + "." + Users.schema.status.columnName + "!=" + 0);
         if (!_.isNaN(Number(username))) {
             username_query.or(UserProfiles.tableAlias + "." + UserProfiles.schema.phone.columnName + "='" + encrypted_phone + "'");
             username_query.or(EmployerProfiles.tableAlias + "." + EmployerProfiles.schema.phone.columnName + "=" + parseInt(username));

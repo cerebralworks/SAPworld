@@ -33,14 +33,20 @@ module.exports = function updatePassword(request, response) {
                     });
                 }else if(user && user.tokens.reset === filtered_post_data.token){
                     var tokens = {};
+                    var datas = {};
                     if(user.tokens){
                         tokens = user.tokens;
                     }
                     tokens.reset = UtilsService.uid(20);
                     hashed_password = await bcrypt.hash(filtered_post_data.password, SALT_WORK_FACTOR);
-                    
+					datas.password=hashed_password;
+					datas.tokens=tokens
+                    if(request.body.verify===true){
+						datas.status=1;
+						datas.verified=true;
+					}
 					//Update the new password
-					Users.update(filtered_post_data.id, {password: hashed_password, tokens: tokens}, async function(err, user){
+					Users.update(filtered_post_data.id,datas , async function(err, user){
                         if(err){
                             await errorBuilder.build(err, function (error_obj) {
                                 _response_object.errors = error_obj;
