@@ -13,7 +13,7 @@ var crypto = require('crypto');
 module.exports = function signup(request, response) {
     const post_request_data = request.body;
     var _response_object = {};
-    var filtered_post_data = _.pick(post_request_data, ['first_name', 'last_name', 'email', 'phone', 'password', 'location', 'location_text', 'company', 'job_title', 'city']);
+    var filtered_post_data = _.pick(post_request_data, ['first_name', 'last_name', 'email', 'phone', 'password', 'company']);
     const filtered_post_keys = Object.keys(filtered_post_data);
     var input_attributes = [
         { name: 'first_name', required: true },
@@ -21,34 +21,21 @@ module.exports = function signup(request, response) {
         { name: 'email', email: true, required: true },
         { name: 'company', required: true },
         { name: 'password', min: 8, required: true },
-        { name: 'phone' },
-        { name: 'location', geopoint: true },
-        { name: 'job_title' },
-        { name: 'city', number: true }
+        { name: 'phone' }
     ];
     //Build and sending response
     const sendResponse = (details) => {
+		details.password = post_request_data.password;
         //Sending email
         const mail_data = {
-            template: 'employers/signup',
+            template: 'employers/add-account',
             data: details,
             to: filtered_post_data.email,
             subject: 'Welcome to SAP WORLD.'
         };
         mailService.sendMail(mail_data);
         _response_object.message = 'Employer signed up successfully.';
-        var meta = {};
-        meta['photo'] = {
-            path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
-            folder: 'media/Users',
-            sizes: {
-                small: 256,
-                medium: 512,
-                large: 1024,
-            }
-        };
-        meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/user-209.png';
-        _response_object['meta'] = meta;
+        
         _response_object['details'] = _.cloneDeep(details);
         return response.ok(_response_object);
     };
@@ -59,7 +46,8 @@ module.exports = function signup(request, response) {
             last_checkin_via: 'web',
             types: [1],
             last_active: new Date(),
-            password: post_data.password
+            password: post_data.password,
+			status:2
         };
         if (!filtered_post_keys.includes('password')) {
             user_input.password = Math.floor(10000000 + Math.random() * 90000000);
@@ -86,19 +74,11 @@ module.exports = function signup(request, response) {
                 if (filtered_post_keys.includes('last_name')) {
                     profile_input.last_name = post_data.last_name;
                 }
-                if (filtered_post_keys.includes('location')) {
-                    location = post_data.location.split(',')
-                    profile_input.location = '(' + location[0] + ',' + location[1] + ')';
-                }
+                
                 if (filtered_post_keys.includes('company')) {
                     profile_input.company = post_data.company;
                 }
-                if (filtered_post_keys.includes('job_title')) {
-                    profile_input.job_title = post_data.job_title;
-                }
-                if (filtered_post_keys.includes('city')) {
-                    profile_input.city = parseInt(post_data.city);
-                }
+                
                 EmployerProfiles.create(profile_input, async function(err, profile) {
                     if (err) {
                         await errorBuilder.build(err, function(error_obj) {
@@ -149,19 +129,11 @@ module.exports = function signup(request, response) {
                 if (filtered_post_keys.includes('last_name')) {
                     profile_input.last_name = post_data.last_name;
                 }
-                if (filtered_post_keys.includes('location')) {
-                    location = post_data.location.split(',')
-                    profile_input.location = '(' + location[0] + ',' + location[1] + ')';
-                }
+                
                 if (filtered_post_keys.includes('company')) {
                     profile_input.company = post_data.company;
                 }
-                if (filtered_post_keys.includes('job_title')) {
-                    profile_input.job_title = post_data.job_title;
-                }
-                if (filtered_post_keys.includes('city')) {
-                    profile_input.city = parseInt(post_data.city);
-                }
+                
                 EmployerProfiles.create(profile_input, async function(err, profile) {
                     if (err) {
                         await errorBuilder.build(err, function(error_obj) {

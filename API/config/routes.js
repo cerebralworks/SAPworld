@@ -218,6 +218,9 @@ module.exports.routes = {
     'POST /accounts/request-reset-password': { controller: 'accounts', action: 'request-reset-password' },
     'GET /accounts/reset-password': nonGetHandler,
     'POST /accounts/reset-password': { controller: 'accounts', action: 'reset-password' },
+	'GET /accounts/verify-otp': nonGetHandler,
+    'POST /accounts/verify-otp': { controller: 'employers', action: 'verify-otp' },
+    'POST /accounts/send-otp': { controller: 'employers', action: 'send-otp' },
     'GET /accounts/verify': nonGetHandler,
     'POST /accounts/verify': { controller: 'accounts', action: 'verify' },
     'GET /accounts/update-password': nonGetHandler,
@@ -237,6 +240,8 @@ module.exports.routes = {
     'GET /admins/update-photo': nonGetHandler,
     'POST /admins/update-photo': { controller: 'admins', action: 'update-photo' },
     'POST /admins/profile-complete-invite': { controller: 'admins', action: 'profile-complete-invite' },
+	'POST /admins/employer-complete-invite': { controller: 'admins', action: 'employer-complete-invite' },
+	'POST /admins/create-employer': { controller: 'admins', action: 'add-employer' },
 
     /*Location routes*/
     'GET /locations/states': { controller: 'locations', action: 'states' },

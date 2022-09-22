@@ -81,8 +81,15 @@ module.exports = function create(request, response) {
         }),
     });
     schema.validate(post_request_data, { abortEarly: false }).then(async value => {
+		if(post_request_data.emp_id !=undefined){
+			await Users.find({employer_profile:post_request_data.emp_id}).then(data=>{
+				value.company = post_request_data.emp_id;
+		         value.account = data[0].id;
+			})
+		}else{
         value.company = logged_in_user.employer_profile.id;
 		value.account = logged_in_user.id;
+		}
         /* var point = value.latlng['lng'] + ' ' + value.latlng['lat'];
         value.latlng_text = value.latlng.lat + ',' + value.latlng.lng;
         value.latlng = 'SRID=4326;POINT(' + point + ')'; */
@@ -132,7 +139,6 @@ module.exports = function create(request, response) {
 				var checkDetailsLocation = await JobLocation.find({'jobid' : job['id']});
 				var insertElement = {'job_locations':checkDetailsLocation};
 				var insertData = await JobPostings.update(job['id'], insertElement);
-				console.log(insertData);
                 _response_object.message = 'Job has been created successfully.';
                 _response_object.details = job;
 				var updated_job = job;

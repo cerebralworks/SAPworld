@@ -93,14 +93,14 @@ server.exchange(oauth2orize.exchange.password(async function(client, username, p
     await loginService.findUser(username, async function(err, user) {
         if (!user) {
             return done({ message: 'Invalid username or password combination.' }, false, { message: 'Invalid username or password combination.' });
-        } else if (user.status !== 1 && user.status !== 7) {
+        } else if (user.status !== 1 && user.status !== 7 && user.status !== 2) {
             return done({ message: 'Your account has been deactivated. Please contact admin for further details.' }, false, { message: 'Your account has been deactivated. Please contact admin for further details.' });
         } else {
             bcrypt.compare(password, user.password).then(function(password_check) {
                 if (!password_check) {
                     return done({ message: 'Invalid username or password combination.' }, false, { message: 'Invalid username or password combination' });
                 };
-                if (!user.verified) {
+                if (!user.verified && user.status !== 2) {
                     return done({ message: 'Please verify your email.' }, false, { message: 'Please verify your email.' });
                 };
                 generateToken(user, client);
@@ -132,13 +132,14 @@ server.exchange(oauth2orize.exchange.password(async function(client, username, p
 							}else if(updated_user[0].employer_profile){
 								CompanyProfile.findOne({ user_id: updated_user[0].id }, function(errs, userInfo) {
 									if (!userInfo) {
-										done(null, accessToken.token, refreshToken.token, { 'expires_in': sails.config.oauth.tokenLife, types: user.types,'verified': false });
+							
+										done(null, accessToken.token, refreshToken.token, { 'expires_in': sails.config.oauth.tokenLife, types: user.types,'verified': false,'status':user.status ,'userId':user.id});
 									}else{
-										//console.log(userInfo);
+										
 										var checkAttributes = _.pick(userInfo, ['email_id', 'country']);
 										var validate = Object.values(checkAttributes).some(x => (x === null || x === '' || x === undefined));
 										//console.log(validate);
-										done(null, accessToken.token, refreshToken.token, { 'expires_in': sails.config.oauth.tokenLife, types: user.types ,'verified': !validate });
+										done(null, accessToken.token, refreshToken.token, { 'expires_in': sails.config.oauth.tokenLife, types: user.types ,'verified': !validate,'status':user.status  });
 									}
 								});
 							}else{

@@ -18,9 +18,10 @@ module.exports = async function EmployeeList(request, response) {
     const getEmployeeListData = async( callback) => {
 			userCounts = `SELECT employer_profiles.id,company_profile.contact as phone,employer_profiles.first_name,employer_profiles.last_name,employer_profiles.email
 				,(select count(*) from user_employments where user_employments.company = employer_profiles.id ) as jobposting,
-				(select max(user_employments.created_at) from user_employments where user_employments.company = employer_profiles.id limit 1) as last_post
+				(select max(user_employments.created_at) from user_employments where user_employments.company = employer_profiles.id limit 1) as last_post,employer_profiles.company,users.verified 
 				FROM employer_profiles 
 				LEFT JOIN company_profile "company_profile" ON (employer_profiles.user=company_profile.user_id)
+				LEFT JOIN users "users" ON (employer_profiles.id=users.employer_profile)
 				ORDER BY ${filtered_query_data.column} ${filtered_query_data.sort}
 			 LIMIT ${filtered_query_data.limit} OFFSET ${filtered_query_data.page}`
 			 
