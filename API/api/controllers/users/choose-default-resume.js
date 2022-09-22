@@ -61,13 +61,13 @@ module.exports = async function updatePhoto(request, response) {
     const sendResponse = (details) => {
         _response_object.message = 'Document has been changed successfully.';
         _response_object.details = details;
-        var meta = {};
+        /*var meta = {};
         meta['doc_resume'] = {
             path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
             folder: 'public/resumes/Documents'
         };
         meta['doc_resume'].example = meta['doc_resume'].path + '/' + meta['doc_resume'].folder + '/doc-resume-55.png';
-        _response_object['meta'] = meta;
+        _response_object['meta'] = meta;*/
         return response.status(200).json(_response_object);
     };
 

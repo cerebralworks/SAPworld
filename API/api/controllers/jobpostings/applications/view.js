@@ -101,7 +101,7 @@ module.exports = async function view(request,response) {
     //Build and sending response
     const sendResponse = (details) => {
         _response_object.message = 'Job application details retrieved successfully.';
-        var meta = {};
+        /*var meta = {};
         meta['photo'] = {
           path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
           folder: 'public/images/Users',
@@ -127,7 +127,7 @@ module.exports = async function view(request,response) {
           folder: 'public/images/Company'
         };
         meta['company'].example = meta['company'].path + '/' + meta['company'].folder + '/company-55.png';
-        _response_object['meta'] = meta;
+        _response_object['meta'] = meta;*/
         _response_object['details'] = _.cloneDeep(details);
         return response.ok(_response_object);
     };

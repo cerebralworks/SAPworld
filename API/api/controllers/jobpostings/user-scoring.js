@@ -17,7 +17,7 @@ module.exports = async function Scoring(request, response) {
         meta['count'] = count;
         meta['page'] = post_request_data.page ? post_request_data.page : 1;
         meta['limit'] = post_request_data.limit;
-        meta['photo'] = {
+       /* meta['photo'] = {
             path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
             folder: 'public/images/Companies',
             sizes: {
@@ -30,7 +30,7 @@ module.exports = async function Scoring(request, response) {
             path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
             folder: 'public/resumes/Documents'
         };
-        meta['doc_resume'].example = meta['doc_resume'].path + '/' + meta['doc_resume'].folder + '/doc-resume-55.png';
+        meta['doc_resume'].example = meta['doc_resume'].path + '/' + meta['doc_resume'].folder + '/doc-resume-55.png';*/
         _response_object['meta'] = meta;
         _response_object['profile'] = _.cloneDeep(model);
         _response_object['jobs'] = _.cloneDeep(items);

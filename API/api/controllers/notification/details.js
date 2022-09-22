@@ -80,7 +80,7 @@ module.exports = async function Details(request, response) {
         meta['total'] = Count_Users_deatails[0]['count'];
         meta['page'] = filtered_query_data.page ? filtered_query_data.page : 1;
         meta['limit'] = filtered_query_data.limit;
-        meta['photo'] = {
+        /*meta['photo'] = {
             path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
             folder: 'public/images/Companies',
             sizes: {
@@ -88,7 +88,7 @@ module.exports = async function Details(request, response) {
                 medium: 512
             }
         };
-        meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/[filename].[filetype]';
+        meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/[filename].[filetype]';*/
         _response_object['meta'] = meta;
 		if (filtered_query_keys.includes('company')) {
 			_response_object['count'] = _.cloneDeep(users);

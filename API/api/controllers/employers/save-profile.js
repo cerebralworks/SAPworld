@@ -22,7 +22,7 @@ module.exports = async function saveProfile(request, response) {
     //Build and sending response
     const sendResponse = (details) => {
         _response_object.message = ' profile saved successfully.';
-        var meta = {};
+        /*var meta = {};
         meta['photo'] = {
             path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
             folder: 'media/Users',
@@ -33,7 +33,7 @@ module.exports = async function saveProfile(request, response) {
             }
         };
         meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/user-209.png';
-        _response_object['meta'] = meta;
+        _response_object['meta'] = meta;*/
         _response_object['details'] = _.cloneDeep(details);
         return response.ok(_response_object);
     };
