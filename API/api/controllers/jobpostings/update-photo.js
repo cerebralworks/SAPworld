@@ -87,7 +87,7 @@ module.exports = async function updatePhoto(request, response) {
                                 await updateJobPosting(filename, function (details) {
                                     _response_object.message = 'Photo has been updated successfully.';
                                     _response_object.details = details;
-                                    var meta = {};
+                                    /*var meta = {};
                                     meta['photo'] = {
                                       path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
                                       folder: 'public/images/Companies',
@@ -97,7 +97,7 @@ module.exports = async function updatePhoto(request, response) {
                                       }
                                     };
                                     meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/photo-55.png';
-                                    _response_object['meta'] = meta;
+                                    _response_object['meta'] = meta;*/
                                     return response.status(200).json(_response_object);
                                 });
                             });

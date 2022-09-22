@@ -141,7 +141,7 @@ module.exports = async function list(request, response) {
         meta['total'] = total;
         meta['page'] = filtered_query_data.page ? filtered_query_data.page : 1;
         meta['limit'] = filtered_query_data.limit;
-        meta['photo'] = {
+        /*meta['photo'] = {
             path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
             folder: 'public/images/Categories',
             sizes: {
@@ -149,7 +149,7 @@ module.exports = async function list(request, response) {
                 medium: 512
             }
         };
-        meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/[filename].[filetype]';
+        meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/[filename].[filetype]';*/
         _response_object['meta'] = meta;
         _response_object['items'] = _.cloneDeep(items);
         if (!_.isEmpty(details)) {

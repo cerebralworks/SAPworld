@@ -95,7 +95,7 @@ module.exports = async function view(request, response) {
     // Build and send response.
     function sendResponse(details) {
         _response_object.message = 'Job item retrieved successfully.';
-        var meta = {};
+        /*var meta = {};
         meta['photo'] = {
             path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
             folder: 'public/images/Companies',
@@ -105,7 +105,7 @@ module.exports = async function view(request, response) {
             }
         };
         meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/[filename].[filetype]';
-        _response_object['meta'] = meta;
+        _response_object['meta'] = meta;*/
         _response_object['details'] = details;
         return response.ok(_response_object);
     };

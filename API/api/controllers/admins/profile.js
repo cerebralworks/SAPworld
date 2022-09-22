@@ -30,7 +30,7 @@ module.exports = async function view(request,response) {
                     return response.status(404).json(_response_object);
                 } else {
                     _response_object.message = 'Admin details retrieved successfully';
-                    var meta = {};
+                   /* var meta = {};
                     meta['photo'] = {
                       path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
                       folder: 'public/images/Admins',
@@ -40,7 +40,7 @@ module.exports = async function view(request,response) {
                       }
                     };
                     meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/photo-55.png';
-                    _response_object['meta'] = meta;
+                    _response_object['meta'] = meta;*/
                    _response_object.details = Object.assign({}, admin_details);
                    return response.ok(_response_object);
                 }

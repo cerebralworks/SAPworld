@@ -127,7 +127,7 @@ WHERE job_posting.screening_process is not null and (job_posting.company = ${fil
         meta['count'] = users.length;
         meta['page'] = filtered_query_data.page ? filtered_query_data.page : 1;
         meta['limit'] = filtered_query_data.limit;
-        meta['photo'] = {
+        /*meta['photo'] = {
             path: 'https://s3.' + sails.config.conf.aws.region + '.amazonaws.com/' + sails.config.conf.aws.bucket_name,
             folder: 'public/images/Companies',
             sizes: {
@@ -135,7 +135,7 @@ WHERE job_posting.screening_process is not null and (job_posting.company = ${fil
                 medium: 512
             }
         };
-        meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/[filename].[filetype]';
+        meta['photo'].example = meta['photo'].path + '/' + meta['photo'].folder + '/' + meta['photo'].sizes.medium + '/[filename].[filetype]';*/
         _response_object['meta'] = meta;
 		if (filtered_query_keys.includes('company')) {
 			_response_object['count'] = _.cloneDeep(users);
