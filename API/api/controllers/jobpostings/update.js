@@ -12,10 +12,15 @@ module.exports = function create(request, response) {
     const logged_in_user = request.user;
     var _response_object = {};
     let yup = sails.yup;
-	
+	var comanyid;
 	var programming_id = [];
 	var programming_ids = '';
 	var programming_skills = [];
+	    if(post_request_data.emp_id !=undefined){
+			comanyid=post_request_data.emp_id
+		}else{
+            comanyid=logged_in_user.employer_profile.id;
+		}
 	for(let i=0;i<post_request_data.programming_skills.length;i++){
 		if(post_request_data.programming_skills[i] !=null &&post_request_data.programming_skills[i] !=undefined){
 			post_request_data.programming_skills[i] = post_request_data.programming_skills[i].replace(/\b\w/g, l => l.toUpperCase());
@@ -34,7 +39,7 @@ module.exports = function create(request, response) {
 	}
     let schema = yup.object().shape({
         id: yup.number().positive().test('id', 'cant find any record', async(value) => {
-            let query = { id: value, company: logged_in_user.employer_profile.id };
+            let query = { id: value, company: comanyid };
             return await JobPostings.findOne(query).then(job => {
                 //console.log(job)
                 return true;
@@ -149,8 +154,15 @@ module.exports = function create(request, response) {
     };
 	//Validating the request and pass on the appriopriate response.
     schema.validate(post_request_data, { abortEarly: false }).then(async value => {
-            value.company = logged_in_user.employer_profile.id;
-            value.account = logged_in_user.id;
+            if(post_request_data.emp_id !=undefined){
+			await Users.find({employer_profile:post_request_data.emp_id}).then(data=>{
+				 value.company = post_request_data.emp_id;
+		         value.account = data[0].id;
+				})
+			}else{
+			value.company = logged_in_user.employer_profile.id;
+			value.account = logged_in_user.id;
+			}
             var point = value.latlng['lng'] + ' ' + value.latlng['lat'];
             value.latlng_text = value.latlng.lat + ',' + value.latlng.lng;
             value.latlng = 'SRID=4326;POINT(' + point + ')';

@@ -7,6 +7,12 @@ module.exports = async function Scoring(request, response) {
     let yup = sails.yup;
     var model = {};
     var score = 4;
+	var employer_id;
+	if(post_request_data.empid !=undefined){
+		employer_id=post_request_data.empid;	
+	}else{
+		employer_id=logged_in_user.employer_profile.id;
+	}
     const filtered_query_data = _.pick(post_request_data, [
         'page', 'sort','country','work_authorization', 'limit', 'status', 'expand', 'search', 'search_type', 'city','visa', 'job_types', 'skill_tags', 'min_salary', 'max_salary', 'min_experience', 'max_experience', 'job_posting', 'skill_tags_filter_type', 'additional_fields',
 		'domain','skills.','programming_skills','availability',
@@ -14,7 +20,7 @@ module.exports = async function Scoring(request, response) {
 		'facing_role','employer_role_type','location_id',
 		'training_experience','travel_opportunity','work_authorization',
 		'end_to_end_implementation','education',
-		'remote','willing_to_relocate','language','visa','filter_location'
+		'remote','willing_to_relocate','language','visa','filter_location','empid'
     ]);
 	const filtered_query_keys = Object.keys(filtered_query_data);
     //Build and sending response
@@ -74,7 +80,7 @@ module.exports = async function Scoring(request, response) {
 	//Validate to form data
     yup.object().shape({
         id: yup.number().test('job_id', 'Cant find record', async(value) => {
-            return await JobPostings.findOne({ company: logged_in_user.employer_profile.id || 0, id: value }).then((result) => {
+            return await JobPostings.findOne({ company: employer_id || 0, id: value }).then((result) => {
                 model = result;
                 return true;
             }).catch(err => {

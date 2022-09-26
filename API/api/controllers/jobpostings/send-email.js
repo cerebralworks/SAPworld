@@ -10,7 +10,7 @@ module.exports = async function sendemail(request, response) {
     const request_query = request.allParams();
     const id = parseInt(request_query.id);
     const logged_in_user = request.user;
-	request_query.logged_in_user=logged_in_user;
+	//request_query.logged_in_user=logged_in_user;
     var _response_object = {};
     let yup = sails.yup;
     var model = {};
@@ -21,10 +21,23 @@ module.exports = async function sendemail(request, response) {
 		{id: 1003, text: 'Freelance'},
 		{id: 1004, text: 'Internship'},
 	  ];
-	  
+	var log_user ={};
+	  if(request_query.emp_id !=undefined){
+			await EmployerProfiles.find({id:request_query.emp_id}).then(data=>{
+				 log_user.company = request_query.emp_id;
+		         log_user.account = data[0].account;
+		         log_user.first_name = data[0].first_name;
+		         log_user.last_name = data[0].last_name;
+				})
+			}else{
+				log_user.company = logged_in_user.employer_profile.id;
+				log_user.first_name = logged_in_user.employer_profile.first_name;
+				log_user.last_name = logged_in_user.employer_profile.last_name;
+				log_user.account = logged_in_user.id;
+			}
     let schema = yup.object().shape({
         job_id: yup.number().positive().test('job_id', 'cant get any job', async(value) => {
-            let query = { id: value, company: logged_in_user.employer_profile.id };
+            let query = { id: value, company: log_user.company };
             return await JobPostings.findOne(query).then(job => {
                 if (job) {
                     model = job;
@@ -106,20 +119,20 @@ module.exports = async function sendemail(request, response) {
             subject: 'An employer is interested in your profile'
         };
         await mailService.sendMail(mail_data);
+		console.log(value);
 		await Scoring.update({job_id:model.id,user_id:value.id}).set({mail:true});
 		var postDetailss = {};
 		postDetailss.name=model.title;
 		postDetailss.title='Job Invitation';
-		postDetailss.message=value.logged_in_user.employer_profile.first_name +' '+value.logged_in_user.employer_profile.last_name +' employer invited you to apply for //'+model.title+'// - ' +model.country;
+		postDetailss.message=log_user.first_name +' '+log_user.last_name +' employer invited you to apply for //'+model.title+'// - ' +model.country;
 		postDetailss.account=value.account;
 		postDetailss.user_id=value.id;
 		postDetailss.job_id=model.id;
-		postDetailss.employer=value.logged_in_user.employer_profile.id;		
+		postDetailss.employer=log_user.company;		
 		postDetailss.view=0;	
-		
 		Notification.create(postDetailss, function(err, job) {
 			
-		}); 
+		});
         _response_object.message = 'Mail sent  successfully.';
         _response_object.details = {};
         return response.status(200).json(_response_object);
