@@ -1,8 +1,4 @@
-/**
- *
- * @author Saravanan Karthikeyan <saravanan@studioq.co.in>
- *
- */
+
 
 /* global _, JobPostings, sails */
 
@@ -81,6 +77,10 @@ module.exports = function create(request, response) {
         }),
     });
     schema.validate(post_request_data, { abortEarly: false }).then(async value => {
+		
+		/** To validate admin to create the job
+		    @params emp_id
+		**/
 		if(post_request_data.emp_id !=undefined){
 			await Users.find({employer_profile:post_request_data.emp_id}).then(data=>{
 				value.company = post_request_data.emp_id;

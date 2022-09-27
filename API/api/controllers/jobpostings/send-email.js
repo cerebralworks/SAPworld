@@ -1,8 +1,4 @@
-/**
- *
- * @author Saravanan Karthikeyan <saravanan@studioq.co.in>
- *
- */
+
 
 /* global _, JobPostings, sails */
 
@@ -22,6 +18,9 @@ module.exports = async function sendemail(request, response) {
 		{id: 1004, text: 'Internship'},
 	  ];
 	var log_user ={};
+	/** To validate admin to sendmail to user
+	    @params emp_id
+	**/
 	  if(request_query.emp_id !=undefined){
 			await EmployerProfiles.find({id:request_query.emp_id}).then(data=>{
 				 log_user.company = request_query.emp_id;

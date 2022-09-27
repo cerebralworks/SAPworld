@@ -1,8 +1,3 @@
-/**
- *
- * @author Saravanan Karthikeyan <saravanan@studioq.co.in>
- *
- */
 
 /* global _, JobPostings, JobApplications, validateModel, sails */
 
@@ -22,6 +17,9 @@ module.exports = async function deleteRecords(request, response) {
     ];
 	filtered_post_data.logged_in_user=logged_in_user;
 	
+	/** To validate admin to delete the job 
+	    @params emp_id
+	**/
 	if(post_request_data.emp_id !=undefined){
 		await Users.find({employer_profile:post_request_data.emp_id}).then(data=>{
 			 log_user.company = post_request_data.emp_id;

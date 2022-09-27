@@ -1,8 +1,4 @@
-/**
- *
- * @author Saravanan Karthikeyan <saravanan@studioq.co.in>
- *
- */
+
 
 /* global _, JobPostings, validateModel, sails */
 
@@ -30,6 +26,10 @@ module.exports = async function update(request, response) {
    var filtered_post_data = _.pick(_.merge(post_request_data, request_query), pick_input);
     const filtered_post_keys = Object.keys(filtered_post_data);
 	filtered_post_data.logged_in_user=logged_in_user;
+	
+	/** To validate admin to change the job status
+	    @params emp_id
+	**/
 	if(post_request_data.emp_id !=undefined){
 			await Users.find({employer_profile:post_request_data.emp_id}).then(data=>{
 				 log_user.company = post_request_data.emp_id;
