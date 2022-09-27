@@ -43,7 +43,7 @@ module.exports = async function dashboardDetails(request, response) {
 			FROM user_employments "job_posting" 
 			LEFT JOIN employer_profiles "employer" ON (job_posting.company = employer.id)
 			where job_posting.status != 3  AND (job_posting.created_at > (select now() - interval ' ${filtered_query_data.day} day '))  ${searchQuery}  `
-				if(filtered_query_data.view =='employer-inactive'){ 
+				if(filtered_query_data.view =='employer-active'){ 
 			query =`SELECT  employer.first_name as first_name,job_posting.title as title,job_posting.created_at as created_at,
 			json_build_object('first_name',employer.first_name,'last_name',employer.last_name) AS "employer" ,
 			(SELECT COUNT(*) FROM  job_applications "job_application" where
@@ -57,15 +57,15 @@ module.exports = async function dashboardDetails(request, response) {
 			 AND (job_application.job_posting=job_posting.id)) as rejected 
 			FROM user_employments "job_posting" 
 			LEFT JOIN employer_profiles "employer" ON (job_posting.company = employer.id)
-			where job_posting.status != 3  AND (job_posting.created_at > (select now() - interval ' ${filtered_query_data.day} day ')) AND job_posting.status != 0   ${searchQuery}  ORDER BY ${filtered_query_data.column} ${filtered_query_data.sort}
+			where job_posting.status =1  AND (job_posting.created_at > (select now() - interval ' ${filtered_query_data.day} day ')) AND job_posting.status != 0   ${searchQuery}  ORDER BY ${filtered_query_data.column} ${filtered_query_data.sort}
 			 LIMIT ${filtered_query_data.limit} OFFSET ${filtered_query_data.page} `	
 			 
 			queryCount =`SELECT count(*)
 			FROM user_employments "job_posting" 
 			LEFT JOIN employer_profiles "employer" ON (job_posting.company = employer.id)
-			where job_posting.status != 3 AND job_posting.status != 0  AND (job_posting.created_at > (select now() - interval ' ${filtered_query_data.day} day '))   ${searchQuery} `	
+			where job_posting.status =1  AND (job_posting.created_at > (select now() - interval ' ${filtered_query_data.day} day '))   ${searchQuery} `	
 				}
-				if(filtered_query_data.view =='employer-active'){ 
+				if(filtered_query_data.view =='employer-inactive'){ 
 			query =`SELECT  employer.first_name as first_name,job_posting.title as title,job_posting.created_at as created_at,
 			json_build_object('first_name',employer.first_name,'last_name',employer.last_name) AS "employer" ,
 			(SELECT COUNT(*) FROM  job_applications "job_application" where
@@ -79,13 +79,13 @@ module.exports = async function dashboardDetails(request, response) {
 			 AND (job_application.job_posting=job_posting.id)) as rejected 
 			FROM user_employments "job_posting" 
 			LEFT JOIN employer_profiles "employer" ON (job_posting.company = employer.id)
-			where job_posting.status != 3  AND (job_posting.created_at > (select now() - interval ' ${filtered_query_data.day} day ')) AND job_posting.status != 1  ${searchQuery}  ORDER BY ${filtered_query_data.column} ${filtered_query_data.sort}
+			where job_posting.status =0  AND (job_posting.created_at > (select now() - interval ' ${filtered_query_data.day} day ')) AND job_posting.status =0  ${searchQuery}  ORDER BY ${filtered_query_data.column} ${filtered_query_data.sort}
 			 LIMIT ${filtered_query_data.limit} OFFSET ${filtered_query_data.page}`	
 			 
 			queryCount =`SELECT count(*)
 			FROM user_employments "job_posting" 
 			LEFT JOIN employer_profiles "employer" ON (job_posting.company = employer.id)
-			where job_posting.status != 3 AND job_posting.status != 1  AND (job_posting.created_at > (select now() - interval ' ${filtered_query_data.day} day '))  ${searchQuery} `	
+			where job_posting.status =0  AND (job_posting.created_at > (select now() - interval ' ${filtered_query_data.day} day '))  ${searchQuery} `	
 				}
 				
 				if(filtered_query_data.search){
