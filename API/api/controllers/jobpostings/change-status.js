@@ -1,8 +1,4 @@
-/**
- *
- * @author Saravanan Karthikeyan <saravanan@studioq.co.in>
- *
- */
+
 
 /* global _, JobPostings, validateModel, sails */
 
@@ -19,15 +15,30 @@ module.exports = async function update(request, response) {
         {name: 'status_glossary', required: true}
     ];
     pick_input = [
-        'id','location_id', 'status', 'status_glossary'
+        'id','location_id', 'status', 'status_glossary','emp_id'
     ];
-    if(!(_.indexOf(_.get(logged_in_user, 'types'), _.get(sails, 'config.custom.access_role.employer')) > -1)){
+	var log_user={};
+    /*if(!(_.indexOf(_.get(logged_in_user, 'types'), _.get(sails, 'config.custom.access_role.employer')) > -1)){
         input_attributes.push({name: 'employer', required: true, number: true, min: 1});
         pick_input.push('employer');
-    }
-    var filtered_post_data = _.pick(_.merge(post_request_data, request_query), pick_input);
+    }*/
+	
+   var filtered_post_data = _.pick(_.merge(post_request_data, request_query), pick_input);
     const filtered_post_keys = Object.keys(filtered_post_data);
 	filtered_post_data.logged_in_user=logged_in_user;
+	
+	/** To validate admin to change the job status
+	    @params emp_id
+	**/
+	if(post_request_data.emp_id !=undefined){
+			await Users.find({employer_profile:post_request_data.emp_id}).then(data=>{
+				 log_user.company = post_request_data.emp_id;
+		         log_user.account = data[0].id;
+				})
+			}else{
+			log_user.company = logged_in_user.employer_profile.id;
+			log_user.account = logged_in_user.id;
+			}
     // Update the Job Posting record to db.
     function updateJobPosting(id, data, callback){
         JobPostings.update(id, data, async function(err, job_posting){
@@ -84,9 +95,9 @@ module.exports = async function update(request, response) {
         }
         _response_object['details'] = {id: details.id, status: details.status};
 		
-		postDetailss.account=filtered_post_data.logged_in_user.id;
+		postDetailss.account=log_user.account;
 		postDetailss.job_id=details.id;
-		postDetailss.employer=filtered_post_data.logged_in_user.employer_profile.id;		
+		postDetailss.employer=log_user.company;		
 		postDetailss.view=0;	
 		
 		Notification.create(postDetailss, function(err, job) {

@@ -1,8 +1,3 @@
-/**
- *
- * @author Saravanan Karthikeyan <saravanan@studioq.co.in>
- *
- */
 
 /* global _, EducationalInstitutions, validateModel, sails */
 

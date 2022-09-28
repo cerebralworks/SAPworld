@@ -1,8 +1,3 @@
-/**
- *
- * @author Ilanchezhian Rajendiran <ilan@studioq.co.in>
- *
- */
 
 /*
  * To change this license header, choose License Headers in Project Properties.

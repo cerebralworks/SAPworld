@@ -1,8 +1,3 @@
-/**
- *
- * @author Saravanan Karthikeyan <saravanan@studioq.co.in>
- *
- */
 
 /* global _, JobPostings, JobApplications, sails */
 module.exports = async function apply(request, response) {

@@ -1,10 +1,10 @@
 /**
  *
- * @author Ilanchezhian Rajendiran <ilan@studioq.co.in>
+ * @author vishal <vishal.m@agnitio-systems.com>
  *
  */
 
-/* global _, EmployerProfiles, UserInformation, Users, sails */
+/* global _, EmployerProfiles, Users, sails */
 
 var bcrypt = require('bcryptjs');
 var SALT_WORK_FACTOR = 10;

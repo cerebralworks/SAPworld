@@ -1,8 +1,4 @@
-/**
- *
- * @author Ilanchezhian Rajendiran <ilan@studioq.co.in>
- *
- */
+
 
 /* global _, UserProfiles, UserInformation, Users, sails */
 module.exports = async function update(request, response) {

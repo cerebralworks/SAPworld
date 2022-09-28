@@ -1,8 +1,4 @@
-/**
- *
- * @author Saravanan Karthikeyan <saravanan@studioq.co.in>
- *
- */
+
 
 /* global _, validateModel, JobPostings, Categories, Cities, EmployerProfiles, SkillTags, sails */
 

@@ -1,8 +1,3 @@
-/**
- *
- * @author Saravanan Karthikeyan <saravanan@studioq.co.in>
- *
- */
 
 /* global _, JobPostings, JobApplications, validateModel, sails */
 
@@ -15,11 +10,26 @@ module.exports = async function deleteRecords(request, response) {
     pick_input = [
         'ids'
     ];
+	var log_user={};
     var filtered_post_data = _.pick(post_request_data, pick_input);
     var input_attributes = [
         { name: 'ids', required: true, array: true, individual_rule: { number: true, min: 1 }, min: 1 }
     ];
 	filtered_post_data.logged_in_user=logged_in_user;
+	
+	/** To validate admin to delete the job 
+	    @params emp_id
+	**/
+	if(post_request_data.emp_id !=undefined){
+		await Users.find({employer_profile:post_request_data.emp_id}).then(data=>{
+			 log_user.company = post_request_data.emp_id;
+			 log_user.account = data[0].id;
+			})
+		}else{
+		log_user.company = logged_in_user.employer_profile.id;
+		log_user.account = logged_in_user.id;
+		}
+		
     // Delete the Job Posting records from db.
     function deleteJobPosting(ids, data, callback) {
         JobPostings.update({ id: { in: ids } }, data, async function(err, job_postings) {
@@ -56,7 +66,7 @@ module.exports = async function deleteRecords(request, response) {
                 where: {
                     id: { in: ids },
                     status: { '!=': _.get(sails.config.custom.status_codes, 'deleted') },
-                    company: _.get(logged_in_user, 'employer_profile.id')
+                    company: log_user.company
                 }
             },
             function(err, job_postings) {
@@ -77,9 +87,9 @@ module.exports = async function deleteRecords(request, response) {
 		var postDetailss = {};
 		postDetailss.name=details[0].title;
 		postDetailss.message=postDetailss.name+' is Removed ';
-		postDetailss.account=filtered_post_data.logged_in_user.id;
+		postDetailss.account=log_user.account;
 		postDetailss.job_id=details[0].id;
-		postDetailss.employer=filtered_post_data.logged_in_user.employer_profile.id;		
+		postDetailss.employer=log_user.company;		
 		postDetailss.view=0;	
 		
 		Notification.create(postDetailss, function(err, job) {

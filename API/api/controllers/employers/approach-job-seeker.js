@@ -1,8 +1,3 @@
-/**
- *
- * @author Saravanan Karthikeyan <saravanan@studioq.co.in>
- *
- */
 
 /* global _, JobPostings, JobApplications, sails */
 const moment = require("moment");

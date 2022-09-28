@@ -27,7 +27,9 @@ module.exports = async function list(request, response) {
 				(SELECT COUNT(*) FROM user_employments where 
 				 user_employments.status = 1  ) as active ,
 				(SELECT COUNT(*) FROM user_employments where 
-				 user_employments.status = 0  ) as inactive 
+				 user_employments.status = 0  ) as inactive,
+				(SELECT COUNT(*) FROM user_employments where 
+				 user_employments.status !=3  ) as all
 				 FROM  employer_profiles `	
 			sails.sendNativeQuery(userCounts, async function(err, Count_Users_value) {
 				if (err) {

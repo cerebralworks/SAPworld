@@ -1,8 +1,4 @@
-/**
- *
- * @author Ilanchezhian Rajendiran <ilan@studioq.co.in>
- *
- */
+
 
 /**
  * EducationalFields.js
