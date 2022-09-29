@@ -15,17 +15,23 @@ module.exports = async function view(request, response) {
     if (filtered_query_data.expand) {
         expand = filtered_query_data.expand.split(',');
     }
+	var employer_id;
     var additional_fields = [];
     if (filtered_query_data.additional_fields) {
         additional_fields = filtered_query_data.additional_fields.split(',');
     }
-
+    if(request_query.emp_id !=undefined){
+		employer_id=request_query.emp_id;
+	}else{
+		employer_id=request.user.employer_profile.id;
+	}
     // Check whether the job posting id is exits in db.
     function isJobPostingExist(id, successCallBack) {
 		let job_model = JobPostings.findOne({
 				where: {
 					id: id,
-					'status': { '!=': _.get(sails.config.custom.status_codes, 'deleted') }
+					'status': { '!=': _.get(sails.config.custom.status_codes, 'deleted') },
+					company:employer_id
 				}
 			}).populate('company');
 			
@@ -48,7 +54,7 @@ module.exports = async function view(request, response) {
 
         job_model.exec(async function(err, job_posting) {
             if (!job_posting) {
-                _response_object.message = 'No job found with the given id.';
+                _response_object.message = 'No job found.';
                 return response.status(404).json(_response_object);
             } else {
                 if (expand.includes('skill_tags')) {
