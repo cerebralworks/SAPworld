@@ -184,5 +184,5 @@ module.exports.policies = {
     'notification/count': ['oauthBearer'],
     'notification/details': ['oauthBearer'],
 	'language/upload' : ['noOauthBearer'],
-	
+	'language/list': ['noOauthBearer'],
 };

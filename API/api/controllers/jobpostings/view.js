@@ -22,7 +22,7 @@ module.exports = async function view(request, response) {
     }
     if(request_query.emp_id !=undefined){
 		employer_id=request_query.emp_id;
-	}else{
+	}else if(request_query.jobshare ==undefined){
 		employer_id=request.user.employer_profile?request.user.employer_profile.id:'';
 	}
     // Check whether the job posting id is exits in db.
