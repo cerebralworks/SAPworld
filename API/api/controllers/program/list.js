@@ -1,109 +1,90 @@
-/* global _, Program, validateModel, sails */
 
-module.exports = async function list(request, response) {
+/* global _, validateModel, getUserListData, Program, sails */
+
+var squel = require("squel");
+const job_type_values = _.values(_.get(sails, 'config.custom.job_types', {}));
+module.exports = async function UserList(request, response) {
     var _response_object = {};
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['page', 'sort','sorting', 'limit', 'search', 'status', 'program_name_ids']);
+    const filtered_query_data = _.pick(request_query, ['page','status','column','id', 'sort', 'limit','company','view','search']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
-        { name: 'page', number: true, min: 1 },
-        { name: 'limit', number: true, min: 1 },
-        { name: 'status', enum: true, values: _.values(_.pick(sails.config.custom.status_codes, ['inactive', 'active'])) },
-        { name: 'program_name_ids', array: true, individual_rule: { number: true, min: 1 }, message: "Has to be a comma seperated integer. ie: each value should be greater than 0." },
+        { name: 'page', number: true, min: 0 },
+        { name: 'limit', number: true, min: 1 }
+       
     ];
 
-    if (filtered_query_keys.includes('program_name_ids')) {
-        filtered_query_data.program_name_ids = filtered_query_data.program_name_ids.split(',');
-    }
-
-    //Find the Program based on general criteria.
-    const getTechskill = (criteria, callback) => {
-        Program.count(criteria.where, function(err, total) {
-            if (err) {
-                var error = {
-                    'name': 'count',
-                    'rules': [{
-                        'rule': 'invalid',
-                        'message': err.message
-                    }]
-                };
-                _response_object.errors = [error];
-                _response_object.count = _response_object.errors.count;
-                return response.status(400).json(_response_object);
-            } else if (total < 1) {
-                return callback([], {}, total);
-            } else {
-                var program_name_model = Program.find(criteria).meta({ makeLikeModifierCaseInsensitive: true });;
-                program_name_model.exec(async function(err, program) {
-                    if (err) {
-                        var error = {
-                            'name': 'items',
-                            'rules': [{
-                                'rule': 'invalid',
-                                'message': err.message
-                            }]
-                        };
-                        _response_object.errors = [error];
-                        _response_object.count = _response_object.errors.count;
-                        return response.status(400).json(_response_object);
-                    } else {
-                        return callback(program, {}, total);
-                    }
-                });
-            }
-        });
+    //Find the getUserListData based on general criteria.
+    const getUserListData = async( callback) => {
+		   var searchQuery =``;
+		   if(filtered_query_data.search){
+			   searchQuery =`where (
+				program.name ilike '%${filtered_query_data.search}%'
+				)`;
+		   }
+			programs = `SELECT * FROM program ${searchQuery}  ORDER BY ${filtered_query_data.sort}
+			 LIMIT ${filtered_query_data.limit} OFFSET ${filtered_query_data.page}`
+				
+			programCount = `SELECT count(*) FROM program ${searchQuery}`
+			sails.sendNativeQuery(programs, async function(err, programs) {
+				if (err) {
+					var error = {
+						'field': 'items',
+						'rules': [{
+							'rule': 'invalid',
+							'message': err.message
+						}]
+					};
+					_response_object.errors = [error];
+					_response_object.count = _response_object.errors.count;
+					return response.status(400).json(_response_object);
+				} else {
+							
+							sails.sendNativeQuery(programCount, async function(errs, programCount) {
+								if (errs) {
+									var error = {
+										'field': 'items',
+										'rules': [{
+											'rule': 'invalid',
+											'message': errs.message
+										}]
+									};
+									_response_object.errors = [error];
+									_response_object.count = _response_object.errors.count;
+									return response.status(400).json(_response_object);
+								} else {
+									
+									return callback(_.get(programs, 'rows'),_.get(programCount, 'rows'));
+								}
+							});
+					
+				}
+			});
+		
     };
 
-    //Build and sending response.
-    const sendResponse = (items, details, total) => {
-        _response_object.message = 'Program name items retrieved successfully.';
+
+    //Build and sending response
+    const sendResponse = (users,total) => {
+        _response_object.message = 'programs Details successfully.';
         var meta = {};
-        meta['count'] = items.length;
-        meta['total'] = total;
-        meta['page'] = filtered_query_data.page ? filtered_query_data.page : 1;
+        meta['count'] = users.length;
+        meta['total'] = total[0]['count'];
+        meta['page'] = filtered_query_data.page ? parseInt(filtered_query_data.page) : 1;
         meta['limit'] = filtered_query_data.limit;
-        _response_object['meta'] = meta;
-        _response_object['items'] = _.cloneDeep(items);
-        if (!_.isEmpty(details)) {
-            _response_object['details'] = _.cloneDeep(details);
-        }
+		_response_object['meta'] = meta;
+		_response_object['items'] = users;
+       
         return response.ok(_response_object);
     };
 
-    //Validating the request and pass on the appriopriate response.
+    //Validating the request and pass on the appriopriate response
     validateModel.validate(null, input_attributes, filtered_query_data, async function(valid, errors) {
         if (valid) {
-            filtered_query_data.limit = parseInt(filtered_query_data.limit) > 0 ? parseInt(filtered_query_data.limit) : 10;
-            filtered_query_data.page = parseInt(filtered_query_data.page);
-            var criteria = {
-                limit: filtered_query_data.limit,
-                where: _.omit(filtered_query_data, ['page', 'limit', 'search','sorting', 'sort', 'program_name_ids'])
-            };
-            if (filtered_query_keys.includes('search')) {
-                criteria.where.name = { 'like': "%" + filtered_query_data.search.toLowerCase() + "%" };
-            }
-            if (filtered_query_keys.includes('page')) {
-                criteria.skip = ((parseInt(filtered_query_data.page)) - 1) * criteria.limit;
-            }
-            if (filtered_query_keys.includes('program_name_ids')) {
-                criteria.where.id = { 'in': filtered_query_data.program_name_ids };
-            }
-            if (filtered_query_keys.includes('status')) {
-                criteria.where.status = filtered_query_data.status;
-            } else {
-                // We should exclude deleted skill tags.
-                criteria.where.status = { '!=': _.get(sails.config.custom.status_codes, 'deleted') };
-            }
-			if(!filtered_query_keys.includes('sorting')){
-				criteria.sort = "id desc"
-			}
-			else{
-				criteria.sort = filtered_query_data.sorting;
-			}
             
-            //Preparing data.
-            await getTechskill(criteria, function(program, details, total) {
-                sendResponse(program, details, total);
+            //Preparing data
+            await getUserListData( function(users,total) {
+                sendResponse(users,total);
             });
         } else {
             _response_object.errors = errors;
