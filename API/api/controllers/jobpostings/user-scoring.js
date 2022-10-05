@@ -67,7 +67,8 @@ module.exports = async function Scoring(request, response) {
             list_query.where(`( job_posting.status =1 OR job_posting.id = (SELECT job_application.job_posting FROM job_applications "job_application" WHERE (job_application.job_posting = job_posting.id) AND (job_application.user = ${parseInt(filtered_query_data.id)} ))  )`);
             list_query.where("job_posting.status !=0");
             list_query.where("job_posting.status !=3");
-            list_query.where("job_posting.experience <=" + model.experience);
+            //list_query.where("job_posting.experience <=" + model.experience);
+			list_query.where("job_posting.experience <=" + model);
 			
 			list_query.left_join(`scorings "scoring" ON (scoring.job_id = job_posting.id) `);
 			list_query.left_join(`employer_profiles "employer" ON (job_posting.company = employer.id)  `);
