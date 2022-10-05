@@ -32,7 +32,7 @@ module.exports.policies = {
 
     //'users/list': ['oauthBearer', 'isAdmin'],
     'users/view': ['oauthBearer'],
-    'users/profile': ['oauthBearer', 'isUser'],
+    'users/profile': ['oauthBearer', 'isUserOrAdmin'],
     'users/signup': ['noOauthBearer'],
     'users/delete-account': ['noOauthBearer'],
     'users/update': ['oauthBearer', 'isUserOrAdmin'],
@@ -82,13 +82,13 @@ module.exports.policies = {
     'jobpostings/delete': ['oauthBearer', 'isEmployerOrAdmin'],
     'jobpostings/change-status': ['oauthBearer', 'isEmployerOrAdmin'],
     'jobpostings/applications/list': ['oauthBearer', 'isEmployerOrAdmin'],
-    'jobpostings/applications/list-for-user': ['oauthBearer', 'isUser'],
+    'jobpostings/applications/list-for-user': ['oauthBearer', 'isUserOrAdmin'],
     'jobpostings/applications/view': ['oauthBearer', 'isEmployerOrAdmin'],
     'jobpostings/applications/view-for-user': ['oauthBearer', 'isUser'],
     'jobpostings/applications/change-status': ['oauthBearer', 'isEmployer'],
     'jobpostings/applications/short-list-user': ['oauthBearer', 'isEmployer'],
     'jobpostings/job-scoring': ['oauthBearer', 'isEmployerOrAdmin'],
-    'jobpostings/user-scoring': ['oauthBearer', 'isUser'],
+    'jobpostings/user-scoring': ['oauthBearer', 'isUserOrAdmin'],
     'jobpostings/send-email': ['oauthBearer', 'isEmployerOrAdmin'],
 
 	
