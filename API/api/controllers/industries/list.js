@@ -17,12 +17,16 @@ module.exports = async function UserList(request, response) {
     //Find the getUserListData based on general criteria.
     const getUserListData = async( callback) => {
 		   var searchQuery =``;
+		   var sortQuery =``;
 		   if(filtered_query_data.search){
 			   searchQuery =`where (
 				industries.name ilike '%${filtered_query_data.search}%'
 				)`;
 		   }
-			industry = `SELECT * FROM industries ${searchQuery}  ORDER BY ${filtered_query_data.sort}
+		   if(filtered_query_data.sort !=undefined){
+			   sortQuery=`ORDER BY ${filtered_query_data.sort}`;
+		   }
+			industry = `SELECT * FROM industries ${searchQuery} ${sortQuery}
 			 LIMIT ${filtered_query_data.limit} OFFSET ${filtered_query_data.page}`
 				
 			industryCount = `SELECT count(*) FROM industries ${searchQuery}`

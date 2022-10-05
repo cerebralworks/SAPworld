@@ -17,14 +17,17 @@ module.exports = async function UserList(request, response) {
     //Find the getUserListData based on general criteria.
     const getUserListData = async( callback) => {
 		   var searchQuery =``;
+		   var sortQuery =``;
 		   if(filtered_query_data.search){
 			   searchQuery =`where (
 				workauthorization.name ilike '%${filtered_query_data.search}%' OR
 				workauthorization.visa ilike '%${filtered_query_data.search}%'
 				)`;
 		   }
-			workauth = `SELECT * FROM workauthorization ${searchQuery}  ORDER BY ${filtered_query_data.sort}
-			 LIMIT ${filtered_query_data.limit} OFFSET ${filtered_query_data.page}`
+		   if(filtered_query_data.sort !=undefined){
+			   sortQuery=`ORDER BY ${filtered_query_data.sort} LIMIT ${filtered_query_data.limit} OFFSET ${filtered_query_data.page}`;
+		   }
+			workauth = `SELECT * FROM workauthorization ${searchQuery} ${sortQuery}`
 				
 			workauthCount = `SELECT count(*) FROM workauthorization ${searchQuery}`
 			sails.sendNativeQuery(workauth, async function(err, workauth) {

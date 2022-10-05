@@ -17,13 +17,17 @@ module.exports = async function UserList(request, response) {
     //Find the getUserListData based on general criteria.
     const getUserListData = async( callback) => {
 		   var searchQuery =``;
+		   var sortQuery =``;
 		   if(filtered_query_data.search){
 			   searchQuery =`where (
 				skill_tags.tag ilike '%${filtered_query_data.search}%' OR
 				skill_tags.long_tag ilike '%${filtered_query_data.search}%'
 				)`;
 		   }
-			skills = `SELECT * FROM skill_tags ${searchQuery}  ORDER BY ${filtered_query_data.sort}
+		   if(filtered_query_data.sort !=undefined){
+			   sortQuery=`ORDER BY ${filtered_query_data.sort}`;
+		   }
+			skills = `SELECT * FROM skill_tags ${searchQuery}  ${sortQuery}
 			 LIMIT ${filtered_query_data.limit} OFFSET ${filtered_query_data.page}`
 				
 			skillsCount = `SELECT count(*) FROM skill_tags ${searchQuery}`
