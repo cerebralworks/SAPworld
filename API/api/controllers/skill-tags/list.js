@@ -1,128 +1,95 @@
 
+/* global _, validateModel, SkillTags, sails */
 
-/* global _, SkillTags, validateModel, sails */
-
-module.exports = async function list(request, response) {
+var squel = require("squel");
+const job_type_values = _.values(_.get(sails, 'config.custom.job_types', {}));
+module.exports = async function UserList(request, response) {
     var _response_object = {};
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['page', 'sort', 'limit','sorting', 'search', 'status', 'skill_tags_ids']);
+    const filtered_query_data = _.pick(request_query, ['page','status','column','id', 'sort', 'limit','company','view','search']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
-        { name: 'page', number: true, min: 1 },
-        { name: 'limit', number: true, min: 1 },
-        { name: 'status', enum: true, values: _.values(_.pick(sails.config.custom.status_codes, ['inactive', 'active'])) },
-        { name: 'skill_tags_ids', array: true, individual_rule: { number: true, min: 1 }, message: "Has to be a comma seperated integer. ie: each value should be greater than 0." },
+        { name: 'page', number: true, min: 0 },
+        { name: 'limit', number: true, min: 1 }
+       
     ];
 
-    if (filtered_query_keys.includes('skill_tags_ids')) {
-        filtered_query_data.skill_tags_ids = filtered_query_data.skill_tags_ids.split(',');
-    }
-
-    //Find the SkillTags based on general criteria.
-    const getSkillTags = (criteria, callback) => {
-        SkillTags.count(criteria.where, function(err, total) {
-            if (err) {
-                var error = {
-                    'tag': 'count',
-                    'rules': [{
-                        'rule': 'invalid',
-                        'message': err.message
-                    }]
-                };
-                _response_object.errors = [error];
-                _response_object.count = _response_object.errors.count;
-                return response.status(400).json(_response_object);
-            } else if (total < 1) {
-                return callback([], {}, total);
-            } else {
-                var skill_tag_model = SkillTags.find(criteria).meta({ makeLikeModifierCaseInsensitive: true });;
-                skill_tag_model.exec(async function(err, skill_tags) {
-                    if (err) {
-                        var error = {
-                            'tag': 'items',
-                            'rules': [{
-                                'rule': 'invalid',
-                                'message': err.message
-                            }]
-                        };
-                        _response_object.errors = [error];
-                        _response_object.count = _response_object.errors.count;
-                        return response.status(400).json(_response_object);
-                    } else {
-                        return callback(skill_tags, {}, total);
-                    }
-                });
-            }
-        });
+    //Find the getUserListData based on general criteria.
+    const getUserListData = async( callback) => {
+		   var searchQuery =``;
+		   var sortQuery =``;
+		   if(filtered_query_data.search){
+			   searchQuery =`where (
+				skill_tags.tag ilike '%${filtered_query_data.search}%' OR
+				skill_tags.long_tag ilike '%${filtered_query_data.search}%'
+				)`;
+		   }
+		   if(filtered_query_data.sort !=undefined){
+			   sortQuery=`ORDER BY ${filtered_query_data.sort}`;
+		   }
+			skills = `SELECT * FROM skill_tags ${searchQuery}  ${sortQuery}
+			 LIMIT ${filtered_query_data.limit} OFFSET ${filtered_query_data.page}`
+				
+			skillsCount = `SELECT count(*) FROM skill_tags ${searchQuery}`
+			sails.sendNativeQuery(skills, async function(err, skills) {
+				if (err) {
+					var error = {
+						'field': 'items',
+						'rules': [{
+							'rule': 'invalid',
+							'message': err.message
+						}]
+					};
+					_response_object.errors = [error];
+					_response_object.count = _response_object.errors.count;
+					return response.status(400).json(_response_object);
+				} else {
+							
+							sails.sendNativeQuery(skillsCount, async function(errs, skillsCount) {
+								if (errs) {
+									var error = {
+										'field': 'items',
+										'rules': [{
+											'rule': 'invalid',
+											'message': errs.message
+										}]
+									};
+									_response_object.errors = [error];
+									_response_object.count = _response_object.errors.count;
+									return response.status(400).json(_response_object);
+								} else {
+									
+									return callback(_.get(skills, 'rows'),_.get(skillsCount, 'rows'));
+								}
+							});
+					
+				}
+			});
+		
     };
 
-    //Build and sending response.
-    const sendResponse = (items, details, total) => {
-        _response_object.message = 'Skill tag items retrieved successfully.';
+
+    //Build and sending response
+    const sendResponse = (users,total) => {
+        _response_object.message = 'Skills Details successfully.';
         var meta = {};
-        meta['count'] = items.length;
-        meta['total'] = total;
-        meta['page'] = filtered_query_data.page ? filtered_query_data.page : 1;
+        meta['count'] = users.length;
+        meta['total'] = total[0]['count'];
+        meta['page'] = filtered_query_data.page ? parseInt(filtered_query_data.page) : 1;
         meta['limit'] = filtered_query_data.limit;
-        _response_object['meta'] = meta;
-        _response_object['items'] = _.cloneDeep(items);
-        if (!_.isEmpty(details)) {
-            _response_object['details'] = _.cloneDeep(details);
-        }
+		_response_object['meta'] = meta;
+		_response_object['items'] = users;
+       
         return response.ok(_response_object);
     };
 
-    //Validating the request and pass on the appriopriate response.
+    //Validating the request and pass on the appriopriate response
     validateModel.validate(null, input_attributes, filtered_query_data, async function(valid, errors) {
         if (valid) {
-            filtered_query_data.limit = parseInt(filtered_query_data.limit) > 0 ? parseInt(filtered_query_data.limit) : 10;
-            filtered_query_data.page = parseInt(filtered_query_data.page);
-            var criteria = {
-                limit: filtered_query_data.limit,
-                where: _.omit(filtered_query_data, ['page', 'limit', 'search','sorting' , 'sort', 'skill_tags_ids'])
-            };
-            if (filtered_query_keys.includes('search')) {
-                criteria.where.tag = { 'like': "%" + filtered_query_data.search.toLowerCase() + "%" };
-            }
-            if (filtered_query_keys.includes('page')) {
-                criteria.skip = ((parseInt(filtered_query_data.page)) - 1) * criteria.limit;
-            }
-            if (filtered_query_keys.includes('skill_tags_ids')) {
-                criteria.where.id = { 'in': filtered_query_data.skill_tags_ids };
-            }
-            if (filtered_query_keys.includes('status')) {
-                criteria.where.status = filtered_query_data.status;
-            } else {
-                // We should exclude deleted skill tags.
-                criteria.where.status = { '!=': _.get(sails.config.custom.status_codes, 'deleted') };
-            }
-            /* if (filtered_query_keys.includes('sort')) {
-                criteria.sort = [];
-                const sort_array = filtered_query_data.sort.split(',');
-                if (sort_array.length > 0) {
-                    _.forEach(sort_array, function(value, key) {
-                        const sort_direction = value.split('.');
-                        var sort = {};
-                        sort[sort_direction[0]] = 'ASC';
-                        if (sort_direction.length > 1) {
-                            if (sort_direction[1] === 'desc') {
-                                sort[sort_direction[0]] = 'DESC';
-                            }
-                        }
-                        criteria.sort.push(sort);
-                    });
-                }
-            } */
-			
-			if(!filtered_query_keys.includes('sorting')){
-				criteria.sort = "id desc"
-			}
-			else{
-				criteria.sort = filtered_query_data.sorting;
-			}
-            //Preparing data.
-            await getSkillTags(criteria, function(skill_tags, details, total) {
-                sendResponse(skill_tags, details, total);
+            
+            //Preparing data
+            await getUserListData( function(users,total) {
+                sendResponse(users,total);
             });
         } else {
             _response_object.errors = errors;

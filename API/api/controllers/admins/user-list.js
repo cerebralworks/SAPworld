@@ -6,7 +6,7 @@ const job_type_values = _.values(_.get(sails, 'config.custom.job_types', {}));
 module.exports = async function UserList(request, response) {
     var _response_object = {};
     const request_query = request.allParams();
-    const filtered_query_data = _.pick(request_query, ['page','status','column','id', 'sort', 'limit','company','view']);
+    const filtered_query_data = _.pick(request_query, ['page','status','column','id', 'sort', 'limit','company','view','search']);
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [
         { name: 'page', number: true, min: 0 },
@@ -16,10 +16,17 @@ module.exports = async function UserList(request, response) {
 
     //Find the getUserListData based on general criteria.
     const getUserListData = async( callback) => {
-			userCounts = `SELECT user_profiles.id,user_profiles.first_name,user_profiles.last_name,user_profiles.job_role,user_profiles.city,	user_profiles.state,user_profiles.country,user_profiles.created_at,user_profiles.zipcode FROM user_profiles  ORDER BY ${filtered_query_data.column} ${filtered_query_data.sort}
+		   var searchQuery =``;
+		   if(filtered_query_data.search !=undefined){
+			   searchQuery =`where (
+				user_profiles.first_name like '%${filtered_query_data.search}%'	OR
+				user_profiles.last_name like '%${filtered_query_data.search}%' OR user_profiles.job_role like '%${filtered_query_data.search}%'	
+				)`;
+		   }
+			userCounts = `SELECT user_profiles.id,user_profiles.first_name,user_profiles.last_name,user_profiles.job_role,user_profiles.city,	user_profiles.state,user_profiles.country,user_profiles.created_at,user_profiles.zipcode FROM user_profiles ${searchQuery}  ORDER BY ${filtered_query_data.column} ${filtered_query_data.sort}
 			 LIMIT ${filtered_query_data.limit} OFFSET ${filtered_query_data.page}`
 				
-				userCountsTotal = `SELECT count(*) FROM user_profiles `
+				userCountsTotal = `SELECT count(*) FROM user_profiles ${searchQuery}`
 				 
 			EmployerCounts =`SELECT user_profiles.country,count(user_profiles.country) FROM user_profiles where user_profiles.country is not null group by country`	
 			sails.sendNativeQuery(userCounts, async function(err, Count_Users_value) {

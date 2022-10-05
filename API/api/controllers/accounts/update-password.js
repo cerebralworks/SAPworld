@@ -10,10 +10,11 @@ module.exports = function updateEmail(request, response) {
     const post_request_data = request.body;
     const logged_in_user = request.user;
     var _response_object = {};
-    var filtered_post_data = _.pick(post_request_data,['current_password', 'email','password']);
+    /*var filtered_post_data = _.pick(post_request_data,['current_password', 'email','password']);*/
+	var filtered_post_data = _.pick(post_request_data,['email','password']);
     const filtered_post_keys = Object.keys(filtered_post_data);
     var input_attributes = [
-        {name: 'current_password', required: true, min: 6},
+        //{name: 'current_password', required: true, min: 6},
         {name: 'email', email: true, required: true}
     ];
 	/**	
@@ -36,12 +37,12 @@ module.exports = function updateEmail(request, response) {
                         return response.status(500).json(_response_object);
                     });
                 }else{
-                    bcrypt.compare(filtered_post_data.current_password, current_user.rows[0].password).then(async function(password_check) {
+                    /*bcrypt.compare(filtered_post_data.current_password, current_user.rows[0].password).then(async function(password_check) {
                         if(!password_check){
                             _response_object.errors = [{field: 'current_password', rules: [{rule:'invalid', message: 'Invalid current password.'}]}];
                             _response_object.count = 1;
                             return response.status(400).json(_response_object);
-                        }else{
+                        }else{*/
 							
 							//Update the password
                             filtered_post_data.password = await bcrypt.hash(filtered_post_data.password, SALT_WORK_FACTOR);
@@ -57,8 +58,8 @@ module.exports = function updateEmail(request, response) {
                                     return response.status(200).json(_response_object);
                                 }
                             });
-                        }
-                    });
+                        //}
+                    //});
                 }
             });
         }else{
