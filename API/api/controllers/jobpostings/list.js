@@ -114,8 +114,12 @@ module.exports = async function list(request, response) {
     if (!_.isEmpty(filtered_query_data.location_miles)) {
         input_attributes.push({ name: 'location', required: true, geopoint: true });
     }
-    if (!_.has(filtered_query_data, 'is_job_applied') && _.get(request, 'user.user_profile.id')) {
+    /*if (!_.has(filtered_query_data, 'is_job_applied') && _.get(request, 'user.user_profile.id')) {
         filtered_query_data.is_job_applied = _.get(request, 'user.user_profile.id');
+        filtered_query_keys.push('is_job_applied');
+    }*/
+	if (!_.has(filtered_query_data, 'is_job_applied') && _.get(filtered_query_data, 'user_id')) {
+		filtered_query_data.is_job_applied = _.get(filtered_query_data, 'user_id');
         filtered_query_keys.push('is_job_applied');
     }
 

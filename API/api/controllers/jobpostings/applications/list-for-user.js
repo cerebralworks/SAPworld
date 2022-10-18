@@ -15,6 +15,13 @@ module.exports = async function list(request,response) {
     var _response_object = {};
     const request_query = request.allParams();
     const logged_in_user = request.user;
+	var user_id;
+	if(request_query.userid !=undefined){
+		user_id=request_query.userid;
+	}else{
+		user_id=logged_in_user.user_profile.id;
+		
+	}
     const filtered_query_data = _.pick(request_query, [
         'page', 'sort', 'limit', 'status', 'expand', 'job_posting', 'employer', 'short_listed'
     ]);
@@ -36,7 +43,7 @@ module.exports = async function list(request,response) {
         //Initializing query
         var query = squel.select({tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"'}).from(JobApplications.tableName, JobApplications.tableAlias);
         var group_by = JobApplications.tableAlias + "." + JobApplications.schema.id.columnName;
-        query.where(JobApplications.tableAlias + '.' + JobApplications.schema.user.columnName + "=" + logged_in_user.user_profile.id);
+        query.where(JobApplications.tableAlias + '.' + JobApplications.schema.user.columnName + "=" + user_id);
         if(filtered_query_keys.includes('status')){
             query.where(JobApplications.tableAlias + '.' + JobApplications.schema.status.columnName + "=" + parseInt(criteria.status));
         }else{

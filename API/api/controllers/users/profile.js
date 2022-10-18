@@ -12,6 +12,13 @@ module.exports = async function list(request, response) {
     const filtered_query_keys = Object.keys(filtered_query_data);
     var input_attributes = [];
     var expand = [];
+	var user_id;
+	if(request_query.userid !=undefined){
+		user_id=request_query.userid;
+	}else{
+		user_id=logged_in_user.user_profile.id;
+		
+	}
     if (filtered_query_keys.includes('expand')) {
         expand = filtered_query_data.expand.split(',');
     }
@@ -21,7 +28,7 @@ module.exports = async function list(request, response) {
         var query = squel.select({ tableAliasQuoteCharacter: '"', fieldAliasQuoteCharacter: '"' }).from(UserProfiles.tableName, UserProfiles.tableAlias);
         query.left_join(Users.tableName, Users.tableAlias, Users.tableAlias + '.' + Users.schema.id.columnName + "=" + UserProfiles.tableAlias + '.' + UserProfiles.schema.account.columnName);
         var group_by = UserProfiles.tableAlias + "." + UserProfiles.schema.id.columnName;
-        query.where(UserProfiles.tableAlias + '.' + UserProfiles.schema.id.columnName + "=" + logged_in_user.user_profile.id);
+        query.where(UserProfiles.tableAlias + '.' + UserProfiles.schema.id.columnName + "=" + user_id);
         //Selecting fields
         fields = _.without(Object.keys(UserProfiles.schema));
         fields.map(function(value) {
