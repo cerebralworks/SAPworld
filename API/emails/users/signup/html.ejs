@@ -145,9 +145,9 @@
                                         <table border="0" cellspacing="0" cellpadding="0">
                                             <tr>
 											   <% if(share !=null){ %>
-                                                <td align="center" style="border-radius: 10px;" bgcolor="#1253ee"><a href="<%= sails.config.conf.appurl %>/#/verify?id=<%= account %>&token=<%= token %>&role=0&share=<%= share %>" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 10px; border: 1px solid #1253ee; display: inline-block;">Confirm</a></td>
+                                                <td align="center" style="border-radius: 10px;" bgcolor="#1253ee"><a href="<%= sails.config.conf.appurl %>/verify?id=<%= account %>&token=<%= token %>&role=0&share=<%= share %>" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 10px; border: 1px solid #1253ee; display: inline-block;">Confirm</a></td>
 												<% }else{ %>
-												<td align="center" style="border-radius: 10px;" bgcolor="#1253ee"><a href="<%= sails.config.conf.appurl %>/#/verify?id=<%= account %>&token=<%= token %>&role=0" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 10px; border: 1px solid #1253ee; display: inline-block;">Confirm</a></td>
+												<td align="center" style="border-radius: 10px;" bgcolor="#1253ee"><a href="<%= sails.config.conf.appurl %>/verify?id=<%= account %>&token=<%= token %>&role=0" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 10px; border: 1px solid #1253ee; display: inline-block;">Confirm</a></td>
 												<% }%>
                                             </tr>
                                         </table>
