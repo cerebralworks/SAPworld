@@ -100,9 +100,9 @@ module.exports = async function update(request, response) {
 		postDetailss.employer=log_user.company;		
 		postDetailss.view=0;	
 		
-		Notification.create(postDetailss, function(err, job) {
+		/*Notification.create(postDetailss, function(err, job) {
 			
-		}); 
+		}); */
         return response.ok(_response_object);
     };
 	//Validating the request and pass on the appriopriate response.
