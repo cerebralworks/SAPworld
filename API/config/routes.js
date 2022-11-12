@@ -81,20 +81,31 @@ module.exports.routes = {
       .send(swaggerJson)
   },
   
-	'POST /scoremaster/upload' : { controller: 'scoremaster', action: 'upload'},
+	'POST /scoremaster/upload' : { controller: 'scoremaster', action: 'upload',swagger: {
+		tags:["Scoremaster"],
+		summary:"UNUSED",
+	}},
 	
 	/*Contact form routes*/
-	'POST /contact/create': { controller: 'contact', action: 'create' },
+	'POST /contact/create': { controller: 'contact', action: 'create' ,swagger: {
+		tags:["Contact"],
+		summary:"UNUSED",
+	}},
 	
 	/*invities routes*/	
-    'POST /invitestatus/create' : { controller: 'invitestatus', action: 'create' },
-     'POST /invitestatus/cancel' : { controller: 'invitestatus', action: 'cancel' },
+    'POST /invitestatus/create' : { controller: 'invitestatus', action: 'create' ,swagger: {
+		tags:["Invitestatus"],
+		summary:"UNUSED",
+	}},
+     'POST /invitestatus/cancel' : { controller: 'invitestatus', action: 'cancel' ,swagger: {
+		tags:["Invitestatus"],
+		summary:"UNUSED",
+	}},
 
 	/*Country routes*/
     'GET /country/list/': { controller: 'country', action: 'list',swagger: {
         tags: ["Country"],
 		summary:"This api list out the country details ",
-		//deprecated:true,
 		parameters: [{
 			name: "page",
               in: "query",
@@ -123,8 +134,14 @@ module.exports.routes = {
         },
 		security:[{"Authorization":[]}]
     }},
-	'POST /country/create': { controller: 'country', action: 'create' },
-    'POST /country/find': { controller: 'country', action: 'find' },
+	'POST /country/create': { controller: 'country', action: 'create' ,swagger: {
+		tags:["Country"],
+		summary:"UNUSED",
+	}},
+    'POST /country/find': { controller: 'country', action: 'find' ,swagger: {
+		tags:["Country"],
+		summary:"UNUSED",
+	}},
     'GET /country/findone/:id': { controller: 'country', action: 'findone' ,swagger: {
 		summary:"This api list out the country details based on the country id ",
 		description:"Use Admin/Employer/User AccessToken",
@@ -145,9 +162,18 @@ module.exports.routes = {
         },
 		security:[{"Authorization":[]}]
     }},
-    'PUT /country/update/:id': { controller: 'country', action: 'update' },
-    'POST /country/delete' : { controller: 'country', action: 'delete' },
-    'POST /country/upload' : { controller: 'country', action: 'upload' },
+    'PUT /country/update/:id': { controller: 'country', action: 'update' ,swagger: {
+		tags:["Country"],
+		summary:"UNUSED",
+	}},
+    'POST /country/delete' : { controller: 'country', action: 'delete' ,swagger: {
+		tags:["Country"],
+		summary:"UNUSED",
+	}},
+    'POST /country/upload' : { controller: 'country', action: 'upload' ,swagger: {
+		tags:["Country"],
+		summary:"UNUSED",
+	}},
 	
 	/* Notification routes */
 	
@@ -239,8 +265,14 @@ module.exports.routes = {
         },
 		security:[{"Authorization":[]}]
     }},
-    'POST /language/find': { controller: 'language', action: 'find' },
-    'POST /language/create': { controller: 'language', action: 'create' },
+    'POST /language/find': { controller: 'language', action: 'find' ,swagger: {
+		tags:["Language"],
+		summary:"UNUSED",
+	}},
+    'POST /language/create': { controller: 'language', action: 'create' ,swagger: {
+		tags:["Language"],
+		summary:"UNUSED",
+	}},
     'GET /language/findone/:id': { controller: 'language', action: 'findone' ,swagger: {
 		summary:"This api show the  Language details based on the language id",
 		description:"Use Admin/Employer/User AccessToken",
@@ -261,21 +293,42 @@ module.exports.routes = {
         },
 		security:[{"Authorization":[]}]
     }},
-    'PUT /language/update/:id': { controller: 'language', action: 'update' },
-    'POST /language/delete' : { controller: 'language', action: 'delete' },
-    'POST /language/upload' : { controller: 'language', action: 'upload' },
+    'PUT /language/update/:id': { controller: 'language', action: 'update' ,swagger: {
+		tags:["Language"],
+		summary:"UNUSED",
+	}},
+    'POST /language/delete' : { controller: 'language', action: 'delete' ,swagger: {
+		tags:["Language"],
+		summary:"UNUSED",
+	}},
+    'POST /language/upload' : { controller: 'language', action: 'upload' ,swagger: {
+		tags:["Language"],
+		summary:"UNUSED",
+	}},
 	
     /*Client routes*/
     'GET /clients/create': nonGetHandler,
-    'POST /clients/create': { controller: 'clients', action: 'create' },
-    'GET /clients/list': { controller: 'clients', action: 'list' },
+    'POST /clients/create': { controller: 'clients', action: 'create' ,swagger: {
+		tags:["Clients"],
+		summary:"UNUSED",
+	}},
+    'GET /clients/list': { controller: 'clients', action: 'list' ,swagger: {
+		tags:["Clients"],
+		summary:"UNUSED",
+	}},
 
 	'GET /user/application/delete/:id': nonGetHandler,
-    'POST /user/application/delete/:id': { controller: 'jobpostings', action: 'applications/delete-application' },
+    'POST /user/application/delete/:id': { controller: 'jobpostings', action: 'applications/delete-application',swagger: {
+		tags:["User"],
+		summary:"UNUSED",
+	} },
     
 	
     /*Users routes*/
-    'GET /users/list': { controller: 'users', action: 'list' },
+    'GET /users/list': { controller: 'users', action: 'list' ,swagger: {
+		tags:["Users"],
+		summary:"UNUSED",
+	}},
     'GET /users/signup': nonGetHandler,
     'POST /users/signup': { controller: 'users', action: 'signup',swagger: {
 		summary:"This api used for create user account",
@@ -783,28 +836,64 @@ module.exports.routes = {
 		security:[{"Authorization":[]}]
     }},
     'GET /users/update-video-resume': nonGetHandler,
-    'POST /users/update-video-resume': { controller: 'users', action: 'update-video-resume' },
-    'GET /users/check-user-handle/:user_handle': { controller: 'users', action: 'check-user-handle' },
+    'POST /users/update-video-resume': { controller: 'users', action: 'update-video-resume' ,swagger: {
+		tags:["Users"],
+		summary:"UNUSED",
+	}},
+    'GET /users/check-user-handle/:user_handle': { controller: 'users', action: 'check-user-handle' ,swagger: {
+		tags:["Users"],
+		summary:"UNUSED",
+	}},
     'GET /users/update-user-handle': nonGetHandler,
-    'POST /users/update-user-handle': { controller: 'users', action: 'update-user-handle' },
+    'POST /users/update-user-handle': { controller: 'users', action: 'update-user-handle',swagger: {
+		tags:["Users"],
+		summary:"UNUSED",
+	} },
     'GET /users/update-phone': nonGetHandler,
-    'POST /users/update-phone': { controller: 'users', action: 'update-phone' },
+    'POST /users/update-phone': { controller: 'users', action: 'update-phone' ,swagger: {
+		tags:["Users"],
+		summary:"UNUSED",
+	}},
     'GET /users/update-email': nonGetHandler,
-    'POST /users/update-email': { controller: 'users', action: 'update-email' },
+    'POST /users/update-email': { controller: 'users', action: 'update-email' ,swagger: {
+		tags:["Users"],
+		summary:"UNUSED",
+	}},
     'GET /users/employments/create': nonGetHandler,
-    'POST /users/employments/create': { controller: 'users', action: 'employments/create' },
+    'POST /users/employments/create': { controller: 'users', action: 'employments/create',swagger: {
+		tags:["Users"],
+		summary:"UNUSED",
+	} },
     'GET /users/employments/update/:id': nonGetHandler,
-    'POST /users/employments/update/:id': { controller: 'users', action: 'employments/update' },
+    'POST /users/employments/update/:id': { controller: 'users', action: 'employments/update' ,swagger: {
+		tags:["Users"],
+		summary:"UNUSED",
+	}},
     'GET /users/employments/delete': nonGetHandler,
-    'POST /users/employments/delete': { controller: 'users', action: 'employments/delete' },
+    'POST /users/employments/delete': { controller: 'users', action: 'employments/delete',swagger: {
+		tags:["Users"],
+		summary:"UNUSED",
+	} },
     'GET /users/educations/create': nonGetHandler,
-    'POST /users/educations/create': { controller: 'users', action: 'educations/create' },
+    'POST /users/educations/create': { controller: 'users', action: 'educations/create' ,swagger: {
+		tags:["Users"],
+		summary:"UNUSED",
+	}},
     'GET /users/educations/update/:id': nonGetHandler,
-    'POST /users/educations/update/:id': { controller: 'users', action: 'educations/update' },
+    'POST /users/educations/update/:id': { controller: 'users', action: 'educations/update' ,swagger: {
+		tags:["Users"],
+		summary:"UNUSED",
+	}},
     'GET /users/educations/delete': nonGetHandler,
-    'POST /users/educations/delete': { controller: 'users', action: 'educations/delete' },
+    'POST /users/educations/delete': { controller: 'users', action: 'educations/delete' ,swagger: {
+		tags:["Users"],
+		summary:"UNUSED",
+	}},
     'GET /users/change-status': nonGetHandler,
-    'POST /users/change-status/:id': { controller: 'users', action: 'change-status' },
+    'POST /users/change-status/:id': { controller: 'users', action: 'change-status' ,swagger: {
+		tags:["Users"],
+		summary:"UNUSED",
+	}},
     'GET /users/user-dashboard': nonGetHandler,
     'POST /users/user-dashboard': { controller: 'users', action: 'user-dashboard' ,swagger: {
 		summary:"This api show the Dasboard's Needs details",
@@ -830,7 +919,10 @@ module.exports.routes = {
         },
 		security:[{"Authorization":[]}]
     }},
-    'GET /users/job-approach-invitation': { controller: 'users', action: 'job-approach-invitation' },
+    'GET /users/job-approach-invitation': { controller: 'users', action: 'job-approach-invitation' ,swagger: {
+		tags:["Users"],
+		summary:"UNUSED",
+	}},
     /*Employers routes*/
     'GET /employers/list': { controller: 'employers', action: 'list',swagger: {
 		summary:"This api list out the Employer details",
@@ -920,7 +1012,10 @@ module.exports.routes = {
 		security:[{"Authorization":[]}]
     }},
     'GET /employers/update/:id': nonGetHandler,
-    'POST /employers/update': { controller: 'employers', action: 'update' },
+    'POST /employers/update': { controller: 'employers', action: 'update' ,swagger: {
+		tags:["Employers"],
+		summary:"UNUSED",
+	}},
     'GET /employers/update-photo': nonGetHandler,
     'POST /employers/update-photo': { controller: 'employers', action: 'update-photo' ,swagger: {
 		summary:"This api update the Employer Profile Photo based on the employer accesstoken",
@@ -953,11 +1048,20 @@ module.exports.routes = {
 		security:[{"Authorization":[]}]
     }},
     'GET /employers/update-phone': nonGetHandler,
-    'POST /employers/update-phone': { controller: 'employers', action: 'update-phone' },
+    'POST /employers/update-phone': { controller: 'employers', action: 'update-phone' ,swagger: {
+		tags:["Employers"],
+		summary:"UNUSED",
+	}},
     'GET /employers/update-email': nonGetHandler,
-    'POST /employers/update-email': { controller: 'employers', action: 'update-email' },
+    'POST /employers/update-email': { controller: 'employers', action: 'update-email' ,swagger: {
+		tags:["Employers"],
+		summary:"UNUSED",
+	}},
     'GET /employers/approach-job-seeker': nonGetHandler,
-    'POST /employers/approach-job-seeker': { controller: 'employers', action: 'approach-job-seeker' },
+    'POST /employers/approach-job-seeker': { controller: 'employers', action: 'approach-job-seeker' ,swagger: {
+		tags:["Employers"],
+		summary:"UNUSED",
+	}},
     'GET /employers/update-company-profile': nonGetHandler,
     'POST /employers/update-company-profile': { controller: 'employers', action: 'update-company-profile' ,swagger: {
 		summary:"This api update the Employer Profile Details based on the employer accesstoken",
@@ -2065,7 +2169,10 @@ module.exports.routes = {
 		security:[{"Authorization":[]}]
     }},
     'GET /jobpostings/update-photo/:id': nonGetHandler,
-    'POST /jobpostings/update-photo/:id': { controller: 'jobpostings', action: 'update-photo' },
+    'POST /jobpostings/update-photo/:id': { controller: 'jobpostings', action: 'update-photo' ,swagger: {
+		tags:["Jobpostings"],
+		summary:"UNUSED",
+	}},
     'GET /jobpostings/delete': nonGetHandler,
     'POST /jobpostings/delete': { controller: 'jobpostings', action: 'delete' ,swagger: {
 		summary:"This api delete the job based on the job_id",
@@ -2268,9 +2375,15 @@ module.exports.routes = {
         },
 		security:[{"Authorization":[]}]
     }},
-    'GET /jobpostings/applications/view-for-user/:id': { controller: 'jobpostings', action: 'applications/view-for-user'},
+    'GET /jobpostings/applications/view-for-user/:id': { controller: 'jobpostings', action: 'applications/view-for-user',swagger: {
+		tags:["Jobpostings"],
+		summary:"UNUSED",
+	}},
     'GET /jobpostings/applications/change-status/:id': nonGetHandler,
-    'POST /jobpostings/applications/change-status/:id': { controller: 'jobpostings', action: 'change-status' },
+    'POST /jobpostings/applications/change-status/:id': { controller: 'jobpostings', action: 'change-status' ,swagger: {
+		tags:["Jobpostings"],
+		summary:"UNUSED",
+	}},
     'GET /jobpostings/applications/short-list-user/:id': nonGetHandler,
     'POST /jobpostings/applications/short-list-user': { controller: 'jobpostings', action: 'applications/short-list-user' ,swagger: {
         tags: ["Jobpostings"],
@@ -2468,9 +2581,15 @@ module.exports.routes = {
     }},
 
     /*Site routes*/
-    'GET /site/health': { controller: 'site', action: 'health' },
+    'GET /site/health': { controller: 'site', action: 'health' ,swagger: {
+		tags:["Site"],
+		summary:"UNUSED",
+	}},
     'GET /site/report': nonGetHandler,
-    'POST /site/report': { controller: 'site', action: 'report' },
+    'POST /site/report': { controller: 'site', action: 'report' ,swagger: {
+		tags:["Site"],
+		summary:"UNUSED",
+	}},
 
     /*Account routes*/
     'GET /accounts/request-reset-password': nonGetHandler,
@@ -2632,7 +2751,10 @@ module.exports.routes = {
 
     /*Admins routes*/
     'GET /admins/create': nonGetHandler,
-    'POST /admins/create': { controller: 'admins', action: 'create' },
+    'POST /admins/create': { controller: 'admins', action: 'create' ,swagger: {
+		tags:["Admins"],
+		summary:"UNUSED",
+	}},
     'GET /admins/profile': { controller: 'admins', action: 'profile'  ,swagger: {
 		summary:"This api can get the Admin details",
 		description:"Use Admin AccessToken",
@@ -2751,7 +2873,10 @@ module.exports.routes = {
 		security:[{"Authorization":[]}]
     } },
     'GET /admins/update-photo': nonGetHandler,
-    'POST /admins/update-photo': { controller: 'admins', action: 'update-photo' },
+    'POST /admins/update-photo': { controller: 'admins', action: 'update-photo' ,swagger: {
+		tags:["Admins"],
+		summary:"UNUSED",
+	}},
     'POST /admins/profile-complete-invite': { controller: 'admins', action: 'profile-complete-invite',swagger: {
 		summary:"This api can send email ('profile-complete-invite') to the users",
 		description:"Use Admin AccessToken",
@@ -2846,59 +2971,149 @@ module.exports.routes = {
     }},
 
     /*Location routes*/
-    'GET /locations/states': { controller: 'locations', action: 'states' },
-    'GET /locations/countries': { controller: 'locations', action: 'countries' },
-    'GET /locations/cities': { controller: 'locations', action: 'cities/list' },
-    'GET /locations/cities/view/:id': { controller: 'locations', action: 'cities/view' },
-    'GET /locations/areas': { controller: 'locations', action: 'areas' },
+    'GET /locations/states': { controller: 'locations', action: 'states' ,swagger: {
+		tags:["Locations"],
+		summary:"UNUSED",
+	}},
+    'GET /locations/countries': { controller: 'locations', action: 'countries' ,swagger: {
+		tags:["Locations"],
+		summary:"UNUSED",
+	}},
+    'GET /locations/cities': { controller: 'locations', action: 'cities/list' ,swagger: {
+		tags:["Locations"],
+		summary:"UNUSED",
+	}},
+    'GET /locations/cities/view/:id': { controller: 'locations', action: 'cities/view' ,swagger: {
+		tags:["Locations"],
+		summary:"UNUSED",
+	}},
+    'GET /locations/areas': { controller: 'locations', action: 'areas' ,swagger: {
+		tags:["Locations"],
+		summary:"UNUSED",
+	}},
 
     /*Category routes*/
     'GET /categories/create': nonGetHandler,
-    'POST /categories/create': { controller: 'categories', action: 'create' },
+    'POST /categories/create': { controller: 'categories', action: 'create' ,swagger: {
+		tags:["Categories"],
+		summary:"UNUSED",
+	}},
     'GET /categories/update/:id': nonGetHandler,
-    'POST /categories/update/:id': { controller: 'categories', action: 'update' },
+    'POST /categories/update/:id': { controller: 'categories', action: 'update' ,swagger: {
+		tags:["Categories"],
+		summary:"UNUSED",
+	}},
     'GET /categories/change-status/:id': nonGetHandler,
-    'POST /categories/change-status/:id': { controller: 'categories', action: 'change-status' },
+    'POST /categories/change-status/:id': { controller: 'categories', action: 'change-status' ,swagger: {
+		tags:["Categories"],
+		summary:"UNUSED",
+	}},
     'GET /categories/update-photo/:id': nonGetHandler,
-    'POST /categories/update-photo/:id': { controller: 'categories', action: 'update-photo' },
+    'POST /categories/update-photo/:id': { controller: 'categories', action: 'update-photo' ,swagger: {
+		tags:["Categories"],
+		summary:"UNUSED",
+	}},
     'GET /categories/delete': nonGetHandler,
-    'POST /categories/delete': { controller: 'categories', action: 'delete' },
-    'GET /categories/list': { controller: 'categories', action: 'list' },
-    'GET /categories/view/:id': { controller: 'categories', action: 'view' },
+    'POST /categories/delete': { controller: 'categories', action: 'delete' ,swagger: {
+		tags:["Categories"],
+		summary:"UNUSED",
+	}},
+    'GET /categories/list': { controller: 'categories', action: 'list' ,swagger: {
+		tags:["Categories"],
+		summary:"UNUSED",
+	}},
+    'GET /categories/view/:id': { controller: 'categories', action: 'view' ,swagger: {
+		tags:["Categories"],
+		summary:"UNUSED",
+	}},
 
     /*Educations routes*/
     'GET /educations/degrees/create': nonGetHandler,
-    'POST /educations/degrees/create': { controller: 'educations', action: 'degrees/create' },
+    'POST /educations/degrees/create': { controller: 'educations', action: 'degrees/create' ,swagger: {
+		tags:["Educations"],
+		summary:"UNUSED",
+	}},
     'GET /educations/degrees/update/:id': nonGetHandler,
-    'POST /educations/degrees/update/:id': { controller: 'educations', action: 'degrees/update' },
+    'POST /educations/degrees/update/:id': { controller: 'educations', action: 'degrees/update' ,swagger: {
+		tags:["Educations"],
+		summary:"UNUSED",
+	}},
     'GET /educations/degrees/change-status/:id': nonGetHandler,
-    'POST /educations/degrees/change-status/:id': { controller: 'educations', action: 'degrees/change-status' },
+    'POST /educations/degrees/change-status/:id': { controller: 'educations', action: 'degrees/change-status' ,swagger: {
+		tags:["Educations"],
+		summary:"UNUSED",
+	}},
     'GET /educations/degrees/delete': nonGetHandler,
-    'POST /educations/degrees/delete': { controller: 'educations', action: 'degrees/delete' },
-    'GET /educations/degrees/view/:id': { controller: 'educations', action: 'degrees/view' },
-    'GET /educations/degrees/list': { controller: 'educations', action: 'degrees/list' },
+    'POST /educations/degrees/delete': { controller: 'educations', action: 'degrees/delete' ,swagger: {
+		tags:["Educations"],
+		summary:"UNUSED",
+	}},
+    'GET /educations/degrees/view/:id': { controller: 'educations', action: 'degrees/view' ,swagger: {
+		tags:["Educations"],
+		summary:"UNUSED",
+	}},
+    'GET /educations/degrees/list': { controller: 'educations', action: 'degrees/list' ,swagger: {
+		tags:["Educations"],
+		summary:"UNUSED",
+	}},
 
     'GET /educations/fields/create': nonGetHandler,
-    'POST /educations/fields/create': { controller: 'educations', action: 'fields/create' },
+    'POST /educations/fields/create': { controller: 'educations', action: 'fields/create',swagger: {
+		tags:["Educations"],
+		summary:"UNUSED",
+	} },
     'GET /educations/fields/update/:id': nonGetHandler,
-    'POST /educations/fields/update/:id': { controller: 'educations', action: 'fields/update' },
+    'POST /educations/fields/update/:id': { controller: 'educations', action: 'fields/update' ,swagger: {
+		tags:["Educations"],
+		summary:"UNUSED",
+	}},
     'GET /educations/fields/change-status/:id': nonGetHandler,
-    'POST /educations/fields/change-status/:id': { controller: 'educations', action: 'fields/change-status' },
+    'POST /educations/fields/change-status/:id': { controller: 'educations', action: 'fields/change-status' ,swagger: {
+		tags:["Educations"],
+		summary:"UNUSED",
+	}},
     'GET /educations/fields/delete': nonGetHandler,
-    'POST /educations/fields/delete': { controller: 'educations', action: 'fields/delete' },
-    'GET /educations/fields/view/:id': { controller: 'educations', action: 'fields/view' },
-    'GET /educations/fields/list': { controller: 'educations', action: 'fields/list' },
+    'POST /educations/fields/delete': { controller: 'educations', action: 'fields/delete',swagger: {
+		tags:["Educations"],
+		summary:"UNUSED",
+	} },
+    'GET /educations/fields/view/:id': { controller: 'educations', action: 'fields/view',swagger: {
+		tags:["Educations"],
+		summary:"UNUSED",
+	} },
+    'GET /educations/fields/list': { controller: 'educations', action: 'fields/list' ,swagger: {
+		tags:["Educations"],
+		summary:"UNUSED",
+	}},
 
     'GET /educations/institutions/create': nonGetHandler,
-    'POST /educations/institutions/create': { controller: 'educations', action: 'institutions/create' },
+    'POST /educations/institutions/create': { controller: 'educations', action: 'institutions/create' ,swagger: {
+		tags:["Educations"],
+		summary:"UNUSED",
+	}},
     'GET /educations/institutions/update/:id': nonGetHandler,
-    'POST /educations/institutions/update/:id': { controller: 'educations', action: 'institutions/update' },
+    'POST /educations/institutions/update/:id': { controller: 'educations', action: 'institutions/update' ,swagger: {
+		tags:["Educations"],
+		summary:"UNUSED",
+	}},
     'GET /educations/institutions/change-status/:id': nonGetHandler,
-    'POST /educations/institutions/change-status/:id': { controller: 'educations', action: 'institutions/change-status' },
+    'POST /educations/institutions/change-status/:id': { controller: 'educations', action: 'institutions/change-status',swagger: {
+		tags:["Educations"],
+		summary:"UNUSED",
+	} },
     'GET /educations/institutions/delete': nonGetHandler,
-    'POST /educations/institutions/delete': { controller: 'educations', action: 'institutions/delete' },
-    'GET /educations/institutions/view/:id': { controller: 'educations', action: 'institutions/view' },
-    'GET /educations/institutions/list': { controller: 'educations', action: 'institutions/list' },
+    'POST /educations/institutions/delete': { controller: 'educations', action: 'institutions/delete' ,swagger: {
+		tags:["Educations"],
+		summary:"UNUSED",
+	}},
+    'GET /educations/institutions/view/:id': { controller: 'educations', action: 'institutions/view' ,swagger: {
+		tags:["Educations"],
+		summary:"UNUSED",
+	}},
+    'GET /educations/institutions/list': { controller: 'educations', action: 'institutions/list' ,swagger: {
+		tags:["Educations"],
+		summary:"UNUSED",
+	}},
 
     /*Industries routes*/
     'GET /industries/list': { controller: 'industries', action: 'list' ,swagger: {
@@ -2960,7 +3175,10 @@ module.exports.routes = {
         },
 		security:[{"Authorization":[]}]
     }},
-    'POST /industries/update-photo/:id': { controller: 'industries', action: 'update-photo' },
+    'POST /industries/update-photo/:id': { controller: 'industries', action: 'update-photo' ,swagger: {
+		tags:["Industries"],
+		summary:"UNUSED",
+	}},
     'POST /industries/create': { controller: 'industries', action: 'create' ,swagger: {
 		summary:"This api can create a new industries name ",
 		description:"Use Admin AccessToken",
@@ -3111,7 +3329,10 @@ module.exports.routes = {
 		security:[{"Authorization":[]}]
     }},
     'GET /skill-tags/create': nonGetHandler,
-    'POST /skill-tags/create': { controller: 'skill-tags', action: 'create' },
+    'POST /skill-tags/create': { controller: 'skill-tags', action: 'create' ,swagger: {
+		tags:["Skill-tags"],
+		summary:"UNUSED",
+	}},
 	
     'POST /skill-tags/creates': { controller: 'skill-tags', action: 'creates' ,swagger: {
 		summary:"This api can create a new skill-tags details",
@@ -3222,7 +3443,10 @@ module.exports.routes = {
         },
 		security:[{"Authorization":[]}]
     }},
-	'POST /skill-tags/upload': { controller: 'skill-tags', action: 'upload' },
+	'POST /skill-tags/upload': { controller: 'skill-tags', action: 'upload' ,swagger: {
+		tags:["Skill-tags"],
+		summary:"UNUSED",
+	}},
 	
 	
     /*Program routes*/
@@ -3342,7 +3566,10 @@ module.exports.routes = {
         },
 		security:[{"Authorization":[]}]
     } },
-	 'POST /program/upload': { controller: 'program', action: 'upload' },
+	 'POST /program/upload': { controller: 'program', action: 'upload' ,swagger: {
+		tags:["Program"],
+		summary:"UNUSED",
+	}},
 
      /*workauthorization routes */
      'GET /workauthorization/list': { controller: 'workauthorization', action: 'list' ,swagger: {
@@ -3467,19 +3694,40 @@ module.exports.routes = {
  
     /*Subscription plans routes*/
     'GET /subscription-plans/create': nonGetHandler,
-    'POST /subscription-plans/create': { controller: 'subscription-plans', action: 'create' },
+    'POST /subscription-plans/create': { controller: 'subscription-plans', action: 'create' ,swagger: {
+		tags:["Subscription"],
+		summary:"UNUSED",
+	}},
     'GET /subscription-plans/update/:id': nonGetHandler,
-    'POST /subscription-plans/update/:id': { controller: 'subscription-plans', action: 'update' },
+    'POST /subscription-plans/update/:id': { controller: 'subscription-plans', action: 'update',swagger: {
+		tags:["Subscription"],
+		summary:"UNUSED",
+	} },
     'GET /subscription-plans/change-status/:id': nonGetHandler,
-    'POST /subscription-plans/change-status/:id': { controller: 'subscription-plans', action: 'change-status' },
+    'POST /subscription-plans/change-status/:id': { controller: 'subscription-plans', action: 'change-status' ,swagger: {
+		tags:["Subscription"],
+		summary:"UNUSED",
+	}},
     'GET /subscription-plans/delete/:id': nonGetHandler,
-    'POST /subscription-plans/delete/:id': { controller: 'subscription-plans', action: 'delete' },
-    'GET /subscription-plans/list': { controller: 'subscription-plans', action: 'list' },
-    'GET /subscription-plans/view/:id': { controller: 'subscription-plans', action: 'view' },
+    'POST /subscription-plans/delete/:id': { controller: 'subscription-plans', action: 'delete' ,swagger: {
+		tags:["Subscription"],
+		summary:"UNUSED",
+	}},
+    'GET /subscription-plans/list': { controller: 'subscription-plans', action: 'list' ,swagger: {
+		tags:["Subscription"],
+		summary:"UNUSED",
+	}},
+    'GET /subscription-plans/view/:id': { controller: 'subscription-plans', action: 'view' ,swagger: {
+		tags:["Subscription"],
+		summary:"UNUSED",
+	}},
 
     /*User subscriptions routes*/
     'GET /users/subscriptions/create': nonGetHandler,
-    'POST /users/subscriptions/create': { controller: 'users', action: 'subscriptions/create' },
+    'POST /users/subscriptions/create': { controller: 'users', action: 'subscriptions/create' ,swagger: {
+		tags:["users"],
+		summary:"UNUSED",
+	}},
 
     /*Oauth 2 - Endpoints*/
     'GET /oauth/token': nonGetHandler,
