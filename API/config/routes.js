@@ -308,7 +308,6 @@ module.exports.routes = {
 		summary:"This api used for delete user account",
 		description:"",
         tags: ["Users"],
-		IgnoreApi : true,
 		parameters: [{
               in: "body",
               name: "body",
