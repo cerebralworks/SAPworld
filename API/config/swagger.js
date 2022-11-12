@@ -36,7 +36,7 @@ module.exports.swaggerConfig = {
             },
             version: ""
         },
-        host: "localhost:1337",
+        host: "http://149.56.180.254:1337",
         basePath: "/",
         schemes: [
             "http",
