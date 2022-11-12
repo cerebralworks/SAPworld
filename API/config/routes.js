@@ -3203,7 +3203,10 @@ module.exports.routes = {
         },
 		security:[{"Authorization":[]}]
     }},
-	'POST /industries/upload': { controller: 'industries', action: 'upload' },
+	'POST /industries/upload': { controller: 'industries', action: 'upload' ,swagger: {
+		tags:["Industries"],
+		summary:"UNUSED",
+	}},
     'POST /industries/update/:id': { controller: 'industries', action: 'update' ,swagger: {
 		summary:"This api can update a industries name based on the industries id ",
 		description:"Use Admin AccessToken",
