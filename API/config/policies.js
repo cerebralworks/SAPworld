@@ -169,7 +169,8 @@ module.exports.policies = {
 	'skill-tags/upload':['noOauthBearer'],
 	
     'program/list': ['noOauthBearer'],
-    'program/create': ['noOauthBearer', 'isAdmin'],
+    'program/create': ['noOauthBearer'],
+	//'program/create': ['noOauthBearer', 'isAdmin'],
 	'program/upload':['noOauthBearer'],
 	
     'subscription-plans/create': ['oauthBearer', 'isAdmin'],
