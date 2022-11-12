@@ -1132,7 +1132,7 @@ module.exports.routes = {
 		security:[{"Authorization":[]}]
     }},
     /*Jobs routes*/
-    'GET /jobpostings/list': { controller: 'jobpostings', action: 'list'/*, swagger: {
+    'GET /jobpostings/list': { controller: 'jobpostings', action: 'list', swagger: {
 		summary:"This api show the Employer postedJobs  details",
 		description:"Use Employer AccessToken",
         tags: ["Jobpostings"],
@@ -1186,7 +1186,7 @@ module.exports.routes = {
           "500": {description: "Internal server error"}
         },
 		security:[{"Authorization":[]}]
-    }*/ },
+    }},
     'GET /jobpostings/list/users/count': { controller: 'users', action: 'users-job-count',swagger: {
 		summary: "This api list out the Total number of matches ,application,shortlisted count have jobs ",
 		description:"Use Employer AccessToken",
