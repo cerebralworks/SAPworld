@@ -81,21 +81,7 @@ module.exports.routes = {
       .send(swaggerJson)
   },
   
-	'POST /scoremaster/upload' : { controller: 'scoremaster', action: 'upload' ,swagger: {
-        tags: ["Scoremaster"],
-		pathsToIgnore:true,
-		summary:"",
-		//deprecated:true,
-		disable:true,
-        consumes: ["application/json"],
-        produces: ["application/json"],
-        responses: {
-          "200": {description: "The requested resource"},
-          "404": {description: "Resource not found"},
-          "500": {description: "Internal server error"}
-        },
-		security:[{"Authorization":[]}]
-    }},
+	'POST /scoremaster/upload' : { controller: 'scoremaster', action: 'upload'},
 	
 	/*Contact form routes*/
 	'POST /contact/create': { controller: 'contact', action: 'create' },
