@@ -179,6 +179,14 @@ module.exports = async function apply(request, response) {
 		postDetails.job_id=job.id;
 		postDetails.employer=employee.id;		
 		postDetails.view=0;		
+  var qry =`SELECT score
+FROM scorings
+	WHERE job_id =${postDetails.job_id} AND user_id =${postDetails.user_id}`;
+  var UserScoring=sails.sendNativeQuery(qry, async function(err,result){
+	console.log( _.get(result, 'rows'));
+	return _.get(result, 'score');
+})
+
 		Notification.create(postDetails, function(err, job) {
 			
 		}); 
