@@ -26,7 +26,7 @@ module.exports = async function update(request, response) {
 			});
 		}
 	}
-		//console.log(programming_id);
+		
 		post_request_data.skills.filter(function(a,b){ a !='' && a!=null && a!=undefined && a!=' ' })
     let schema = yup.object().shape({
         id: yup.number().test('user_profile', 'Cant find record', async(value) => {
@@ -272,7 +272,6 @@ module.exports = async function update(request, response) {
 				}
 			});
 		}else{
-			console.log(value);
 			//Update the user profile details
 			UserProfiles.update(logged_in_user.user_profile.id, value, async function(err, profile) {
 				if (err) {
@@ -803,15 +802,19 @@ module.exports = async function update(request, response) {
 								
 
 								//await Notification.findOrCreate(newMatchCheck1,newMatch1);
+		                        
 								await Notification.find(newMatchCheck1).exec(async(err1, results)=> {
 									if(results && results.length ==0 ){
+									
 										//await Notification.findOrCreate(newMatchCheck,newMatch);
 										await Notification.findOrCreate(newMatchCheck1,newMatch1);	
 									}
 								});
+							
 								await Notification.find(newMatchCheck).exec(async(err1, results)=> {
 								if(results && results.length ==0 ){
 									if(responseMatch.length > 1 && i==0){
+										
 										await Notification.findOrCreate(newMatchCheck,newMatch2);	
 									}
 									else if(responseMatch.length == 1){
@@ -821,7 +824,6 @@ module.exports = async function update(request, response) {
 							});
 								//find or create the scoring calculation
 								if(post_datas.score >=5){
-									console.log(post_datas.score)
 								await Scoring.findOrCreate(post_data,post_datas,function(err, job) {
 									if (err) {
 										console.log(err);
