@@ -782,7 +782,7 @@ module.exports = async function update(request, response) {
 								newMatchCheck.job_id=updated_job['id'];
 								newMatchCheck.employer=updated_job['company'];	
 								newMatch.view=0;
-								//console.log(newMatch);
+								
 								//await Notification.findOrCreate(newMatchCheck,newMatch);
 								//Employee Notification
 								var newMatch1 = {};
@@ -800,17 +800,17 @@ module.exports = async function update(request, response) {
 								newMatchCheck1.employer=updated_job['company'];		
 								newMatch1.view=0;
 								
-
-								//await Notification.findOrCreate(newMatchCheck1,newMatch1);
 		                        
+								//Employer notification create
 								await Notification.find(newMatchCheck1).exec(async(err1, results)=> {
 									if(results && results.length ==0 ){
-									
-										//await Notification.findOrCreate(newMatchCheck,newMatch);
-										await Notification.findOrCreate(newMatchCheck1,newMatch1);	
+									  if(newMatch1.id===undefined){
+										await Notification.findOrCreate(newMatchCheck1,newMatch1);
+									  }
 									}
 								});
-							
+							    
+								//user notification create
 								await Notification.find(newMatchCheck).exec(async(err1, results)=> {
 								if(results && results.length ==0 ){
 									if(responseMatch.length > 1 && i==0){

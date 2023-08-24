@@ -37,7 +37,7 @@ module.exports = function update(request, response) {
                 _response_object.count = 1;
                 return response.status(400).json(_response_object);
             }
-			if(filtered_post_data.latlng['lng'] && filtered_post_data.latlng['lng'] !=undefined && filtered_post_data.latlng['lng'] !="undefined" &&
+			/*if(filtered_post_data.latlng['lng'] && filtered_post_data.latlng['lng'] !=undefined && filtered_post_data.latlng['lng'] !="undefined" &&
 			filtered_post_data.latlng['lat'] && filtered_post_data.latlng['lat'] !=undefined && filtered_post_data.latlng['lat'] !="undefined"){
 			var point = filtered_post_data.latlng['lng'] + ' ' + filtered_post_data.latlng['lat'];
 			filtered_post_data.latlng_text = filtered_post_data.latlng.lat + ',' + filtered_post_data.latlng.lng;
@@ -46,7 +46,7 @@ module.exports = function update(request, response) {
 				var point = "1.00" + ' ' + "5.00";
 				filtered_post_data.latlng_text = "1.00" + ',' + "5.00";
 				filtered_post_data.latlng = 'SRID=4326;POINT(' + point + ')';	
-			}
+			}*/
 			if(filtered_post_data.phone){
 				await phoneEncryptor.encrypt(filtered_post_data.phone, function(encrypted_text) {
 					filtered_post_data.phone = encrypted_text;

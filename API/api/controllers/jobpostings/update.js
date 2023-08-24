@@ -668,7 +668,7 @@ module.exports = function create(request, response) {
 							newMatchCheck.job_id=updated_job['id'];
 							newMatchCheck.employer=updated_job['company'];	
 							newMatch.view=0;
-							//console.log(newMatch);
+							
 							
 							//Employee Notification
 							var newMatch1 = {};
@@ -697,12 +697,16 @@ module.exports = function create(request, response) {
 							newMatchCheck1.employer=updated_job['company'];		
 							newMatch1.view=0;
 							
+							//User notification create
 							await Notification.find(newMatchCheck).exec(async(err1, results)=> {
 								if(results && results.length ==0 ){
-									await Notification.findOrCreate(newMatchCheck,newMatch);
-									//await Notification.findOrCreate(newMatchCheck1,newMatch1);	
+								  if(newMatch.id ===undefined){
+								     await Notification.findOrCreate(newMatchCheck,newMatch);
+								  }
 								}
 							});
+							
+							//Employer notification create
 							await Notification.find(newMatchCheck1).exec(async(err1, results)=> {
 								if(results && results.length ==0 ){
 									if(responseMatch.length > 1 && i==0){
