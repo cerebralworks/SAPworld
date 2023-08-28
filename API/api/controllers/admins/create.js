@@ -7,8 +7,7 @@ module.exports = function update(request, response) {
     const logged_in_user = request.user;
     var _response_object = {};
     pick_input = [
-        'first_name', 'last_name', 'name', 'address', 'city', 'country','website','contact','social_media_link',
-        'latlng','phone', 'latlng_text', 'state', 'zipcode', 'description'
+        'first_name', 'last_name', 'name', 'address', 'city', 'country','website','contact','social_media_link','phone', 'state', 'zipcode', 'description'
     ];
     var filtered_post_data = _.pick(post_request_data, pick_input);
     const filtered_post_keys = Object.keys(filtered_post_data);
