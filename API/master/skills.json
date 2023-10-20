@@ -1,0 +1,1544 @@
+{
+	"items":[
+    {
+        "id": 3,
+        "tag": "SAP TR",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Treasury"
+    },
+    {
+        "id": 2,
+        "tag": "SAP IM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "sap investment Management"
+    },
+    {
+        "id": 4,
+        "tag": "SAP EC",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Enterprise Control"
+    },
+    {
+        "id": 9,
+        "tag": "SAP PM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP plant maintenance"
+    },
+    {
+        "id": 8,
+        "tag": "SAP QM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Quality management"
+    },
+    {
+        "id": 7,
+        "tag": "SAP PP",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP production planning"
+    },
+    {
+        "id": 10,
+        "tag": "SAP SM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Strategy management"
+    },
+    {
+        "id": 6,
+        "tag": "SAP SD",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Sap sales distribution"
+    },
+    {
+        "id": 5,
+        "tag": "SAP MM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP material management"
+    },
+    {
+        "id": 11,
+        "tag": "SAP PS",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Project System"
+    },
+    {
+        "id": 12,
+        "tag": "SAP HCM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Human Capital Management"
+    },
+    {
+        "id": 14,
+        "tag": "SAP ABAP",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "ABAP"
+    },
+    {
+        "id": 15,
+        "tag": "SAP NETWEAVER BPM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Netweaver"
+    },
+    {
+        "id": 16,
+        "tag": "SAP BI",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP business intelligernce"
+    },
+    {
+        "id": 17,
+        "tag": "SAP MDM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Master Data Management"
+    },
+    {
+        "id": 19,
+        "tag": "SAP CCMS ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Computing Center Mgmt System"
+    },
+    {
+        "id": 20,
+        "tag": "SAP MDM  ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Master Data Management"
+    },
+    {
+        "id": 21,
+        "tag": "SAP BC-CCM-ADK  ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Archiving Development Kit"
+    },
+    {
+        "id": 22,
+        "tag": "SAP CCM-API ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Application Program Interfaces"
+    },
+    {
+        "id": 23,
+        "tag": "SAP CCM-BTC ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Background Processing"
+    },
+    {
+        "id": 24,
+        "tag": "SAP CCM-CNF ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Configuration"
+    },
+    {
+        "id": 25,
+        "tag": "SAP CCM-HAV ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "High Availability"
+    },
+    {
+        "id": 26,
+        "tag": "SAP CCM-MON ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Monitoring"
+    },
+    {
+        "id": 27,
+        "tag": "SAP CCM-PRN ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Print and Output Management"
+    },
+    {
+        "id": 28,
+        "tag": "SAP MDM100 ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Master Data Management"
+    },
+    {
+        "id": 29,
+        "tag": "SAP MDM101 ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "MDM GDS"
+    },
+    {
+        "id": 30,
+        "tag": "SAP MDM300 ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "MDM Print Publishing"
+    },
+    {
+        "id": 31,
+        "tag": "SAP MDM400 ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "MDM Data Modeling"
+    },
+    {
+        "id": 32,
+        "tag": "SAP BS",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "BUSINESS SUITE"
+    },
+    {
+        "id": 33,
+        "tag": "SAP ERP",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Enterprise Resource Planning"
+    },
+    {
+        "id": 34,
+        "tag": "SAP CRM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Customer Relationship Management"
+    },
+    {
+        "id": 35,
+        "tag": "SAP PLM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Product Lifecycle Management "
+    },
+    {
+        "id": 36,
+        "tag": "SAP SCM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Supply Chain Management"
+    },
+    {
+        "id": 37,
+        "tag": "SAP SRM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Supplier Relationship Management"
+    },
+    {
+        "id": 38,
+        "tag": "SAP S/4HANA",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP HANA"
+    },
+    {
+        "id": 39,
+        "tag": "SAP BW",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP business Warehouse"
+    },
+    {
+        "id": 40,
+        "tag": "SAP BEX",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Business Explorer"
+    },
+    {
+        "id": 41,
+        "tag": "SAP WF",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP workflow"
+    },
+    {
+        "id": 42,
+        "tag": "SAP R/3",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "R/3"
+    },
+    {
+        "id": 43,
+        "tag": "SAP SEM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Strategic Enterprise Management"
+    },
+    {
+        "id": 45,
+        "tag": "SEM-BIC ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Business Information Collection"
+    },
+    {
+        "id": 44,
+        "tag": "SEM BCS",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Business consolidation"
+    },
+    {
+        "id": 46,
+        "tag": "BW-BPS",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Business Planning and Simulation"
+    },
+    {
+        "id": 47,
+        "tag": "SEM-CPM ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Corporate Performance Monitor"
+    },
+    {
+        "id": 49,
+        "tag": "SAP PLM_RM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Recipe Management"
+    },
+    {
+        "id": 50,
+        "tag": "SAP PLM_AM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Audit Management"
+    },
+    {
+        "id": 51,
+        "tag": "SAP PLM400",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Quality Management"
+    },
+    {
+        "id": 52,
+        "tag": "SAP PLM410",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Quality Notifications"
+    },
+    {
+        "id": 53,
+        "tag": "SAP PLM405",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Quality Inspections"
+    },
+    {
+        "id": 54,
+        "tag": "SAP PLM425",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "QM in Sales and Distribution"
+    },
+    {
+        "id": 58,
+        "tag": "SAP FI-GL ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "General Ledger"
+    },
+    {
+        "id": 59,
+        "tag": "SAP FI-AP",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Accounts Payable"
+    },
+    {
+        "id": 60,
+        "tag": "SAP FI-AR",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Account Receivable"
+    },
+    {
+        "id": 61,
+        "tag": "SAP FI-SL",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Special Purpose Ledger"
+    },
+    {
+        "id": 62,
+        "tag": "SAP FI-BL",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Bank Accounting"
+    },
+    {
+        "id": 63,
+        "tag": "SAP CO-CEA",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Cost Element Accounting"
+    },
+    {
+        "id": 64,
+        "tag": "SAP CO-CCA",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Cost Center Accounting"
+    },
+    {
+        "id": 65,
+        "tag": "SAP CO",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Controlling"
+    },
+    {
+        "id": 66,
+        "tag": "SAP CO-PC",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Product Cost Controlling"
+    },
+    {
+        "id": 67,
+        "tag": "SAP CO-PA",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Profitability Analysis"
+    },
+    {
+        "id": 68,
+        "tag": "SAP CO-PCA",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Profit Center Accounting"
+    },
+    {
+        "id": 69,
+        "tag": "SAP CO-OM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Overhead Cost controlling"
+    },
+    {
+        "id": 70,
+        "tag": "SAP CO-ML",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Material Ledger"
+    },
+    {
+        "id": 71,
+        "tag": "SAP TR-CB",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Cash Budget Management"
+    },
+    {
+        "id": 72,
+        "tag": "SAP TR-MRM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Market Risk Management"
+    },
+    {
+        "id": 73,
+        "tag": "SAP TR-CM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Cash Management"
+    },
+    {
+        "id": 74,
+        "tag": "SAP TR-LO",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Loans Management"
+    },
+    {
+        "id": 75,
+        "tag": "SAP TR-TM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Treasury Management"
+    },
+    {
+        "id": 76,
+        "tag": "SAP TR-FM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Funds Management"
+    },
+    {
+        "id": 77,
+        "tag": "SAP PA-APP ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Applicant Management"
+    },
+    {
+        "id": 78,
+        "tag": "SAP PA-BEN",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Benefits"
+    },
+    {
+        "id": 79,
+        "tag": "SAP PA-EMP",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Employee Management"
+    },
+    {
+        "id": 80,
+        "tag": "SAP PA-INW ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Incentive wages"
+    },
+    {
+        "id": 81,
+        "tag": "SAP PA-PAY",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Payroll"
+    },
+    {
+        "id": 82,
+        "tag": "SAP PA-TIM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Time Management"
+    },
+    {
+        "id": 83,
+        "tag": "SAP PA-TRV",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Travel Expenses"
+    },
+    {
+        "id": 84,
+        "tag": "SAP PD-OM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Organizational Management"
+    },
+    {
+        "id": 85,
+        "tag": "SAP PD-RPL",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Room Reservations Planning"
+    },
+    {
+        "id": 86,
+        "tag": "SAP PD-WFP",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Workforce Planning"
+    },
+    {
+        "id": 87,
+        "tag": "SAP PD-SCM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Seminar and Convention Management"
+    },
+    {
+        "id": 88,
+        "tag": "SAP PD-PD ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Personnel development"
+    },
+    {
+        "id": 89,
+        "tag": "SAP SD-MD",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Master Data"
+    },
+    {
+        "id": 90,
+        "tag": "SAP SD-CAS",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Sales Support"
+    },
+    {
+        "id": 91,
+        "tag": "SAP SD-SLS",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Sales"
+    },
+    {
+        "id": 92,
+        "tag": "SAP SD-SHP",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Shipping"
+    },
+    {
+        "id": 94,
+        "tag": "SAP SD-BIL",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Billing"
+    },
+    {
+        "id": 57,
+        "tag": "SAP EM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Event Management"
+    },
+    {
+        "id": 13,
+        "tag": "SAP BASIS",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Basis"
+    },
+    {
+        "id": 56,
+        "tag": "SAP  OCH",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Inventory Collaboration Hub"
+    },
+    {
+        "id": 55,
+        "tag": "SAP  APO",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Advance Planning and Optimization"
+    },
+    {
+        "id": 93,
+        "tag": "SAP SD-TR",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Transportation"
+    },
+    {
+        "id": 104,
+        "tag": "SAP MM-CBP ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Consumption Based Planning"
+    },
+    {
+        "id": 113,
+        "tag": "SAP PP-IS ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Information System"
+    },
+    {
+        "id": 121,
+        "tag": "SAP PM-EQM  ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Equipment and Technical Objects"
+    },
+    {
+        "id": 133,
+        "tag": "SAP QM-CR ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "General functions"
+    },
+    {
+        "id": 146,
+        "tag": "SAP PS-ST ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Structures"
+    },
+    {
+        "id": 157,
+        "tag": "SAP LO-MDS ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Merchandise Distribution"
+    },
+    {
+        "id": 163,
+        "tag": "SAP LO-VC ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Variant Configuration"
+    },
+    {
+        "id": 172,
+        "tag": "SAP GTS  ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Global Trade Services"
+    },
+    {
+        "id": 187,
+        "tag": "SAP Ariba",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Ariba"
+    },
+    {
+        "id": 194,
+        "tag": "SAP CPI",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Cloud Platform Integration"
+    },
+    {
+        "id": 204,
+        "tag": "SAP APO",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Advanced Planning & Optimizer"
+    },
+    {
+        "id": 178,
+        "tag": "SAP EHSM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Environment"
+    },
+    {
+        "id": 95,
+        "tag": "SAP SD-SIS",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Sales Information System"
+    },
+    {
+        "id": 105,
+        "tag": "SAP MM-EDI  ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Electronic Data Interchange"
+    },
+    {
+        "id": 115,
+        "tag": "SAP PP-MRP ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Material Requirements Planning"
+    },
+    {
+        "id": 127,
+        "tag": "SAP QM-QP ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Quality Planning"
+    },
+    {
+        "id": 136,
+        "tag": "SAP PS-CON ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Confirmation"
+    },
+    {
+        "id": 140,
+        "tag": "SAP PS-DOC ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Documents"
+    },
+    {
+        "id": 150,
+        "tag": "SAP LO-ECH  ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Engineering Change Management "
+    },
+    {
+        "id": 160,
+        "tag": "SAP LO-RIS ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Retail Information System"
+    },
+    {
+        "id": 168,
+        "tag": "SAP LE ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Logistic Execution"
+    },
+    {
+        "id": 181,
+        "tag": "SAP PI/PO",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Process Integration/process orchestration"
+    },
+    {
+        "id": 193,
+        "tag": "SAP WM/EM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Warehouse Management/Extended Warehouse Management"
+    },
+    {
+        "id": 207,
+        "tag": "SAP UI5",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP UI5"
+    },
+    {
+        "id": 96,
+        "tag": "SAP SD-EDI ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Electronic Data Interchange"
+    },
+    {
+        "id": 106,
+        "tag": "SAP MRP ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": " Materials Requirement Planning"
+    },
+    {
+        "id": 114,
+        "tag": "SAP PP-KAB ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": " Kanban/Just-in-Time"
+    },
+    {
+        "id": 123,
+        "tag": "SAP PM-PRM ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Preventive Maintenance"
+    },
+    {
+        "id": 132,
+        "tag": "SAP QM-CA ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Quality certificates"
+    },
+    {
+        "id": 147,
+        "tag": "SAP PS-VER",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": " Versions"
+    },
+    {
+        "id": 153,
+        "tag": "SAP LO-HU ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Handling Unit Management"
+    },
+    {
+        "id": 170,
+        "tag": "SAP SDN ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Developer Network"
+    },
+    {
+        "id": 182,
+        "tag": "SAP Basis Hana",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Basis Hana"
+    },
+    {
+        "id": 198,
+        "tag": "SAP BPC",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Business Planning andconsolidation"
+    },
+    {
+        "id": 210,
+        "tag": "SAP Hybris",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Hybris"
+    },
+    {
+        "id": 97,
+        "tag": "SAP SD-GF",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "General Sales Functions"
+    },
+    {
+        "id": 112,
+        "tag": "SAP PP-BD ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Basic Data"
+    },
+    {
+        "id": 118,
+        "tag": "SAP PP-REM ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Repetitive Manufacturing"
+    },
+    {
+        "id": 128,
+        "tag": "SAP QM-IM ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": " Quality Inspection processing"
+    },
+    {
+        "id": 138,
+        "tag": "SAP PS-CRP  ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Resources"
+    },
+    {
+        "id": 148,
+        "tag": "SAP LO-AB-TC ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Trading Contract"
+    },
+    {
+        "id": 158,
+        "tag": "SAP LO-PDM ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Product Data Management"
+    },
+    {
+        "id": 167,
+        "tag": "SAP LO725",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": " Quality Certificates"
+    },
+    {
+        "id": 183,
+        "tag": "SAP CS",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Customer Service"
+    },
+    {
+        "id": 196,
+        "tag": "SAP SAC",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Analytics Cloud"
+    },
+    {
+        "id": 206,
+        "tag": "SAP FS-PM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Policy Management"
+    },
+    {
+        "id": 189,
+        "tag": "Business One",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Business One"
+    },
+    {
+        "id": 98,
+        "tag": "SAP LE",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Logistic Execution"
+    },
+    {
+        "id": 110,
+        "tag": "SAP PP-MP ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": " Master planning"
+    },
+    {
+        "id": 119,
+        "tag": "SAP PP-SFC ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Production orders"
+    },
+    {
+        "id": 129,
+        "tag": "SAP QM-QC-AQC ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": " Quality control"
+    },
+    {
+        "id": 139,
+        "tag": "SAP PS-DAT ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Dates"
+    },
+    {
+        "id": 149,
+        "tag": "SAP LO-BM ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Batches"
+    },
+    {
+        "id": 159,
+        "tag": "SAP LO-PR ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Forecast"
+    },
+    {
+        "id": 175,
+        "tag": "SAP SEM ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Strategic Enterprise Management"
+    },
+    {
+        "id": 185,
+        "tag": "SAP Security",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Security"
+    },
+    {
+        "id": 191,
+        "tag": "SAP Sales Cloud",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Sales Cloud"
+    },
+    {
+        "id": 201,
+        "tag": "Web Dynpro",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Webdynpro"
+    },
+    {
+        "id": 211,
+        "tag": "SAP Fiori",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Fiori"
+    },
+    {
+        "id": 169,
+        "tag": "SAP GRC ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Governance"
+    },
+    {
+        "id": 214,
+        "tag": "SAP Opentext-VIM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Open Text VIM"
+    },
+    {
+        "id": 99,
+        "tag": "SAP MM-PUR",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Purchasing"
+    },
+    {
+        "id": 107,
+        "tag": "SAP ML ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Material Ledger"
+    },
+    {
+        "id": 117,
+        "tag": "SAP PP-PI ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Production Planning for Process Industries"
+    },
+    {
+        "id": 125,
+        "tag": "SAP PM-SM ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Service Management"
+    },
+    {
+        "id": 135,
+        "tag": "SAP PS-CAF",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Payments"
+    },
+    {
+        "id": 141,
+        "tag": "SAP PS-IS  ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Information System"
+    },
+    {
+        "id": 151,
+        "tag": "SAP LO-EHS",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": " Environment Management"
+    },
+    {
+        "id": 161,
+        "tag": "SAP LO-SCI ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Supply Chain Planning Interface"
+    },
+    {
+        "id": 173,
+        "tag": "SAP EM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Emissions Management"
+    },
+    {
+        "id": 180,
+        "tag": "SAP Success Factor",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Success Factor"
+    },
+    {
+        "id": 203,
+        "tag": "SAP IDT",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Information Design Tool"
+    },
+    {
+        "id": 215,
+        "tag": "SAP TM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Transportation Management"
+    },
+    {
+        "id": 192,
+        "tag": "SAP ACR",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Advanced Compliance Reporting"
+    },
+    {
+        "id": 100,
+        "tag": "SAP MM-IM ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Inventory Management"
+    },
+    {
+        "id": 108,
+        "tag": "SAP PP-SOP ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Sales and Operations Planning"
+    },
+    {
+        "id": 122,
+        "tag": "SAP PM-IS ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "PM Information System"
+    },
+    {
+        "id": 131,
+        "tag": "SAP QM-QN ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Quality notifications"
+    },
+    {
+        "id": 143,
+        "tag": "SAP PS-PRG ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Progress"
+    },
+    {
+        "id": 154,
+        "tag": "SAP LO-LIS ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Logistics Information System"
+    },
+    {
+        "id": 164,
+        "tag": "SAP LO170 ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Quality Management"
+    },
+    {
+        "id": 177,
+        "tag": "SAP SM ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Strategy Management - Service Management (SM)"
+    },
+    {
+        "id": 188,
+        "tag": "SAP IBP",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Integrated Business Planning"
+    },
+    {
+        "id": 199,
+        "tag": "SAP GUI",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Graphical user interface"
+    },
+    {
+        "id": 205,
+        "tag": "SAP ECC",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP ECC"
+    },
+    {
+        "id": 216,
+        "tag": "SAP BW/4HANA",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Business Warehouse on HANA"
+    },
+    {
+        "id": 101,
+        "tag": "SAP MM-WM  ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Warehouse Management"
+    },
+    {
+        "id": 111,
+        "tag": "SAP PP-ATO ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Assembly orders"
+    },
+    {
+        "id": 124,
+        "tag": "SAP PM-PRO",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Maintenance Projects"
+    },
+    {
+        "id": 130,
+        "tag": "SAP QM-IT ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Test equipment management"
+    },
+    {
+        "id": 144,
+        "tag": "SAP PS-REV ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Revenues and Earnings"
+    },
+    {
+        "id": 152,
+        "tag": "SAP LO-EWB ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Engineering Workbench"
+    },
+    {
+        "id": 165,
+        "tag": "SAP LO705 ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Quality Inspections"
+    },
+    {
+        "id": 174,
+        "tag": "SAP CPM ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Corporate Performance Management"
+    },
+    {
+        "id": 184,
+        "tag": "SAP MII",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Manfacturing Integration and Intelligence"
+    },
+    {
+        "id": 197,
+        "tag": "SAP DWC",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Datawarehouse cloud"
+    },
+    {
+        "id": 208,
+        "tag": "SAP Lumira",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Lumira"
+    },
+    {
+        "id": 102,
+        "tag": "SAP MM-IV ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Invoice Verification"
+    },
+    {
+        "id": 109,
+        "tag": "SAP PP-CRP ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Capacity Requirement Planning"
+    },
+    {
+        "id": 120,
+        "tag": "SAP DS  ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Detailed Scheduling"
+    },
+    {
+        "id": 134,
+        "tag": "SAP QM-PT-RP",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": " Control in logistics"
+    },
+    {
+        "id": 145,
+        "tag": "SAP PS-SIM ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Simulation"
+    },
+    {
+        "id": 156,
+        "tag": "SAP LO-MD ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Logistics Basic Data"
+    },
+    {
+        "id": 166,
+        "tag": "SAP LO710 ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Quality Notifications"
+    },
+    {
+        "id": 179,
+        "tag": "SAP ISU",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Industry Specific for Utilities "
+    },
+    {
+        "id": 190,
+        "tag": "SAP C4C",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP C4C"
+    },
+    {
+        "id": 200,
+        "tag": "SAP FPSL",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Financial products Sub ledger"
+    },
+    {
+        "id": 209,
+        "tag": "SAP Testing",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Testing"
+    },
+    {
+        "id": 103,
+        "tag": "SAP MM-IS ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": " Information System"
+    },
+    {
+        "id": 116,
+        "tag": "SAP PP-PDC ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Plant Data Collection"
+    },
+    {
+        "id": 126,
+        "tag": "SAP PM-WOC ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": " Maintenance Orders Management"
+    },
+    {
+        "id": 137,
+        "tag": "SAP PS-COS ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": " Costs"
+    },
+    {
+        "id": 142,
+        "tag": "SAP PS-MAT",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": " Material"
+    },
+    {
+        "id": 162,
+        "tag": "SAP LO-SRS ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Retail Store"
+    },
+    {
+        "id": 171,
+        "tag": "SAP Virsa",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Virsa"
+    },
+    {
+        "id": 176,
+        "tag": "SAP BPS ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Business Planning and Simulation"
+    },
+    {
+        "id": 186,
+        "tag": "SAP MDG",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Master Data Governance"
+    },
+    {
+        "id": 195,
+        "tag": "SAP DS  ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Data services"
+    },
+    {
+        "id": 202,
+        "tag": "Concur",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Concur"
+    },
+    {
+        "id": 155,
+        "tag": "SAP LO-MAP ",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Merchandise &  Assortment Planning"
+    },
+    {
+        "id": 18,
+        "tag": "SAP BODS",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Business Objects Data Services"
+    },
+    {
+        "id": 221,
+        "tag": "SAP Business Process",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Business Process"
+    },
+    {
+        "id": 223,
+        "tag": "sap test",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "test"
+    },
+    {
+        "id": 213,
+        "tag": "SAP Opentext ECM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Opentext ECM"
+    },
+    {
+        "id": 48,
+        "tag": "SEM SRM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Stakeholder Relationship Management"
+    },
+    {
+        "id": 224,
+        "tag": "SAP Business Technology Platform",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP BTP"
+    },
+    {
+        "id": 225,
+        "tag": "SAP ME",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "SAP Manufacturing Execution"
+    },
+    {
+        "id": 226,
+        "tag": "SAP SolMan ChaRM",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Solution Manager ChaRM"
+    },
+    {
+        "id": 227,
+        "tag": "SAP Odata",
+        "status": 1,
+        "status_glossary": null,
+        "long_tag": "Odata Services"
+    }
+]
+}

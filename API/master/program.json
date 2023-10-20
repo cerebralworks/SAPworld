@@ -1,0 +1,304 @@
+{
+	"items":[
+    {
+        "id": 115,
+        "name": "Query/Ajax",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 8,
+        "name": "Laravel",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 3,
+        "name": "Hana Architecture",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 7,
+        "name": "Sql",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 10,
+        "name": "Swift",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 4,
+        "name": "HTML 5",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 12,
+        "name": "Python",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 47,
+        "name": "Html",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 15,
+        "name": "Design Document",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 16,
+        "name": "Flutter",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 17,
+        "name": "Kotlin",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 18,
+        "name": "Cloud Architecture",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 21,
+        "name": "Postgresql",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 22,
+        "name": "PHP",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 23,
+        "name": "Mysql",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 24,
+        "name": "OOPS",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 25,
+        "name": "Webdynpro",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 26,
+        "name": "Information Steward",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 27,
+        "name": "UI/UX",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 28,
+        "name": "Shell Scripting",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 29,
+        "name": "Nodejs",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 30,
+        "name": "Elixir",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 31,
+        "name": ".Net",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 48,
+        "name": "Css",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 35,
+        "name": "Spring",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 36,
+        "name": "Angular",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 37,
+        "name": "J2ee",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 38,
+        "name": "Maven",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 39,
+        "name": "Git",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 40,
+        "name": "Eclipse",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 41,
+        "name": "C#",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 20,
+        "name": "C",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 14,
+        "name": "Data Analytics",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 19,
+        "name": "ABAP",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 50,
+        "name": "Testing",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 59,
+        "name": "Php",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 61,
+        "name": "Anguarjs",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 62,
+        "name": "Js",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 71,
+        "name": "Gmtl",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 72,
+        "name": "Html Java",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 98,
+        "name": "Javas",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 104,
+        "name": "Android",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 105,
+        "name": "Javascript",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 106,
+        "name": "SAP ABAP, SAP ABAP OO, SAP ABAP ON HANA",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 107,
+        "name": "Kubernetes",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 108,
+        "name": "Springboot",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 109,
+        "name": "SAP Products",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 110,
+        "name": "HANA Cloud Service",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 111,
+        "name": "SAP BTP Services",
+        "status": 1,
+        "status_glossary": null
+    },
+    {
+        "id": 112,
+        "name": "Supply Chain",
+        "status": 1,
+        "status_glossary": null
+    }
+]
+}

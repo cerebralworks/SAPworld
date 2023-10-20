@@ -1,0 +1,431 @@
+{
+	"items":[
+    {
+        "id": 14,
+        "name": "drug manufacturing",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 13,
+        "name": "defence",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 19,
+        "name": "entertainment",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 16,
+        "name": "electric utilities",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 22,
+        "name": "finance",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 15,
+        "name": "education",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 17,
+        "name": "electronics",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 24,
+        "name": "food processing",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 25,
+        "name": "forestry",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 26,
+        "name": "fishing",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 28,
+        "name": "government",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 29,
+        "name": "healthcare",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 30,
+        "name": "hospitality",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 31,
+        "name": "insurance",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 32,
+        "name": "internet",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 33,
+        "name": "information technology",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 34,
+        "name": "leisure",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 35,
+        "name": "life science",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 36,
+        "name": "manufacturing",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 37,
+        "name": "medical supplies",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 38,
+        "name": "mortgage",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 39,
+        "name": "mining",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 40,
+        "name": "natural gas",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 42,
+        "name": "production",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 43,
+        "name": "pharmaceutical",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 45,
+        "name": "railroads",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 46,
+        "name": "real estate",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 47,
+        "name": "retail",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 48,
+        "name": "recreation",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 49,
+        "name": "shipping",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 50,
+        "name": "sports",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 51,
+        "name": "steel",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 52,
+        "name": "textile",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 53,
+        "name": "tobacco",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 54,
+        "name": "transportation",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 55,
+        "name": "trucking",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 57,
+        "name": "telecommunication",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 59,
+        "name": "wholesale",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 60,
+        "name": "utilities",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 62,
+        "name": "Logistics",
+        "description": "",
+        "photo": "default.png",
+        "status": 1
+    },
+    {
+        "id": 63,
+        "name": "Consulting",
+        "description": "",
+        "photo": "default.png",
+        "status": 1
+    },
+    {
+        "id": 1,
+        "name": "Agriculture",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 3,
+        "name": "Automobile",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 4,
+        "name": "Aviation",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 5,
+        "name": "Banking",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 6,
+        "name": "Beverages",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 7,
+        "name": "Broadcasting",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 8,
+        "name": "Building Materials",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 9,
+        "name": "Chemicals",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 11,
+        "name": "Construction",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 10,
+        "name": "Computer Software",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 21,
+        "name": "Farming",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 20,
+        "name": "Environmental",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 18,
+        "name": "energy & natural resources",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 23,
+        "name": "food & beverages",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 27,
+        "name": "gas & oil",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 41,
+        "name": "oil & gas",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 44,
+        "name": "publishing & printing",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 56,
+        "name": "timber, logging & paper mills",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 58,
+        "name": "waste management",
+        "description": "",
+        "photo": null,
+        "status": 1
+    },
+    {
+        "id": 2,
+        "name": "Aerospace",
+        "description": "",
+        "photo": null,
+        "status": 1
+    }
+]
+}
