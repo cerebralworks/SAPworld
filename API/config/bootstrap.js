@@ -30,6 +30,30 @@ module.exports.bootstrap = async function(done) {
     // Don't forget to trigger `done()` when this bootstrap function's logic is finished.
     // (otherwise your server will never lift, since it's waiting on the bootstrap)
     sails.yup = require('yup');
+	
+	sails.on('lifted', async function () {
+    
+     const { exec } = require('child_process');
+	 
+	 //To execute the migration when sails lifted
+      await exec('knex migrate:latest', async(error, stdout, stderr) => {
+		  if (error) {
+			console.error(`Error executing command: ${error}`);
+		  } else {
+			console.log(`Command output: ${stdout}`);
+			
+			//To execute the data seeding when sails lifted
+			await exec('knex seed:run', (error, stdout, stderr) => {
+				if (error) {
+				  console.error(`Error executing command: ${error}`);
+				} else {
+				  console.log(`Command output: ${stdout}`);
+				}
+			 });
+		  }
+	   });
+
+	});
     return done();
 
 };

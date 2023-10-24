@@ -1,0 +1,44 @@
+{
+	"items":[
+  {
+    "id": 4,
+    "visa": "H1B",
+    "name": "United States",
+    "country": 226,
+    "status": 1,
+    "status_glossary": null
+  },
+  {
+    "id": 5,
+    "visa": "H4EAD",
+    "name": "United States",
+    "country": 226,
+    "status": 1,
+    "status_glossary": null
+  },
+  {
+    "id": 6,
+    "visa": "GC",
+    "name": "United States",
+    "country": 226,
+    "status": 1,
+    "status_glossary": null
+  },
+  {
+    "id": 7,
+    "visa": "OPT",
+    "name": "United States",
+    "country": 226,
+    "status": 1,
+    "status_glossary": null
+  },
+  {
+    "id": 8,
+    "visa": "CPT",
+    "name": "United States",
+    "country": 226,
+    "status": 1,
+    "status_glossary": null
+  }
+]
+}

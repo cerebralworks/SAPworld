@@ -13,6 +13,9 @@ module.exports = {
     migrations: {
       directory: './migrations'
     },
+	seeds: {
+        directory: './seeds'
+    }
   },
 
   staging: {
@@ -36,6 +39,9 @@ module.exports = {
     connection: process.env.db_connection_string,
     migrations: {
       directory: './migrations'
+    },
+	seeds: {
+        directory: './seeds'
     }
   }
 
