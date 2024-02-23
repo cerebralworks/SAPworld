@@ -14,7 +14,7 @@
  module.exports.email = {
     service: 'elasticemail',
 	host: 'smtp.elasticemail.com',
-	port: '2525',
+	port: 2525,
     auth: {
         user: process.env.mailgun_username,
         pass: process.env.mailgun_password
