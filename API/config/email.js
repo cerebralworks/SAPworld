@@ -12,7 +12,9 @@
  env(__dirname+'/../../.env');
 
  module.exports.email = {
-    service: 'Mailgun',
+    service: 'elasticemail',
+	host: 'smtp.elasticemail.com',
+	port: 2525,
     auth: {
         user: process.env.mailgun_username,
         pass: process.env.mailgun_password
